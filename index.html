@@ -1,0 +1,708 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>계명태권도 | 아이의 자신감이 자라는 공간</title>
+  <meta name="description" content="유치부·초등 저학년 맞춤, 안전하고 따뜻한 지도. 체험 수업 1회 10,000원(등록 시 전액 차감)." />
+
+  <style>
+    :root{
+      --bg:#ffffff;
+      --ink:#152033;
+      --navy:#1f2f46;
+      --muted:#5b677a;
+      --line:#e8edf3;
+      --soft:#f6f8fb;
+      --orange:#ff7a00;
+      --shadow: 0 10px 30px rgba(16,24,40,.08);
+      --radius:18px;
+      --radius2:24px;
+      --max: 1040px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,"Segoe UI","Noto Sans KR","Apple SD Gothic Neo",sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      line-height:1.6;
+    }
+    a{color:inherit}
+    .wrap{max-width:var(--max); margin:0 auto; padding:0 18px}
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      background:rgba(255,255,255,.86);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; padding:12px 0;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; min-width:0;
+    }
+    .brand .logo{
+      width:40px; height:40px; border-radius:12px;
+      background:linear-gradient(135deg, rgba(31,47,70,.12), rgba(255,122,0,.10));
+      border:1px solid var(--line);
+      display:grid; place-items:center;
+      font-weight:900; color:var(--navy);
+      flex:0 0 auto;
+    }
+    .brand .txt{min-width:0}
+    .brand .txt b{display:block; font-size:15px; color:var(--navy); letter-spacing:-.2px}
+    .brand .txt span{display:block; font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .navbtns{
+      display:flex; gap:10px; flex:0 0 auto;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      text-decoration:none;
+      font-weight:800;
+      font-size:13px;
+      box-shadow: 0 4px 14px rgba(16,24,40,.04);
+    }
+    .btn.primary{
+      background:var(--orange);
+      border-color:rgba(255,122,0,.35);
+      color:#fff;
+      box-shadow: 0 12px 26px rgba(255,122,0,.22);
+    }
+    .btn.ghost{
+      background:var(--soft);
+      border-color:var(--line);
+      color:var(--navy);
+    }
+
+    /* HERO */
+    .hero{
+      padding:18px 0 10px;
+    }
+    .hero-card{
+      border:1px solid var(--line);
+      border-radius:var(--radius2);
+      overflow:hidden;
+      box-shadow:var(--shadow);
+      background:#fff;
+    }
+    .hero-media{
+      position:relative;
+      aspect-ratio: 4/5;   /* 모바일 우선 */
+      background:#0c1220;
+    }
+    @media (min-width: 860px){
+      .hero-media{aspect-ratio: 16/9;}
+    }
+    .hero-media img{
+      width:100%; height:100%; object-fit:cover; display:block;
+      filter:saturate(1.02) contrast(1.02);
+    }
+    .hero-overlay{
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(21,32,51,.45) 0%, rgba(21,32,51,.10) 55%, rgba(255,255,255,0) 100%);
+      pointer-events:none;
+    }
+    .hero-text{
+      position:absolute; left:16px; right:16px; bottom:16px;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(232,237,243,.9);
+      color:var(--navy);
+      font-weight:900;
+      width:max-content;
+      box-shadow: 0 10px 25px rgba(16,24,40,.08);
+    }
+    .hero-title{
+      margin:0;
+      color:#fff;
+      font-size:24px;
+      line-height:1.25;
+      letter-spacing:-.3px;
+      text-shadow: 0 10px 24px rgba(0,0,0,.35);
+    }
+    .hero-sub{
+      margin:0;
+      color:rgba(255,255,255,.92);
+      font-size:14px;
+      text-shadow: 0 10px 24px rgba(0,0,0,.35);
+    }
+    .hero-cta{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:6px;
+    }
+    .hero-cta .btn{border-radius:16px; padding:12px 14px}
+    .hero-cta .btn.primary{font-size:14px}
+    .hero-cta .btn.ghost{background:rgba(255,255,255,.92)}
+    .play{
+      position:absolute; top:16px; right:16px;
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(232,237,243,.9);
+      box-shadow: 0 10px 25px rgba(16,24,40,.08);
+      text-decoration:none;
+      font-weight:900;
+      color:var(--navy);
+    }
+    .play svg{width:18px; height:18px}
+
+    /* Sections */
+    .section{padding:18px 0}
+    .h{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+      margin:10px 0 12px;
+    }
+    .h h2{
+      margin:0;
+      font-size:18px;
+      letter-spacing:-.2px;
+      color:var(--navy);
+    }
+    .h p{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 860px){
+      .grid{grid-template-columns: 1fr 1fr;}
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:#fff;
+      box-shadow: 0 10px 24px rgba(16,24,40,.05);
+      padding:16px;
+    }
+    .card b{color:var(--navy)}
+    .card ul{margin:10px 0 0; padding-left:18px; color:var(--muted)}
+    .card li{margin:6px 0}
+    .badge{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      color:var(--navy);
+      background:var(--soft);
+      border:1px solid var(--line);
+    }
+
+    /* Gallery */
+    .gallery{
+      border:1px solid var(--line);
+      border-radius:var(--radius2);
+      background:#fff;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .gallery-top{
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, #fff, var(--soft));
+    }
+    .gallery-top b{color:var(--navy)}
+    .rail{
+      display:flex; gap:12px;
+      overflow:auto;
+      padding:14px 14px 18px;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling:touch;
+    }
+    .rail::-webkit-scrollbar{height:10px}
+    .rail::-webkit-scrollbar-thumb{background:rgba(21,32,51,.18); border-radius:999px}
+    .shot{
+      flex:0 0 auto;
+      width: 78%;
+      max-width: 360px;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      box-shadow: 0 10px 22px rgba(16,24,40,.08);
+      scroll-snap-align:start;
+      background:#0c1220;
+      position:relative;
+      cursor:pointer;
+    }
+    .shot img{
+      width:100%; height:260px; object-fit:cover; display:block;
+    }
+    @media(min-width:860px){
+      .shot{width: 320px}
+      .shot img{height:240px}
+    }
+    .shot .cap{
+      position:absolute; left:10px; bottom:10px;
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(232,237,243,.9);
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      color:var(--navy);
+    }
+
+    /* Lightbox */
+    .lightbox{
+      position:fixed; inset:0; z-index:200;
+      background:rgba(0,0,0,.75);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .lightbox.open{display:flex}
+    .lightbox .frame{
+      width:min(980px, 100%);
+      background:#0b0f19;
+      border-radius:20px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow: 0 30px 80px rgba(0,0,0,.45);
+      position:relative;
+    }
+    .lightbox img{
+      width:100%; height:auto; display:block;
+      max-height: 80vh;
+      object-fit:contain;
+      background:#0b0f19;
+    }
+    .lbbar{
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      color:#fff;
+      background:linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.15));
+      position:absolute; left:0; right:0; top:0;
+    }
+    .lbbar .lbtitle{font-weight:900; font-size:13px; opacity:.92}
+    .lbbar button{
+      appearance:none; border:0; cursor:pointer;
+      background:rgba(255,255,255,.14);
+      color:#fff;
+      font-weight:900;
+      padding:8px 12px;
+      border-radius:999px;
+    }
+
+    /* Footer */
+    footer{
+      margin:18px 0 28px;
+      padding:18px 0 10px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+
+    /* Floating call */
+    .fab{
+      position:fixed; right:14px; bottom:14px; z-index:120;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .fab a{
+      text-decoration:none;
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:8px;
+      padding:13px 16px;
+      border-radius:999px;
+      font-weight:900;
+      box-shadow: 0 16px 30px rgba(16,24,40,.16);
+      border:1px solid rgba(0,0,0,.06);
+    }
+    .fab .call{background:var(--orange); color:#fff; border-color:rgba(255,122,0,.35)}
+    .fab .msg{background:#fff; color:var(--navy)}
+    .fab svg{width:18px; height:18px}
+
+    /* Small helper */
+    .muted{color:var(--muted)}
+    .sep{height:1px; background:var(--line); margin:14px 0}
+  </style>
+</head>
+
+<body>
+  <!-- =========================
+       EDIT HERE (수정할 것들)
+  ========================= -->
+  <script>
+    const KMT = {
+      phoneDisplay: "010-4477-2772",
+      phoneTel: "01044772772",
+      // 유튜브 영상 링크(원하시는 영상으로 교체)
+      youtubeUrl: "https://www.youtube.com/",
+      // 카톡/문의 링크(없으면 빈 문자열로 두셔도 됩니다)
+      kakaoUrl: "",
+      // 지도(네이버/구글) 링크
+      mapUrl: "",
+      // 체험 신청 폼(구글폼 등) 링크
+      trialFormUrl: ""
+    };
+
+    // 아이들 사진 (Wix URL 그대로 사용)
+    const GALLERY = [
+      "https://static.wixstatic.com/media/abf917_9a323d3a71994964a4b962b29393fbf9~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_8866dffe5a7843a99efc87f9b2b97065~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_ba6bfb5cef4d4c79a071f1891b2862be~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_f1771f9de8504c5cb66e5a62dd4168ff~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_ca5d597777034b95b7e4d140d3790320~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_8a47a08d57374efd91a6c85caf6eada9~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_5c7b6e17bbbe46769c2e04a9cf14a295~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_a2eef1c23b7a489a92966662dd6850ee~mv2.jpg"
+    ];
+  </script>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="wrap">
+      <div class="topbar-inner">
+        <div class="brand">
+          <div class="logo">KMT</div>
+          <div class="txt">
+            <b>계명태권도</b>
+            <span class="muted">유치부 · 초등 저학년 맞춤 | 안전하고 따뜻한 지도</span>
+          </div>
+        </div>
+        <div class="navbtns">
+          <a class="btn ghost" href="#info">안내</a>
+          <a class="btn primary" href="#trial">체험예약</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="wrap hero">
+    <div class="hero-card">
+      <div class="hero-media">
+        <!-- 대표 이미지는 갤러리 1번 사용 (원하면 다른 사진으로 바꾸세요) -->
+        <img id="heroImg" alt="계명태권도 수련 사진" />
+        <div class="hero-overlay"></div>
+
+        <a class="play" id="youtubeBtn" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M10 8.5v7l6-3.5-6-3.5Z" fill="currentColor"/>
+            <path d="M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z" stroke="currentColor" opacity=".35"/>
+          </svg>
+          수업 영상 보기
+        </a>
+
+        <div class="hero-text">
+          <div class="pill">아이의 자신감이 자라는 공간</div>
+          <h1 class="hero-title">밝게 · 안전하게 · 꾸준히<br/>아이 성장을 함께합니다.</h1>
+          <p class="hero-sub">체험 수업 1회 10,000원 (등록 시 전액 수강료에서 차감)</p>
+          <div class="hero-cta">
+            <a class="btn primary" href="#trial">체험 수업 예약</a>
+            <a class="btn ghost" href="#schedule">수업 시간</a>
+            <a class="btn ghost" href="#gallery">아이들 사진</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK INFO -->
+  <div class="wrap section" id="info">
+    <div class="h">
+      <h2>처음 방문하신 학부모님 안내</h2>
+      <p>핵심만 빠르게 확인하세요</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <span class="badge">믿을 수 있나?</span>
+        <div class="sep"></div>
+        <b>아이 중심 지도 + 단계별 수련</b><br/>
+        <span class="muted">무리하지 않고, 아이의 체력·성향에 맞춰 차근차근 성장하도록 돕습니다.</span>
+        <ul>
+          <li>유치부·저학년 눈높이 수업</li>
+          <li>기초 체력 + 인성 습관 형성</li>
+          <li>꾸준함을 만드는 루틴</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <span class="badge">우리 아이 안전한가?</span>
+        <div class="sep"></div>
+        <b>안전이 먼저인 수업 운영</b><br/>
+        <span class="muted">안전 매트/공간 관리, 무리 없는 강도로 진행합니다.</span>
+        <ul>
+          <li>과격한 훈련보다 정확한 기본기</li>
+          <li>충돌 위험 동작은 단계별 진행</li>
+          <li>아이 컨디션에 따른 수업 조절</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHEDULE / COST / BUS -->
+  <div class="wrap section" id="schedule">
+    <div class="h">
+      <h2>수업 시간은?</h2>
+      <p>가장 많이 물어보는 질문</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <b>반 구성</b>
+        <ul>
+          <li>유치부 / 초등 저학년 중심 운영</li>
+          <li>아이 성향과 수준에 따라 반 편성</li>
+        </ul>
+        <div class="sep"></div>
+        <span class="muted">정확한 시간표는 상담 시 안내드립니다 (아이 연령/학교 일정에 맞춰 추천)</span>
+      </div>
+
+      <div class="card" id="cost">
+        <b>비용은?</b>
+        <ul>
+          <li>수강료는 상담 시 투명하게 안내</li>
+          <li>아이에게 맞는 횟수/프로그램 추천</li>
+        </ul>
+        <div class="sep"></div>
+        <span class="muted">“꼭 필요한 것만” 안내하는 방식으로 운영합니다.</span>
+      </div>
+    </div>
+
+    <div class="card" id="bus" style="margin-top:12px">
+      <b>차량 운행하나요?</b><br/>
+      <span class="muted">차량 운행 가능 여부/지역은 상담 시 안내드립니다. (아이 안전을 최우선으로 배차)</span>
+    </div>
+  </div>
+
+  <!-- TRIAL -->
+  <div class="wrap section" id="trial">
+    <div class="h">
+      <h2>체험 수업 예약</h2>
+      <p>부담 없이, 제대로 한 번 경험해보세요</p>
+    </div>
+
+    <div class="card">
+      <b>1회 체험 수업 : 10,000원</b><br/>
+      <span class="muted">(등록 시 전액 수강료에서 차감됩니다)</span>
+      <div class="sep"></div>
+      <ul>
+        <li>정규 수업과 동일하게 진행</li>
+        <li>아이 성향/체력 간단 체크</li>
+        <li>보호자 상담 포함</li>
+      </ul>
+
+      <div class="sep"></div>
+
+      <!-- 버튼들 (링크가 비어있으면 전화로 유도) -->
+      <div style="display:flex; gap:10px; flex-wrap:wrap">
+        <a class="btn primary" id="trialBtn" target="_blank" rel="noopener">체험 예약 링크</a>
+        <a class="btn ghost" href="#growth">성장 포인트 보기</a>
+      </div>
+
+      <p class="muted" style="margin:12px 0 0; font-size:12px">
+        ※ 예약 링크가 없으면 “전화 상담”으로 바로 연결되도록 자동 설정됩니다.
+      </p>
+    </div>
+  </div>
+
+  <!-- GROWTH -->
+  <div class="wrap section" id="growth">
+    <div class="h">
+      <h2>아이가 얼마나 성장하나요?</h2>
+      <p>학부모님이 가장 만족하는 변화</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <b>눈에 보이는 변화</b>
+        <ul>
+          <li>자신감 · 바른 자세 · 기초 체력</li>
+          <li>집중력 · 규칙 습관 · 인사 예절</li>
+          <li>친구 관계에서의 안정감</li>
+        </ul>
+      </div>
+      <div class="card">
+        <b>지도 원리</b><br/>
+        <span class="muted">구조 >> 교차원리, 교차원리 기반 무도</span>
+        <div class="sep"></div>
+        <ul>
+          <li>기본을 구조적으로 쌓아 안전하게 확장</li>
+          <li>아이의 ‘지금’ 수준에 맞춘 단계별 반복</li>
+          <li>무리 없는 루틴으로 꾸준함을 습관화</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  <div class="wrap section" id="gallery">
+    <div class="h">
+      <h2>아이들 사진</h2>
+      <p>가로로 넘기고(스와이프) 눌러서 크게 보기</p>
+    </div>
+
+    <div class="gallery">
+      <div class="gallery-top">
+        <b>수업 분위기 미리 보기</b>
+        <span class="muted" style="font-size:12px">모바일 최적화 갤러리</span>
+      </div>
+      <div class="rail" id="rail"></div>
+    </div>
+  </div>
+
+  <!-- Q&A -->
+  <div class="wrap section" id="qna">
+    <div class="h">
+      <h2>Q&A 모음</h2>
+      <p>자주 묻는 질문만 모았어요</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <b>Q. 우리 아이가 낯을 많이 가려요.</b>
+        <div class="sep"></div>
+        <span class="muted">A. 처음엔 적응이 가장 중요합니다. 아이가 편해질 때까지 무리 없이 단계적으로 참여하도록 돕습니다.</span>
+      </div>
+      <div class="card">
+        <b>Q. 체력이 약한데 괜찮을까요?</b>
+        <div class="sep"></div>
+        <span class="muted">A. 괜찮습니다. 강도를 낮춰 기초부터 차근차근 진행하며, 아이 컨디션을 먼저 봅니다.</span>
+      </div>
+      <div class="card">
+        <b>Q. 체험 수업은 어떻게 진행되나요?</b>
+        <div class="sep"></div>
+        <span class="muted">A. 정규 수업과 동일하게 진행되며, 수업 후 보호자 상담으로 아이에게 맞는 방향을 안내드립니다.</span>
+      </div>
+      <div class="card">
+        <b>Q. 비용·시간표는 어디서 확인하나요?</b>
+        <div class="sep"></div>
+        <span class="muted">A. 아이 연령/학교 일정에 따라 추천이 달라서, 상담 시 가장 정확하게 안내드립니다.</span>
+      </div>
+    </div>
+  </div>
+
+  <footer class="wrap">
+    <div><b style="color:var(--navy)">계명태권도</b> · 상담문의 <span id="phoneFoot"></span></div>
+    <div style="margin-top:6px">© Keimyung Taekwondo. All rights reserved.</div>
+  </footer>
+
+  <!-- Floating buttons -->
+  <div class="fab">
+    <a class="call" id="callBtn">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6.6 10.8c1.7 3.2 3.4 4.9 6.6 6.6l2.2-2.2c.3-.3.8-.4 1.1-.2 1.2.5 2.5.8 3.9.8.6 0 1 .4 1 1V21c0 .6-.4 1-1 1C10.9 22 2 13.1 2 2c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.4.3 2.7.8 3.9.1.4 0 .8-.2 1.1l-2.2 2.2Z" fill="currentColor"/>
+      </svg>
+      전화 상담
+    </a>
+    <a class="msg" id="msgBtn">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M20 4H4c-1.1 0-2 .9-2 2v16l4-4h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2Z" fill="currentColor" opacity=".9"/>
+      </svg>
+      문의하기
+    </a>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="frame" role="dialog" aria-modal="true">
+      <div class="lbbar">
+        <div class="lbtitle" id="lbTitle">사진 보기</div>
+        <button type="button" id="lbClose">닫기</button>
+      </div>
+      <img id="lbImg" alt="확대 이미지" />
+    </div>
+  </div>
+
+  <script>
+    // Apply settings
+    const $ = (s)=>document.querySelector(s);
+
+    // hero
+    $("#heroImg").src = GALLERY[0];
+    $("#youtubeBtn").href = KMT.youtubeUrl || "https://www.youtube.com/";
+    $("#phoneFoot").textContent = KMT.phoneDisplay;
+
+    // floating
+    $("#callBtn").href = "tel:" + (KMT.phoneTel || "01000000000");
+
+    // 문의 버튼: 카톡 링크가 있으면 카톡, 없으면 전화로 유도
+    if (KMT.kakaoUrl && KMT.kakaoUrl.trim().length > 0) {
+      $("#msgBtn").href = KMT.kakaoUrl;
+      $("#msgBtn").target = "_blank";
+      $("#msgBtn").rel = "noopener";
+    } else {
+      $("#msgBtn").href = "tel:" + (KMT.phoneTel || "01000000000");
+    }
+
+    // 체험 예약 링크: trialFormUrl 있으면 그쪽, 없으면 전화로 유도
+    if (KMT.trialFormUrl && KMT.trialFormUrl.trim().length > 0) {
+      $("#trialBtn").href = KMT.trialFormUrl;
+      $("#trialBtn").target = "_blank";
+      $("#trialBtn").rel = "noopener";
+    } else {
+      $("#trialBtn").href = "tel:" + (KMT.phoneTel || "01000000000");
+      $("#trialBtn").textContent = "전화로 체험 예약";
+    }
+
+    // Build gallery rail
+    const rail = $("#rail");
+    GALLERY.forEach((src, idx)=>{
+      const div = document.createElement("div");
+      div.className = "shot";
+      div.setAttribute("tabindex","0");
+      div.innerHTML = `
+        <img loading="lazy" src="${src}" alt="계명태권도 수련 사진 ${idx+1}">
+        <div class="cap">사진 ${idx+1}</div>
+      `;
+      div.addEventListener("click", ()=>openLightbox(src, idx+1));
+      div.addEventListener("keydown", (e)=>{
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          openLightbox(src, idx+1);
+        }
+      });
+      rail.appendChild(div);
+    });
+
+    // Lightbox
+    const lb = $("#lightbox");
+    const lbImg = $("#lbImg");
+    const lbTitle = $("#lbTitle");
+
+    function openLightbox(src, n){
+      lbImg.src = src;
+      lbTitle.textContent = "사진 " + n;
+      lb.classList.add("open");
+      lb.setAttribute("aria-hidden","false");
+      document.body.style.overflow = "hidden";
+    }
+    function closeLightbox(){
+      lb.classList.remove("open");
+      lb.setAttribute("aria-hidden","true");
+      lbImg.src = "";
+      document.body.style.overflow = "";
+    }
+    $("#lbClose").addEventListener("click", closeLightbox);
+    lb.addEventListener("click", (e)=>{
+      if(e.target === lb) closeLightbox();
+    });
+    window.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape" && lb.classList.contains("open")) closeLightbox();
+    });
+  </script>
+</body>
+</html>
