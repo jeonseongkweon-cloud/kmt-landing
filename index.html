@@ -19,12 +19,15 @@
       phone: "010-4477-2772",
       bandUrl: "https://band.us/n/a8a7b9Xahdgb8",
       kakaoUrl: "https://open.kakao.com/o/gF8p81hi",
-      payPageUrl: "/pay/",
+
+      // ✅ 중요: GitHub Pages(프로젝트/도메인) 어디서든 동작하도록 "상대경로"로 유지
+      //    pay/ 폴더를 만든 상태면 이대로 OK
+      payPageUrl: "pay/",
 
       // ✅ 로고
       logoImage: "https://static.wixstatic.com/media/abf917_f835f132f9cb46f782ebb43bd5dc6cca~mv2.png",
 
-      // ✅ 상단 슬라이드 이미지 8장(전총재님 제공)
+      // ✅ 상단 슬라이드 이미지 8장
       heroImages: [
         "https://static.wixstatic.com/media/abf917_9a323d3a71994964a4b962b29393fbf9~mv2.jpg",
         "https://static.wixstatic.com/media/abf917_8866dffe5a7843a99efc87f9b2b97065~mv2.jpg",
@@ -218,6 +221,7 @@
       border:1px solid rgba(255,255,255,.12);
       padding:7px 10px;border-radius:12px;
       background: rgba(255,255,255,.05);
+      cursor:pointer;
     }
     .items{padding:12px}
 
@@ -301,6 +305,7 @@
       background: rgba(255,255,255,.05);
       font-weight:950;font-size:13px;
       min-width:120px;
+      cursor:pointer;
     }
     .bbtn.primary{
       background: linear-gradient(180deg, rgba(255,138,0,.95), rgba(255,138,0,.75));
@@ -343,27 +348,27 @@
     </div>
 
     <div class="grid">
-      <a class="tile" href="#schedule"><div class="ico">🗓️</div><div class="label">수련시간표</div><div class="sub">반/시간</div></a>
-      <a class="tile" href="#program"><div class="ico">🥋</div><div class="label">프로그램 소개</div><div class="sub">연령별</div></a>
-      <a class="tile" href="#plan"><div class="ico">📘</div><div class="label">수련계획표</div><div class="sub">월간</div></a>
-      <a class="tile" href="#test"><div class="ico">🏅</div><div class="label">승급·승단심사안내</div><div class="sub">절차</div></a>
+      <a class="tile" data-go="#schedule" href="#schedule"><div class="ico">🗓️</div><div class="label">수련시간표</div><div class="sub">반/시간</div></a>
+      <a class="tile" data-go="#program" href="#program"><div class="ico">🥋</div><div class="label">프로그램 소개</div><div class="sub">연령별</div></a>
+      <a class="tile" data-go="#plan" href="#plan"><div class="ico">📘</div><div class="label">수련계획표</div><div class="sub">월간</div></a>
+      <a class="tile" data-go="#test" href="#test"><div class="ico">🏅</div><div class="label">승급·승단심사안내</div><div class="sub">절차</div></a>
 
-      <a class="tile" href="#lookup"><div class="ico">🔎</div><div class="label">단증·인증서 조회</div><div class="sub">준비중</div></a>
-      <a class="tile" href="#gallery"><div class="ico">🖼️</div><div class="label">갤러리&영상</div><div class="sub">분위기</div></a>
-      <a class="tile" href="#qa"><div class="ico">❓</div><div class="label">Q&A 모음</div><div class="sub">자주묻는</div></a>
-      <a class="tile" href="#shuttle"><div class="ico">🚌</div><div class="label">차량운행 문의</div><div class="sub">상담 후</div></a>
+      <a class="tile" data-go="#lookup" href="#lookup"><div class="ico">🔎</div><div class="label">단증·인증서 조회</div><div class="sub">준비중</div></a>
+      <a class="tile" data-go="#gallery" href="#gallery"><div class="ico">🖼️</div><div class="label">갤러리&영상</div><div class="sub">분위기</div></a>
+      <a class="tile" data-go="#qa" href="#qa"><div class="ico">❓</div><div class="label">Q&A 모음</div><div class="sub">자주묻는</div></a>
+      <a class="tile" data-go="#shuttle" href="#shuttle"><div class="ico">🚌</div><div class="label">차량운행 문의</div><div class="sub">상담 후</div></a>
 
       <a class="tile" id="payTile" href="#"><div class="ico">💳</div><div class="label">결제 안내</div><div class="sub">계좌/QR</div></a>
-      <a class="tile" href="#contact"><div class="ico">✅</div><div class="label">카톡 문의</div><div class="sub">바로 상담</div></a>
+      <a class="tile" data-go="#contact" href="#contact"><div class="ico">✅</div><div class="label">카톡 문의</div><div class="sub">바로 상담</div></a>
       <a class="tile" id="bandTile" href="#" target="_blank" rel="noopener"><div class="ico">🟢</div><div class="label">밴드 바로가기</div><div class="sub">공지/소통</div></a>
-      <a class="tile" href="#top"><div class="ico">⬆️</div><div class="label">맨 위로</div><div class="sub">이동</div></a>
+      <a class="tile" data-go="#top" href="#top"><div class="ico">⬆️</div><div class="label">맨 위로</div><div class="sub">이동</div></a>
     </div>
 
     <!-- 신규 학부모 안내 -->
     <section class="panel" id="intro">
       <div class="panelHeader">
         <b>처음 오시는 학부모님 안내</b>
-        <a class="moreBtn" href="#contact">카톡 문의</a>
+        <a class="moreBtn" data-go="#contact" href="#contact">카톡 문의</a>
       </div>
       <div class="items">
         <div class="bullets" id="introBullets"></div>
@@ -378,7 +383,7 @@
     <section class="panel" id="schedule">
       <div class="panelHeader">
         <b>수련시간표</b>
-        <a class="moreBtn" href="#contact">문의</a>
+        <a class="moreBtn" data-go="#contact" href="#contact">문의</a>
       </div>
       <div class="items">
         <div class="scheduleGrid" id="scheduleGrid"></div>
@@ -392,7 +397,7 @@
     <section class="panel" id="program">
       <div class="panelHeader">
         <b>프로그램 소개</b>
-        <a class="moreBtn" href="#contact">문의</a>
+        <a class="moreBtn" data-go="#contact" href="#contact">문의</a>
       </div>
       <div class="items">
         <div class="noteBox">
@@ -424,7 +429,7 @@
     <section class="panel" id="test">
       <div class="panelHeader">
         <b>승급·승단심사 안내</b>
-        <a class="moreBtn" href="#qa">Q&A</a>
+        <a class="moreBtn" data-go="#qa" href="#qa">Q&A</a>
       </div>
       <div class="items">
         <div class="noteBox">
@@ -440,7 +445,7 @@
     <section class="panel" id="lookup">
       <div class="panelHeader">
         <b>단증·인증서 조회</b>
-        <a class="moreBtn" href="#contact">문의</a>
+        <a class="moreBtn" data-go="#contact" href="#contact">문의</a>
       </div>
       <div class="items">
         <div class="noteBox">
@@ -454,7 +459,7 @@
     <section class="panel" id="gallery">
       <div class="panelHeader">
         <b>갤러리 & 영상</b>
-        <a class="moreBtn" href="#contact">문의</a>
+        <a class="moreBtn" data-go="#contact" href="#contact">문의</a>
       </div>
       <div class="items">
         <div class="ytBox">
@@ -477,7 +482,7 @@
     <section class="panel" id="qa">
       <div class="panelHeader">
         <b>Q&A 모음</b>
-        <a class="moreBtn" href="#contact">바로 문의</a>
+        <a class="moreBtn" data-go="#contact" href="#contact">바로 문의</a>
       </div>
       <div class="items">
         <div class="noteBox">
@@ -494,7 +499,7 @@
     <section class="panel" id="shuttle">
       <div class="panelHeader">
         <b>차량운행 문의</b>
-        <a class="moreBtn" href="#contact">문의</a>
+        <a class="moreBtn" data-go="#contact" href="#contact">문의</a>
       </div>
       <div class="items">
         <div class="noteBox">
@@ -508,7 +513,7 @@
     <section class="panel" id="contact">
       <div class="panelHeader">
         <b>문의하기</b>
-        <a class="moreBtn" href="#top">맨위로</a>
+        <a class="moreBtn" data-go="#top" href="#top">맨위로</a>
       </div>
       <div class="items" style="display:grid; gap:10px;">
         <a class="btn primary" id="callBtn" href="#">📞 전화상담</a>
@@ -532,7 +537,7 @@
   <!-- Bottom fixed -->
   <div class="bottomBar">
     <div class="bottomInner">
-      <a class="bbtn" href="#top">🏠 홈</a>
+      <a class="bbtn" data-go="#top" href="#top">🏠 홈</a>
       <a class="bbtn" id="callBottom" href="#">📞 전화</a>
       <a class="bbtn primary" id="kakaoBottom" href="#" target="_blank" rel="noopener">🟡 카톡</a>
       <a class="bbtn" id="bandBottom" href="#" target="_blank" rel="noopener">🟢 밴드</a>
@@ -542,6 +547,20 @@
 
   <script>
     const $ = (id)=>document.getElementById(id);
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[s]));
+    }
+
+    // ✅ GitHub Pages(프로젝트/도메인) 어디서든 URL을 안전하게 만드는 함수
+    function toAbs(url){
+      // url이 이미 http(s)면 그대로
+      if(/^https?:\/\//i.test(url)) return url;
+      // 상대경로면 현재 페이지 기준으로 절대URL로 변환
+      return new URL(url, window.location.href).toString();
+    }
 
     // Text
     $("dojoName").textContent = KMT.dojoName;
@@ -556,27 +575,28 @@
     }
 
     // Phone
-    const tel = `tel:${String(KMT.phone).replaceAll("-","")}`;
+    const tel = `tel:${String(KMT.phone).replace(/-/g,"")}`;
     $("callTop").href = tel;
     $("callBtn").href = tel;
     $("callBottom").href = tel;
 
     // Links
-    $("kakaoTop").href = KMT.kakaoUrl;
-    $("kakaoBtn").href = KMT.kakaoUrl;
-    $("kakaoBottom").href = KMT.kakaoUrl;
+    $("kakaoTop").href = toAbs(KMT.kakaoUrl);
+    $("kakaoBtn").href = toAbs(KMT.kakaoUrl);
+    $("kakaoBottom").href = toAbs(KMT.kakaoUrl);
 
-    $("bandTop").href = KMT.bandUrl;
-    $("bandBtn").href = KMT.bandUrl;
-    $("bandBottom").href = KMT.bandUrl;
-    $("bandTile").href = KMT.bandUrl;
+    $("bandTop").href = toAbs(KMT.bandUrl);
+    $("bandBtn").href = toAbs(KMT.bandUrl);
+    $("bandBottom").href = toAbs(KMT.bandUrl);
+    $("bandTile").href = toAbs(KMT.bandUrl);
 
-    // Pay
-    $("payTop").href = KMT.payPageUrl;
-    $("payBtn").href = KMT.payPageUrl;
-    $("payBottom").href = KMT.payPageUrl;
-    $("payTile").href = KMT.payPageUrl;
-    $("payBtn2").href = KMT.payPageUrl;
+    // Pay (✅ 404 방지: 절대경로(/pay/) 금지, 현재 주소 기준으로 계산)
+    const payAbs = toAbs(KMT.payPageUrl);
+    $("payTop").href = payAbs;
+    $("payBtn").href = payAbs;
+    $("payBottom").href = payAbs;
+    $("payTile").href = payAbs;
+    $("payBtn2").href = payAbs;
 
     // Intro bullets
     const intro = $("introBullets");
@@ -616,7 +636,6 @@
     const imgs = (KMT.heroImages || []).filter(Boolean);
     let idx = 0;
 
-    // create layers
     hero.querySelectorAll(".layer").forEach(n=>n.remove());
     dots.innerHTML = "";
 
@@ -638,26 +657,34 @@
       layers.forEach((el,i)=>el.classList.toggle("on", i===idx));
       [...dots.children].forEach((el,i)=>el.classList.toggle("on", i===idx));
     }
-
     if(imgs.length > 1){
       setInterval(()=>show((idx+1)%imgs.length), 3200);
     }
 
-    function escapeHtml(str){
-      return String(str).replace(/[&<>"']/g, s => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[s]));
+    // ✅ 섹션 이동 통일 (data-go)
+    function goHash(hash){
+      const el = document.querySelector(hash);
+      if(!el) return;
+      // 주소 hash도 맞춰주고 부드럽게 이동
+      history.replaceState(null, "", hash);
+      el.scrollIntoView({behavior:'smooth', block:'start'});
     }
 
-    // smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(a=>{
-      a.addEventListener('click', (e)=>{
-        const id = a.getAttribute('href');
-        const el = document.querySelector(id);
-        if(!el) return;
+    document.querySelectorAll("[data-go]").forEach(el=>{
+      el.addEventListener("click", (e)=>{
+        const hash = el.getAttribute("data-go");
+        if(!hash || !hash.startsWith("#")) return;
         e.preventDefault();
-        el.scrollIntoView({behavior:'smooth', block:'start'});
+        goHash(hash);
       });
+    });
+
+    // 주소로 #qa 같은 링크로 들어온 경우도 부드럽게
+    window.addEventListener("load", ()=>{
+      if(location.hash){
+        const el = document.querySelector(location.hash);
+        if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      }
     });
   </script>
 </body>
