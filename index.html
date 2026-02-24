@@ -7,9 +7,9 @@
   <meta name="description" content="계명태권도 - 시간표/프로그램/계획/심사/갤러리/Q&A/차량/결제/문의" />
   <meta name="theme-color" content="#0b0f19" />
 
-  <!-- =========================
-   ✅ 수정할 부분(여기만 수정하면 됩니다)
-  ========================== -->
+  <!-- =====================================================
+   ✅ 수정할 부분 (여기만 바꾸면 전체 자동 반영됩니다)
+  ====================================================== -->
   <script>
     const KMT = {
       dojoName: "계명태권도",
@@ -20,16 +20,8 @@
       bandUrl: "https://band.us/n/a8a7b9Xahdgb8",
       kakaoUrl: "https://open.kakao.com/o/gF8p81hi",
 
-      // ✅ 폴더 페이지들(전총재님이 이미 만들어둔 폴더명과 맞춰둠)
-      pages: {
-        schedule: "schedule/",   // 수련시간표 폴더
-        program:  "program/",    // 프로그램 소개 폴더
-        plan:     "plan/",       // 수련계획표 폴더
-        exam:     "exam/",       // 승급·승단심사 안내 폴더
-        gallery:  "gallery/",    // 갤러리&영상 폴더
-        pay:      "pay/"         // 결제 폴더
-        // qa:     "qa/"          // Q&A 폴더가 따로 있으면 여기만 추가하면 됨
-      },
+      // 결제 폴더 (이미 만드셨으니 그대로)
+      payPageUrl: "pay/",
 
       // ✅ 로고
       logoImage: "https://static.wixstatic.com/media/abf917_f835f132f9cb46f782ebb43bd5dc6cca~mv2.png",
@@ -46,23 +38,49 @@
         "https://static.wixstatic.com/media/abf917_a2eef1c23b7a489a92966662dd6850ee~mv2.jpg"
       ],
 
-      // ✅ 유튜브 대표 영상(대문 미리보기용)
+      // ✅ 유튜브 대표 영상
       youtubeVideoId: "J67yvo12Q1s",
 
-      // ✅ 신규 학부모 안내 문구
+      // ✅ 시간표(폰마다 밀림 방지: 카드형)
+      scheduleCards: [
+        { title:"1부", badge:"초등부", time:"1:50 ~ 2:40", hint:"상담 후 반 배정 안내" },
+        { title:"2부", badge:"초등부", time:"3:00 ~ 3:50", hint:"학년/성향에 맞춰 안내" },
+        { title:"3부", badge:"유치부 전용", time:"4:30 ~ 5:15", hint:"처음 시작도 OK" },
+        { title:"4부", badge:"유치부+초등부", time:"5:40 ~ 6:30", hint:"수업 적응/성장 중심" },
+        { title:"5부", badge:"초등부", time:"6:50 ~ 7:40", hint:"기초체력+기술 균형" }
+      ],
+
+      // ✅ 신규 학부모 안내
       introPoints: [
         "처음 등록 전, 아이 성향/목표에 맞는 반을 먼저 안내합니다.",
         "안전·기본기·생활습관(예절/집중)을 함께 지도합니다.",
-        "차량운행은 상담 후 시간 배정(지역/수련시간에 따라 조정)됩니다."
+        "차량운행은 상담 후 시간 배정(지역/시간에 따라 조정)됩니다."
       ],
 
-      // ✅ Q&A (대문에서 바로 보이도록 구현)
-      qaItems: [
-        { q:"처음 시작해도 괜찮나요?", a:"네. 처음 시작하는 아이 기준으로 안전/기초/예절부터 단계별로 지도합니다. 성향 확인 후 반을 안내드려요." },
-        { q:"안전관리는 어떻게 하나요?", a:"준비운동/기초체력/공간 점검/단계별 강도 조절로 안전을 우선합니다. 컨디션에 따라 즉시 조정합니다." },
-        { q:"어떤 반이 우리 아이에게 맞나요?", a:"나이·학년, 성향, 목표(체력/자신감/대회 등)를 기준으로 상담 후 반을 안내드립니다." },
-        { q:"차량운행은 가능한가요?", a:"가능 여부는 지역/시간/동선에 따라 달라집니다. 상담 후 시간 배정으로 안내드립니다." },
-        { q:"체험/등록 절차는 어떻게 되나요?", a:"카톡으로 ①아이 나이/학년 ②목표 ③차량 필요 여부를 보내주시면 일정과 준비물을 안내드립니다." }
+      trialText: "체험 수업/등록 안내는 카톡 문의로 빠르게 도와드립니다.",
+
+      // ✅ Q&A (메인에서 바로 펼쳐보기)
+      faq: [
+        {
+          q: "처음 시작해도 괜찮나요?",
+          a: "네. 처음 시작하는 아이들을 위한 '기초/적응' 단계부터 안내합니다. 아이 성향(활동성/집중력/낯가림)과 목표(체력/자신감/품새 등)에 맞춰 반을 추천해드립니다."
+        },
+        {
+          q: "안전관리는 어떻게 하나요?",
+          a: "수업 전후 체크(컨디션/부상 예방), 단계별 난이도 조절, 충분한 준비운동/정리운동을 기본으로 운영합니다. 아이들의 안전이 최우선입니다."
+        },
+        {
+          q: "어떤 반이 우리 아이에게 맞나요?",
+          a: "카톡으로 '아이 학년/나이 + 목표 + 차량 필요 여부' 3가지만 보내주시면 가장 맞는 시간대/반을 안내해드립니다."
+        },
+        {
+          q: "차량운행은 가능한가요?",
+          a: "차량운행은 상담 후 시간 배정됩니다. 지역/수련시간에 따라 조정될 수 있어, 먼저 카톡으로 문의주시면 가능 여부를 안내드립니다."
+        },
+        {
+          q: "체험/등록 절차는 어떻게 되나요?",
+          a: "카톡 문의 → 시간/반 안내 → 체험(또는 상담 후 등록) 순으로 진행합니다. 문의 시 아이 정보(학년/나이)와 희망 시간대를 함께 보내주시면 더 빠릅니다."
+        }
       ]
     };
   </script>
@@ -83,7 +101,7 @@
     body{
       margin:0;
       color:var(--text);
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", sans-serif;
       background:
         radial-gradient(1200px 600px at 50% -10%, rgba(255,138,0,.18), transparent 60%),
         linear-gradient(180deg, #060a13, var(--bg));
@@ -91,36 +109,55 @@
     }
     a{color:inherit;text-decoration:none}
     .wrap{max-width:1040px;margin:0 auto;padding:14px 14px 120px}
-    section{scroll-margin-top:14px}
+    section{scroll-margin-top: 14px;}
 
+    /* HERO slider */
     .hero{
       border:1px solid rgba(36,52,90,.55);
       background: linear-gradient(180deg, rgba(15,22,40,.92), rgba(13,19,34,.88));
-      border-radius:22px; overflow:hidden;
-      box-shadow:var(--shadow);
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow: var(--shadow);
     }
-    .heroSlide{position:relative;width:100%;height:220px;background:#111}
+    .heroSlide{
+      position:relative;
+      width:100%;
+      height:220px;
+      background: #111;
+    }
     .heroSlide .layer{
-      position:absolute;inset:0;
-      background-size:cover;background-position:center;
-      opacity:0;transform:translateX(22px);
-      transition:opacity .6s ease, transform .6s ease;
-      filter:saturate(1.05) contrast(1.02);
+      position:absolute; inset:0;
+      background-size:cover;
+      background-position:center;
+      opacity:0;
+      transform: translateX(22px);
+      transition: opacity .6s ease, transform .6s ease;
+      filter: saturate(1.05) contrast(1.02);
     }
-    .heroSlide .layer.on{opacity:1;transform:translateX(0)}
+    .heroSlide .layer.on{ opacity:1; transform: translateX(0); }
     .heroSlide:after{
-      content:"";position:absolute;inset:0;
-      background:linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.62));
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.62));
       pointer-events:none;
     }
-    .dots{position:absolute;right:14px;bottom:12px;display:flex;gap:6px;z-index:3}
-    .dot{width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.22)}
-    .dot.on{background:rgba(255,138,0,.9);border-color:rgba(255,138,0,.35)}
+    .dots{
+      position:absolute; right:14px; bottom:12px;
+      display:flex; gap:6px; z-index:3;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:999px;
+      background: rgba(255,255,255,.35);
+      border:1px solid rgba(255,255,255,.22);
+      cursor:pointer;
+    }
+    .dot.on{ background: rgba(255,138,0,.9); border-color: rgba(255,138,0,.35); }
 
     .heroBar{
       display:flex;gap:12px;align-items:center;justify-content:space-between;
-      padding:12px 14px;background:rgba(8,10,18,.70);
-      backdrop-filter:blur(10px);
+      padding:12px 14px;
+      background: rgba(8,10,18,.70);
+      backdrop-filter: blur(10px);
       border-top:1px solid rgba(36,52,90,.4);
       flex-wrap:wrap;
     }
@@ -138,127 +175,174 @@
     .brandText .t1{font-weight:950;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .brandText .t2{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .brandText .t3{font-size:12px;color:rgba(233,238,252,.70);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
     .ctaRow{display:flex;gap:8px;flex-wrap:wrap}
+
     .btn{
       display:inline-flex;align-items:center;justify-content:center;gap:8px;
       padding:10px 12px;border-radius:14px;
       border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.06);
+      background: rgba(255,255,255,.06);
       font-weight:950;font-size:13px;
-      cursor:pointer;min-width:92px;
+      cursor:pointer;
+      min-width:92px;
     }
     .btn.primary{
-      background:linear-gradient(180deg, rgba(255,138,0,.95), rgba(255,138,0,.75));
-      border-color:rgba(255,138,0,.35);color:#101019;
+      background: linear-gradient(180deg, rgba(255,138,0,.95), rgba(255,138,0,.75));
+      border-color: rgba(255,138,0,.35);
+      color:#101019;
     }
 
+    /* Tiles */
     .sectionTitle{
       margin:16px 4px 10px;
       display:flex;align-items:flex-end;justify-content:space-between;gap:10px;
     }
     .sectionTitle h2{margin:0;font-size:15px}
     .sectionTitle .mini{font-size:12px;color:var(--muted)}
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-    @media (min-width:640px){.grid{grid-template-columns:repeat(4,1fr)}}
+    .grid{display:grid;grid-template-columns: repeat(3, 1fr);gap:10px;}
+    @media (min-width:640px){ .grid{grid-template-columns: repeat(4, 1fr);} }
 
     .tile{
-      background:linear-gradient(180deg, rgba(18,28,51,.95), rgba(12,18,34,.92));
+      background: linear-gradient(180deg, rgba(18,28,51,.95), rgba(12,18,34,.92));
       border:1px solid rgba(36,52,90,.55);
       border-radius:18px;
       padding:12px 10px;
-      box-shadow:0 10px 24px rgba(0,0,0,.25);
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
       display:flex;flex-direction:column;align-items:center;gap:8px;
-      text-align:center;min-height:92px;
-      transition:transform .10s ease, border-color .15s ease;
+      text-align:center;
+      min-height:92px;
+      transition: transform .10s ease, border-color .15s ease;
     }
-    .tile:hover{transform:translateY(-1px);border-color:rgba(255,138,0,.35)}
+    .tile:hover{transform: translateY(-1px);border-color: rgba(255,138,0,.35)}
     .ico{
       width:46px;height:46px;border-radius:15px;
       display:grid;place-items:center;
-      background:rgba(255,255,255,.06);
+      background: rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
       font-size:22px;
     }
     .tile .label{font-size:12px;font-weight:950}
     .tile .sub{font-size:11px;color:var(--muted);margin-top:-6px}
 
+    /* Panels */
     .panel{
       margin-top:12px;
       border:1px solid rgba(36,52,90,.55);
-      background:linear-gradient(180deg, rgba(15,22,40,.92), rgba(13,19,34,.90));
-      border-radius:22px;overflow:hidden;
-      box-shadow:var(--shadow);
+      background: linear-gradient(180deg, rgba(15,22,40,.92), rgba(13,19,34,.90));
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow: var(--shadow);
     }
     .panelHeader{
       padding:12px 14px;
       display:flex;align-items:center;justify-content:space-between;gap:10px;
       border-bottom:1px solid rgba(36,52,90,.45);
-      background:linear-gradient(90deg, rgba(20,40,90,.75), rgba(10,14,28,.0));
+      background: linear-gradient(90deg, rgba(20,40,90,.75), rgba(10,14,28,.0));
     }
     .panelHeader b{font-size:14px}
     .moreBtn{
       font-size:12px;color:var(--muted);
       border:1px solid rgba(255,255,255,.12);
       padding:7px 10px;border-radius:12px;
-      background:rgba(255,255,255,.05);
+      background: rgba(255,255,255,.05);
       white-space:nowrap;
     }
     .items{padding:12px}
 
-    .bullets{display:grid;gap:8px}
+    /* Info bullets */
+    .bullets{ display:grid; gap:8px; }
     .bullet{
-      padding:10px 12px;border-radius:16px;
+      padding:10px 12px;
+      border-radius:16px;
       border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.03);
-      font-size:12px;line-height:1.55;
+      background: rgba(255,255,255,.03);
+      color: rgba(233,238,252,.92);
+      font-size:12px;
+      line-height:1.55;
     }
+
+    /* Schedule cards (밀림 방지 핵심) */
+    .scheduleGrid{display:grid;grid-template-columns:1fr;gap:10px;}
+    @media (min-width:720px){ .scheduleGrid{grid-template-columns:1fr 1fr;} }
+    .timeCard{
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(18,28,51,.88), rgba(12,18,34,.92));
+      padding:14px;
+      overflow:hidden;
+    }
+    .timeTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+    .timeTitle{font-weight:950;font-size:14px}
+    .timeBadge{
+      font-size:11px;color: rgba(233,238,252,.80);
+      padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+    .timeLine{
+      font-size:13px;color: rgba(233,238,252,.90);
+      padding:8px 10px;border-radius:14px;
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      margin-bottom:8px;
+      word-break:keep-all;
+    }
+    .timeHint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
 
     .noteBox{
       margin-top:10px;
-      padding:12px 14px;border-radius:18px;
+      padding:12px 14px;
+      border-radius:18px;
       border:1px solid rgba(255,138,0,.22);
-      background:rgba(255,138,0,.07);
-      font-size:12px;line-height:1.6;
+      background: rgba(255,138,0,.07);
+      color: rgba(233,238,252,.92);
+      font-size:12px;
+      line-height:1.6;
     }
 
+    /* YouTube */
     .ytBox{
       border:1px solid rgba(255,255,255,.12);
-      border-radius:18px;overflow:hidden;
-      background:rgba(255,255,255,.03);
-    }
-    .ytFrameWrap{position:relative;padding-top:56.25%}
-    .ytFrameWrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-
-    /* Q&A 아코디언 */
-    .qaList{display:grid;gap:10px}
-    details.qa{
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.03);
       border-radius:18px;
       overflow:hidden;
+      background: rgba(255,255,255,.03);
     }
-    details.qa summary{
-      cursor:pointer;
-      list-style:none;
-      padding:12px 14px;
-      font-weight:950;
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-    }
-    details.qa summary::-webkit-details-marker{display:none}
-    .qaA{
-      padding:0 14px 12px;
-      color:rgba(233,238,252,.86);
-      font-size:12px;line-height:1.6;
-    }
-    .chev{color:rgba(233,238,252,.55);font-size:12px}
+    .ytFrameWrap{position:relative;padding-top:56.25%;}
+    .ytFrameWrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
 
+    /* FAQ accordion */
+    .faqList{display:grid;gap:10px;}
+    details.faq{
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      overflow:hidden;
+    }
+    details.faq summary{
+      list-style:none;
+      cursor:pointer;
+      padding:12px 14px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      font-weight:900;font-size:13px;
+    }
+    details.faq summary::-webkit-details-marker{display:none;}
+    .faqA{
+      padding:0 14px 14px;
+      color:rgba(233,238,252,.85);
+      font-size:12px;
+      line-height:1.6;
+    }
+    .chev{opacity:.7}
+
+    /* Bottom bar */
     .bottomBar{
       position:fixed;left:0;right:0;bottom:0;
-      background:rgba(7,9,16,.78);
+      background: rgba(7,9,16,.78);
       border-top:1px solid rgba(36,52,90,.55);
-      backdrop-filter:blur(10px);
+      backdrop-filter: blur(10px);
       padding:10px 12px;
+      z-index:999;
     }
     .bottomInner{max-width:1040px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap}
     .bbtn{
@@ -266,13 +350,13 @@
       display:flex;align-items:center;justify-content:center;gap:8px;
       padding:12px 10px;border-radius:16px;
       border:1px solid rgba(255,255,255,.14);
-      background:rgba(255,255,255,.05);
+      background: rgba(255,255,255,.05);
       font-weight:950;font-size:13px;
       min-width:120px;
     }
     .bbtn.primary{
-      background:linear-gradient(180deg, rgba(255,138,0,.95), rgba(255,138,0,.75));
-      border-color:rgba(255,138,0,.35);
+      background: linear-gradient(180deg, rgba(255,138,0,.95), rgba(255,138,0,.75));
+      border-color: rgba(255,138,0,.35);
       color:#101019;
     }
   </style>
@@ -299,7 +383,7 @@
           <a class="btn primary" id="callTop" href="#">📞 전화</a>
           <a class="btn" id="kakaoTop" href="#" target="_blank" rel="noopener">🟡 카톡</a>
           <a class="btn" id="bandTop" href="#" target="_blank" rel="noopener">🟢 밴드</a>
-          <a class="btn" id="payTop" href="#">💳 결제</a>
+          <a class="btn" id="payTop" href="pay/">💳 결제</a>
         </div>
       </div>
     </div>
@@ -310,21 +394,22 @@
       <div class="mini">신규 학부모가 가장 많이 확인하는 정보</div>
     </div>
 
+    <!-- ✅ 여기 링크는 “폴더 고정” (절대 #으로 안 씀) -->
     <div class="grid">
-      <a class="tile" id="goSchedule" href="#"><div class="ico">🗓️</div><div class="label">수련시간표</div><div class="sub">반/시간</div></a>
-      <a class="tile" id="goProgram"  href="#"><div class="ico">🥋</div><div class="label">프로그램 소개</div><div class="sub">연령별</div></a>
-      <a class="tile" id="goPlan"     href="#"><div class="ico">📘</div><div class="label">수련계획표</div><div class="sub">월간</div></a>
-      <a class="tile" id="goExam"     href="#"><div class="ico">🏅</div><div class="label">승급·승단심사안내</div><div class="sub">절차</div></a>
+      <a class="tile" href="schedule/"><div class="ico">🗓️</div><div class="label">수련시간표</div><div class="sub">반/시간</div></a>
+      <a class="tile" href="program/"><div class="ico">🥋</div><div class="label">프로그램 소개</div><div class="sub">연령별</div></a>
+      <a class="tile" href="plan/"><div class="ico">📘</div><div class="label">수련계획표</div><div class="sub">월간</div></a>
+      <a class="tile" href="exam/"><div class="ico">🏅</div><div class="label">승급·승단심사안내</div><div class="sub">절차</div></a>
 
-      <a class="tile" id="goGallery"  href="#"><div class="ico">🖼️</div><div class="label">갤러리&영상</div><div class="sub">분위기</div></a>
-      <a class="tile" href="#qa"><div class="ico">❓</div><div class="label">Q&A 모음</div><div class="sub">자주 묻는</div></a>
+      <a class="tile" href="gallery/"><div class="ico">🖼️</div><div class="label">갤러리&영상</div><div class="sub">분위기</div></a>
+      <a class="tile" href="#faq"><div class="ico">❓</div><div class="label">Q&A 모음</div><div class="sub">바로 보기</div></a>
       <a class="tile" href="#shuttle"><div class="ico">🚌</div><div class="label">차량운행 문의</div><div class="sub">상담 후</div></a>
-      <a class="tile" id="goPayTile"  href="#"><div class="ico">💳</div><div class="label">결제 안내</div><div class="sub">계좌/QR</div></a>
+      <a class="tile" href="pay/"><div class="ico">💳</div><div class="label">결제 안내</div><div class="sub">계좌/QR</div></a>
 
       <a class="tile" href="#contact"><div class="ico">✅</div><div class="label">카톡 문의</div><div class="sub">바로 상담</div></a>
-      <a class="tile" id="goBandTile" href="#" target="_blank" rel="noopener"><div class="ico">🟢</div><div class="label">밴드 바로가기</div><div class="sub">공지/소통</div></a>
+      <a class="tile" id="bandTile" href="#" target="_blank" rel="noopener"><div class="ico">🟢</div><div class="label">밴드 바로가기</div><div class="sub">공지/소통</div></a>
       <a class="tile" href="#top"><div class="ico">⬆️</div><div class="label">맨 위로</div><div class="sub">이동</div></a>
-      <a class="tile" id="goYoutube" href="#preview"><div class="ico">▶️</div><div class="label">영상 미리보기</div><div class="sub">대표 영상</div></a>
+      <a class="tile" href="#intro"><div class="ico">📌</div><div class="label">처음오신 분</div><div class="sub">안내</div></a>
     </div>
 
     <!-- 신규 학부모 안내 -->
@@ -342,11 +427,25 @@
       </div>
     </section>
 
-    <!-- 영상 미리보기 -->
-    <section class="panel" id="preview">
+    <!-- 시간표(메인에서도 한 번 더 보여주기: 밀림 방지 카드형) -->
+    <section class="panel" id="schedulePreview">
       <div class="panelHeader">
-        <b>갤러리 & 영상 (미리보기)</b>
-        <a class="moreBtn" id="goGalleryBtn" href="#">갤러리로</a>
+        <b>수련시간표 (미리보기)</b>
+        <a class="moreBtn" href="schedule/">전체 보기</a>
+      </div>
+      <div class="items">
+        <div class="scheduleGrid" id="scheduleGrid"></div>
+        <div class="noteBox">
+          시간표는 행사/학기 일정에 따라 일부 조정될 수 있으며, 정확한 반 편성은 상담 후 안내드립니다.
+        </div>
+      </div>
+    </section>
+
+    <!-- 갤러리/영상 (대표 유튜브) -->
+    <section class="panel" id="galleryPreview">
+      <div class="panelHeader">
+        <b>갤러리 & 영상 (대표)</b>
+        <a class="moreBtn" href="gallery/">갤러리로</a>
       </div>
       <div class="items">
         <div class="ytBox">
@@ -359,19 +458,19 @@
           </div>
         </div>
         <div class="noteBox" style="margin-top:10px;">
-          더 많은 사진/영상은 “갤러리&영상” 폴더 페이지에서 확인할 수 있어요.
+          사진/영상은 “갤러리&영상” 폴더에서 계속 업데이트됩니다.
         </div>
       </div>
     </section>
 
-    <!-- Q&A (이제 확실히 보임) -->
-    <section class="panel" id="qa">
+    <!-- Q&A (메인에서 바로 펼쳐보기) -->
+    <section class="panel" id="faq">
       <div class="panelHeader">
         <b>Q&A 모음</b>
         <a class="moreBtn" href="#contact">바로 문의</a>
       </div>
       <div class="items">
-        <div class="qaList" id="qaList"></div>
+        <div class="faqList" id="faqList"></div>
       </div>
     </section>
 
@@ -399,7 +498,12 @@
         <a class="btn primary" id="callBtn" href="#">📞 전화상담</a>
         <a class="btn" id="kakaoBtn" href="#" target="_blank" rel="noopener">🟡 카톡 문의</a>
         <a class="btn" id="bandBtn" href="#" target="_blank" rel="noopener">🟢 밴드 바로가기</a>
-        <a class="btn" id="payBtn" href="#">💳 결제 안내</a>
+        <a class="btn" id="payBtn" href="pay/">💳 결제 안내</a>
+      </div>
+
+      <div class="noteBox" style="margin-top:12px;">
+        <b>체험/등록 안내</b><br/>
+        <span id="trialText"></span>
       </div>
 
       <div style="margin-top:10px; color:rgba(233,238,252,.60); font-size:12px; text-align:center;">
@@ -416,54 +520,32 @@
       <a class="bbtn" id="callBottom" href="#">📞 전화</a>
       <a class="bbtn primary" id="kakaoBottom" href="#" target="_blank" rel="noopener">🟡 카톡</a>
       <a class="bbtn" id="bandBottom" href="#" target="_blank" rel="noopener">🟢 밴드</a>
-      <a class="bbtn" id="payBottom" href="#">💳 결제</a>
+      <a class="bbtn" href="pay/">💳 결제</a>
     </div>
   </div>
 
   <script>
     const $ = (id)=>document.getElementById(id);
 
-    // ✅ 핵심: GitHub Pages(프로젝트/커스텀도메인) 모두 안전한 베이스 경로 자동 계산
-    function getBasePath(){
-      // 예) https://jeonseongkweon-cloud.github.io/kmt-landing/  -> "/kmt-landing/"
-      // 예) https://계명태권도.com/  -> "/"
-      const host = location.hostname;
-      const path = location.pathname;
-
-      // github.io 이고, 루트가 아닌 경우 첫 폴더를 base로 사용
-      if (host.endsWith("github.io")) {
-        const parts = path.split("/").filter(Boolean);
-        return parts.length ? `/${parts[0]}/` : "/";
-      }
-      return "/"; // 커스텀 도메인은 보통 루트
-    }
-    const BASE = getBasePath();
-
-    // 상대경로 만들기(슬래시 시작 금지! BASE 붙여서 절대 안전하게)
-    function toUrl(rel){
-      if (!rel) return BASE;
-      rel = String(rel).replace(/^\/+/, ""); // 앞 슬래시 제거
-      return BASE + rel;
-    }
-
-    // 텍스트
+    // Text
     $("dojoName").textContent = KMT.dojoName;
     $("dojoName2").textContent = KMT.dojoName;
     $("subTitle").textContent = KMT.subTitle;
     $("slogan").textContent = KMT.slogan;
+    $("trialText").textContent = KMT.trialText;
 
-    // 로고
+    // Logo
     if(KMT.logoImage){
       $("logo").style.backgroundImage = `url('${KMT.logoImage}')`;
     }
 
-    // 전화
+    // Phone
     const tel = `tel:${String(KMT.phone).replaceAll("-","")}`;
     $("callTop").href = tel;
     $("callBtn").href = tel;
     $("callBottom").href = tel;
 
-    // 카톡/밴드
+    // Kakao/Band
     $("kakaoTop").href = KMT.kakaoUrl;
     $("kakaoBtn").href = KMT.kakaoUrl;
     $("kakaoBottom").href = KMT.kakaoUrl;
@@ -471,30 +553,13 @@
     $("bandTop").href = KMT.bandUrl;
     $("bandBtn").href = KMT.bandUrl;
     $("bandBottom").href = KMT.bandUrl;
-    $("goBandTile").href = KMT.bandUrl;
+    $("bandTile").href = KMT.bandUrl;
 
-    // ✅ 폴더 페이지 링크들 (전총재님이 만든 폴더로 연결)
-    const scheduleUrl = toUrl(KMT.pages.schedule);
-    const programUrl  = toUrl(KMT.pages.program);
-    const planUrl     = toUrl(KMT.pages.plan);
-    const examUrl     = toUrl(KMT.pages.exam);
-    const galleryUrl  = toUrl(KMT.pages.gallery);
-    const payUrl      = toUrl(KMT.pages.pay);
+    // Pay top
+    $("payTop").href = KMT.payPageUrl;
+    $("payBtn").href = KMT.payPageUrl;
 
-    $("goSchedule").href = scheduleUrl;
-    $("goProgram").href  = programUrl;
-    $("goPlan").href     = planUrl;
-    $("goExam").href     = examUrl;
-    $("goGallery").href  = galleryUrl;
-    $("goPayTile").href  = payUrl;
-
-    $("goGalleryBtn").href = galleryUrl;
-
-    $("payTop").href = payUrl;
-    $("payBtn").href = payUrl;
-    $("payBottom").href = payUrl;
-
-    // 신규학부모 안내
+    // Intro bullets
     const intro = $("introBullets");
     intro.innerHTML = "";
     (KMT.introPoints || []).forEach(t=>{
@@ -504,38 +569,42 @@
       intro.appendChild(d);
     });
 
-    // 유튜브 미리보기
+    // YouTube
     if(KMT.youtubeVideoId){
       $("ytFrame").src = `https://www.youtube.com/embed/${KMT.youtubeVideoId}`;
     }
 
-    // ✅ Q&A 렌더(이제 “안보인다”가 아니라 실제로 생성됨)
-    function escapeHtml(str){
-      return String(str).replace(/[&<>"']/g, s => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[s]));
-    }
-    const qaList = $("qaList");
-    qaList.innerHTML = "";
-    (KMT.qaItems || []).forEach((item, i)=>{
-      const d = document.createElement("details");
-      d.className = "qa";
-      if(i===0) d.open = true;
-      d.innerHTML = `
-        <summary>
-          <span>Q${i+1}. ${escapeHtml(item.q || "")}</span>
-          <span class="chev">열기</span>
-        </summary>
-        <div class="qaA"><b>A.</b> ${escapeHtml(item.a || "")}</div>
+    // Schedule cards render
+    const grid = $("scheduleGrid");
+    grid.innerHTML = "";
+    (KMT.scheduleCards || []).forEach(card=>{
+      const div = document.createElement("div");
+      div.className = "timeCard";
+      div.innerHTML = `
+        <div class="timeTop">
+          <div class="timeTitle">${escapeHtml(card.title || "")}</div>
+          <div class="timeBadge">${escapeHtml(card.badge || "")}</div>
+        </div>
+        <div class="timeLine">${escapeHtml(card.time || "")}</div>
+        ${card.hint ? `<div class="timeHint">※ ${escapeHtml(card.hint)}</div>` : ``}
       `;
-      d.addEventListener("toggle", ()=>{
-        const chev = d.querySelector(".chev");
-        if(chev) chev.textContent = d.open ? "닫기" : "열기";
-      });
-      qaList.appendChild(d);
+      grid.appendChild(div);
     });
 
-    // HERO 슬라이더
+    // FAQ render (메인에서 바로 보이게)
+    const faqList = $("faqList");
+    faqList.innerHTML = "";
+    (KMT.faq || []).forEach((item)=>{
+      const d = document.createElement("details");
+      d.className = "faq";
+      d.innerHTML = `
+        <summary>${escapeHtml(item.q)} <span class="chev">▾</span></summary>
+        <div class="faqA">${escapeHtml(item.a)}</div>
+      `;
+      faqList.appendChild(d);
+    });
+
+    // Hero slider
     const hero = $("heroSlide");
     const dots = $("dots");
     const imgs = (KMT.heroImages || []).filter(Boolean);
@@ -562,11 +631,18 @@
       layers.forEach((el,i)=>el.classList.toggle("on", i===idx));
       [...dots.children].forEach((el,i)=>el.classList.toggle("on", i===idx));
     }
+
     if(imgs.length > 1){
       setInterval(()=>show((idx+1)%imgs.length), 3200);
     }
 
-    // 부드러운 스크롤(#anchor만)
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[s]));
+    }
+
+    // smooth scroll (메인 내부 #만 부드럽게)
     document.querySelectorAll('a[href^="#"]').forEach(a=>{
       a.addEventListener('click', (e)=>{
         const id = a.getAttribute('href');
