@@ -68,6 +68,7 @@
       box-shadow: 0 4px 14px rgba(16,24,40,.04);
       cursor:pointer;
       user-select:none;
+      white-space:nowrap;
     }
     .btn.primary{
       background:var(--orange);
@@ -75,11 +76,7 @@
       color:#fff;
       box-shadow: 0 12px 26px rgba(255,122,0,.22);
     }
-    .btn.ghost{
-      background:var(--soft);
-      border-color:var(--line);
-      color:var(--navy);
-    }
+    .btn.ghost{background:var(--soft); border-color:var(--line); color:var(--navy);}
 
     /* HERO */
     .hero{padding:18px 0 10px;}
@@ -173,6 +170,14 @@
     @media (min-width: 860px){
       .grid{grid-template-columns: 1fr 1fr;}
     }
+    .grid3{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 860px){
+      .grid3{grid-template-columns: 1fr 1fr 1fr;}
+    }
     .card{
       border:1px solid var(--line);
       border-radius:var(--radius);
@@ -193,8 +198,60 @@
       background:var(--soft);
       border:1px solid var(--line);
     }
+    .muted{color:var(--muted)}
+    .sep{height:1px; background:var(--line); margin:14px 0}
 
-    /* Gallery */
+    /* Quick links cards */
+    .qlink{
+      text-decoration:none;
+      display:block;
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+    .qlink:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 18px 34px rgba(16,24,40,.10);
+    }
+    .qlink .tiny{font-size:12px;color:var(--muted);margin-top:6px}
+
+    /* Schedule table */
+    .table-wrap{
+      border:1px solid var(--line);
+      border-radius:var(--radius2);
+      overflow:hidden;
+      background:#fff;
+      box-shadow: var(--shadow);
+    }
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      font-size:14px;
+    }
+    thead th{
+      text-align:left;
+      padding:12px 14px;
+      background:linear-gradient(180deg,#fff,var(--soft));
+      border-bottom:1px solid var(--line);
+      color:var(--navy);
+    }
+    tbody td{
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      vertical-align:middle;
+    }
+    tbody tr:last-child td{border-bottom:0}
+    .period{font-weight:900;color:var(--navy);white-space:nowrap;}
+    .time{font-weight:900;letter-spacing:-.2px;}
+    .note{color:var(--muted);font-size:12px;}
+
+    /* 부별 색상(은은하게) */
+    .r1 td{ background: rgba(255,122,0,.06); }
+    .r2 td{ background: rgba(31,47,70,.06); }
+    .r3 td{ background: rgba(46,125,50,.08); } /* 유치부 전용 */
+    .r4 td{ background: rgba(103,58,183,.06); }
+    .r5 td{ background: rgba(0,150,136,.06); }
+
+    /* Gallery preview */
     .gallery{
       border:1px solid var(--line);
       border-radius:var(--radius2);
@@ -319,11 +376,7 @@
     .fab .msg{background:#fff; color:var(--navy)}
     .fab svg{width:18px; height:18px}
 
-    /* Small helper */
-    .muted{color:var(--muted)}
-    .sep{height:1px; background:var(--line); margin:14px 0}
-
-    /* 상담 모달 (PC용) */
+    /* PC 상담 모달 */
     .modal{
       position:fixed; inset:0; z-index:250;
       background:rgba(0,0,0,.55);
@@ -369,10 +422,20 @@
     const KMT = {
       phoneDisplay: "010-4477-2772",
       phoneTel: "01044772772",
-      youtubeUrl: "https://www.youtube.com/",
-      kakaoUrl: "",     // 예) https://open.kakao.com/o/xxxx
-      mapUrl: "",       // 예) 네이버지도/구글지도 링크
-      trialFormUrl: ""  // 예) 구글폼 링크
+      youtubeUrl: "https://www.youtube.com/@globalnews24official",
+      kakaoUrl: "https://open.kakao.com/o/gF8p81hi",
+      bandUrl: "https://band.us/n/a8a7b9Xahdgb8",
+      mapUrl: "",
+      trialFormUrl: ""
+    };
+
+    // 폴더(페이지) 링크들
+    const LINKS = {
+      schedule: "/schedule/",
+      program: "/program/",
+      exam: "/exam/",
+      gallery: "/gallery/",
+      lookup: "https://doublecross.kr/check/index.html"
     };
 
     // 아이들 사진 (Wix URL 그대로 사용)
@@ -400,7 +463,6 @@
           </div>
         </div>
         <div class="navbtns">
-          <!-- 앵커 이동은 data-scroll로 통일 -->
           <a class="btn ghost" href="#info" data-scroll="#info">안내</a>
           <a class="btn primary" href="#trial" data-scroll="#trial">체험예약</a>
         </div>
@@ -430,11 +492,68 @@
 
           <div class="hero-cta">
             <a class="btn primary" href="#trial" data-scroll="#trial">체험 수업 예약</a>
-            <a class="btn ghost" href="#schedule" data-scroll="#schedule">수업 시간</a>
-            <a class="btn ghost" href="#gallery" data-scroll="#gallery">아이들 사진</a>
+            <a class="btn ghost" href="#schedule" data-scroll="#schedule">수련시간표</a>
+            <a class="btn ghost" href="/gallery/">갤러리&영상</a>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- QUICK LINKS -->
+  <div class="wrap section" id="quick">
+    <div class="h">
+      <h2>핵심 바로가기</h2>
+      <p>가장 많이 찾는 메뉴</p>
+    </div>
+
+    <div class="grid3">
+      <a class="card qlink" id="goSchedule" href="/schedule/">
+        <span class="badge">시간표</span>
+        <div class="sep"></div>
+        <b>수련시간표</b>
+        <div class="tiny">1부~5부 시간표를 한눈에</div>
+      </a>
+
+      <a class="card qlink" id="goProgram" href="/program/">
+        <span class="badge">안내</span>
+        <div class="sep"></div>
+        <b>프로그램 안내</b>
+        <div class="tiny">유치부/초등 맞춤 수련</div>
+      </a>
+
+      <a class="card qlink" id="goExam" href="/exam/">
+        <span class="badge">심사</span>
+        <div class="sep"></div>
+        <b>승단 · 심사 안내</b>
+        <div class="tiny">기준/절차/준비물 정리</div>
+      </a>
+
+      <a class="card qlink" id="goGallery" href="/gallery/">
+        <span class="badge">사진·영상</span>
+        <div class="sep"></div>
+        <b>갤러리 & 영상</b>
+        <div class="tiny">수련 분위기 미리 보기</div>
+      </a>
+
+      <a class="card qlink" id="goLookup" target="_blank" rel="noopener">
+        <span class="badge">공식조회</span>
+        <div class="sep"></div>
+        <b>단증 · 자격증 · 인증서 조회</b>
+        <div class="tiny">더블크로스 공식 조회 시스템</div>
+      </a>
+
+      <a class="card qlink" id="goKakao" target="_blank" rel="noopener">
+        <span class="badge">상담</span>
+        <div class="sep"></div>
+        <b>카톡 상담</b>
+        <div class="tiny">가장 빠른 상담/예약</div>
+      </a>
+    </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px">
+      <a class="btn ghost" id="goBand" target="_blank" rel="noopener">밴드 바로가기</a>
+      <a class="btn ghost" id="goYouTube" target="_blank" rel="noopener">유튜브 채널</a>
     </div>
   </div>
 
@@ -472,25 +591,58 @@
     </div>
   </div>
 
-  <!-- SCHEDULE / COST / BUS -->
+  <!-- SCHEDULE -->
   <div class="wrap section" id="schedule">
     <div class="h">
-      <h2>수업 시간은?</h2>
-      <p>가장 많이 물어보는 질문</p>
+      <h2>수련시간표</h2>
+      <p>학부모님이 가장 많이 확인하는 정보</p>
+    </div>
+
+    <div class="table-wrap" style="margin-bottom:12px">
+      <table aria-label="계명태권도 수련시간표">
+        <thead>
+          <tr>
+            <th style="width:110px">구분</th>
+            <th>수련시간</th>
+            <th style="width:180px">비고</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="r1">
+            <td class="period">1부</td>
+            <td class="time">1:50 - 2:40</td>
+            <td class="note">일반</td>
+          </tr>
+          <tr class="r2">
+            <td class="period">2부</td>
+            <td class="time">3:00 - 3:50</td>
+            <td class="note">일반</td>
+          </tr>
+          <tr class="r3">
+            <td class="period">3부</td>
+            <td class="time">4:30 - 5:20</td>
+            <td class="note">유치부 전용</td>
+          </tr>
+          <tr class="r4">
+            <td class="period">4부</td>
+            <td class="time">5:40 - 6:30</td>
+            <td class="note">일반</td>
+          </tr>
+          <tr class="r5">
+            <td class="period">5부</td>
+            <td class="time">6:50 - 7:40</td>
+            <td class="note">일반</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="muted" style="font-size:12px; margin-bottom:12px">
+      ※ 학기/행사 일정에 따라 일부 조정될 수 있으며, 정확한 반 편성은 상담 시 안내드립니다.
     </div>
 
     <div class="grid">
       <div class="card">
-        <b>반 구성</b>
-        <ul>
-          <li>유치부 / 초등 저학년 중심 운영</li>
-          <li>아이 성향과 수준에 따라 반 편성</li>
-        </ul>
-        <div class="sep"></div>
-        <span class="muted">정확한 시간표는 상담 시 안내드립니다 (아이 연령/학교 일정에 맞춰 추천)</span>
-      </div>
-
-      <div class="card" id="cost">
         <b>비용은?</b>
         <ul>
           <li>수강료는 상담 시 투명하게 안내</li>
@@ -499,11 +651,16 @@
         <div class="sep"></div>
         <span class="muted">“꼭 필요한 것만” 안내하는 방식으로 운영합니다.</span>
       </div>
-    </div>
 
-    <div class="card" id="bus" style="margin-top:12px">
-      <b>차량 운행하나요?</b><br/>
-      <span class="muted">차량 운행 가능 여부/지역은 상담 시 안내드립니다. (아이 안전을 최우선으로 배차)</span>
+      <div class="card" id="bus">
+        <b>차량 운행하나요?</b>
+        <ul>
+          <li>차량 운행 가능 여부/지역은 상담 시 안내</li>
+          <li>아이 안전을 최우선으로 배차</li>
+        </ul>
+        <div class="sep"></div>
+        <span class="muted">정확한 배차 가능 지역은 상담 시 확인해주세요.</span>
+      </div>
     </div>
   </div>
 
@@ -529,11 +686,10 @@
       <div style="display:flex; gap:10px; flex-wrap:wrap">
         <a class="btn primary" id="trialBtn" target="_blank" rel="noopener">체험 예약</a>
         <a class="btn ghost" href="#growth" data-scroll="#growth">성장 포인트 보기</a>
-        <a class="btn ghost" id="mapBtn" target="_blank" rel="noopener">오시는 길</a>
       </div>
 
       <p class="muted" style="margin:12px 0 0; font-size:12px">
-        ※ 링크가 없으면 “상담 안내”가 먼저 뜨고, 모바일은 바로 전화로 연결됩니다.
+        ※ 모바일은 전화 상담이 바로 연결됩니다. PC에서는 안내창이 표시됩니다.
       </p>
     </div>
   </div>
@@ -567,17 +723,17 @@
     </div>
   </div>
 
-  <!-- GALLERY -->
-  <div class="wrap section" id="gallery">
+  <!-- GALLERY PREVIEW -->
+  <div class="wrap section" id="galleryPreview">
     <div class="h">
-      <h2>아이들 사진</h2>
-      <p>가로로 넘기고(스와이프) 눌러서 크게 보기</p>
+      <h2>사진 미리보기</h2>
+      <p>눌러서 크게 보기</p>
     </div>
 
     <div class="gallery">
       <div class="gallery-top">
         <b>수업 분위기 미리 보기</b>
-        <span class="muted" style="font-size:12px">모바일 최적화 갤러리</span>
+        <a class="btn ghost" href="/gallery/" style="padding:8px 10px;border-radius:12px">갤러리로 이동</a>
       </div>
       <div class="rail" id="rail"></div>
     </div>
@@ -629,7 +785,7 @@
     </a>
     <a class="msg" id="msgBtn">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M20 4H4c-1.1 0-2 .9-2 2v16l4-4h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2Z" fill="currentColor" opacity=".9"/>
+        <path d="M20 4H4c-1.1 0-2 .9-2 2v16l4-4h14c1.1 0 1-.9 2-2V6c0-1.1-.9-2-2-2Z" fill="currentColor" opacity=".9"/>
       </svg>
       문의하기
     </a>
@@ -654,16 +810,17 @@
         <button class="close" type="button" id="helpClose">닫기</button>
       </div>
       <div class="body">
-        <div style="font-weight:900; color:var(--navy); font-size:15px">모바일은 바로 전화 연결이 됩니다.</div>
+        <div style="font-weight:900; color:var(--navy); font-size:15px">모바일은 바로 전화/카톡 연결이 됩니다.</div>
         <div class="mini" style="margin-top:6px">
           PC에서는 통화 기능이 없어 안내창이 먼저 표시됩니다.<br/>
-          아래 버튼으로 카톡/예약 링크를 이용하시거나, 휴대폰으로 <b id="helpPhone"></b>로 전화 주세요.
+          아래 버튼을 이용하시거나, 휴대폰으로 <b id="helpPhone"></b>로 전화 주세요.
         </div>
 
         <div class="actions">
           <a class="btn primary" id="helpKakao" target="_blank" rel="noopener">카톡 문의</a>
-          <a class="btn ghost" id="helpTrial" target="_blank" rel="noopener">체험 예약</a>
-          <a class="btn ghost" id="helpMap" target="_blank" rel="noopener">오시는 길</a>
+          <a class="btn ghost" id="helpBand" target="_blank" rel="noopener">밴드</a>
+          <a class="btn ghost" id="helpYouTube" target="_blank" rel="noopener">유튜브</a>
+          <a class="btn ghost" id="helpLookup" target="_blank" rel="noopener">공식 조회</a>
         </div>
 
         <div class="mini" style="margin-top:10px">
@@ -674,17 +831,8 @@
   </div>
 
   <script>
-    // ========= helpers =========
     const $ = (s)=>document.querySelector(s);
     const isMobile = () => /Android|iPhone|iPad|iPod|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-    function safeOpen(url){
-      if(!url) return false;
-      const u = String(url).trim();
-      if(!u) return false;
-      window.open(u, "_blank", "noopener");
-      return true;
-    }
 
     function openModal(){
       const m = $("#helpModal");
@@ -702,61 +850,26 @@
     function scrollToId(sel){
       const el = document.querySelector(sel);
       if(!el) return;
-      // 상단바 높이만큼 여유
       const topbarH = document.querySelector(".topbar")?.offsetHeight || 0;
       const y = el.getBoundingClientRect().top + window.pageYOffset - (topbarH + 10);
       window.scrollTo({ top:y, behavior:"smooth" });
-      // 주소창 hash 업데이트 (뒤로가기/공유 안정)
       history.replaceState(null, "", sel);
     }
 
-    // ========= Apply settings =========
+    // hero
     $("#heroImg").src = GALLERY[0];
     $("#youtubeBtn").href = (KMT.youtubeUrl && KMT.youtubeUrl.trim()) ? KMT.youtubeUrl.trim() : "https://www.youtube.com/";
     $("#phoneFoot").textContent = KMT.phoneDisplay;
     $("#helpPhone").textContent = KMT.phoneDisplay;
 
-    // map button
-    const mapBtn = $("#mapBtn");
-    if(KMT.mapUrl && KMT.mapUrl.trim()){
-      mapBtn.href = KMT.mapUrl.trim();
-      mapBtn.style.display = "";
-    }else{
-      mapBtn.style.display = "none";
-    }
-
-    // PC 모달 버튼 구성
-    const helpKakao = $("#helpKakao");
-    const helpTrial = $("#helpTrial");
-    const helpMap = $("#helpMap");
-
-    if(KMT.kakaoUrl && KMT.kakaoUrl.trim()){
-      helpKakao.href = KMT.kakaoUrl.trim();
-      helpKakao.style.display = "";
-    }else{
-      helpKakao.style.display = "none";
-    }
-    if(KMT.trialFormUrl && KMT.trialFormUrl.trim()){
-      helpTrial.href = KMT.trialFormUrl.trim();
-      helpTrial.style.display = "";
-    }else{
-      helpTrial.style.display = "none";
-    }
-    if(KMT.mapUrl && KMT.mapUrl.trim()){
-      helpMap.href = KMT.mapUrl.trim();
-      helpMap.style.display = "";
-    }else{
-      helpMap.style.display = "none";
-    }
-
-    // ========= floating buttons =========
+    // floating call
     $("#callBtn").href = "tel:" + (KMT.phoneTel || "01000000000");
 
-    // 문의 버튼: 카톡 링크 있으면 우선, 없으면 모바일은 전화 / PC는 모달
+    // 문의하기: 모바일 카톡 우선, 없으면 전화 / PC는 모달
     $("#msgBtn").addEventListener("click", (e)=>{
       e.preventDefault();
-      if(KMT.kakaoUrl && KMT.kakaoUrl.trim()){
-        safeOpen(KMT.kakaoUrl);
+      if (KMT.kakaoUrl && KMT.kakaoUrl.trim()){
+        window.open(KMT.kakaoUrl.trim(), "_blank", "noopener");
         return;
       }
       if(isMobile()){
@@ -765,19 +878,19 @@
         openModal();
       }
     });
-    // 통화 버튼: 모바일 tel / PC 모달
+
+    // PC에서 통화 버튼 누르면 모달
     $("#callBtn").addEventListener("click", (e)=>{
-      if(isMobile()) return; // 모바일은 기본 tel 동작
+      if(isMobile()) return;
       e.preventDefault();
       openModal();
     });
 
-    // 체험예약 버튼: 링크 있으면 열기 / 모바일 tel / PC 모달
-    const trialBtn = $("#trialBtn");
-    trialBtn.addEventListener("click", (e)=>{
+    // 체험예약 버튼: 링크 없으면 모바일 전화 / PC 모달
+    $("#trialBtn").addEventListener("click", (e)=>{
       e.preventDefault();
-      if(KMT.trialFormUrl && KMT.trialFormUrl.trim()){
-        safeOpen(KMT.trialFormUrl);
+      if (KMT.trialFormUrl && KMT.trialFormUrl.trim()){
+        window.open(KMT.trialFormUrl.trim(), "_blank", "noopener");
         return;
       }
       if(isMobile()){
@@ -786,15 +899,8 @@
         openModal();
       }
     });
-    // 버튼 텍스트도 상황에 맞게
-    if(KMT.trialFormUrl && KMT.trialFormUrl.trim()){
-      trialBtn.textContent = "체험 예약 링크";
-    }else{
-      trialBtn.textContent = "체험 예약(상담)";
-    }
 
-    // ========= anchor scrolling (문제 해결 핵심) =========
-    // data-scroll이 있으면 무조건 JS로 스크롤 (새로고침/루트튐 방지)
+    // 앵커 이동 (새로고침/루트 튐 방지)
     document.addEventListener("click", (e)=>{
       const a = e.target.closest("a[data-scroll]");
       if(!a) return;
@@ -803,16 +909,24 @@
       if(sel) scrollToId(sel);
     });
 
-    // 처음 로드 시 #hash가 있으면 정확히 그 위치로 이동
-    window.addEventListener("load", ()=>{
-      const h = window.location.hash;
-      if(h && document.querySelector(h)){
-        // 약간 늦춰서 레이아웃 계산 후 이동
-        setTimeout(()=>scrollToId(h), 60);
-      }
-    });
+    // 핵심 링크 연결
+    const setHref = (id, href) => {
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.href = href;
+    };
+    setHref("goLookup", LINKS.lookup);
+    setHref("goKakao", KMT.kakaoUrl);
+    setHref("goBand", KMT.bandUrl);
+    setHref("goYouTube", KMT.youtubeUrl);
 
-    // ========= gallery rail =========
+    // 모달 링크들
+    const hk = $("#helpKakao"); if(hk){ if(KMT.kakaoUrl) hk.href = KMT.kakaoUrl; else hk.style.display="none"; }
+    const hb = $("#helpBand"); if(hb){ if(KMT.bandUrl) hb.href = KMT.bandUrl; else hb.style.display="none"; }
+    const hy = $("#helpYouTube"); if(hy){ if(KMT.youtubeUrl) hy.href = KMT.youtubeUrl; else hy.style.display="none"; }
+    const hl = $("#helpLookup"); if(hl){ if(LINKS.lookup) hl.href = LINKS.lookup; else hl.style.display="none"; }
+
+    // 갤러리 레일 생성
     const rail = $("#rail");
     GALLERY.forEach((src, idx)=>{
       const div = document.createElement("div");
@@ -832,11 +946,10 @@
       rail.appendChild(div);
     });
 
-    // ========= Lightbox =========
+    // Lightbox
     const lb = $("#lightbox");
     const lbImg = $("#lbImg");
     const lbTitle = $("#lbTitle");
-
     function openLightbox(src, n){
       lbImg.src = src;
       lbTitle.textContent = "사진 " + n;
@@ -851,15 +964,11 @@
       document.body.style.overflow = "";
     }
     $("#lbClose").addEventListener("click", closeLightbox);
-    lb.addEventListener("click", (e)=>{
-      if(e.target === lb) closeLightbox();
-    });
+    lb.addEventListener("click", (e)=>{ if(e.target === lb) closeLightbox(); });
 
-    // ========= Modal close =========
+    // Modal close
     $("#helpClose").addEventListener("click", closeModal);
-    $("#helpModal").addEventListener("click", (e)=>{
-      if(e.target.id === "helpModal") closeModal();
-    });
+    $("#helpModal").addEventListener("click", (e)=>{ if(e.target.id === "helpModal") closeModal(); });
 
     window.addEventListener("keydown", (e)=>{
       if(e.key === "Escape"){
