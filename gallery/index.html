@@ -1,1 +1,193 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>갤러리 & 영상 | 계명태권도</title>
 
+<style>
+:root{
+  --navy:#1f2f46;
+  --orange:#ff7a00;
+  --line:#e8edf3;
+  --soft:#f6f8fb;
+}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;
+  background:#fff;
+  color:#152033;
+}
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
+h1{
+  font-size:22px;
+  margin:10px 0 4px;
+  color:var(--navy);
+}
+.sub{
+  font-size:13px;
+  color:#5b677a;
+  margin-bottom:20px;
+}
+
+.topbtn{
+  display:inline-block;
+  margin-bottom:20px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:var(--soft);
+  text-decoration:none;
+  font-weight:700;
+  border:1px solid var(--line);
+}
+
+.section-title{
+  margin:30px 0 12px;
+  font-size:18px;
+  font-weight:800;
+  color:var(--navy);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+@media (max-width:700px){
+  .grid{grid-template-columns:1fr;}
+}
+
+.card{
+  border:1px solid var(--line);
+  border-radius:18px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:0 10px 24px rgba(16,24,40,.06);
+}
+
+.card img{
+  width:100%;
+  height:240px;
+  object-fit:cover;
+  display:block;
+}
+
+.card .cap{
+  padding:10px 12px;
+  font-size:13px;
+  font-weight:700;
+  background:#fff;
+}
+
+.video-box{
+  position:relative;
+  padding-bottom:56.25%;
+  height:0;
+  overflow:hidden;
+  border-radius:18px;
+  border:1px solid var(--line);
+  box-shadow:0 10px 24px rgba(16,24,40,.06);
+}
+.video-box iframe{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+}
+
+.linkbox{
+  margin-top:20px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.linkbox a{
+  text-decoration:none;
+  padding:12px 16px;
+  border-radius:999px;
+  font-weight:800;
+  border:1px solid var(--line);
+}
+.kakao{background:#fff;color:#152033;}
+.band{background:#fff;color:#152033;}
+.youtube{background:var(--orange);color:#fff;border-color:rgba(255,122,0,.3);}
+footer{
+  margin-top:40px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+  font-size:12px;
+  color:#5b677a;
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+<a href="/" class="topbtn">← 메인으로 돌아가기</a>
+
+<h1>갤러리 & 영상</h1>
+<p class="sub">계명태권도의 수련 분위기를 사진과 영상으로 확인하세요.</p>
+
+<!-- =====================
+     사진 영역
+===================== -->
+<div class="section-title">📸 수련 사진</div>
+
+<div class="grid">
+  <div class="card">
+    <img src="https://static.wixstatic.com/media/abf917_9a323d3a71994964a4b962b29393fbf9~mv2.jpg">
+    <div class="cap">기초 수련 모습</div>
+  </div>
+
+  <div class="card">
+    <img src="https://static.wixstatic.com/media/abf917_8866dffe5a7843a99efc87f9b2b97065~mv2.jpg">
+    <div class="cap">자세 교정 훈련</div>
+  </div>
+
+  <div class="card">
+    <img src="https://static.wixstatic.com/media/abf917_ba6bfb5cef4d4c79a071f1891b2862be~mv2.jpg">
+    <div class="cap">집중력 향상 수업</div>
+  </div>
+
+  <div class="card">
+    <img src="https://static.wixstatic.com/media/abf917_f1771f9de8504c5cb66e5a62dd4168ff~mv2.jpg">
+    <div class="cap">즐거운 단체 수련</div>
+  </div>
+</div>
+
+<!-- =====================
+     영상 영역
+===================== -->
+<div class="section-title">🎥 수업 영상</div>
+
+<div class="video-box">
+<iframe 
+src="https://www.youtube.com/embed?listType=user_uploads&list=globalnews24official"
+frameborder="0"
+allowfullscreen>
+</iframe>
+</div>
+
+<div class="linkbox">
+  <a class="youtube" href="https://www.youtube.com/@globalnews24official" target="_blank">
+    유튜브 채널 바로가기
+  </a>
+  <a class="band" href="https://band.us/n/a8a7b9Xahdgb8" target="_blank">
+    밴드 바로가기
+  </a>
+  <a class="kakao" href="https://open.kakao.com/o/gF8p81hi" target="_blank">
+    카톡 상담하기
+  </a>
+</div>
+
+<footer>
+계명태권도 · 아이의 자신감이 자라는 공간<br>
+© Keimyung Taekwondo
+</footer>
+
+</div>
+</body>
+</html>
