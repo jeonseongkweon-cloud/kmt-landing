@@ -1,8 +1,63 @@
-<!doctype html><html lang="ko"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>수련시간표 | 계명태권도</title>
-</head><body style="font-family:system-ui,'Noto Sans KR',sans-serif;padding:20px;">
-<h1>수련시간표</h1>
-<p>대문 페이지에 표로 먼저 안내되고 있습니다. 이 페이지는 확장용입니다.</p>
-<p><a href="/">← 메인으로</a></p>
-</body></html>
+<style>
+:root{--navy:#1f2f46;--muted:#5b677a;--line:#e8edf3;--soft:#f6f8fb;--shadow:0 10px 30px rgba(16,24,40,.08);--radius:18px;--radius2:24px;}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:#fff;color:#152033}
+.wrap{max-width:980px;margin:0 auto;padding:18px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+a.btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--soft);text-decoration:none;font-weight:900;color:var(--navy)}
+h1{margin:6px 0 0;color:var(--navy);font-size:22px}
+p{margin:6px 0 0;color:var(--muted);font-size:13px}
+.table-wrap{margin-top:14px;border:1px solid var(--line);border-radius:var(--radius2);overflow:hidden;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px}
+thead th{padding:12px 14px;text-align:left;background:linear-gradient(180deg,#fff,var(--soft));border-bottom:1px solid var(--line);color:var(--navy)}
+tbody td{padding:12px 14px;border-bottom:1px solid var(--line)}
+tbody tr:last-child td{border-bottom:0}
+.period{font-weight:900;color:var(--navy);white-space:nowrap}
+.time{font-weight:900}
+.note{color:var(--muted);font-size:12px}
+.r1 td{ background: rgba(255,122,0,.06); }
+.r2 td{ background: rgba(31,47,70,.06); }
+.r3 td{ background: rgba(46,125,50,.08); }
+.r4 td{ background: rgba(103,58,183,.06); }
+.r5 td{ background: rgba(0,150,136,.06); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>수련시간표</h1>
+      <p>학부모님이 가장 많이 확인하는 정보입니다.</p>
+    </div>
+    <a class="btn" href="/">처음으로</a>
+  </div>
+
+  <div class="table-wrap">
+    <table aria-label="계명태권도 수련시간표">
+      <thead>
+        <tr>
+          <th style="width:110px">구분</th>
+          <th>수련시간</th>
+          <th style="width:200px">비고</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="r1"><td class="period">1부</td><td class="time">1:50 - 2:40</td><td class="note">초등부</td></tr>
+        <tr class="r2"><td class="period">2부</td><td class="time">3:00 - 3:50</td><td class="note">초등부</td></tr>
+        <tr class="r3"><td class="period">3부</td><td class="time">4:30 - 5:15</td><td class="note">유치부 전용</td></tr>
+        <tr class="r4"><td class="period">4부</td><td class="time">5:40 - 6:30</td><td class="note">유치부+초등부</td></tr>
+        <tr class="r5"><td class="period">5부</td><td class="time">6:50 - 7:40</td><td class="note">초등부</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p style="margin-top:10px">※ 학기/행사 일정에 따라 일부 조정될 수 있으며, 정확한 반 편성은 상담 시 안내드립니다.</p>
+</div>
+</body>
+</html>
