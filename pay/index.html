@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>계명태권도 | 결제 안내</title>
+<meta name="theme-color" content="#0b0f19" />
+
+<!-- =========================
+  🔧 수정할 부분 (여기만 수정하세요)
+========================= -->
+<script>
+const PAY = {
+  dojoName: "계명태권도",
+  phone: "010-4477-2772",
+  bankText: "농협 767-02-298023 전성권(계명태권도)",
+  ulsanPayQr: "https://static.wixstatic.com/media/abf917_754e73903d3b41f181a95793a34b8e4d~mv2.jpg"
+};
+</script>
+
+<style>
+:root{
+  --bg:#0b0f19;
+  --panel:#121c33;
+  --text:#e9eefc;
+  --muted:#a9b6d6;
+  --accent:#ff8a00;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, "Noto Sans KR", sans-serif;
+  background: linear-gradient(180deg,#060a13,#0b0f19);
+  color:var(--text);
+}
+.wrap{
+  max-width:600px;
+  margin:0 auto;
+  padding:20px 16px 100px;
+}
+h1{
+  font-size:20px;
+  margin:10px 0 6px;
+}
+.sub{
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:18px;
+}
+.card{
+  background:var(--panel);
+  border-radius:18px;
+  padding:18px;
+  margin-bottom:14px;
+  border:1px solid rgba(255,255,255,.08);
+}
+.title{
+  font-weight:900;
+  margin-bottom:12px;
+  font-size:15px;
+}
+.bankBox{
+  padding:14px;
+  background:rgba(255,255,255,.05);
+  border-radius:14px;
+  font-weight:900;
+  line-height:1.6;
+  word-break:keep-all;
+}
+.copyBtn{
+  margin-top:10px;
+  width:100%;
+  padding:12px;
+  border-radius:14px;
+  border:none;
+  font-weight:900;
+  background:var(--accent);
+  color:#111;
+  cursor:pointer;
+}
+.qrWrap{
+  text-align:center;
+}
+.qrWrap img{
+  max-width:320px;
+  width:100%;
+  border-radius:14px;
+}
+.note{
+  margin-top:10px;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.6;
+}
+.fixedBottom{
+  position:fixed;
+  left:0;right:0;bottom:0;
+  background:#0b0f19;
+  border-top:1px solid rgba(255,255,255,.08);
+  padding:12px;
+}
+.callBtn{
+  display:block;
+  text-align:center;
+  padding:14px;
+  border-radius:16px;
+  background:var(--accent);
+  font-weight:900;
+  color:#111;
+  text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <h1 id="dojoName"></h1>
+  <div class="sub">결제 안내 페이지</div>
+
+  <!-- 계좌 -->
+  <div class="card">
+    <div class="title">계좌이체</div>
+    <div class="bankBox" id="bankText"></div>
+    <button class="copyBtn" onclick="copyBank()">계좌번호 복사</button>
+    <div class="note">
+      ※ 입금 후 아이 이름 / 반 / 연락처를 문자 또는 카톡으로 보내주세요.
+    </div>
+  </div>
+
+  <!-- 울산페이 -->
+  <div class="card">
+    <div class="title">울산페이 QR</div>
+    <div class="qrWrap">
+      <img id="qrImage" alt="울산페이 QR">
+    </div>
+    <div class="note">
+      ※ QR이 흐리면 이미지를 눌러 확대 후 스캔해주세요.
+    </div>
+  </div>
+
+  <!-- 차량 -->
+  <div class="card">
+    <div class="title">차량운행 안내</div>
+    <div class="note">
+      차량운행은 상담 후 시간 배정됩니다.<br>
+      지역 및 수련시간에 따라 조정될 수 있습니다.
+    </div>
+  </div>
+
+</div>
+
+<div class="fixedBottom">
+  <a id="callBtn" class="callBtn">📞 전화 상담</a>
+</div>
+
+<script>
+document.getElementById("dojoName").textContent = PAY.dojoName;
+document.getElementById("bankText").textContent = PAY.bankText;
+document.getElementById("qrImage").src = PAY.ulsanPayQr;
+document.getElementById("callBtn").href = "tel:" + PAY.phone.replaceAll("-","");
+
+function copyBank(){
+  navigator.clipboard.writeText(PAY.bankText);
+  alert("계좌번호가 복사되었습니다.");
+}
+</script>
+
+</body>
+</html>
