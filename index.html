@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#0b0f19" />
 
   <!-- =====================================================
-   ✅ 수정할 부분 (여기만 바꾸면 전체 자동 반영됩니다)
+   ✅ 수정할 부분 (여기만 바꾸면 전체 자동 반영)
   ====================================================== -->
   <script>
     const KMT = {
@@ -20,13 +20,13 @@
       bandUrl: "https://band.us/n/a8a7b9Xahdgb8",
       kakaoUrl: "https://open.kakao.com/o/gF8p81hi",
 
-      // 결제 폴더 (이미 만드셨으니 그대로)
+      // 결제 폴더
       payPageUrl: "pay/",
 
-      // ✅ 로고
+      // 로고
       logoImage: "https://static.wixstatic.com/media/abf917_f835f132f9cb46f782ebb43bd5dc6cca~mv2.png",
 
-      // ✅ 상단 슬라이드 이미지 8장
+      // ✅ 1080*1350 (4:5) 이미지 8장
       heroImages: [
         "https://static.wixstatic.com/media/abf917_9a323d3a71994964a4b962b29393fbf9~mv2.jpg",
         "https://static.wixstatic.com/media/abf917_8866dffe5a7843a99efc87f9b2b97065~mv2.jpg",
@@ -38,10 +38,10 @@
         "https://static.wixstatic.com/media/abf917_a2eef1c23b7a489a92966662dd6850ee~mv2.jpg"
       ],
 
-      // ✅ 유튜브 대표 영상
+      // 유튜브 대표 영상
       youtubeVideoId: "J67yvo12Q1s",
 
-      // ✅ 시간표(폰마다 밀림 방지: 카드형)
+      // 시간표
       scheduleCards: [
         { title:"1부", badge:"초등부", time:"1:50 ~ 2:40", hint:"상담 후 반 배정 안내" },
         { title:"2부", badge:"초등부", time:"3:00 ~ 3:50", hint:"학년/성향에 맞춰 안내" },
@@ -50,7 +50,6 @@
         { title:"5부", badge:"초등부", time:"6:50 ~ 7:40", hint:"기초체력+기술 균형" }
       ],
 
-      // ✅ 신규 학부모 안내
       introPoints: [
         "처음 등록 전, 아이 성향/목표에 맞는 반을 먼저 안내합니다.",
         "안전·기본기·생활습관(예절/집중)을 함께 지도합니다.",
@@ -59,28 +58,13 @@
 
       trialText: "체험 수업/등록 안내는 카톡 문의로 빠르게 도와드립니다.",
 
-      // ✅ Q&A (메인에서 바로 펼쳐보기)
+      // Q&A(메인에서 바로 펼쳐보기)
       faq: [
-        {
-          q: "처음 시작해도 괜찮나요?",
-          a: "네. 처음 시작하는 아이들을 위한 '기초/적응' 단계부터 안내합니다. 아이 성향(활동성/집중력/낯가림)과 목표(체력/자신감/품새 등)에 맞춰 반을 추천해드립니다."
-        },
-        {
-          q: "안전관리는 어떻게 하나요?",
-          a: "수업 전후 체크(컨디션/부상 예방), 단계별 난이도 조절, 충분한 준비운동/정리운동을 기본으로 운영합니다. 아이들의 안전이 최우선입니다."
-        },
-        {
-          q: "어떤 반이 우리 아이에게 맞나요?",
-          a: "카톡으로 '아이 학년/나이 + 목표 + 차량 필요 여부' 3가지만 보내주시면 가장 맞는 시간대/반을 안내해드립니다."
-        },
-        {
-          q: "차량운행은 가능한가요?",
-          a: "차량운행은 상담 후 시간 배정됩니다. 지역/수련시간에 따라 조정될 수 있어, 먼저 카톡으로 문의주시면 가능 여부를 안내드립니다."
-        },
-        {
-          q: "체험/등록 절차는 어떻게 되나요?",
-          a: "카톡 문의 → 시간/반 안내 → 체험(또는 상담 후 등록) 순으로 진행합니다. 문의 시 아이 정보(학년/나이)와 희망 시간대를 함께 보내주시면 더 빠릅니다."
-        }
+        { q:"처음 시작해도 괜찮나요?", a:"네. 처음 시작하는 아이를 위한 기초 단계부터 안내합니다. 아이 성향/목표에 맞춰 반을 추천해드립니다." },
+        { q:"안전관리는 어떻게 하나요?", a:"수업 전후 체크, 단계별 난이도 조절, 준비운동/정리운동을 기본으로 운영합니다. 안전이 최우선입니다." },
+        { q:"어떤 반이 우리 아이에게 맞나요?", a:"카톡으로 ①학년/나이 ②목표 ③차량 필요 여부 3가지만 보내주시면 가장 맞는 반을 안내해드립니다." },
+        { q:"차량운행은 가능한가요?", a:"차량운행은 상담 후 시간 배정됩니다. 지역/수련시간에 따라 조정될 수 있습니다." },
+        { q:"체험/등록 절차는 어떻게 되나요?", a:"카톡 문의 → 시간/반 안내 → 체험(또는 상담 후 등록) 순으로 진행합니다." }
       ]
     };
   </script>
@@ -95,7 +79,6 @@
       --muted:#a9b6d6;
       --accent:#ff8a00;
       --shadow: 0 16px 40px rgba(0,0,0,.38);
-      --r:18px;
     }
     *{box-sizing:border-box}
     body{
@@ -111,7 +94,7 @@
     .wrap{max-width:1040px;margin:0 auto;padding:14px 14px 120px}
     section{scroll-margin-top: 14px;}
 
-    /* HERO slider */
+    /* ✅ HERO (4:5 이미지 전체 보이게 핵심) */
     .hero{
       border:1px solid rgba(36,52,90,.55);
       background: linear-gradient(180deg, rgba(15,22,40,.92), rgba(13,19,34,.88));
@@ -122,23 +105,39 @@
     .heroSlide{
       position:relative;
       width:100%;
-      height:220px;
-      background: #111;
+      /* ✅ 1080x1350 = 4:5 비율 박스로 고정 */
+      aspect-ratio: 4 / 5;
+      height:auto;
+      background: #0c111f;
     }
+    @media (min-width:860px){
+      /* 데스크탑에서 너무 길어지지 않게 */
+      .heroSlide{ max-height:520px; }
+    }
+
     .heroSlide .layer{
       position:absolute; inset:0;
-      background-size:cover;
-      background-position:center;
+
+      /* ✅ cover → contain : 이미지 전체 보이기 */
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+
+      /* 남는 여백이 밋밋하지 않게(고급 배경) */
+      background-color:#0c111f;
+
       opacity:0;
-      transform: translateX(22px);
-      transition: opacity .6s ease, transform .6s ease;
-      filter: saturate(1.05) contrast(1.02);
+      transform: translateX(18px);
+      transition: opacity .55s ease, transform .55s ease;
+      filter: saturate(1.03) contrast(1.01);
     }
     .heroSlide .layer.on{ opacity:1; transform: translateX(0); }
+
+    /* 살짝 어두운 오버레이 */
     .heroSlide:after{
       content:"";
       position:absolute; inset:0;
-      background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.62));
+      background: linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.40));
       pointer-events:none;
     }
     .dots{
@@ -249,8 +248,7 @@
     }
     .items{padding:12px}
 
-    /* Info bullets */
-    .bullets{ display:grid; gap:8px; }
+    .bullets{display:grid; gap:8px;}
     .bullet{
       padding:10px 12px;
       border-radius:16px;
@@ -261,7 +259,6 @@
       line-height:1.55;
     }
 
-    /* Schedule cards (밀림 방지 핵심) */
     .scheduleGrid{display:grid;grid-template-columns:1fr;gap:10px;}
     @media (min-width:720px){ .scheduleGrid{grid-template-columns:1fr 1fr;} }
     .timeCard{
@@ -301,7 +298,6 @@
       line-height:1.6;
     }
 
-    /* YouTube */
     .ytBox{
       border:1px solid rgba(255,255,255,.12);
       border-radius:18px;
@@ -311,7 +307,6 @@
     .ytFrameWrap{position:relative;padding-top:56.25%;}
     .ytFrameWrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
 
-    /* FAQ accordion */
     .faqList{display:grid;gap:10px;}
     details.faq{
       border-radius:18px;
@@ -335,7 +330,6 @@
     }
     .chev{opacity:.7}
 
-    /* Bottom bar */
     .bottomBar{
       position:fixed;left:0;right:0;bottom:0;
       background: rgba(7,9,16,.78);
@@ -394,7 +388,6 @@
       <div class="mini">신규 학부모가 가장 많이 확인하는 정보</div>
     </div>
 
-    <!-- ✅ 여기 링크는 “폴더 고정” (절대 #으로 안 씀) -->
     <div class="grid">
       <a class="tile" href="schedule/"><div class="ico">🗓️</div><div class="label">수련시간표</div><div class="sub">반/시간</div></a>
       <a class="tile" href="program/"><div class="ico">🥋</div><div class="label">프로그램 소개</div><div class="sub">연령별</div></a>
@@ -427,7 +420,7 @@
       </div>
     </section>
 
-    <!-- 시간표(메인에서도 한 번 더 보여주기: 밀림 방지 카드형) -->
+    <!-- 시간표 미리보기 -->
     <section class="panel" id="schedulePreview">
       <div class="panelHeader">
         <b>수련시간표 (미리보기)</b>
@@ -435,13 +428,10 @@
       </div>
       <div class="items">
         <div class="scheduleGrid" id="scheduleGrid"></div>
-        <div class="noteBox">
-          시간표는 행사/학기 일정에 따라 일부 조정될 수 있으며, 정확한 반 편성은 상담 후 안내드립니다.
-        </div>
       </div>
     </section>
 
-    <!-- 갤러리/영상 (대표 유튜브) -->
+    <!-- 대표 유튜브 -->
     <section class="panel" id="galleryPreview">
       <div class="panelHeader">
         <b>갤러리 & 영상 (대표)</b>
@@ -457,13 +447,10 @@
               allowfullscreen></iframe>
           </div>
         </div>
-        <div class="noteBox" style="margin-top:10px;">
-          사진/영상은 “갤러리&영상” 폴더에서 계속 업데이트됩니다.
-        </div>
       </div>
     </section>
 
-    <!-- Q&A (메인에서 바로 펼쳐보기) -->
+    <!-- Q&A -->
     <section class="panel" id="faq">
       <div class="panelHeader">
         <b>Q&A 모음</b>
@@ -545,7 +532,7 @@
     $("callBtn").href = tel;
     $("callBottom").href = tel;
 
-    // Kakao/Band
+    // Links
     $("kakaoTop").href = KMT.kakaoUrl;
     $("kakaoBtn").href = KMT.kakaoUrl;
     $("kakaoBottom").href = KMT.kakaoUrl;
@@ -554,10 +541,6 @@
     $("bandBtn").href = KMT.bandUrl;
     $("bandBottom").href = KMT.bandUrl;
     $("bandTile").href = KMT.bandUrl;
-
-    // Pay top
-    $("payTop").href = KMT.payPageUrl;
-    $("payBtn").href = KMT.payPageUrl;
 
     // Intro bullets
     const intro = $("introBullets");
@@ -574,7 +557,7 @@
       $("ytFrame").src = `https://www.youtube.com/embed/${KMT.youtubeVideoId}`;
     }
 
-    // Schedule cards render
+    // Schedule
     const grid = $("scheduleGrid");
     grid.innerHTML = "";
     (KMT.scheduleCards || []).forEach(card=>{
@@ -591,10 +574,10 @@
       grid.appendChild(div);
     });
 
-    // FAQ render (메인에서 바로 보이게)
+    // FAQ
     const faqList = $("faqList");
     faqList.innerHTML = "";
-    (KMT.faq || []).forEach((item)=>{
+    (KMT.faq || []).forEach(item=>{
       const d = document.createElement("details");
       d.className = "faq";
       d.innerHTML = `
@@ -604,7 +587,7 @@
       faqList.appendChild(d);
     });
 
-    // Hero slider
+    // Hero slider (✅ contain 적용됨)
     const hero = $("heroSlide");
     const dots = $("dots");
     const imgs = (KMT.heroImages || []).filter(Boolean);
