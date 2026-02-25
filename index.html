@@ -4,11 +4,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>계명태권도 | 공식 대문</title>
-  <meta name="description" content="계명태권도 - 시간표/프로그램/계획/심사/갤러리/Q&A/차량/결제/문의" />
+  <meta name="description" content="계명태권도 공식 홈페이지. 유치부·초등 저학년 맞춤 수련, 시간표/프로그램/갤러리/문의." />
   <meta name="theme-color" content="#0b0f19" />
 
   <!-- ✅ NAVER site verification (소유확인) -->
   <meta name="naver-site-verification" content="2a572f93dfd846891eef198177054b9bb2a11934" />
+
+  <!-- ✅ OG (카톡/문자 공유 시 '계명태권도'로 보이게) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="계명태권도 | 공식 홈페이지" />
+  <meta property="og:description" content="유치부·초등 저학년 맞춤 | 안전하고 따뜻한 지도 | 영상/시간표/문의" />
+  <meta property="og:image" content="https://static.wixstatic.com/media/abf917_9a323d3a71994964a4b962b29393fbf9~mv2.jpg" />
+  <meta property="og:url" content="https://계명태권도.com" />
 
   <!-- =====================================================
    ✅ 수정할 부분 (여기만 바꾸면 전체 자동 반영)
@@ -22,6 +29,10 @@
       phone: "010-4477-2772",
       bandUrl: "https://band.us/n/a8a7b9Xahdgb8",
       kakaoUrl: "https://open.kakao.com/o/gF8p81hi",
+
+      // ✅ 유튜브 (채널/첫 영상)
+      youtubeChannelUrl: "https://www.youtube.com/@%EA%B3%84%EB%AA%85%ED%83%9C%EA%B6%8C%EB%8F%84%EC%9A%B8%EC%82%B0",
+      youtubeVideoId: "aHZSZ1YHIAY", // ✅ 첫 영상 ID로 변경
 
       // 결제 폴더
       payPageUrl: "pay/",
@@ -40,9 +51,6 @@
         "https://static.wixstatic.com/media/abf917_5c7b6e17bbbe46769c2e04a9cf14a295~mv2.jpg",
         "https://static.wixstatic.com/media/abf917_a2eef1c23b7a489a92966662dd6850ee~mv2.jpg"
       ],
-
-      // 유튜브 대표 영상
-      youtubeVideoId: "J67yvo12Q1s",
 
       // 시간표
       scheduleCards: [
@@ -108,27 +116,20 @@
     .heroSlide{
       position:relative;
       width:100%;
-      /* ✅ 1080x1350 = 4:5 비율 박스로 고정 */
       aspect-ratio: 4 / 5;
       height:auto;
       background: #0c111f;
     }
     @media (min-width:860px){
-      /* 데스크탑에서 너무 길어지지 않게 */
       .heroSlide{ max-height:520px; }
     }
 
     .heroSlide .layer{
       position:absolute; inset:0;
-
-      /* ✅ cover → contain : 이미지 전체 보이기 */
       background-size: contain;
       background-position: center;
       background-repeat: no-repeat;
-
-      /* 남는 여백이 밋밋하지 않게(고급 배경) */
       background-color:#0c111f;
-
       opacity:0;
       transform: translateX(18px);
       transition: opacity .55s ease, transform .55s ease;
@@ -136,7 +137,6 @@
     }
     .heroSlide .layer.on{ opacity:1; transform: translateX(0); }
 
-    /* 살짝 어두운 오버레이 */
     .heroSlide:after{
       content:"";
       position:absolute; inset:0;
@@ -194,7 +194,6 @@
       color:#101019;
     }
 
-    /* Tiles */
     .sectionTitle{
       margin:16px 4px 10px;
       display:flex;align-items:flex-end;justify-content:space-between;gap:10px;
@@ -226,7 +225,6 @@
     .tile .label{font-size:12px;font-weight:950}
     .tile .sub{font-size:11px;color:var(--muted);margin-top:-6px}
 
-    /* Panels */
     .panel{
       margin-top:12px;
       border:1px solid rgba(36,52,90,.55);
@@ -309,6 +307,41 @@
     }
     .ytFrameWrap{position:relative;padding-top:56.25%;}
     .ytFrameWrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+
+    /* ✅ 유튜브 채널 버튼(학부모용) */
+    .ytChannelBar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+    }
+    .ytChannelBar .left{
+      display:flex; gap:10px; align-items:center; min-width:0;
+    }
+    .ytBadge{
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: rgba(233,238,252,.90);
+      white-space:nowrap;
+    }
+    .ytChannelBar .txt{
+      font-size:12px;
+      color: rgba(233,238,252,.80);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:520px;
+    }
 
     .faqList{display:grid;gap:10px;}
     details.faq{
@@ -404,7 +437,7 @@
 
       <a class="tile" href="#contact"><div class="ico">✅</div><div class="label">카톡 문의</div><div class="sub">바로 상담</div></a>
       <a class="tile" id="bandTile" href="#" target="_blank" rel="noopener"><div class="ico">🟢</div><div class="label">밴드 바로가기</div><div class="sub">공지/소통</div></a>
-      <a class="tile" href="#top"><div class="ico">⬆️</div><div class="label">맨 위로</div><div class="sub">이동</div></a>
+      <a class="tile" id="ytTile" href="#" target="_blank" rel="noopener"><div class="ico">▶️</div><div class="label">유튜브 채널</div><div class="sub">영상 더보기</div></a>
       <a class="tile" href="#intro"><div class="ico">📌</div><div class="label">처음오신 분</div><div class="sub">안내</div></a>
     </div>
 
@@ -450,6 +483,15 @@
               allowfullscreen></iframe>
           </div>
         </div>
+
+        <!-- ✅ 학부모용: 채널로 바로 가는 버튼 -->
+        <div class="ytChannelBar">
+          <div class="left">
+            <span class="ytBadge">▶️ 유튜브</span>
+            <div class="txt" id="ytChannelTxt">계명태권도 공식채널에서 더 많은 영상을 확인하세요.</div>
+          </div>
+          <a class="btn" id="ytChannelBtn" href="#" target="_blank" rel="noopener">채널 바로가기</a>
+        </div>
       </div>
     </section>
 
@@ -488,6 +530,7 @@
         <a class="btn primary" id="callBtn" href="#">📞 전화상담</a>
         <a class="btn" id="kakaoBtn" href="#" target="_blank" rel="noopener">🟡 카톡 문의</a>
         <a class="btn" id="bandBtn" href="#" target="_blank" rel="noopener">🟢 밴드 바로가기</a>
+        <a class="btn" id="ytBtn" href="#" target="_blank" rel="noopener">▶️ 유튜브 채널</a>
         <a class="btn" id="payBtn" href="pay/">💳 결제 안내</a>
       </div>
 
@@ -510,6 +553,7 @@
       <a class="bbtn" id="callBottom" href="#">📞 전화</a>
       <a class="bbtn primary" id="kakaoBottom" href="#" target="_blank" rel="noopener">🟡 카톡</a>
       <a class="bbtn" id="bandBottom" href="#" target="_blank" rel="noopener">🟢 밴드</a>
+      <a class="bbtn" id="ytBottom" href="#" target="_blank" rel="noopener">▶️ 유튜브</a>
       <a class="bbtn" href="pay/">💳 결제</a>
     </div>
   </div>
@@ -545,6 +589,14 @@
     $("bandBottom").href = KMT.bandUrl;
     $("bandTile").href = KMT.bandUrl;
 
+    // ✅ YouTube Channel Links (학부모용)
+    const ytCh = KMT.youtubeChannelUrl || "https://www.youtube.com/";
+    const ytBtnIds = ["ytChannelBtn","ytBtn","ytBottom","ytTile"];
+    ytBtnIds.forEach(id=>{
+      const el = $(id);
+      if(el) el.href = ytCh;
+    });
+
     // Intro bullets
     const intro = $("introBullets");
     intro.innerHTML = "";
@@ -555,7 +607,7 @@
       intro.appendChild(d);
     });
 
-    // YouTube
+    // YouTube 대표영상
     if(KMT.youtubeVideoId){
       $("ytFrame").src = `https://www.youtube.com/embed/${KMT.youtubeVideoId}`;
     }
@@ -590,7 +642,7 @@
       faqList.appendChild(d);
     });
 
-    // Hero slider (✅ contain 적용됨)
+    // Hero slider
     const hero = $("heroSlide");
     const dots = $("dots");
     const imgs = (KMT.heroImages || []).filter(Boolean);
@@ -628,7 +680,7 @@
       }[s]));
     }
 
-    // smooth scroll (메인 내부 #만 부드럽게)
+    // smooth scroll (# only)
     document.querySelectorAll('a[href^="#"]').forEach(a=>{
       a.addEventListener('click', (e)=>{
         const id = a.getAttribute('href');
