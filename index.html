@@ -32,7 +32,7 @@
 
       // ✅ 유튜브 (채널/첫 영상)
       youtubeChannelUrl: "https://www.youtube.com/@%EA%B3%84%EB%AA%85%ED%83%9C%EA%B6%8C%EB%8F%84%EC%9A%B8%EC%82%B0",
-      youtubeVideoId: "aHZSZ1YHIAY", // ✅ 첫 영상 ID로 변경
+      youtubeVideoId: "aHZSZ1YHIAY",
 
       // 결제 폴더
       payPageUrl: "pay/",
@@ -53,7 +53,6 @@
       ],
 
       // ✅ 공지사항(최근 5) — 여기만 수정하면 됩니다!
-      // tip) url은 "밴드 주소" 그대로 넣어도 OK.
       notices: [
         { tag:"중요", title:"2026년 제1차 국기원 승품·단 심사 개최 안내", meta:"상세 공지·첨부파일은 밴드(회원전용)에서 확인", url:"https://band.us/band/54855723/post/1268736837" },
         { tag:"운영", title:"DOUBLE CROSS 공식 수련 지정도장 선정", meta:"지정도 안내", url:"https://band.us/band/54855723/post/1268736836" },
@@ -63,8 +62,9 @@
       ],
 
       // ✅ 공지 스크롤 속도(초) & 보여주는 높이(px)
-      noticeSpeedSec: 18,     // 숫자 줄이면 더 빨라짐 (예: 14)
-      noticeViewportPx: 120,  // 높이 키우면 더 많이 보임 (예: 150)
+      // (PC/태블릿 기준. 폰에서는 CSS가 자동으로 더 크게 보이게 처리됨)
+      noticeSpeedSec: 18,
+      noticeViewportPx: 140,
 
       // 시간표
       scheduleCards: [
@@ -405,7 +405,7 @@
     }
 
     /* =====================================================
-      ✅ 공지사항 스크롤(추가됨)
+      ✅ 공지사항 스크롤
     ====================================================== */
     .noticeBox{
       margin-top:12px;
@@ -441,7 +441,7 @@
 
     .noticeViewport{
       padding:12px 12px 12px;
-      height: var(--noticeH, 120px);
+      height: var(--noticeH, 140px);
       overflow:hidden;
       position:relative;
     }
@@ -491,7 +491,23 @@
 
     @keyframes noticeUp{
       0%   { transform: translateY(0); }
-      100% { transform: translateY(-50%); } /* JS에서 목록을 2번 이어붙여 자연스럽게 반복 */
+      100% { transform: translateY(-50%); }
+    }
+
+    /* =====================================================
+      ✅ 폰에서만 “5개가 잘 보이게” 강제 최적화 (추가!)
+      - 높이 크게
+      - meta는 한 줄로만(줄먹는 것 방지)
+    ====================================================== */
+    @media (max-width: 480px){
+      .noticeViewport{ height: 290px !important; }
+      .noticeTitle{ font-size: 13px; }
+      .noticeMeta{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: calc(100vw - 140px);
+      }
     }
   </style>
 </head>
@@ -605,7 +621,6 @@
           </div>
         </div>
 
-        <!-- ✅ 학부모용: 채널로 바로 가는 버튼 -->
         <div class="ytChannelBar">
           <div class="left">
             <span class="ytBadge">▶️ 유튜브</span>
@@ -682,7 +697,6 @@
   <script>
     const $ = (id)=>document.getElementById(id);
 
-    // ========= helpers =========
     function escapeHtml(str){
       return String(str).replace(/[&<>"']/g, s => ({
         "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
@@ -717,10 +731,9 @@
     $("bandBottom").href = KMT.bandUrl;
     $("bandTile").href = KMT.bandUrl;
 
-    // 공지 상단 버튼도 밴드로
     $("noticeBandBtn").href = KMT.bandUrl;
 
-    // ✅ YouTube Channel Links (학부모용)
+    // YouTube Channel Links
     const ytCh = KMT.youtubeChannelUrl || "https://www.youtube.com/";
     const ytBtnIds = ["ytChannelBtn","ytBtn","ytBottom","ytTile"];
     ytBtnIds.forEach(id=>{
@@ -773,12 +786,11 @@
       faqList.appendChild(d);
     });
 
-    // ✅ 공지사항 렌더링 + 무한 스크롤
+    // 공지사항 렌더링 + 무한 스크롤
     (function renderNotices(){
       const list = $("noticeList");
       const vp = $("noticeViewport");
 
-      // CSS 변수로 높이/속도 적용
       if(vp && typeof KMT.noticeViewportPx === "number"){
         vp.style.setProperty("--noticeH", `${KMT.noticeViewportPx}px`);
         vp.style.height = `${KMT.noticeViewportPx}px`;
@@ -800,7 +812,6 @@
         </li>
       `).join("");
 
-      // 자연스러운 무한반복(2번 이어붙이기)
       if(items.length >= 2){
         list.innerHTML = list.innerHTML + list.innerHTML;
       }
