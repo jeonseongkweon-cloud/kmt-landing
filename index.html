@@ -52,6 +52,20 @@
         "https://static.wixstatic.com/media/abf917_a2eef1c23b7a489a92966662dd6850ee~mv2.jpg"
       ],
 
+      // ✅ 공지사항(최근 5) — 여기만 수정하면 됩니다!
+      // tip) url은 "밴드 주소" 그대로 넣어도 OK.
+      notices: [
+        { tag:"중요", title:"(예시) 3월 승급심사 안내 — 시간/준비물 확인", meta:"상세 공지·첨부파일은 밴드(회원전용)에서 확인", url:"https://band.us/n/a8a7b9Xahdgb8" },
+        { tag:"운영", title:"(예시) 픽업/출석 안전수칙 안내", meta:"안전 운영 안내", url:"https://band.us/n/a8a7b9Xahdgb8" },
+        { tag:"행사", title:"(예시) 이번 주 특별수업(체력/기초) 일정", meta:"변동 시 밴드 우선 공지", url:"https://band.us/n/a8a7b9Xahdgb8" },
+        { tag:"알림", title:"(예시) 도복/띠 구매 및 이름 부착 안내", meta:"사이즈 문의 가능", url:"https://band.us/n/a8a7b9Xahdgb8" },
+        { tag:"공지", title:"(예시) 휴관/공휴일 운영 안내", meta:"당일 공지는 밴드 우선", url:"https://band.us/n/a8a7b9Xahdgb8" }
+      ],
+
+      // ✅ 공지 스크롤 속도(초) & 보여주는 높이(px)
+      noticeSpeedSec: 18,     // 숫자 줄이면 더 빨라짐 (예: 14)
+      noticeViewportPx: 120,  // 높이 키우면 더 많이 보임 (예: 150)
+
       // 시간표
       scheduleCards: [
         { title:"1부", badge:"초등부", time:"1:50 ~ 2:40", hint:"상담 후 반 배정 안내" },
@@ -389,6 +403,96 @@
       border-color: rgba(255,138,0,.35);
       color:#101019;
     }
+
+    /* =====================================================
+      ✅ 공지사항 스크롤(추가됨)
+    ====================================================== */
+    .noticeBox{
+      margin-top:12px;
+      border:1px solid rgba(36,52,90,.55);
+      background: linear-gradient(180deg, rgba(15,22,40,.92), rgba(13,19,34,.90));
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow: var(--shadow);
+    }
+    .noticeHead{
+      padding:12px 14px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      border-bottom:1px solid rgba(36,52,90,.45);
+      background: linear-gradient(90deg, rgba(20,40,90,.75), rgba(10,14,28,.0));
+      flex-wrap:wrap;
+    }
+    .noticeHead .left{
+      display:flex; flex-direction:column; gap:2px;
+      min-width:0;
+    }
+    .noticeHead b{font-size:14px}
+    .noticeHead .sub{
+      font-size:12px;
+      color:rgba(233,238,252,.72);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:720px;
+    }
+    .noticeHead .actions{
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
+
+    .noticeViewport{
+      padding:12px 12px 12px;
+      height: var(--noticeH, 120px);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .noticeList{
+      list-style:none;
+      padding:0;
+      margin:0;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      will-change: transform;
+      animation: noticeUp var(--noticeSpeed, 18s) linear infinite;
+    }
+    .noticeBox:hover .noticeList{ animation-play-state: paused; }
+
+    .noticeItem{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      line-height:1.35;
+    }
+    .noticeBadge{
+      flex:0 0 auto;
+      font-weight:950;
+      font-size:11px;
+      padding:5px 9px;
+      border-radius:999px;
+      background: rgba(255,138,0,.12);
+      border:1px solid rgba(255,138,0,.22);
+      color: rgba(233,238,252,.92);
+      white-space:nowrap;
+    }
+    .noticeTitle{
+      font-weight:950;
+      font-size:13px;
+      text-decoration:none;
+    }
+    .noticeTitle:hover{ text-decoration: underline; }
+    .noticeMeta{
+      display:block;
+      margin-top:2px;
+      font-size:12px;
+      color: rgba(233,238,252,.72);
+      line-height:1.4;
+    }
+
+    @keyframes noticeUp{
+      0%   { transform: translateY(0); }
+      100% { transform: translateY(-50%); } /* JS에서 목록을 2번 이어붙여 자연스럽게 반복 */
+    }
   </style>
 </head>
 
@@ -417,6 +521,23 @@
         </div>
       </div>
     </div>
+
+    <!-- ✅ 공지사항(최근 5) 스크롤 -->
+    <section class="noticeBox" id="notice">
+      <div class="noticeHead">
+        <div class="left">
+          <b>📌 공지사항(최근 5)</b>
+          <div class="sub">자세한 내용·첨부파일은 밴드에서 확인 가능합니다(회원전용).</div>
+        </div>
+        <div class="actions">
+          <a class="moreBtn" id="noticeBandBtn" href="#" target="_blank" rel="noopener">밴드 공지 확인</a>
+          <a class="moreBtn" href="#contact">문의하기</a>
+        </div>
+      </div>
+      <div class="noticeViewport" id="noticeViewport">
+        <ul class="noticeList" id="noticeList"></ul>
+      </div>
+    </section>
 
     <!-- 핵심 바로가기 -->
     <div class="sectionTitle">
@@ -561,6 +682,13 @@
   <script>
     const $ = (id)=>document.getElementById(id);
 
+    // ========= helpers =========
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[s]));
+    }
+
     // Text
     $("dojoName").textContent = KMT.dojoName;
     $("dojoName2").textContent = KMT.dojoName;
@@ -588,6 +716,9 @@
     $("bandBtn").href = KMT.bandUrl;
     $("bandBottom").href = KMT.bandUrl;
     $("bandTile").href = KMT.bandUrl;
+
+    // 공지 상단 버튼도 밴드로
+    $("noticeBandBtn").href = KMT.bandUrl;
 
     // ✅ YouTube Channel Links (학부모용)
     const ytCh = KMT.youtubeChannelUrl || "https://www.youtube.com/";
@@ -642,6 +773,39 @@
       faqList.appendChild(d);
     });
 
+    // ✅ 공지사항 렌더링 + 무한 스크롤
+    (function renderNotices(){
+      const list = $("noticeList");
+      const vp = $("noticeViewport");
+
+      // CSS 변수로 높이/속도 적용
+      if(vp && typeof KMT.noticeViewportPx === "number"){
+        vp.style.setProperty("--noticeH", `${KMT.noticeViewportPx}px`);
+        vp.style.height = `${KMT.noticeViewportPx}px`;
+      }
+      if(list && typeof KMT.noticeSpeedSec === "number"){
+        list.style.setProperty("--noticeSpeed", `${KMT.noticeSpeedSec}s`);
+      }
+
+      const items = (KMT.notices || []).slice(0,5);
+      list.innerHTML = items.map(n => `
+        <li class="noticeItem">
+          <span class="noticeBadge">${escapeHtml(n.tag || "공지")}</span>
+          <div>
+            <a class="noticeTitle" href="${escapeHtml(n.url || KMT.bandUrl)}" target="_blank" rel="noopener">
+              ${escapeHtml(n.title || "")}
+            </a>
+            ${n.meta ? `<span class="noticeMeta">${escapeHtml(n.meta)}</span>` : ``}
+          </div>
+        </li>
+      `).join("");
+
+      // 자연스러운 무한반복(2번 이어붙이기)
+      if(items.length >= 2){
+        list.innerHTML = list.innerHTML + list.innerHTML;
+      }
+    })();
+
     // Hero slider
     const hero = $("heroSlide");
     const dots = $("dots");
@@ -672,12 +836,6 @@
 
     if(imgs.length > 1){
       setInterval(()=>show((idx+1)%imgs.length), 3200);
-    }
-
-    function escapeHtml(str){
-      return String(str).replace(/[&<>"']/g, s => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-      }[s]));
     }
 
     // smooth scroll (# only)
