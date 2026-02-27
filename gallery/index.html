@@ -4,65 +4,794 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>갤러리 & 영상 | 계명태권도</title>
+  <meta name="description" content="계명태권도 공식 갤러리 & 영상. 수련, 심사, 행사, 성장 기록을 한 곳에서 확인하세요." />
   <meta name="theme-color" content="#0b0f19" />
+
+  <!-- OG (카톡/문자 미리보기용) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="계명태권도 | 갤러리 & 영상" />
+  <meta property="og:description" content="수련·심사·행사·성장 기록. 모바일 최적화 갤러리." />
+  <!-- 필요 시 대표이미지로 교체 -->
+  <meta property="og:image" content="https://static.wixstatic.com/media/abf917_38e0bc3b3d804b3caa6aa8363163950d~mv2.jpg" />
+
   <style>
-    :root{--bg:#0b0f19;--text:#e9eefc;--muted:#a9b6d6;--accent:#ff8a00;--shadow:0 16px 40px rgba(0,0,0,.38)}
+    :root{
+      --bg:#0b0f19;
+      --panel:#0f162a;
+      --panel2:#0c1326;
+      --line:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.68);
+      --gold:#d7b56d;
+      --blue:#66b3ff;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --r:18px;
+    }
     *{box-sizing:border-box}
-    body{margin:0;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;background:radial-gradient(1200px 600px at 50% -10%, rgba(255,138,0,.18), transparent 60%),linear-gradient(180deg,#060a13,var(--bg))}
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:980px;margin:0 auto;padding:14px 14px 110px}
-    .panel{border:1px solid rgba(36,52,90,.55);background:linear-gradient(180deg,rgba(15,22,40,.92),rgba(13,19,34,.90));border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
-    .head{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid rgba(36,52,90,.45);background:linear-gradient(90deg,rgba(20,40,90,.75),rgba(10,14,28,.0))}
-    .title{margin:0;font-size:16px;font-weight:950}
-    .sub{margin:4px 0 0;font-size:12px;color:rgba(233,238,252,.72)}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);font-weight:950;font-size:13px;white-space:nowrap}
-    .btn.primary{background:linear-gradient(180deg,rgba(255,138,0,.95),rgba(255,138,0,.75));border-color:rgba(255,138,0,.35);color:#101019}
-    .items{padding:14px}
-    .ytBox{border:1px solid rgba(255,255,255,.12);border-radius:18px;overflow:hidden;background:rgba(255,255,255,.03)}
-    .ytWrap{position:relative;padding-top:56.25%}
-    iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-    .note{margin-top:10px;padding:12px 14px;border-radius:18px;border:1px solid rgba(255,138,0,.22);background:rgba(255,138,0,.07);font-size:12px;line-height:1.7}
-    .bottomBar{position:fixed;left:0;right:0;bottom:0;background:rgba(7,9,16,.78);border-top:1px solid rgba(36,52,90,.55);backdrop-filter:blur(10px);padding:10px 12px}
-    .bottomInner{max-width:980px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap}
-    .bbtn{flex:1;min-width:120px}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", "Malgun Gothic", sans-serif;
+      background: radial-gradient(1200px 700px at 18% -10%, rgba(102,179,255,.15), transparent 55%),
+                  radial-gradient(900px 650px at 100% 0%, rgba(215,181,109,.14), transparent 58%),
+                  linear-gradient(180deg, #070b14, var(--bg));
+      color:var(--text);
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:1100px; margin:0 auto; padding:20px 16px 90px}
+
+    /* Top Bar */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: rgba(11,15,25,.68);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar .inner{
+      max-width:1100px; margin:0 auto;
+      display:flex; align-items:center; gap:10px;
+      padding:10px 16px;
+    }
+    .brand{
+      display:flex; flex-direction:column; gap:2px;
+      min-width: 180px;
+    }
+    .brand b{letter-spacing:.2px}
+    .brand small{color:var(--muted)}
+    .spacer{flex:1}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      color:var(--text);
+      cursor:pointer;
+      user-select:none;
+      transition: transform .15s ease, border-color .15s ease, background .15s ease;
+      font-weight:650;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(215,181,109,.35)}
+    .btn:active{transform: translateY(0px)}
+    .btn.primary{
+      border-color: rgba(102,179,255,.35);
+      background: linear-gradient(180deg, rgba(102,179,255,.16), rgba(255,255,255,.03));
+    }
+    .btn.gold{
+      border-color: rgba(215,181,109,.45);
+      background: linear-gradient(180deg, rgba(215,181,109,.18), rgba(255,255,255,.03));
+    }
+
+    /* Hero */
+    .hero{
+      margin-top:18px;
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hero .row{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:0;
+    }
+    .hero .left{padding:22px 18px}
+    .hero h1{margin:0 0 8px; font-size:22px}
+    .hero p{margin:0; color:var(--muted); line-height:1.55}
+    .chips{
+      display:flex; flex-wrap:wrap; gap:8px;
+      margin-top:12px;
+    }
+    .chip{
+      padding:7px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      color:rgba(255,255,255,.8);
+      background: rgba(0,0,0,.18);
+      font-size:12.5px;
+    }
+    .hero .right{
+      border-left:1px solid var(--line);
+      background:
+        radial-gradient(600px 240px at 50% 0%, rgba(215,181,109,.16), transparent 60%),
+        radial-gradient(600px 240px at 50% 100%, rgba(102,179,255,.12), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.10));
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      justify-content:center;
+    }
+    .stat{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 12px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+    }
+    .stat b{color:rgba(255,255,255,.9)}
+    .stat span{color:var(--muted); font-size:13px}
+
+    /* Section */
+    .section{margin-top:18px}
+    .section-head{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+      margin: 12px 2px;
+    }
+    .section-head h2{margin:0; font-size:18px}
+    .section-head p{margin:0; color:var(--muted); font-size:13px}
+
+    /* Controls */
+    .controls{
+      margin-top:12px;
+      display:flex; flex-wrap:wrap; gap:10px;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      background: rgba(0,0,0,.16);
+    }
+    .input{
+      flex: 1 1 260px;
+      display:flex; align-items:center; gap:8px;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding:10px 12px;
+      background: rgba(255,255,255,.04);
+    }
+    .input input{
+      width:100%;
+      border:0;
+      outline:0;
+      background:transparent;
+      color:var(--text);
+      font-size:14px;
+    }
+    .input .x{
+      width:28px; height:28px; border-radius:10px;
+      display:grid; place-items:center;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+      cursor:pointer;
+      color: rgba(255,255,255,.75);
+    }
+    .tabs{display:flex; gap:8px; flex-wrap:wrap}
+    .tab{
+      padding:9px 10px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      font-weight:650;
+      color: rgba(255,255,255,.82);
+      cursor:pointer;
+      user-select:none;
+    }
+    .tab.active{
+      border-color: rgba(215,181,109,.55);
+      background: rgba(215,181,109,.13);
+      color: rgba(255,255,255,.92);
+    }
+
+    /* Gallery grid */
+    .grid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:10px;
+    }
+    @media (min-width: 720px){
+      .grid{grid-template-columns: repeat(3, 1fr); gap:12px}
+    }
+    @media (min-width: 1024px){
+      .grid{grid-template-columns: repeat(4, 1fr); gap:12px}
+    }
+
+    .card{
+      position:relative;
+      border-radius: 16px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      box-shadow: 0 10px 28px rgba(0,0,0,.28);
+      transform: translateZ(0);
+      cursor:pointer;
+    }
+    .thumb{
+      width:100%;
+      aspect-ratio: 1 / 1;   /* ✅ 자동 통일 (정사각형) */
+      object-fit: cover;     /* ✅ 자동 크롭 */
+      display:block;
+      filter: saturate(1.02) contrast(1.02);
+      transition: transform .25s ease, filter .25s ease;
+    }
+    .card:hover .thumb{
+      transform: scale(1.03);
+      filter: saturate(1.06) contrast(1.06);
+    }
+    .overlay{
+      position:absolute; inset:auto 0 0 0;
+      padding:10px 10px 9px;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,.72));
+      display:flex; align-items:flex-end; justify-content:space-between; gap:10px;
+    }
+    .overlay .meta{
+      display:flex; flex-direction:column; gap:2px;
+      min-width:0;
+    }
+    .overlay .meta b{
+      font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .overlay .meta small{color: rgba(255,255,255,.72); font-size:12px}
+    .badge{
+      padding:6px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(215,181,109,.35);
+      background: rgba(215,181,109,.12);
+      color: rgba(255,255,255,.88);
+      font-size:11.5px;
+      font-weight:750;
+      flex:0 0 auto;
+    }
+
+    /* Video section */
+    .video-grid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 900px){
+      .video-grid{grid-template-columns: 1fr 1fr}
+    }
+    .video-card{
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      overflow:hidden;
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+    }
+    .video-embed{
+      position:relative;
+      width:100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+    .video-embed iframe{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      border:0;
+    }
+    .video-body{
+      padding:12px 12px 14px;
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .video-body b{font-size:14px}
+    .video-body p{margin:0; color:var(--muted); font-size:13px; line-height:1.5}
+
+    /* Lightbox */
+    .lb{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.78);
+      display:none;
+      z-index: 9999;
+      padding: 16px;
+    }
+    .lb.show{display:flex}
+    .lb .panel{
+      margin:auto;
+      width:min(980px, 100%);
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(15,22,42,.88);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 30px 120px rgba(0,0,0,.65);
+    }
+    .lb-top{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.12);
+    }
+    .lb-top .title{
+      display:flex; flex-direction:column; gap:2px;
+      min-width:0;
+    }
+    .lb-top .title b{font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .lb-top .title small{color:rgba(255,255,255,.70); font-size:12px}
+    .lb-actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .iconbtn{
+      padding:9px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      cursor:pointer;
+      color: rgba(255,255,255,.88);
+      font-weight:750;
+    }
+    .iconbtn:hover{border-color: rgba(102,179,255,.35)}
+    .lb-body{
+      position:relative;
+      background: rgba(0,0,0,.35);
+    }
+    .lb-img{
+      width:100%;
+      max-height: calc(100vh - 220px);
+      object-fit: contain;
+      display:block;
+      margin: 0 auto;
+      background: rgba(0,0,0,.30);
+    }
+    .navbtn{
+      position:absolute;
+      top:50%;
+      transform: translateY(-50%);
+      width:44px; height:44px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.35);
+      color: rgba(255,255,255,.92);
+      display:grid; place-items:center;
+      cursor:pointer;
+      user-select:none;
+    }
+    .navbtn:hover{border-color: rgba(215,181,109,.45)}
+    .navbtn.prev{left:10px}
+    .navbtn.next{right:10px}
+
+    /* Footer */
+    .footer{
+      margin-top:18px;
+      padding:14px 12px;
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      background: rgba(0,0,0,.14);
+      color: var(--muted);
+      font-size: 12.8px;
+      line-height: 1.6;
+    }
+
+    /* Mobile hero stack */
+    @media (max-width: 820px){
+      .hero .row{grid-template-columns: 1fr}
+      .hero .right{border-left:0; border-top:1px solid var(--line)}
+      .brand{min-width:auto}
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="panel">
-      <div class="head">
-        <div>
-          <h1 class="title">🖼️ 갤러리 & 영상</h1>
-          <div class="sub">3월1일에 사진 올라옵니다~</div>
-        </div>
-        <a class="btn" href="../">🏠 홈으로</a>
-      </div>
 
-      <div class="items">
-        <div class="ytBox">
-          <div class="ytWrap">
-            <iframe
-              src="https://www.youtube.com/embed/J67yvo12Q1s"
-              title="YouTube video"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowfullscreen></iframe>
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="inner">
+      <div class="brand">
+        <b>계명태권도</b>
+        <small>Gallery & Video Archive</small>
+      </div>
+      <div class="spacer"></div>
+      <!-- ✅ 홈으로 가기: 루트 index.html로 이동 -->
+      <a class="btn gold" href="../index.html" aria-label="홈으로 가기">🏠 홈으로</a>
+      <button class="btn primary" id="btnScrollTop" type="button" aria-label="맨 위로">⬆️</button>
+    </div>
+  </div>
+
+  <main class="wrap">
+
+    <!-- Hero -->
+    <section class="hero" aria-label="페이지 소개">
+      <div class="row">
+        <div class="left">
+          <h1>갤러리 & 영상</h1>
+          <p>
+            수련·심사·행사·성장 기록을 한 곳에 모았습니다.<br/>
+            사진 사이즈가 제각각이어도 자동으로 정렬되며, 모바일에서 가장 예쁘게 보이도록 최적화되어 있습니다.
+          </p>
+          <div class="chips">
+            <span class="chip">자동 정렬</span>
+            <span class="chip">모바일 2열</span>
+            <span class="chip">확대보기(라이트박스)</span>
+            <span class="chip">링크복사</span>
+            <span class="chip">다운로드</span>
           </div>
         </div>
-
-        <div class="note">
-          사진/영상이 더 필요하면 “갤러리 전용 링크(구글포토/네이버포토/유튜브 재생목록)”를 주시면<br/>
-          이 페이지를 **사진 그리드 + 영상 목록**으로 확장해드릴게요.
+        <div class="right">
+          <div class="stat">
+            <b>사진</b>
+            <span id="countPhotos">-</span>
+          </div>
+          <div class="stat">
+            <b>현재 보기</b>
+            <span id="countFiltered">-</span>
+          </div>
+          <div class="stat">
+            <b>기본 정렬</b>
+            <span>카드형(정사각)</span>
+          </div>
         </div>
       </div>
     </section>
-  </div>
 
-  <div class="bottomBar">
-    <div class="bottomInner">
-      <a class="btn bbtn" href="../">🏠 홈으로</a>
-      <a class="btn bbtn primary" href="../#contact">🟡 카톡 문의</a>
-      <a class="btn bbtn" href="../pay/">💳 결제 안내</a>
+    <!-- Controls -->
+    <section class="section" aria-label="갤러리">
+      <div class="section-head">
+        <div>
+          <h2>사진 갤러리</h2>
+          <p>검색/필터는 준비해두었습니다. 지금은 “전체”로 운영해도 충분히 고급스럽습니다.</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="input" role="search">
+          🔎
+          <input id="q" type="text" placeholder="사진 검색(예: 심사, 행사, 수련) — 지금은 제목이 자동이므로 비워두셔도 OK" autocomplete="off" />
+          <div class="x" id="clearQ" title="지우기">✕</div>
+        </div>
+
+        <div class="tabs" aria-label="필터">
+          <div class="tab active" data-filter="all">전체</div>
+          <div class="tab" data-filter="class">수련</div>
+          <div class="tab" data-filter="exam">심사</div>
+          <div class="tab" data-filter="event">행사</div>
+        </div>
+
+        <div style="margin-left:auto; display:flex; gap:8px; flex-wrap:wrap">
+          <button class="btn" id="btnCopyPage" type="button">🔗 이 페이지 링크 복사</button>
+          <button class="btn" id="btnShuffle" type="button">🎲 랜덤 보기</button>
+        </div>
+      </div>
+
+      <!-- Gallery Grid -->
+      <div id="grid" class="grid" aria-label="사진 목록"></div>
+    </section>
+
+    <!-- Videos -->
+    <section class="section" aria-label="영상">
+      <div class="section-head">
+        <div>
+          <h2>영상</h2>
+          <p>유튜브 영상 링크만 넣으면 자동 반응형으로 예쁘게 들어갑니다. (아래는 예시)</p>
+        </div>
+      </div>
+
+      <div class="video-grid" id="videoGrid">
+        <!-- ✅ 예시 2개 (원하시면 전총재님 채널 영상으로 교체해드릴게요) -->
+        <article class="video-card">
+          <div class="video-embed">
+            <iframe src="https://www.youtube.com/embed/aHZSZ1YHIAY" title="계명태권도 영상" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-body">
+            <b>계명태권도 대표 영상</b>
+            <p>수련 분위기와 핵심 포인트를 한 번에 보여주는 소개 영상입니다.</p>
+          </div>
+        </article>
+
+        <article class="video-card">
+          <div class="video-embed">
+            <iframe src="https://www.youtube.com/embed/aHZSZ1YHIAY" title="계명태권도 영상 2" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <div class="video-body">
+            <b>수련/심사 하이라이트</b>
+            <p>아이들의 성장 기록을 담은 하이라이트 영상(예시)입니다.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <div class="footer">
+      <b style="color:rgba(255,255,255,.85)">운영 팁</b><br/>
+      ① 사진은 Wix에 사이즈 상관없이 업로드 → 링크만 추가하면 됩니다. <br/>
+      ② 이 페이지는 자동으로 같은 크기(카드형)로 맞춰 보여줍니다. <br/>
+      ③ 영상은 유튜브 링크만 바꾸면 자동 반응형으로 적용됩니다.
+    </div>
+
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lb" id="lb" aria-hidden="true">
+    <div class="panel" role="dialog" aria-modal="true" aria-label="이미지 확대 보기">
+      <div class="lb-top">
+        <div class="title">
+          <b id="lbTitle">사진</b>
+          <small id="lbSub">계명태권도 갤러리</small>
+        </div>
+        <div class="lb-actions">
+          <button class="iconbtn" id="lbCopy" type="button">🔗 링크복사</button>
+          <a class="iconbtn" id="lbDownload" href="#" download target="_blank" rel="noopener">⬇️ 다운로드</a>
+          <button class="iconbtn" id="lbClose" type="button">✕ 닫기</button>
+        </div>
+      </div>
+      <div class="lb-body">
+        <img class="lb-img" id="lbImg" src="" alt="확대 이미지" />
+        <div class="navbtn prev" id="lbPrev" aria-label="이전">‹</div>
+        <div class="navbtn next" id="lbNext" aria-label="다음">›</div>
+      </div>
     </div>
   </div>
+
+  <script>
+    /* ===============================
+      ✅ 1) 전총재님이 주신 Wix 링크들
+    =============================== */
+    const PHOTO_URLS = [
+      "https://static.wixstatic.com/media/abf917_38e0bc3b3d804b3caa6aa8363163950d~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_951d85fca9694590a8f2fd38ff592b39~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_47a49706d5f7405fa0b86c569a4b4a86~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_2edf0bc5b46147949f9bbfe826dfb7a3~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_0d0eac21a7824d48a0db82c006fbb375~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_06f2ae7d70114b29bdf872a19b97a7f6~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_487f495e59b648eab51c773696f71bee~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_4f20b9e1c7764cf5aa53e9ff16cb9a73~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_660214461f0f4038b03d21771f4f464a~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_793e9454aab6410e995582f449a4d39b~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_ebf78e91cc4644dcb596cc0cfb33e152~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_d3893ce8f75d4d2d9c0e0c137b4e643b~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_4a7549f31a4843229d9cc89707b81c9c~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_5f5dff08c8c14a03bbaeca6cd3004221~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_b7319f215e454b178b0c5144339cc542~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_73615ce2de16474b8319269341cde789~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_08ee40ffffa44677b843d2e40e31e7a9~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_93b4cedd1808446cafe27dda156265a6~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_f11c89342f0a499abd89211afeaa22dd~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_c8fab836b1e24f6bac8721a55aef0299~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_3258b2202c69466d961ec9a5ed2f5ff8~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_b038304bfe8144ac97b686933da74210~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_c789e417707447a4af719cd1d8640e19~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_840168eb34f8469cb257dad25b54d97f~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_6348ccc36ec74228ae74e6b829fb1c28~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_61d046155d6e421fa4990041ab4571d5~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_e4bebbb49dd74e0ab31456847d2a7d7e~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_835bfff455f34d148c2fe1ce8ef52f83~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_0cb4ed6dc39146b9ac2e0228fc5fe88d~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_f811763b2f0743c08b1ab73801f181be~mv2.jpg"
+    ];
+
+    /* ===============================
+      ✅ 2) 사진에 “카테고리/제목” 붙일 수 있게 구조화
+      (지금은 자동 제목, 카테고리는 임시 분배)
+      원하시면 전총재님이 "이건 심사/이건 행사"처럼 표시해주시면
+      제가 정확히 태그 붙여드릴게요.
+    =============================== */
+    function autoCategory(i){
+      // 임시 분배: 0~9 수련 / 10~19 심사 / 20~29 행사
+      if(i < 10) return "class";
+      if(i < 20) return "exam";
+      return "event";
+    }
+    const ITEMS = PHOTO_URLS.map((url, i) => ({
+      id: i+1,
+      url,
+      cat: autoCategory(i),
+      title: `계명태권도 기록 #${String(i+1).padStart(2,'0')}`,
+      sub: (autoCategory(i)==="class") ? "수련" : (autoCategory(i)==="exam" ? "심사" : "행사")
+    }));
+
+    /* ===============================
+      ✅ 3) Render
+    =============================== */
+    const grid = document.getElementById("grid");
+    const countPhotos = document.getElementById("countPhotos");
+    const countFiltered = document.getElementById("countFiltered");
+
+    const q = document.getElementById("q");
+    const clearQ = document.getElementById("clearQ");
+    const tabs = [...document.querySelectorAll(".tab")];
+
+    let activeFilter = "all";
+    let view = [...ITEMS];
+
+    function render(){
+      const query = (q.value || "").trim().toLowerCase();
+      view = ITEMS.filter(it => {
+        const passFilter = (activeFilter === "all") ? true : it.cat === activeFilter;
+        const passQuery = query
+          ? (it.title.toLowerCase().includes(query) || it.sub.toLowerCase().includes(query))
+          : true;
+        return passFilter && passQuery;
+      });
+
+      grid.innerHTML = view.map((it, idx) => `
+        <div class="card" data-idx="${idx}" title="클릭하여 확대보기">
+          <img class="thumb" loading="lazy" src="${it.url}" alt="${it.title}">
+          <div class="overlay">
+            <div class="meta">
+              <b>${it.title}</b>
+              <small>${it.sub}</small>
+            </div>
+            <span class="badge">${it.sub}</span>
+          </div>
+        </div>
+      `).join("");
+
+      countPhotos.textContent = `${ITEMS.length} 장`;
+      countFiltered.textContent = `${view.length} 장`;
+
+      // click bind
+      [...grid.querySelectorAll(".card")].forEach(el=>{
+        el.addEventListener("click", () => openLightbox(Number(el.dataset.idx)));
+      });
+    }
+
+    tabs.forEach(t=>{
+      t.addEventListener("click", ()=>{
+        tabs.forEach(x=>x.classList.remove("active"));
+        t.classList.add("active");
+        activeFilter = t.dataset.filter;
+        render();
+      });
+    });
+
+    q.addEventListener("input", render);
+    clearQ.addEventListener("click", ()=>{ q.value=""; q.focus(); render(); });
+
+    document.getElementById("btnShuffle").addEventListener("click", ()=>{
+      // Fisher-Yates shuffle on a copy of ITEMS
+      const shuffled = [...ITEMS];
+      for(let i=shuffled.length-1; i>0; i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      // Replace ITEMS order visually by rendering from shuffled snapshot
+      const query = (q.value || "").trim().toLowerCase();
+      const filtered = shuffled.filter(it => {
+        const passFilter = (activeFilter === "all") ? true : it.cat === activeFilter;
+        const passQuery = query ? (it.title.toLowerCase().includes(query) || it.sub.toLowerCase().includes(query)) : true;
+        return passFilter && passQuery;
+      });
+      view = filtered;
+      grid.innerHTML = view.map((it, idx) => `
+        <div class="card" data-idx="${idx}" title="클릭하여 확대보기">
+          <img class="thumb" loading="lazy" src="${it.url}" alt="${it.title}">
+          <div class="overlay">
+            <div class="meta">
+              <b>${it.title}</b>
+              <small>${it.sub}</small>
+            </div>
+            <span class="badge">${it.sub}</span>
+          </div>
+        </div>
+      `).join("");
+      countFiltered.textContent = `${view.length} 장`;
+      [...grid.querySelectorAll(".card")].forEach(el=>{
+        el.addEventListener("click", () => openLightbox(Number(el.dataset.idx)));
+      });
+      window.scrollTo({top: grid.offsetTop - 80, behavior:"smooth"});
+    });
+
+    document.getElementById("btnCopyPage").addEventListener("click", async ()=>{
+      try{
+        await navigator.clipboard.writeText(location.href);
+        toast("페이지 링크를 복사했습니다 ✅");
+      }catch(e){
+        toast("복사 실패 😅 주소창에서 복사해주세요.");
+      }
+    });
+
+    document.getElementById("btnScrollTop").addEventListener("click", ()=>{
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+
+    /* ===============================
+      ✅ 4) Lightbox
+    =============================== */
+    const lb = document.getElementById("lb");
+    const lbImg = document.getElementById("lbImg");
+    const lbTitle = document.getElementById("lbTitle");
+    const lbSub = document.getElementById("lbSub");
+    const lbClose = document.getElementById("lbClose");
+    const lbPrev = document.getElementById("lbPrev");
+    const lbNext = document.getElementById("lbNext");
+    const lbCopy = document.getElementById("lbCopy");
+    const lbDownload = document.getElementById("lbDownload");
+
+    let lbIndex = 0;
+
+    function openLightbox(idx){
+      lbIndex = idx;
+      const it = view[lbIndex];
+      if(!it) return;
+
+      lbImg.src = it.url;
+      lbTitle.textContent = it.title;
+      lbSub.textContent = `카테고리: ${it.sub} · ${lbIndex+1}/${view.length}`;
+      lbDownload.href = it.url;
+
+      lb.classList.add("show");
+      lb.setAttribute("aria-hidden","false");
+      document.body.style.overflow="hidden";
+    }
+    function closeLightbox(){
+      lb.classList.remove("show");
+      lb.setAttribute("aria-hidden","true");
+      document.body.style.overflow="";
+      lbImg.src = "";
+    }
+    function prev(){
+      if(view.length === 0) return;
+      lbIndex = (lbIndex - 1 + view.length) % view.length;
+      openLightbox(lbIndex);
+    }
+    function next(){
+      if(view.length === 0) return;
+      lbIndex = (lbIndex + 1) % view.length;
+      openLightbox(lbIndex);
+    }
+
+    lbClose.addEventListener("click", closeLightbox);
+    lbPrev.addEventListener("click", prev);
+    lbNext.addEventListener("click", next);
+
+    lb.addEventListener("click", (e)=>{
+      if(e.target === lb) closeLightbox();
+    });
+
+    window.addEventListener("keydown", (e)=>{
+      if(!lb.classList.contains("show")) return;
+      if(e.key === "Escape") closeLightbox();
+      if(e.key === "ArrowLeft") prev();
+      if(e.key === "ArrowRight") next();
+    });
+
+    lbCopy.addEventListener("click", async ()=>{
+      try{
+        const it = view[lbIndex];
+        await navigator.clipboard.writeText(it.url);
+        toast("이미지 링크를 복사했습니다 ✅");
+      }catch(e){
+        toast("복사 실패 😅");
+      }
+    });
+
+    /* ===============================
+      ✅ 5) Tiny toast
+    =============================== */
+    let toastTimer;
+    function toast(msg){
+      let el = document.getElementById("toast");
+      if(!el){
+        el = document.createElement("div");
+        el.id = "toast";
+        el.style.position = "fixed";
+        el.style.left = "50%";
+        el.style.bottom = "18px";
+        el.style.transform = "translateX(-50%)";
+        el.style.padding = "10px 12px";
+        el.style.borderRadius = "14px";
+        el.style.border = "1px solid rgba(255,255,255,.14)";
+        el.style.background = "rgba(15,22,42,.88)";
+        el.style.backdropFilter = "blur(10px)";
+        el.style.color = "rgba(255,255,255,.92)";
+        el.style.fontWeight = "750";
+        el.style.boxShadow = "0 18px 60px rgba(0,0,0,.45)";
+        el.style.zIndex = "10000";
+        document.body.appendChild(el);
+      }
+      el.textContent = msg;
+      el.style.opacity = "1";
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>{ el.style.opacity="0"; }, 1500);
+    }
+
+    // init
+    render();
+  </script>
 </body>
 </html>
