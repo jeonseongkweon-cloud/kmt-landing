@@ -1,23 +1,162 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>수련생 조회</title>
 
 <style>
-  body{font-family:Arial, sans-serif;background:#0b0f19;color:#fff;margin:0;padding:20px}
-  h1{text-align:center;margin:0 0 22px}
-  .search-box{text-align:center;margin:0 0 16px}
-  input{padding:10px 12px;width:240px;border-radius:8px;border:none;font-size:16px}
-  button{padding:10px 14px;border:none;border-radius:8px;background:gold;font-weight:800;cursor:pointer;margin-left:8px}
-  .card{background:#111827;padding:18px 18px;border-radius:14px;max-width:460px;margin:18px auto;box-shadow:0 0 18px rgba(0,0,0,.45)}
-  .card img{width:120px;height:120px;object-fit:cover;border-radius:12px;display:block;margin:0 auto 12px}
-  .label{font-weight:800;color:gold}
-  .message{text-align:center;margin-top:14px;opacity:.95}
-  .hint{max-width:520px;margin:12px auto 0;font-size:13px;opacity:.75;line-height:1.45}
-  .debug{max-width:720px;margin:14px auto 0;background:#0f172a;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;font-size:12px;white-space:pre-wrap;overflow:auto}
-  .rowline{margin:2px 0}
+  :root{
+    --bg:#0b0f19;
+    --card:#111827;
+    --line:rgba(255,255,255,.10);
+    --text:#ffffff;
+    --muted:rgba(255,255,255,.72);
+    --gold:#f6c945;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; padding:22px 18px;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: radial-gradient(900px 600px at 50% 0%, rgba(246,201,69,.12), transparent 55%),
+                radial-gradient(900px 600px at 10% 20%, rgba(59,130,246,.10), transparent 55%),
+                var(--bg);
+    color:var(--text);
+  }
+  h1{
+    text-align:center;
+    margin:8px 0 18px;
+    letter-spacing:-.5px;
+    font-size:34px;
+    font-weight:900;
+  }
+  .search-box{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin:0 auto 14px;
+    max-width:560px;
+  }
+  input{
+    width:min(360px, 70vw);
+    padding:12px 14px;
+    border-radius:10px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.04);
+    color:var(--text);
+    font-size:16px;
+    outline:none;
+  }
+  input:focus{
+    border-color:rgba(246,201,69,.55);
+    box-shadow:0 0 0 3px rgba(246,201,69,.15);
+  }
+  button{
+    padding:12px 16px;
+    border:0;
+    border-radius:10px;
+    background:var(--gold);
+    color:#111;
+    font-weight:900;
+    cursor:pointer;
+    min-width:72px;
+  }
+  button:active{transform:translateY(1px)}
+  #result{margin-top:14px}
+  .message{
+    text-align:center;
+    margin-top:16px;
+    color:var(--muted);
+    line-height:1.5;
+  }
+  .hint{
+    max-width:720px;
+    margin:14px auto 0;
+    font-size:13px;
+    color:rgba(255,255,255,.68);
+    line-height:1.55;
+    text-align:center;
+  }
+
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px;
+    max-width:520px;
+    margin:16px auto 0;
+    box-shadow: 0 14px 30px rgba(0,0,0,.35);
+  }
+  .top{
+    display:flex;
+    gap:14px;
+    align-items:center;
+  }
+  .photo{
+    width:110px;height:110px;border-radius:14px;
+    background: rgba(255,255,255,.06);
+    border:1px solid var(--line);
+    overflow:hidden;
+    flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,.55);
+    font-weight:800;
+  }
+  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .nameblock h2{
+    margin:0 0 6px;
+    font-size:22px;
+    font-weight:900;
+    letter-spacing:-.3px;
+  }
+  .nameblock .sub{
+    margin:0;
+    color:rgba(255,255,255,.72);
+    font-size:13px;
+  }
+  .grid{
+    margin-top:14px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+  .row{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:12px;
+    background: rgba(17,24,39,.55);
+    border:1px solid rgba(255,255,255,.07);
+    font-size:14px;
+  }
+  .label{color:rgba(255,255,255,.70);font-weight:800}
+  .val{color:#fff;font-weight:800;text-align:right}
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:10px;
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid rgba(246,201,69,.35);
+    background: rgba(246,201,69,.10);
+    color: rgba(255,255,255,.90);
+    font-size:12px;
+    font-weight:800;
+  }
+  .debug{
+    max-width:760px;
+    margin:14px auto 0;
+    background:#0f172a;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:14px;
+    padding:12px;
+    font-size:12px;
+    white-space:pre-wrap;
+    overflow:auto;
+    color:rgba(255,255,255,.90);
+  }
 </style>
 </head>
 
@@ -25,49 +164,47 @@
   <h1>수련생 조회</h1>
 
   <div class="search-box">
-    <input type="text" id="searchName" placeholder="이름 입력 (예: 김예담)">
+    <input id="searchName" type="text" placeholder="이름 입력 (예: 김예담)" autocomplete="off" />
     <button onclick="searchStudent()">조회</button>
   </div>
 
   <div id="result"></div>
 
   <div class="hint">
-    ※ 검색이 안 되면 이름 앞/뒤 공백 또는 따옴표 문제일 수 있어요. (이 페이지는 자동으로 정리해서 비교합니다)<br>
-    ※ 디버그 확인: 주소 끝에 <b>?debug=1</b> 을 붙이면 불러온 이름 목록/행 수가 보입니다.
+    ※ 주소 끝에 <b>?debug=1</b> 을 붙이면(예: /verification/?debug=1) 불러온 행 수/이름 일부가 표시됩니다.
   </div>
 
 <script>
-/** =============================
- *  1) 구글시트 CSV 주소 + CORS 우회
- * ============================== */
-const RAW_CSV =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYhWbNhlhFmg2tNyaaRJRRlxYGCgUawZUeytRZ-aH9nusJSAUHYYozgO6aO/pub?gid=0&single=true&output=csv";
+/**
+ * ✅ 여기만 바꾸면 끝!
+ * 아래 CHANGE_ME 를 "웹에 게시"에서 나온 CSV 링크로 교체하세요.
+ * 형태 예:
+ * https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?gid=0&single=true&output=csv
+ */
+const RAW_CSV = "CHANGE_ME_PASTE_YOUR_PUBLISHED_CSV_URL_HERE";
 
-// GitHub Pages → Google 직접 fetch는 CORS가 막힐 수 있어 프록시 사용
+/**
+ * GitHub Pages에서 Google CSV 직접 fetch가 막히는 경우가 있어,
+ * allorigins 프록시를 씁니다.
+ */
 const CSV_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(RAW_CSV);
 
 const DEBUG = new URLSearchParams(location.search).get("debug") === "1";
 
-/** =============================
- *  2) 문자열 정리/정규화
- * ============================== */
+/* ---------- 문자열 정리 ---------- */
 function clean(v){
   return (v ?? "")
     .toString()
-    .replace(/^\uFEFF/, "")    // BOM 제거
-    .replace(/\r/g, "")        // \r 제거
-    .replace(/^"|"$/g, "")     // 양끝 따옴표 제거
+    .replace(/^\uFEFF/, "")     // BOM
+    .replace(/\r/g, "")         // CR
+    .replace(/^"|"$/g, "")      // 양끝 따옴표
     .trim();
 }
-
-// 비교용 정규화: 공백 전부 제거 + 따옴표 제거 + trim
 function normName(v){
   return clean(v).replace(/\s+/g, "");
 }
 
-/** =============================
- *  3) CSV 한 줄 파싱(따옴표/콤마 안전)
- * ============================== */
+/* ---------- CSV 라인 파서(따옴표/콤마 안전) ---------- */
 function splitCSVLine(line){
   const out = [];
   let cur = "";
@@ -76,12 +213,10 @@ function splitCSVLine(line){
   for(let i=0;i<line.length;i++){
     const ch = line[i];
     if(ch === '"'){
-      // "" -> " 처리
       if(inQuotes && line[i+1] === '"'){ cur += '"'; i++; }
       else inQuotes = !inQuotes;
     } else if(ch === "," && !inQuotes){
-      out.push(cur);
-      cur = "";
+      out.push(cur); cur = "";
     } else {
       cur += ch;
     }
@@ -90,14 +225,17 @@ function splitCSVLine(line){
   return out;
 }
 
-/** =============================
- *  4) 데이터 로드
- * ============================== */
+/* ---------- 데이터 로드 ---------- */
 async function fetchRows(){
+  if(!RAW_CSV || RAW_CSV.includes("CHANGE_ME")){
+    throw new Error("RAW_CSV not set");
+  }
+
   const res = await fetch(CSV_URL, { cache: "no-store" });
   if(!res.ok) throw new Error("CSV fetch failed: " + res.status);
 
   const text = await res.text();
+
   const lines = text
     .split("\n")
     .map(l => l.replace(/\r/g,""))
@@ -110,48 +248,63 @@ async function fetchRows(){
   return rows;
 }
 
-/** =============================
- *  5) UI 출력
- * ============================== */
+/* ---------- UI ---------- */
 function renderCard(row){
-  // 컬럼 인덱스:
-  // 0 아이디, 1 이름, 2 생년월일, 3 태권도단증, 4 경호무술단증, 5 검도단증, 6 포토링크, 7 현재포인트, 8 보유자격증, 9 보유인증서
+  // 컬럼:
+  // 0 아이디, 1 이름, 2 생년월일, 3 태권도단증, 4 경호무술단증, 5 검도단증,
+  // 6 포토링크, 7 현재포인트, 8 보유자격증, 9 보유인증서
+  const id = clean(row[0]);
+  const name = clean(row[1]);
+  const birth = clean(row[2]);
+  const tkd = clean(row[3]);
+  const pm = clean(row[4]);
+  const kendo = clean(row[5]);
   const photo = clean(row[6]);
+  const point = clean(row[7]);
+  const cert = clean(row[8]);
+  const doc = clean(row[9]);
 
   return `
     <div class="card">
-      ${photo ? `<img src="${photo}" alt="사진" referrerpolicy="no-referrer">` : ""}
-      <p><span class="label">아이디:</span> ${clean(row[0])}</p>
-      <p><span class="label">이름:</span> ${clean(row[1])}</p>
-      <p><span class="label">생년월일:</span> ${clean(row[2])}</p>
-      <p><span class="label">태권도단증:</span> ${clean(row[3])}</p>
-      <p><span class="label">경호무술단증:</span> ${clean(row[4])}</p>
-      <p><span class="label">검도단증:</span> ${clean(row[5])}</p>
-      <p><span class="label">현재포인트:</span> ${clean(row[7])}</p>
-      <p><span class="label">보유자격증:</span> ${clean(row[8])}</p>
-      <p><span class="label">보유인증서:</span> ${clean(row[9])}</p>
+      <div class="top">
+        <div class="photo">
+          ${photo ? `<img src="${photo}" alt="사진" referrerpolicy="no-referrer">` : `NO PHOTO`}
+        </div>
+        <div class="nameblock">
+          <h2>${name}</h2>
+          <p class="sub">아이디: <b>${id || "-"}</b> · 생년월일: <b>${birth || "-"}</b></p>
+          <div class="badge">현재 상태 조회 완료</div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="row"><span class="label">태권도단증</span><span class="val">${tkd || "-"}</span></div>
+        <div class="row"><span class="label">경호무술단증</span><span class="val">${pm || "-"}</span></div>
+        <div class="row"><span class="label">검도단증</span><span class="val">${kendo || "-"}</span></div>
+        <div class="row"><span class="label">현재포인트</span><span class="val">${point || "0"}</span></div>
+        <div class="row"><span class="label">보유자격증</span><span class="val">${cert || "-"}</span></div>
+        <div class="row"><span class="label">보유인증서</span><span class="val">${doc || "-"}</span></div>
+      </div>
     </div>
   `;
 }
 
 function renderDebug(rows){
   const names = rows.slice(1).map(r => clean(r[1])).filter(Boolean);
-  const html = [
-    `DEBUG MODE ON`,
+  const txt = [
+    "DEBUG MODE ON",
     `rows: ${rows.length}`,
-    `first 10 names:`,
+    "first 10 names:",
     ...names.slice(0,10).map((n,i)=>`${i+1}. ${n}`)
   ].join("\n");
 
   const dbg = document.createElement("div");
   dbg.className = "debug";
-  dbg.textContent = html;
+  dbg.textContent = txt;
   document.body.appendChild(dbg);
 }
 
-/** =============================
- *  6) 검색
- * ============================== */
+/* ---------- 검색 ---------- */
 async function searchStudent(){
   const input = document.getElementById("searchName").value;
   const target = normName(input);
@@ -168,13 +321,17 @@ async function searchStudent(){
     rows = await fetchRows();
   }catch(e){
     console.error(e);
-    resultEl.innerHTML = `<div class="message">데이터를 불러오지 못했습니다.</div>`;
+    if((e.message||"").includes("RAW_CSV not set")){
+      resultEl.innerHTML = `<div class="message">구글시트 CSV 링크가 아직 설정되지 않았습니다.<br>verification/index.html에서 RAW_CSV를 최신 CSV 링크로 교체하세요.</div>`;
+    }else{
+      resultEl.innerHTML = `<div class="message">데이터를 불러오지 못했습니다.</div>`;
+    }
     return;
   }
 
   if(DEBUG) renderDebug(rows);
 
-  // 1) 완전일치(공백 제거 기준)
+  // 완전일치(공백 제거 기준)
   let found = null;
   for(let i=1;i<rows.length;i++){
     if(normName(rows[i][1]) === target){
@@ -183,7 +340,7 @@ async function searchStudent(){
     }
   }
 
-  // 2) 그래도 없으면 부분일치(혹시 ‘김예담(무언가)’ 형태 대비)
+  // 부분일치(예: 김예담(무언가) 대비)
   if(!found){
     for(let i=1;i<rows.length;i++){
       const rn = normName(rows[i][1]);
@@ -203,10 +360,9 @@ async function searchStudent(){
 }
 
 // 엔터키로 조회
-document.addEventListener("keydown", (e)=>{
-  if(e.key === "Enter") searchStudent();
+document.addEventListener("keydown",(e)=>{
+  if(e.key==="Enter") searchStudent();
 });
 </script>
-
 </body>
 </html>
