@@ -37,6 +37,9 @@
       // 결제 폴더
       payPageUrl: "pay/",
 
+      // ✅ 공지 폴더 (홈페이지 내부 공지)
+      noticePageUrl: "notice/",
+
       // 로고
       logoImage: "https://static.wixstatic.com/media/abf917_f835f132f9cb46f782ebb43bd5dc6cca~mv2.png",
 
@@ -52,21 +55,10 @@
         "https://static.wixstatic.com/media/abf917_a2eef1c23b7a489a92966662dd6850ee~mv2.jpg"
       ],
 
-      // ✅ 공지사항(최근 5) — 여기만 수정하면 됩니다!
-      notices: [
-        { tag:"중요", title:"2026년 제1차 국기원 승품·단 심사 개최 안내", meta:"상세 공지·첨부파일은 밴드(회원전용)에서 확인", url:"https://band.us/band/54855723/post/1268736837" },
-        { tag:"운영", title:"DOUBLE CROSS 공식 수련 지정도장 선정", meta:"지정도 안내", url:"https://band.us/band/54855723/post/1268736836" },
-        { tag:"행사", title:"경호무술 · 태권검도 온라인 승단 심사 합격자 발표", meta:"승단심사 발표", url:"https://band.us/band/54855723/post/1268736835" },
-        { tag:"알림", title:"계명 성장기록 DAY 안내", meta:"카톡 문의 가능", url:"https://band.us/band/54855723/post/1268736834" },
-        { tag:"공지", title:"밴드 닉네임 안내", meta:"밴드 공지사항", url:"https://band.us/band/54855723/post/1268736411" }
-      ],
-
       // ✅ 공지 스크롤 속도(초) & 보여주는 높이(px)
-      // (PC/태블릿 기준. 폰에서는 CSS가 자동으로 더 크게 보이게 처리됨)
       noticeSpeedSec: 18,
       noticeViewportPx: 140,
 
-      // 시간표
       scheduleCards: [
         { title:"1부", badge:"초등부", time:"1:50 ~ 2:40", hint:"상담 후 반 배정 안내" },
         { title:"2부", badge:"초등부", time:"3:00 ~ 3:50", hint:"학년/성향에 맞춰 안내" },
@@ -83,7 +75,6 @@
 
       trialText: "체험 수업/등록 안내는 카톡 문의로 빠르게 도와드립니다.",
 
-      // Q&A(메인에서 바로 펼쳐보기)
       faq: [
         { q:"처음 시작해도 괜찮나요?", a:"네. 처음 시작하는 아이를 위한 기초 단계부터 안내합니다. 아이 성향/목표에 맞춰 반을 추천해드립니다." },
         { q:"안전관리는 어떻게 하나요?", a:"수업 전후 체크, 단계별 난이도 조절, 준비운동/정리운동을 기본으로 운영합니다. 안전이 최우선입니다." },
@@ -119,7 +110,7 @@
     .wrap{max-width:1040px;margin:0 auto;padding:14px 14px 120px}
     section{scroll-margin-top: 14px;}
 
-    /* ✅ HERO (4:5 이미지 전체 보이게 핵심) */
+    /* ✅ HERO */
     .hero{
       border:1px solid rgba(36,52,90,.55);
       background: linear-gradient(180deg, rgba(15,22,40,.92), rgba(13,19,34,.88));
@@ -322,7 +313,6 @@
     .ytFrameWrap{position:relative;padding-top:56.25%;}
     .ytFrameWrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
 
-    /* ✅ 유튜브 채널 버튼(학부모용) */
     .ytChannelBar{
       display:flex;
       gap:10px;
@@ -404,9 +394,7 @@
       color:#101019;
     }
 
-    /* =====================================================
-      ✅ 공지사항 스크롤
-    ====================================================== */
+    /* ✅ 공지사항 스크롤 */
     .noticeBox{
       margin-top:12px;
       border:1px solid rgba(36,52,90,.55);
@@ -494,11 +482,6 @@
       100% { transform: translateY(-50%); }
     }
 
-    /* =====================================================
-      ✅ 폰에서만 “5개가 잘 보이게” 강제 최적화 (추가!)
-      - 높이 크게
-      - meta는 한 줄로만(줄먹는 것 방지)
-    ====================================================== */
     @media (max-width: 480px){
       .noticeViewport{ height: 290px !important; }
       .noticeTitle{ font-size: 13px; }
@@ -509,6 +492,59 @@
         max-width: calc(100vw - 140px);
       }
     }
+
+    /* ✅ 최근 공지 3개 (첫 화면 자동 노출) */
+    .recentNotice{
+      margin-top:12px;
+      border:1px solid rgba(36,52,90,.55);
+      background: linear-gradient(180deg, rgba(15,22,40,.92), rgba(13,19,34,.90));
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow: var(--shadow);
+    }
+    .recentNoticeHead{
+      padding:12px 14px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      border-bottom:1px solid rgba(36,52,90,.45);
+      background: linear-gradient(90deg, rgba(20,40,90,.75), rgba(10,14,28,.0));
+      flex-wrap:wrap;
+    }
+    .recentNoticeHead b{font-size:14px}
+    .recentNoticeGrid{
+      padding:12px;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+    @media (min-width:720px){
+      .recentNoticeGrid{ grid-template-columns: repeat(3, 1fr); }
+    }
+    .nCard{
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      padding:12px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:7px;
+      transition: transform .10s ease, border-color .15s ease;
+      min-height:96px;
+    }
+    .nCard:hover{ transform: translateY(-1px); border-color: rgba(255,138,0,.35); }
+    .nTop{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+    .nDate{font-size:12px; color: rgba(233,238,252,.70);}
+    .nTag{
+      font-size:11px;
+      font-weight:950;
+      padding:5px 9px;
+      border-radius:999px;
+      background: rgba(255,138,0,.12);
+      border:1px solid rgba(255,138,0,.22);
+      color: rgba(233,238,252,.92);
+      white-space:nowrap;
+    }
+    .nTitle{font-size:13px; font-weight:950; line-height:1.35;}
+    .nMeta{font-size:12px; color: rgba(233,238,252,.72); line-height:1.45;}
   </style>
 </head>
 
@@ -533,26 +569,40 @@
           <a class="btn primary" id="callTop" href="#">📞 전화</a>
           <a class="btn" id="kakaoTop" href="#" target="_blank" rel="noopener">🟡 카톡</a>
           <a class="btn" id="bandTop" href="#" target="_blank" rel="noopener">🟢 밴드</a>
+
+          <!-- ✅ 추가: 공지사항 버튼 -->
+          <a class="btn" id="noticeTop" href="notice/">📢 공지</a>
+
           <a class="btn" id="payTop" href="pay/">💳 결제</a>
         </div>
       </div>
     </div>
 
-    <!-- ✅ 공지사항(최근 5) 스크롤 -->
+    <!-- ✅ 공지사항(최근 5) 스크롤 (홈페이지 공지 데이터 기반) -->
     <section class="noticeBox" id="notice">
       <div class="noticeHead">
         <div class="left">
           <b>📌 공지사항(최근 5)</b>
-          <div class="sub">자세한 내용·첨부파일은 밴드에서 확인 가능합니다(회원전용).</div>
+          <div class="sub">공개 공지는 홈페이지에, 회원 전용 안내는 밴드에서 운영합니다.</div>
         </div>
         <div class="actions">
-          <a class="moreBtn" id="noticeBandBtn" href="#" target="_blank" rel="noopener">밴드 공지 확인</a>
+          <a class="moreBtn" id="noticeHomeBtn" href="notice/">공지 전체보기</a>
+          <a class="moreBtn" id="noticeBandBtn" href="#" target="_blank" rel="noopener">학부모 밴드</a>
           <a class="moreBtn" href="#contact">문의하기</a>
         </div>
       </div>
       <div class="noticeViewport" id="noticeViewport">
         <ul class="noticeList" id="noticeList"></ul>
       </div>
+    </section>
+
+    <!-- ✅ 첫 화면: 최근 공지 3개 자동 노출 -->
+    <section class="recentNotice" id="recentNotice">
+      <div class="recentNoticeHead">
+        <b>최근 공지 (3)</b>
+        <a class="moreBtn" href="notice/">전체 보기</a>
+      </div>
+      <div class="recentNoticeGrid" id="recentNoticeGrid"></div>
     </section>
 
     <!-- 핵심 바로가기 -->
@@ -666,6 +716,7 @@
         <a class="btn primary" id="callBtn" href="#">📞 전화상담</a>
         <a class="btn" id="kakaoBtn" href="#" target="_blank" rel="noopener">🟡 카톡 문의</a>
         <a class="btn" id="bandBtn" href="#" target="_blank" rel="noopener">🟢 밴드 바로가기</a>
+        <a class="btn" id="noticeBtn" href="notice/">📢 공지사항</a>
         <a class="btn" id="ytBtn" href="#" target="_blank" rel="noopener">▶️ 유튜브 채널</a>
         <a class="btn" id="payBtn" href="pay/">💳 결제 안내</a>
       </div>
@@ -689,10 +740,14 @@
       <a class="bbtn" id="callBottom" href="#">📞 전화</a>
       <a class="bbtn primary" id="kakaoBottom" href="#" target="_blank" rel="noopener">🟡 카톡</a>
       <a class="bbtn" id="bandBottom" href="#" target="_blank" rel="noopener">🟢 밴드</a>
+      <a class="bbtn" href="notice/">📢 공지</a>
       <a class="bbtn" id="ytBottom" href="#" target="_blank" rel="noopener">▶️ 유튜브</a>
       <a class="bbtn" href="pay/">💳 결제</a>
     </div>
   </div>
+
+  <!-- ✅ 홈페이지 공지 데이터 -->
+  <script src="notice/data.js"></script>
 
   <script>
     const $ = (id)=>document.getElementById(id);
@@ -786,8 +841,15 @@
       faqList.appendChild(d);
     });
 
-    // 공지사항 렌더링 + 무한 스크롤
-    (function renderNotices(){
+    // ✅ 공지(홈페이지 data.js)에서 최근 5/3 자동 렌더링
+    function getHomeNotices(){
+      // notice/data.js의 전역 변수: notices (없으면 빈 배열)
+      const arr = Array.isArray(window.notices) ? window.notices : [];
+      const sorted = [...arr].sort((a,b)=> (String(b.date||"")).localeCompare(String(a.date||"")));
+      return sorted;
+    }
+
+    (function renderNoticeTicker(){
       const list = $("noticeList");
       const vp = $("noticeViewport");
 
@@ -799,12 +861,12 @@
         list.style.setProperty("--noticeSpeed", `${KMT.noticeSpeedSec}s`);
       }
 
-      const items = (KMT.notices || []).slice(0,5);
+      const items = getHomeNotices().slice(0,5);
       list.innerHTML = items.map(n => `
         <li class="noticeItem">
           <span class="noticeBadge">${escapeHtml(n.tag || "공지")}</span>
           <div>
-            <a class="noticeTitle" href="${escapeHtml(n.url || KMT.bandUrl)}" target="_blank" rel="noopener">
+            <a class="noticeTitle" href="${escapeHtml((n.url && String(n.url).trim()) ? n.url : (KMT.noticePageUrl || "notice/"))}">
               ${escapeHtml(n.title || "")}
             </a>
             ${n.meta ? `<span class="noticeMeta">${escapeHtml(n.meta)}</span>` : ``}
@@ -815,6 +877,23 @@
       if(items.length >= 2){
         list.innerHTML = list.innerHTML + list.innerHTML;
       }
+    })();
+
+    (function renderRecent3(){
+      const box = $("recentNoticeGrid");
+      if(!box) return;
+
+      const top3 = getHomeNotices().slice(0,3);
+      box.innerHTML = top3.map(n => `
+        <a class="nCard" href="${escapeHtml((n.url && String(n.url).trim()) ? n.url : (KMT.noticePageUrl || "notice/"))}">
+          <div class="nTop">
+            <div class="nDate">${escapeHtml(n.date || "")}</div>
+            <div class="nTag">${escapeHtml(n.tag || "공지")}</div>
+          </div>
+          <div class="nTitle">${escapeHtml(n.title || "")}</div>
+          ${n.meta ? `<div class="nMeta">${escapeHtml(n.meta)}</div>` : `<div class="nMeta">자세히 보기</div>`}
+        </a>
+      `).join("");
     })();
 
     // Hero slider
