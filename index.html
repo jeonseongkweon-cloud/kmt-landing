@@ -43,6 +43,9 @@
       // ✅ 공지 폴더 (홈페이지 내부 공지)
       noticePageUrl: "notice/",
 
+      // ✅ NEW: 갤러리 조회 폴더(이번에 /gallery/를 조회형으로 사용)
+      galleryPageUrl: "gallery/",
+
       // 로고
       logoImage: "https://static.wixstatic.com/media/abf917_f835f132f9cb46f782ebb43bd5dc6cca~mv2.png",
 
@@ -576,6 +579,9 @@
           <!-- ✅ 추가: 수련생 조회 -->
           <a class="btn primary" id="verifyTop" href="verification/">🔎 조회</a>
 
+          <!-- ✅ NEW: 갤러리 조회(검색형) -->
+          <a class="btn" id="galleryTop" href="gallery/">🖼️ 갤러리 조회</a>
+
           <!-- ✅ 공지사항 -->
           <a class="btn" id="noticeTop" href="notice/">📢 공지</a>
 
@@ -626,7 +632,9 @@
       <!-- ✅ 추가: 수련생 조회 타일 -->
       <a class="tile" href="verification/"><div class="ico">🔎</div><div class="label">수련생 조회</div><div class="sub">이름으로 확인</div></a>
 
+      <!-- ✅ (기존 유지) gallery/는 이제 '조회형 갤러리'로 사용 -->
       <a class="tile" href="gallery/"><div class="ico">🖼️</div><div class="label">갤러리&영상</div><div class="sub">분위기</div></a>
+
       <a class="tile" href="#faq"><div class="ico">❓</div><div class="label">Q&A 모음</div><div class="sub">바로 보기</div></a>
       <a class="tile" href="#shuttle"><div class="ico">🚌</div><div class="label">차량운행 문의</div><div class="sub">상담 후</div></a>
 
@@ -667,7 +675,7 @@
     <section class="panel" id="galleryPreview">
       <div class="panelHeader">
         <b>갤러리 & 영상 (대표)</b>
-        <a class="moreBtn" href="gallery/">갤러리로</a>
+        <a class="moreBtn" id="galleryMoreBtn" href="gallery/">갤러리로</a>
       </div>
       <div class="items">
         <div class="ytBox">
@@ -686,6 +694,11 @@
             <div class="txt" id="ytChannelTxt">계명태권도 공식채널에서 더 많은 영상을 확인하세요.</div>
           </div>
           <a class="btn" id="ytChannelBtn" href="#" target="_blank" rel="noopener">채널 바로가기</a>
+        </div>
+
+        <!-- ✅ NEW: 갤러리 조회 바로가기(대표영상 아래에 하나 더) -->
+        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+          <a class="btn" id="galleryBtnMid" href="gallery/">🖼️ 이름으로 사진 찾기</a>
         </div>
       </div>
     </section>
@@ -729,6 +742,9 @@
         <!-- ✅ 추가: 수련생 조회 -->
         <a class="btn primary" id="verifyBtn" href="verification/">🔎 수련생 조회</a>
 
+        <!-- ✅ NEW: 갤러리 조회 -->
+        <a class="btn" id="galleryBtn" href="gallery/">🖼️ 갤러리 조회</a>
+
         <a class="btn" id="noticeBtn" href="notice/">📢 공지사항</a>
         <a class="btn" id="ytBtn" href="#" target="_blank" rel="noopener">▶️ 유튜브 채널</a>
         <a class="btn" id="payBtn" href="pay/">💳 결제 안내</a>
@@ -756,6 +772,9 @@
 
       <!-- ✅ 추가: 조회 -->
       <a class="bbtn" id="verifyBottom" href="verification/">🔎 조회</a>
+
+      <!-- ✅ NEW: 갤러리 조회 -->
+      <a class="bbtn" id="galleryBottom" href="gallery/">🖼️ 갤러리</a>
 
       <a class="bbtn" href="notice/">📢 공지</a>
       <a class="bbtn" id="ytBottom" href="#" target="_blank" rel="noopener">▶️ 유튜브</a>
@@ -810,6 +829,13 @@
     ["verifyTop","verifyBtn","verifyBottom"].forEach(id=>{
       const el = $(id);
       if(el) el.href = v;
+    });
+
+    // ✅ NEW: Gallery links (한 곳만 바꾸면 자동 반영)
+    const g = KMT.galleryPageUrl || "gallery/";
+    ["galleryTop","galleryBottom","galleryBtn","galleryBtnMid","galleryMoreBtn"].forEach(id=>{
+      const el = $(id);
+      if(el) el.href = g;
     });
 
     // YouTube Channel Links
