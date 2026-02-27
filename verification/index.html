@@ -1,0 +1,41 @@
+<script>
+const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYhWbNhlhFmg2tNyaaRJRRlxYGCgUawZUeytRZ-aH9nusJSAUHYYozgO6aO/pub?gid=0&single=true&output=csv";
+
+async function fetchData(){
+  const response = await fetch(sheetURL);
+  const text = await response.text();
+  const rows = text.split("\n").map(row => row.split(","));
+  return rows;
+}
+
+async function searchStudent(){
+  const name = document.getElementById("searchName").value.trim();
+  const rows = await fetchData();
+
+  let resultHTML = "";
+
+  for(let i=1; i<rows.length; i++){
+    if(rows[i][1] && rows[i][1].trim() === name){
+
+      resultHTML = `
+      <div class="card">
+        <img src="${rows[i][6]}" alt="사진">
+        <p><span class="label">이름:</span> ${rows[i][1]}</p>
+        <p><span class="label">태권도단증:</span> ${rows[i][3]}</p>
+        <p><span class="label">경호무술단증:</span> ${rows[i][4]}</p>
+        <p><span class="label">검도단증:</span> ${rows[i][5]}</p>
+        <p><span class="label">현재포인트:</span> ${rows[i][7]}</p>
+        <p><span class="label">보유인증서:</span> ${rows[i][9]}</p>
+      </div>
+      `;
+      break;
+    }
+  }
+
+  if(resultHTML === ""){
+    resultHTML = "<p style='text-align:center;'>조회 결과가 없습니다.</p>";
+  }
+
+  document.getElementById("result").innerHTML = resultHTML;
+}
+</script>
