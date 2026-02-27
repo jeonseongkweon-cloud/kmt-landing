@@ -7,11 +7,10 @@
   <meta name="description" content="계명태권도 공식 갤러리 & 영상. 수련, 심사, 행사, 성장 기록을 한 곳에서 확인하세요." />
   <meta name="theme-color" content="#0b0f19" />
 
-  <!-- OG (카톡/문자 미리보기용) -->
+  <!-- OG -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="계명태권도 | 갤러리 & 영상" />
   <meta property="og:description" content="수련·심사·행사·성장 기록. 모바일 최적화 갤러리." />
-  <!-- 필요 시 대표이미지로 교체 -->
   <meta property="og:image" content="https://static.wixstatic.com/media/abf917_38e0bc3b3d804b3caa6aa8363163950d~mv2.jpg" />
 
   <style>
@@ -52,10 +51,7 @@
       display:flex; align-items:center; gap:10px;
       padding:10px 16px;
     }
-    .brand{
-      display:flex; flex-direction:column; gap:2px;
-      min-width: 180px;
-    }
+    .brand{display:flex; flex-direction:column; gap:2px}
     .brand b{letter-spacing:.2px}
     .brand small{color:var(--muted)}
     .spacer{flex:1}
@@ -70,6 +66,7 @@
       user-select:none;
       transition: transform .15s ease, border-color .15s ease, background .15s ease;
       font-weight:650;
+      white-space:nowrap;
     }
     .btn:hover{transform: translateY(-1px); border-color: rgba(215,181,109,.35)}
     .btn:active{transform: translateY(0px)}
@@ -82,8 +79,8 @@
       background: linear-gradient(180deg, rgba(215,181,109,.18), rgba(255,255,255,.03));
     }
 
-    /* Hero */
-    .hero{
+    /* Cards */
+    .cardBox{
       margin-top:18px;
       border:1px solid var(--line);
       border-radius: var(--r);
@@ -91,108 +88,166 @@
       box-shadow: var(--shadow);
       overflow:hidden;
     }
-    .hero .row{
+    .cardBox .head{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+      padding:16px 16px 12px;
+      border-bottom:1px solid var(--line);
+    }
+    .cardBox .head h2{margin:0; font-size:18px}
+    .cardBox .head p{margin:0; color:var(--muted); font-size:13px; line-height:1.55}
+    .cardBox .body{padding:14px 14px 16px}
+
+    /* HERO COVER + THUMBS */
+    .cover{
       display:grid;
       grid-template-columns: 1.2fr .8fr;
-      gap:0;
+      gap:12px;
+      align-items:stretch;
     }
-    .hero .left{padding:22px 18px}
-    .hero h1{margin:0 0 8px; font-size:22px}
-    .hero p{margin:0; color:var(--muted); line-height:1.55}
-    .chips{
-      display:flex; flex-wrap:wrap; gap:8px;
-      margin-top:12px;
-    }
-    .chip{
-      padding:7px 10px;
+    .coverMain{
+      position:relative;
       border:1px solid var(--line);
-      border-radius:999px;
-      color:rgba(255,255,255,.8);
-      background: rgba(0,0,0,.18);
-      font-size:12.5px;
+      border-radius: 18px;
+      overflow:hidden;
+      background: rgba(0,0,0,.22);
+      min-height: 240px;
     }
-    .hero .right{
-      border-left:1px solid var(--line);
-      background:
-        radial-gradient(600px 240px at 50% 0%, rgba(215,181,109,.16), transparent 60%),
-        radial-gradient(600px 240px at 50% 100%, rgba(102,179,255,.12), transparent 60%),
-        linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.10));
-      padding:18px;
+    .coverMain img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      filter: contrast(1.02) saturate(1.03);
+      transform: scale(1.01);
+    }
+    .coverMain .cap{
+      position:absolute; left:0; right:0; bottom:0;
+      padding:14px 14px 12px;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,.72));
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+    }
+    .cap .txt{min-width:0}
+    .cap .txt b{
+      display:block;
+      font-size:15px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .cap .txt small{color:rgba(255,255,255,.72)}
+    .cap .pill{
+      padding:8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(215,181,109,.40);
+      background: rgba(215,181,109,.12);
+      font-weight:800;
+      font-size:12px;
+      flex:0 0 auto;
+    }
+    .thumbRail{
+      border:1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(0,0,0,.18);
+      padding:10px;
       display:flex;
       flex-direction:column;
       gap:10px;
-      justify-content:center;
     }
-    .stat{
-      display:flex; align-items:center; justify-content:space-between;
-      padding:12px 12px;
+    .thumbTitle{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:0 4px;
+    }
+    .thumbTitle b{font-size:14px}
+    .thumbTitle small{color:var(--muted)}
+    .thumbs{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:8px;
+      overflow:auto;
+      padding-right:2px;
+    }
+    .titem{
+      position:relative;
       border-radius: 14px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      cursor:pointer;
+      transform: translateZ(0);
+    }
+    .titem img{
+      width:100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display:block;
+      transition: transform .2s ease, filter .2s ease;
+      filter: saturate(1.02);
+    }
+    .titem:hover img{transform: scale(1.05); filter: saturate(1.08)}
+    .titem.active{border-color: rgba(102,179,255,.45)}
+    .titem.active::after{
+      content:"";
+      position:absolute; inset:0;
+      box-shadow: inset 0 0 0 2px rgba(102,179,255,.55);
+      border-radius: 14px;
+      pointer-events:none;
+    }
+
+    /* SLIDESHOW */
+    .slideshow{
+      margin-top:12px;
       border:1px solid var(--line);
+      border-radius: 18px;
+      overflow:hidden;
       background: rgba(0,0,0,.18);
     }
-    .stat b{color:rgba(255,255,255,.9)}
-    .stat span{color:var(--muted); font-size:13px}
-
-    /* Section */
-    .section{margin-top:18px}
-    .section-head{
-      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
-      margin: 12px 2px;
-    }
-    .section-head h2{margin:0; font-size:18px}
-    .section-head p{margin:0; color:var(--muted); font-size:13px}
-
-    /* Controls */
-    .controls{
-      margin-top:12px;
-      display:flex; flex-wrap:wrap; gap:10px;
-      padding:12px;
-      border:1px solid var(--line);
-      border-radius: var(--r);
-      background: rgba(0,0,0,.16);
-    }
-    .input{
-      flex: 1 1 260px;
-      display:flex; align-items:center; gap:8px;
-      border:1px solid var(--line);
-      border-radius: 14px;
+    .slideTop{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
       padding:10px 12px;
-      background: rgba(255,255,255,.04);
+      border-bottom:1px solid rgba(255,255,255,.10);
     }
-    .input input{
+    .slideTop .info{
+      display:flex; flex-direction:column; gap:2px;
+      min-width:0;
+    }
+    .slideTop .info b{
+      font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .slideTop .info small{color:var(--muted); font-size:12px}
+    .controls{
+      display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;
+    }
+    .slideBox{
+      position:relative;
       width:100%;
-      border:0;
-      outline:0;
-      background:transparent;
-      color:var(--text);
-      font-size:14px;
+      aspect-ratio: 16 / 9;
+      background:#000;
     }
-    .input .x{
-      width:28px; height:28px; border-radius:10px;
+    .slideBox img{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit: cover;
+      display:block;
+      opacity:0;
+      transition: opacity .35s ease;
+    }
+    .slideBox img.show{opacity:1}
+    .navBtn{
+      position:absolute;
+      top:50%;
+      transform: translateY(-50%);
+      width:44px; height:44px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.35);
+      color: rgba(255,255,255,.92);
       display:grid; place-items:center;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.12);
-      cursor:pointer;
-      color: rgba(255,255,255,.75);
-    }
-    .tabs{display:flex; gap:8px; flex-wrap:wrap}
-    .tab{
-      padding:9px 10px;
-      border-radius: 999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      font-weight:650;
-      color: rgba(255,255,255,.82);
       cursor:pointer;
       user-select:none;
     }
-    .tab.active{
-      border-color: rgba(215,181,109,.55);
-      background: rgba(215,181,109,.13);
-      color: rgba(255,255,255,.92);
-    }
+    .navBtn:hover{border-color: rgba(215,181,109,.45)}
+    .navBtn.prev{left:10px}
+    .navBtn.next{right:10px}
 
-    /* Gallery grid */
+    /* Gallery Grid (below) */
     .grid{
       margin-top:12px;
       display:grid;
@@ -205,30 +260,25 @@
     @media (min-width: 1024px){
       .grid{grid-template-columns: repeat(4, 1fr); gap:12px}
     }
-
-    .card{
+    .gcard{
       position:relative;
       border-radius: 16px;
       overflow:hidden;
       border:1px solid var(--line);
       background: rgba(255,255,255,.03);
       box-shadow: 0 10px 28px rgba(0,0,0,.28);
-      transform: translateZ(0);
       cursor:pointer;
     }
-    .thumb{
+    .gcard img{
       width:100%;
-      aspect-ratio: 1 / 1;   /* ✅ 자동 통일 (정사각형) */
-      object-fit: cover;     /* ✅ 자동 크롭 */
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
       display:block;
-      filter: saturate(1.02) contrast(1.02);
       transition: transform .25s ease, filter .25s ease;
+      filter: saturate(1.02) contrast(1.02);
     }
-    .card:hover .thumb{
-      transform: scale(1.03);
-      filter: saturate(1.06) contrast(1.06);
-    }
-    .overlay{
+    .gcard:hover img{transform: scale(1.03); filter: saturate(1.07) contrast(1.06)}
+    .gcard .overlay{
       position:absolute; inset:auto 0 0 0;
       padding:10px 10px 9px;
       background: linear-gradient(180deg, transparent, rgba(0,0,0,.72));
@@ -253,9 +303,8 @@
       flex:0 0 auto;
     }
 
-    /* Video section */
+    /* Videos */
     .video-grid{
-      margin-top:12px;
       display:grid;
       grid-template-columns: 1fr;
       gap:12px;
@@ -287,6 +336,20 @@
     }
     .video-body b{font-size:14px}
     .video-body p{margin:0; color:var(--muted); font-size:13px; line-height:1.5}
+    .moreRow{
+      margin-top:12px;
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+    .note{
+      color:var(--muted);
+      font-size:12.8px;
+      line-height:1.6;
+      margin-top:10px;
+      padding:12px;
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      background: rgba(0,0,0,.14);
+    }
 
     /* Lightbox */
     .lb{
@@ -327,12 +390,10 @@
       cursor:pointer;
       color: rgba(255,255,255,.88);
       font-weight:750;
+      white-space:nowrap;
     }
     .iconbtn:hover{border-color: rgba(102,179,255,.35)}
-    .lb-body{
-      position:relative;
-      background: rgba(0,0,0,.35);
-    }
+    .lb-body{background: rgba(0,0,0,.35)}
     .lb-img{
       width:100%;
       max-height: calc(100vh - 220px);
@@ -341,167 +402,212 @@
       margin: 0 auto;
       background: rgba(0,0,0,.30);
     }
-    .navbtn{
-      position:absolute;
-      top:50%;
-      transform: translateY(-50%);
-      width:44px; height:44px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.35);
+
+    /* Toast */
+    #toast{
+      position:fixed;
+      left:50%;
+      bottom:18px;
+      transform: translateX(-50%);
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(15,22,42,.88);
+      backdrop-filter: blur(10px);
       color: rgba(255,255,255,.92);
-      display:grid; place-items:center;
-      cursor:pointer;
-      user-select:none;
-    }
-    .navbtn:hover{border-color: rgba(215,181,109,.45)}
-    .navbtn.prev{left:10px}
-    .navbtn.next{right:10px}
-
-    /* Footer */
-    .footer{
-      margin-top:18px;
-      padding:14px 12px;
-      border:1px solid var(--line);
-      border-radius: var(--r);
-      background: rgba(0,0,0,.14);
-      color: var(--muted);
-      font-size: 12.8px;
-      line-height: 1.6;
+      font-weight:750;
+      box-shadow: 0 18px 60px rgba(0,0,0,.45);
+      z-index: 10000;
+      opacity:0;
+      transition: opacity .2s ease;
+      pointer-events:none;
     }
 
-    /* Mobile hero stack */
-    @media (max-width: 820px){
-      .hero .row{grid-template-columns: 1fr}
-      .hero .right{border-left:0; border-top:1px solid var(--line)}
-      .brand{min-width:auto}
+    @media (max-width: 980px){
+      .cover{grid-template-columns: 1fr}
+      .thumbs{grid-template-columns: repeat(6, 1fr)}
+    }
+    @media (max-width: 520px){
+      .thumbs{grid-template-columns: repeat(4, 1fr)}
+      .btn{padding:10px 11px}
     }
   </style>
 </head>
 <body>
 
-  <!-- Topbar -->
   <div class="topbar">
     <div class="inner">
       <div class="brand">
         <b>계명태권도</b>
-        <small>Gallery & Video Archive</small>
+        <small>Gallery & Video (Premium)</small>
       </div>
       <div class="spacer"></div>
-      <!-- ✅ 홈으로 가기: 루트 index.html로 이동 -->
-      <a class="btn gold" href="../index.html" aria-label="홈으로 가기">🏠 홈으로</a>
-      <button class="btn primary" id="btnScrollTop" type="button" aria-label="맨 위로">⬆️</button>
+      <a class="btn gold" href="../index.html">🏠 홈으로</a>
+      <button class="btn primary" id="btnScrollTop" type="button">⬆️</button>
     </div>
   </div>
 
   <main class="wrap">
 
-    <!-- Hero -->
-    <section class="hero" aria-label="페이지 소개">
-      <div class="row">
-        <div class="left">
-          <h1>갤러리 & 영상</h1>
-          <p>
-            수련·심사·행사·성장 기록을 한 곳에 모았습니다.<br/>
-            사진 사이즈가 제각각이어도 자동으로 정렬되며, 모바일에서 가장 예쁘게 보이도록 최적화되어 있습니다.
-          </p>
-          <div class="chips">
-            <span class="chip">자동 정렬</span>
-            <span class="chip">모바일 2열</span>
-            <span class="chip">확대보기(라이트박스)</span>
-            <span class="chip">링크복사</span>
-            <span class="chip">다운로드</span>
-          </div>
-        </div>
-        <div class="right">
-          <div class="stat">
-            <b>사진</b>
-            <span id="countPhotos">-</span>
-          </div>
-          <div class="stat">
-            <b>현재 보기</b>
-            <span id="countFiltered">-</span>
-          </div>
-          <div class="stat">
-            <b>기본 정렬</b>
-            <span>카드형(정사각)</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Controls -->
-    <section class="section" aria-label="갤러리">
-      <div class="section-head">
+    <!-- 1) COVER + THUMBS -->
+    <section class="cardBox">
+      <div class="head">
         <div>
-          <h2>사진 갤러리</h2>
-          <p>검색/필터는 준비해두었습니다. 지금은 “전체”로 운영해도 충분히 고급스럽습니다.</p>
+          <h2>대표 사진</h2>
+          <p>대표 1장 크게 보여주고, 아래 썸네일로 빠르게 이동합니다. (사진 크기 상관없이 자동 맞춤)</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <button class="btn" id="btnCoverPrev" type="button">‹ 이전</button>
+          <button class="btn" id="btnCoverNext" type="button">다음 ›</button>
+          <button class="btn" id="btnOpenCover" type="button">🔍 확대보기</button>
         </div>
       </div>
 
-      <div class="controls">
-        <div class="input" role="search">
-          🔎
-          <input id="q" type="text" placeholder="사진 검색(예: 심사, 행사, 수련) — 지금은 제목이 자동이므로 비워두셔도 OK" autocomplete="off" />
-          <div class="x" id="clearQ" title="지우기">✕</div>
-        </div>
+      <div class="body">
+        <div class="cover">
+          <div class="coverMain" id="coverMain">
+            <img id="coverImg" src="" alt="대표 사진" />
+            <div class="cap">
+              <div class="txt">
+                <b id="coverTitle">—</b>
+                <small id="coverSub">—</small>
+              </div>
+              <div class="pill" id="coverPill">대표</div>
+            </div>
+          </div>
 
-        <div class="tabs" aria-label="필터">
-          <div class="tab active" data-filter="all">전체</div>
-          <div class="tab" data-filter="class">수련</div>
-          <div class="tab" data-filter="exam">심사</div>
-          <div class="tab" data-filter="event">행사</div>
-        </div>
-
-        <div style="margin-left:auto; display:flex; gap:8px; flex-wrap:wrap">
-          <button class="btn" id="btnCopyPage" type="button">🔗 이 페이지 링크 복사</button>
-          <button class="btn" id="btnShuffle" type="button">🎲 랜덤 보기</button>
+          <aside class="thumbRail">
+            <div class="thumbTitle">
+              <b>썸네일</b>
+              <small><span id="thumbCount">0</span>장</small>
+            </div>
+            <div class="thumbs" id="thumbs"></div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:2px">
+              <button class="btn" id="btnCopyCover" type="button">🔗 대표사진 링크 복사</button>
+              <button class="btn" id="btnShuffleThumbs" type="button">🎲 섞기</button>
+            </div>
+          </aside>
         </div>
       </div>
-
-      <!-- Gallery Grid -->
-      <div id="grid" class="grid" aria-label="사진 목록"></div>
     </section>
 
-    <!-- Videos -->
-    <section class="section" aria-label="영상">
-      <div class="section-head">
+    <!-- 2) SLIDESHOW -->
+    <section class="cardBox">
+      <div class="head">
+        <div>
+          <h2>갤러리 슬라이드 쇼</h2>
+          <p>자동 재생(기본 4초). 손님이 “멍~” 하니 보고 가게 만드는 마법 구간입니다.</p>
+        </div>
+        <div class="controls">
+          <button class="btn" id="btnPrev" type="button">⟵</button>
+          <button class="btn primary" id="btnPlay" type="button">▶ 자동재생</button>
+          <button class="btn" id="btnPause" type="button">⏸ 정지</button>
+          <button class="btn" id="btnNext" type="button">⟶</button>
+          <button class="btn" id="btnSpeed" type="button">⏱ 4초</button>
+          <button class="btn" id="btnOpenSlide" type="button">🔍 확대보기</button>
+        </div>
+      </div>
+
+      <div class="body">
+        <div class="slideshow">
+          <div class="slideTop">
+            <div class="info">
+              <b id="slideTitle">—</b>
+              <small id="slideSub">—</small>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap">
+              <button class="btn" id="btnCopySlide" type="button">🔗 현재 슬라이드 링크 복사</button>
+            </div>
+          </div>
+          <div class="slideBox" id="slideBox">
+            <img id="slideImgA" src="" alt="슬라이드 A" />
+            <img id="slideImgB" src="" alt="슬라이드 B" />
+            <div class="navBtn prev" id="navPrev">‹</div>
+            <div class="navBtn next" id="navNext">›</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3) GRID GALLERY -->
+    <section class="cardBox">
+      <div class="head">
+        <div>
+          <h2>전체 갤러리</h2>
+          <p>사진 사이즈가 달라도 카드형으로 자동 통일됩니다.</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <button class="btn" id="btnCopyPage" type="button">🔗 페이지 링크 복사</button>
+          <button class="btn" id="btnShuffleGrid" type="button">🎲 랜덤 보기</button>
+        </div>
+      </div>
+
+      <div class="body">
+        <div class="grid" id="grid"></div>
+      </div>
+    </section>
+
+    <!-- 4) VIDEO -->
+    <section class="cardBox">
+      <div class="head">
         <div>
           <h2>영상</h2>
-          <p>유튜브 영상 링크만 넣으면 자동 반응형으로 예쁘게 들어갑니다. (아래는 예시)</p>
+          <p>아래 “영상 더보기”는 <b>플레이리스트를 자동 임베드</b>합니다. (API 필요 없음)</p>
         </div>
       </div>
 
-      <div class="video-grid" id="videoGrid">
-        <!-- ✅ 예시 2개 (원하시면 전총재님 채널 영상으로 교체해드릴게요) -->
-        <article class="video-card">
-          <div class="video-embed">
-            <iframe src="https://www.youtube.com/embed/aHZSZ1YHIAY" title="계명태권도 영상" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
-          <div class="video-body">
-            <b>계명태권도 대표 영상</b>
-            <p>수련 분위기와 핵심 포인트를 한 번에 보여주는 소개 영상입니다.</p>
-          </div>
-        </article>
+      <div class="body">
+        <div class="video-grid" id="videoGrid">
+          <!-- 메인 2개는 예시: 필요하면 전총재님 영상으로 교체 -->
+          <article class="video-card">
+            <div class="video-embed">
+              <iframe src="https://www.youtube.com/embed/aHZSZ1YHIAY" title="계명태권도 대표 영상" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="video-body">
+              <b>계명태권도 대표 영상</b>
+              <p>수련 분위기와 핵심 포인트를 한 번에 보여주는 소개 영상(예시)입니다.</p>
+            </div>
+          </article>
 
-        <article class="video-card">
-          <div class="video-embed">
-            <iframe src="https://www.youtube.com/embed/aHZSZ1YHIAY" title="계명태권도 영상 2" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          <article class="video-card">
+            <div class="video-embed">
+              <iframe src="https://www.youtube.com/embed/aHZSZ1YHIAY" title="계명태권도 하이라이트" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <div class="video-body">
+              <b>수련/심사 하이라이트</b>
+              <p>아이들의 성장 기록을 담은 하이라이트 영상(예시)입니다.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="moreRow">
+          <button class="btn gold" id="btnMoreVideos" type="button">📺 영상 더보기</button>
+          <button class="btn" id="btnHideVideos" type="button" style="display:none">접기</button>
+          <button class="btn" id="btnOpenPlaylist" type="button">▶ 플레이리스트 새창</button>
+        </div>
+
+        <div id="playlistBox" style="display:none; margin-top:12px; border:1px solid var(--line); border-radius:18px; overflow:hidden; background:rgba(0,0,0,.18)">
+          <div style="padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.10); display:flex; align-items:center; justify-content:space-between; gap:10px">
+            <div style="min-width:0">
+              <b style="display:block; font-size:14px">계명태권도 플레이리스트</b>
+              <small style="color:var(--muted)">자동 로드 · 모바일 반응형</small>
+            </div>
+            <button class="btn" id="btnCopyPlaylist" type="button">🔗 플레이리스트 링크 복사</button>
           </div>
-          <div class="video-body">
-            <b>수련/심사 하이라이트</b>
-            <p>아이들의 성장 기록을 담은 하이라이트 영상(예시)입니다.</p>
+          <div style="position:relative; width:100%; aspect-ratio:16/9; background:#000">
+            <iframe id="playlistFrame" src="" title="계명태권도 플레이리스트" style="position:absolute; inset:0; width:100%; height:100%; border:0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
-        </article>
+        </div>
+
+        <div class="note">
+          <b style="color:rgba(255,255,255,.86)">사진 추가 방법(초간단)</b><br/>
+          아래 코드의 <b>PHOTO_URLS 배열</b>에 Wix 이미지 링크를 한 줄 추가하면 끝입니다.<br/>
+          예) <code>"https://static.wixstatic.com/media/....jpg",</code><br/><br/>
+          <b>대표 사진(커버)</b>은 배열의 1번째(0번)로 자동 지정됩니다. 대표로 쓰고 싶은 사진을 맨 위로 올리면 됩니다.
+        </div>
       </div>
     </section>
-
-    <div class="footer">
-      <b style="color:rgba(255,255,255,.85)">운영 팁</b><br/>
-      ① 사진은 Wix에 사이즈 상관없이 업로드 → 링크만 추가하면 됩니다. <br/>
-      ② 이 페이지는 자동으로 같은 크기(카드형)로 맞춰 보여줍니다. <br/>
-      ③ 영상은 유튜브 링크만 바꾸면 자동 반응형으로 적용됩니다.
-    </div>
 
   </main>
 
@@ -521,15 +627,17 @@
       </div>
       <div class="lb-body">
         <img class="lb-img" id="lbImg" src="" alt="확대 이미지" />
-        <div class="navbtn prev" id="lbPrev" aria-label="이전">‹</div>
-        <div class="navbtn next" id="lbNext" aria-label="다음">›</div>
       </div>
     </div>
   </div>
 
+  <div id="toast">복사 완료</div>
+
   <script>
     /* ===============================
-      ✅ 1) 전총재님이 주신 Wix 링크들
+      ✅ [CHANGE ZONE] 1) 사진 추가/관리: 여기만 수정하면 끝!
+      - Wix 링크를 아래 배열에 추가하세요.
+      - 대표 사진(커버)은 0번째(맨 위) 사진이 자동 적용됩니다.
     =============================== */
     const PHOTO_URLS = [
       "https://static.wixstatic.com/media/abf917_38e0bc3b3d804b3caa6aa8363163950d~mv2.jpg",
@@ -565,154 +673,307 @@
     ];
 
     /* ===============================
-      ✅ 2) 사진에 “카테고리/제목” 붙일 수 있게 구조화
-      (지금은 자동 제목, 카테고리는 임시 분배)
-      원하시면 전총재님이 "이건 심사/이건 행사"처럼 표시해주시면
-      제가 정확히 태그 붙여드릴게요.
+      ✅ [CHANGE ZONE] 2) 유튜브 플레이리스트 설정
+      - 아래 PLAYLIST_ID만 바꾸면 “영상 더보기”가 자동으로 바뀝니다.
+      - 전총재님 채널 플레이리스트 ID를 알려주시면 제가 정확히 넣어드릴게요.
+    =============================== */
+    const PLAYLIST_ID = "PL9tY0BWXOZ2EXAMPLE_REPLACE_ME"; // ★ 교체 필요
+    const PLAYLIST_URL = `https://www.youtube.com/playlist?list=${PLAYLIST_ID}`;
+    const PLAYLIST_EMBED = `https://www.youtube.com/embed/videoseries?list=${PLAYLIST_ID}`;
+
+    /* ===============================
+      ✅ 0) 공통 데이터 만들기
     =============================== */
     function autoCategory(i){
-      // 임시 분배: 0~9 수련 / 10~19 심사 / 20~29 행사
-      if(i < 10) return "class";
-      if(i < 20) return "exam";
-      return "event";
+      // 임시 분배: 0~9 수련 / 10~19 심사 / 20~ 행사
+      if(i < 10) return "수련";
+      if(i < 20) return "심사";
+      return "행사";
     }
     const ITEMS = PHOTO_URLS.map((url, i) => ({
       id: i+1,
       url,
-      cat: autoCategory(i),
-      title: `계명태권도 기록 #${String(i+1).padStart(2,'0')}`,
-      sub: (autoCategory(i)==="class") ? "수련" : (autoCategory(i)==="exam" ? "심사" : "행사")
+      sub: autoCategory(i),
+      title: `계명태권도 기록 #${String(i+1).padStart(2,'0')}`
     }));
 
     /* ===============================
-      ✅ 3) Render
+      ✅ Toast
     =============================== */
-    const grid = document.getElementById("grid");
-    const countPhotos = document.getElementById("countPhotos");
-    const countFiltered = document.getElementById("countFiltered");
-
-    const q = document.getElementById("q");
-    const clearQ = document.getElementById("clearQ");
-    const tabs = [...document.querySelectorAll(".tab")];
-
-    let activeFilter = "all";
-    let view = [...ITEMS];
-
-    function render(){
-      const query = (q.value || "").trim().toLowerCase();
-      view = ITEMS.filter(it => {
-        const passFilter = (activeFilter === "all") ? true : it.cat === activeFilter;
-        const passQuery = query
-          ? (it.title.toLowerCase().includes(query) || it.sub.toLowerCase().includes(query))
-          : true;
-        return passFilter && passQuery;
-      });
-
-      grid.innerHTML = view.map((it, idx) => `
-        <div class="card" data-idx="${idx}" title="클릭하여 확대보기">
-          <img class="thumb" loading="lazy" src="${it.url}" alt="${it.title}">
-          <div class="overlay">
-            <div class="meta">
-              <b>${it.title}</b>
-              <small>${it.sub}</small>
-            </div>
-            <span class="badge">${it.sub}</span>
-          </div>
-        </div>
-      `).join("");
-
-      countPhotos.textContent = `${ITEMS.length} 장`;
-      countFiltered.textContent = `${view.length} 장`;
-
-      // click bind
-      [...grid.querySelectorAll(".card")].forEach(el=>{
-        el.addEventListener("click", () => openLightbox(Number(el.dataset.idx)));
-      });
+    let toastTimer;
+    const toastEl = document.getElementById("toast");
+    function toast(msg){
+      toastEl.textContent = msg;
+      toastEl.style.opacity = "1";
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>{ toastEl.style.opacity="0"; }, 1500);
+    }
+    async function copyText(t){
+      try{ await navigator.clipboard.writeText(t); toast("복사 완료 ✅"); }
+      catch(e){ toast("복사 실패 😅 주소창에서 복사해주세요."); }
     }
 
-    tabs.forEach(t=>{
-      t.addEventListener("click", ()=>{
-        tabs.forEach(x=>x.classList.remove("active"));
-        t.classList.add("active");
-        activeFilter = t.dataset.filter;
-        render();
-      });
-    });
-
-    q.addEventListener("input", render);
-    clearQ.addEventListener("click", ()=>{ q.value=""; q.focus(); render(); });
-
-    document.getElementById("btnShuffle").addEventListener("click", ()=>{
-      // Fisher-Yates shuffle on a copy of ITEMS
-      const shuffled = [...ITEMS];
-      for(let i=shuffled.length-1; i>0; i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      // Replace ITEMS order visually by rendering from shuffled snapshot
-      const query = (q.value || "").trim().toLowerCase();
-      const filtered = shuffled.filter(it => {
-        const passFilter = (activeFilter === "all") ? true : it.cat === activeFilter;
-        const passQuery = query ? (it.title.toLowerCase().includes(query) || it.sub.toLowerCase().includes(query)) : true;
-        return passFilter && passQuery;
-      });
-      view = filtered;
-      grid.innerHTML = view.map((it, idx) => `
-        <div class="card" data-idx="${idx}" title="클릭하여 확대보기">
-          <img class="thumb" loading="lazy" src="${it.url}" alt="${it.title}">
-          <div class="overlay">
-            <div class="meta">
-              <b>${it.title}</b>
-              <small>${it.sub}</small>
-            </div>
-            <span class="badge">${it.sub}</span>
-          </div>
-        </div>
-      `).join("");
-      countFiltered.textContent = `${view.length} 장`;
-      [...grid.querySelectorAll(".card")].forEach(el=>{
-        el.addEventListener("click", () => openLightbox(Number(el.dataset.idx)));
-      });
-      window.scrollTo({top: grid.offsetTop - 80, behavior:"smooth"});
-    });
-
-    document.getElementById("btnCopyPage").addEventListener("click", async ()=>{
-      try{
-        await navigator.clipboard.writeText(location.href);
-        toast("페이지 링크를 복사했습니다 ✅");
-      }catch(e){
-        toast("복사 실패 😅 주소창에서 복사해주세요.");
-      }
-    });
-
+    /* ===============================
+      ✅ 1) Top buttons
+    =============================== */
     document.getElementById("btnScrollTop").addEventListener("click", ()=>{
       window.scrollTo({top:0, behavior:"smooth"});
     });
 
     /* ===============================
-      ✅ 4) Lightbox
+      ✅ 2) Cover + thumbs
+    =============================== */
+    const coverImg = document.getElementById("coverImg");
+    const coverTitle = document.getElementById("coverTitle");
+    const coverSub = document.getElementById("coverSub");
+    const thumbs = document.getElementById("thumbs");
+    const thumbCount = document.getElementById("thumbCount");
+    const btnCoverPrev = document.getElementById("btnCoverPrev");
+    const btnCoverNext = document.getElementById("btnCoverNext");
+    const btnOpenCover = document.getElementById("btnOpenCover");
+    const btnCopyCover = document.getElementById("btnCopyCover");
+    const btnShuffleThumbs = document.getElementById("btnShuffleThumbs");
+
+    let coverIndex = 0;
+
+    function setCover(idx){
+      coverIndex = (idx + ITEMS.length) % ITEMS.length;
+      const it = ITEMS[coverIndex];
+      coverImg.src = it.url;
+      coverTitle.textContent = it.title;
+      coverSub.textContent = `카테고리: ${it.sub} · ${coverIndex+1}/${ITEMS.length}`;
+
+      [...thumbs.querySelectorAll(".titem")].forEach((el,i)=>{
+        el.classList.toggle("active", i === coverIndex);
+      });
+    }
+
+    function renderThumbs(){
+      thumbs.innerHTML = ITEMS.map((it, i)=>`
+        <div class="titem ${i===0?'active':''}" data-i="${i}" title="썸네일 클릭">
+          <img loading="lazy" src="${it.url}" alt="${it.title}">
+        </div>
+      `).join("");
+      thumbCount.textContent = String(ITEMS.length);
+
+      [...thumbs.querySelectorAll(".titem")].forEach(el=>{
+        el.addEventListener("click", ()=> setCover(Number(el.dataset.i)));
+      });
+    }
+
+    btnCoverPrev.addEventListener("click", ()=> setCover(coverIndex-1));
+    btnCoverNext.addEventListener("click", ()=> setCover(coverIndex+1));
+    btnOpenCover.addEventListener("click", ()=> openLightboxByUrl(ITEMS[coverIndex].url, ITEMS[coverIndex].title, `대표 사진 · ${ITEMS[coverIndex].sub}`));
+    btnCopyCover.addEventListener("click", ()=> copyText(ITEMS[coverIndex].url));
+
+    btnShuffleThumbs.addEventListener("click", ()=>{
+      // shuffle ITEMS order (copy)
+      const shuffled = [...ITEMS];
+      for(let i=shuffled.length-1; i>0; i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      // apply shuffled to PHOTO_URLS via rebuild approach (visual only)
+      // easiest: re-render thumbs from shuffled list and set cover to first
+      thumbs.innerHTML = shuffled.map((it, i)=>`
+        <div class="titem ${i===0?'active':''}" data-i="${i}">
+          <img loading="lazy" src="${it.url}" alt="${it.title}">
+        </div>
+      `).join("");
+      thumbCount.textContent = String(shuffled.length);
+      coverIndex = 0;
+      coverImg.src = shuffled[0].url;
+      coverTitle.textContent = shuffled[0].title;
+      coverSub.textContent = `카테고리: ${shuffled[0].sub} · 1/${shuffled.length}`;
+
+      // click: set cover based on shuffled
+      [...thumbs.querySelectorAll(".titem")].forEach(el=>{
+        el.addEventListener("click", ()=>{
+          const i = Number(el.dataset.i);
+          coverIndex = i;
+          coverImg.src = shuffled[i].url;
+          coverTitle.textContent = shuffled[i].title;
+          coverSub.textContent = `카테고리: ${shuffled[i].sub} · ${i+1}/${shuffled.length}`;
+          [...thumbs.querySelectorAll(".titem")].forEach((x,idx)=>x.classList.toggle("active", idx===i));
+        });
+      });
+
+      // also update open/copy buttons to use current shuffled item
+      btnOpenCover.onclick = ()=> openLightboxByUrl(shuffled[coverIndex].url, shuffled[coverIndex].title, `대표 사진 · ${shuffled[coverIndex].sub}`);
+      btnCopyCover.onclick = ()=> copyText(shuffled[coverIndex].url);
+
+      toast("썸네일을 섞었습니다 🎲");
+    });
+
+    /* ===============================
+      ✅ 3) Slideshow
+    =============================== */
+    const slideTitle = document.getElementById("slideTitle");
+    const slideSub = document.getElementById("slideSub");
+    const imgA = document.getElementById("slideImgA");
+    const imgB = document.getElementById("slideImgB");
+    const btnPrev = document.getElementById("btnPrev");
+    const btnNext = document.getElementById("btnNext");
+    const btnPlay = document.getElementById("btnPlay");
+    const btnPause = document.getElementById("btnPause");
+    const btnSpeed = document.getElementById("btnSpeed");
+    const btnOpenSlide = document.getElementById("btnOpenSlide");
+    const btnCopySlide = document.getElementById("btnCopySlide");
+    const navPrev = document.getElementById("navPrev");
+    const navNext = document.getElementById("navNext");
+
+    let slideIndex = 0;
+    let showingA = true;
+    let timer = null;
+    const speeds = [3000, 4000, 6000, 8000];
+    let speedIdx = 1;
+
+    function setSlide(idx){
+      slideIndex = (idx + ITEMS.length) % ITEMS.length;
+      const it = ITEMS[slideIndex];
+
+      slideTitle.textContent = it.title;
+      slideSub.textContent = `카테고리: ${it.sub} · ${slideIndex+1}/${ITEMS.length}`;
+
+      const target = showingA ? imgA : imgB;
+      const other  = showingA ? imgB : imgA;
+
+      target.src = it.url;
+      target.classList.add("show");
+      other.classList.remove("show");
+
+      showingA = !showingA;
+    }
+
+    function play(){
+      if(timer) return;
+      timer = setInterval(()=> setSlide(slideIndex+1), speeds[speedIdx]);
+      toast("자동재생 시작 ▶");
+    }
+    function pause(){
+      clearInterval(timer);
+      timer = null;
+      toast("자동재생 정지 ⏸");
+    }
+    function toggleSpeed(){
+      speedIdx = (speedIdx + 1) % speeds.length;
+      const label = `${Math.round(speeds[speedIdx]/1000)}초`;
+      btnSpeed.textContent = `⏱ ${label}`;
+      if(timer){ pause(); play(); }
+      toast(`재생 속도: ${label}`);
+    }
+
+    btnPrev.addEventListener("click", ()=> setSlide(slideIndex-1));
+    btnNext.addEventListener("click", ()=> setSlide(slideIndex+1));
+    navPrev.addEventListener("click", ()=> setSlide(slideIndex-1));
+    navNext.addEventListener("click", ()=> setSlide(slideIndex+1));
+    btnPlay.addEventListener("click", play);
+    btnPause.addEventListener("click", pause);
+    btnSpeed.addEventListener("click", toggleSpeed);
+    btnOpenSlide.addEventListener("click", ()=> openLightboxByUrl(ITEMS[slideIndex].url, ITEMS[slideIndex].title, `슬라이드 쇼 · ${ITEMS[slideIndex].sub}`));
+    btnCopySlide.addEventListener("click", ()=> copyText(ITEMS[slideIndex].url));
+
+    /* ===============================
+      ✅ 4) Grid gallery
+    =============================== */
+    const grid = document.getElementById("grid");
+    const btnCopyPage = document.getElementById("btnCopyPage");
+    const btnShuffleGrid = document.getElementById("btnShuffleGrid");
+
+    function renderGrid(list){
+      grid.innerHTML = list.map((it)=>`
+        <div class="gcard" data-url="${it.url}" data-title="${it.title}" data-sub="${it.sub}">
+          <img loading="lazy" src="${it.url}" alt="${it.title}">
+          <div class="overlay">
+            <div class="meta">
+              <b>${it.title}</b>
+              <small>${it.sub}</small>
+            </div>
+            <span class="badge">${it.sub}</span>
+          </div>
+        </div>
+      `).join("");
+
+      [...grid.querySelectorAll(".gcard")].forEach(el=>{
+        el.addEventListener("click", ()=>{
+          openLightboxByUrl(el.dataset.url, el.dataset.title, el.dataset.sub);
+        });
+      });
+    }
+
+    btnCopyPage.addEventListener("click", ()=> copyText(location.href));
+    btnShuffleGrid.addEventListener("click", ()=>{
+      const shuffled = [...ITEMS];
+      for(let i=shuffled.length-1; i>0; i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      renderGrid(shuffled);
+      toast("갤러리를 랜덤으로 섞었습니다 🎲");
+    });
+
+    /* ===============================
+      ✅ 5) Videos - playlist more
+    =============================== */
+    const btnMoreVideos = document.getElementById("btnMoreVideos");
+    const btnHideVideos = document.getElementById("btnHideVideos");
+    const btnOpenPlaylist = document.getElementById("btnOpenPlaylist");
+    const btnCopyPlaylist = document.getElementById("btnCopyPlaylist");
+    const playlistBox = document.getElementById("playlistBox");
+    const playlistFrame = document.getElementById("playlistFrame");
+
+    btnMoreVideos.addEventListener("click", ()=>{
+      if(PLAYLIST_ID.includes("REPLACE_ME")){
+        toast("플레이리스트 ID를 먼저 넣어주세요 😅");
+        playlistBox.style.display = "block";
+        playlistFrame.src = "about:blank";
+        return;
+      }
+      playlistBox.style.display = "block";
+      playlistFrame.src = PLAYLIST_EMBED + "&rel=0";
+      btnHideVideos.style.display = "inline-flex";
+      toast("플레이리스트를 불러왔습니다 ✅");
+      playlistBox.scrollIntoView({behavior:"smooth", block:"start"});
+    });
+    btnHideVideos.addEventListener("click", ()=>{
+      playlistBox.style.display = "none";
+      playlistFrame.src = "about:blank";
+      btnHideVideos.style.display = "none";
+      toast("접었습니다 ✅");
+    });
+    btnOpenPlaylist.addEventListener("click", ()=>{
+      if(PLAYLIST_ID.includes("REPLACE_ME")){
+        toast("플레이리스트 ID를 먼저 넣어주세요 😅");
+        return;
+      }
+      window.open(PLAYLIST_URL, "_blank", "noopener");
+    });
+    btnCopyPlaylist.addEventListener("click", ()=>{
+      if(PLAYLIST_ID.includes("REPLACE_ME")){
+        toast("플레이리스트 ID를 먼저 넣어주세요 😅");
+        return;
+      }
+      copyText(PLAYLIST_URL);
+    });
+
+    /* ===============================
+      ✅ 6) Lightbox
     =============================== */
     const lb = document.getElementById("lb");
     const lbImg = document.getElementById("lbImg");
     const lbTitle = document.getElementById("lbTitle");
     const lbSub = document.getElementById("lbSub");
     const lbClose = document.getElementById("lbClose");
-    const lbPrev = document.getElementById("lbPrev");
-    const lbNext = document.getElementById("lbNext");
     const lbCopy = document.getElementById("lbCopy");
     const lbDownload = document.getElementById("lbDownload");
 
-    let lbIndex = 0;
-
-    function openLightbox(idx){
-      lbIndex = idx;
-      const it = view[lbIndex];
-      if(!it) return;
-
-      lbImg.src = it.url;
-      lbTitle.textContent = it.title;
-      lbSub.textContent = `카테고리: ${it.sub} · ${lbIndex+1}/${view.length}`;
-      lbDownload.href = it.url;
+    let lbUrl = "";
+    function openLightboxByUrl(url, title, sub){
+      lbUrl = url;
+      lbImg.src = url;
+      lbTitle.textContent = title || "사진";
+      lbSub.textContent = sub || "계명태권도 갤러리";
+      lbDownload.href = url;
 
       lb.classList.add("show");
       lb.setAttribute("aria-hidden","false");
@@ -723,75 +984,34 @@
       lb.setAttribute("aria-hidden","true");
       document.body.style.overflow="";
       lbImg.src = "";
+      lbUrl = "";
     }
-    function prev(){
-      if(view.length === 0) return;
-      lbIndex = (lbIndex - 1 + view.length) % view.length;
-      openLightbox(lbIndex);
-    }
-    function next(){
-      if(view.length === 0) return;
-      lbIndex = (lbIndex + 1) % view.length;
-      openLightbox(lbIndex);
-    }
-
     lbClose.addEventListener("click", closeLightbox);
-    lbPrev.addEventListener("click", prev);
-    lbNext.addEventListener("click", next);
-
-    lb.addEventListener("click", (e)=>{
-      if(e.target === lb) closeLightbox();
-    });
-
+    lb.addEventListener("click", (e)=>{ if(e.target === lb) closeLightbox(); });
     window.addEventListener("keydown", (e)=>{
       if(!lb.classList.contains("show")) return;
       if(e.key === "Escape") closeLightbox();
-      if(e.key === "ArrowLeft") prev();
-      if(e.key === "ArrowRight") next();
     });
-
-    lbCopy.addEventListener("click", async ()=>{
-      try{
-        const it = view[lbIndex];
-        await navigator.clipboard.writeText(it.url);
-        toast("이미지 링크를 복사했습니다 ✅");
-      }catch(e){
-        toast("복사 실패 😅");
-      }
-    });
+    lbCopy.addEventListener("click", ()=> copyText(lbUrl));
 
     /* ===============================
-      ✅ 5) Tiny toast
+      ✅ INIT
     =============================== */
-    let toastTimer;
-    function toast(msg){
-      let el = document.getElementById("toast");
-      if(!el){
-        el = document.createElement("div");
-        el.id = "toast";
-        el.style.position = "fixed";
-        el.style.left = "50%";
-        el.style.bottom = "18px";
-        el.style.transform = "translateX(-50%)";
-        el.style.padding = "10px 12px";
-        el.style.borderRadius = "14px";
-        el.style.border = "1px solid rgba(255,255,255,.14)";
-        el.style.background = "rgba(15,22,42,.88)";
-        el.style.backdropFilter = "blur(10px)";
-        el.style.color = "rgba(255,255,255,.92)";
-        el.style.fontWeight = "750";
-        el.style.boxShadow = "0 18px 60px rgba(0,0,0,.45)";
-        el.style.zIndex = "10000";
-        document.body.appendChild(el);
-      }
-      el.textContent = msg;
-      el.style.opacity = "1";
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=>{ el.style.opacity="0"; }, 1500);
-    }
+    renderThumbs();
+    setCover(0);
 
-    // init
-    render();
+    // slideshow init
+    imgA.src = ITEMS[0].url;
+    imgA.classList.add("show");
+    slideTitle.textContent = ITEMS[0].title;
+    slideSub.textContent = `카테고리: ${ITEMS[0].sub} · 1/${ITEMS.length}`;
+    btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
+
+    // grid init
+    renderGrid(ITEMS);
+
+    // autoplay on load? (원하면 켜세요)
+    // play();
   </script>
 </body>
 </html>
