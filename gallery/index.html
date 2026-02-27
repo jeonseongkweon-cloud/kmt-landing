@@ -16,8 +16,6 @@
   <style>
     :root{
       --bg:#0b0f19;
-      --panel:#0f162a;
-      --panel2:#0c1326;
       --line:rgba(255,255,255,.10);
       --text:rgba(255,255,255,.92);
       --muted:rgba(255,255,255,.68);
@@ -79,7 +77,7 @@
       background: linear-gradient(180deg, rgba(215,181,109,.18), rgba(255,255,255,.03));
     }
 
-    /* Cards */
+    /* Section Cards */
     .cardBox{
       margin-top:18px;
       border:1px solid var(--line);
@@ -97,7 +95,7 @@
     .cardBox .head p{margin:0; color:var(--muted); font-size:13px; line-height:1.55}
     .cardBox .body{padding:14px 14px 16px}
 
-    /* HERO COVER + THUMBS */
+    /* COVER + THUMBS */
     .cover{
       display:grid;
       grid-template-columns: 1.2fr .8fr;
@@ -120,28 +118,9 @@
       filter: contrast(1.02) saturate(1.03);
       transform: scale(1.01);
     }
-    .coverMain .cap{
-      position:absolute; left:0; right:0; bottom:0;
-      padding:14px 14px 12px;
-      background: linear-gradient(180deg, transparent, rgba(0,0,0,.72));
-      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
-    }
-    .cap .txt{min-width:0}
-    .cap .txt b{
-      display:block;
-      font-size:15px;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .cap .txt small{color:rgba(255,255,255,.72)}
-    .cap .pill{
-      padding:8px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(215,181,109,.40);
-      background: rgba(215,181,109,.12);
-      font-weight:800;
-      font-size:12px;
-      flex:0 0 auto;
-    }
+    /* ✅ 대표사진 “설명/문구” 완전 비표시 */
+    .coverMain .cap{display:none !important;}
+
     .thumbRail{
       border:1px solid var(--line);
       border-radius: 18px;
@@ -247,7 +226,7 @@
     .navBtn.prev{left:10px}
     .navBtn.next{right:10px}
 
-    /* Gallery Grid (below) */
+    /* Gallery Grid */
     .grid{
       margin-top:12px;
       display:grid;
@@ -340,16 +319,6 @@
       margin-top:12px;
       display:flex; gap:10px; flex-wrap:wrap;
     }
-    .note{
-      color:var(--muted);
-      font-size:12.8px;
-      line-height:1.6;
-      margin-top:10px;
-      padding:12px;
-      border:1px solid var(--line);
-      border-radius: var(--r);
-      background: rgba(0,0,0,.14);
-    }
 
     /* Lightbox */
     .lb{
@@ -439,7 +408,7 @@
     <div class="inner">
       <div class="brand">
         <b>계명태권도</b>
-        <small>Gallery & Video (Premium)</small>
+        <small>Gallery & Video</small>
       </div>
       <div class="spacer"></div>
       <a class="btn gold" href="../index.html">🏠 홈으로</a>
@@ -454,12 +423,12 @@
       <div class="head">
         <div>
           <h2>대표 사진</h2>
-          <p>대표 1장 크게 보여주고, 아래 썸네일로 빠르게 이동합니다. (사진 크기 상관없이 자동 맞춤)</p>
+          <p>대표 1장 크게 + 썸네일 선택. (대표 사진 위 설명/문구는 표시되지 않습니다)</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap">
           <button class="btn" id="btnCoverPrev" type="button">‹ 이전</button>
           <button class="btn" id="btnCoverNext" type="button">다음 ›</button>
-          <button class="btn" id="btnOpenCover" type="button">🔍 확대보기</button>
+          <button class="btn" id="btnOpenCover" type="button">🔍 확대</button>
         </div>
       </div>
 
@@ -483,7 +452,7 @@
             </div>
             <div class="thumbs" id="thumbs"></div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:2px">
-              <button class="btn" id="btnCopyCover" type="button">🔗 대표사진 링크 복사</button>
+              <button class="btn" id="btnCopyCover" type="button">🔗 링크복사</button>
               <button class="btn" id="btnShuffleThumbs" type="button">🎲 섞기</button>
             </div>
           </aside>
@@ -496,7 +465,7 @@
       <div class="head">
         <div>
           <h2>갤러리 슬라이드 쇼</h2>
-          <p>자동 재생(기본 4초). 손님이 “멍~” 하니 보고 가게 만드는 마법 구간입니다.</p>
+          <p>자동 재생(기본 4초) · 일시정지/이전/다음/속도 조절</p>
         </div>
         <div class="controls">
           <button class="btn" id="btnPrev" type="button">⟵</button>
@@ -504,7 +473,7 @@
           <button class="btn" id="btnPause" type="button">⏸ 정지</button>
           <button class="btn" id="btnNext" type="button">⟶</button>
           <button class="btn" id="btnSpeed" type="button">⏱ 4초</button>
-          <button class="btn" id="btnOpenSlide" type="button">🔍 확대보기</button>
+          <button class="btn" id="btnOpenSlide" type="button">🔍 확대</button>
         </div>
       </div>
 
@@ -516,7 +485,7 @@
               <small id="slideSub">—</small>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap">
-              <button class="btn" id="btnCopySlide" type="button">🔗 현재 슬라이드 링크 복사</button>
+              <button class="btn" id="btnCopySlide" type="button">🔗 링크복사</button>
             </div>
           </div>
           <div class="slideBox" id="slideBox">
@@ -534,7 +503,7 @@
       <div class="head">
         <div>
           <h2>전체 갤러리</h2>
-          <p>사진 사이즈가 달라도 카드형으로 자동 통일됩니다.</p>
+          <p>사진 크기 상관없이 카드형으로 자동 통일됩니다.</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap">
           <button class="btn" id="btnCopyPage" type="button">🔗 페이지 링크 복사</button>
@@ -552,59 +521,16 @@
       <div class="head">
         <div>
           <h2>영상</h2>
-          <p>아래 “영상 더보기”는 <b>플레이리스트를 자동 임베드</b>합니다. (API 필요 없음)</p>
+          <p>전총재님이 주신 4개 영상으로 재설정 완료 ✅</p>
         </div>
       </div>
 
       <div class="body">
-        <div class="video-grid" id="videoGrid">
-          <!-- 메인 2개는 예시: 필요하면 전총재님 영상으로 교체 -->
-          <article class="video-card">
-            <div class="video-embed">
-              <iframe src="https://www.youtube.com/embed/aHZSZ1YHIAY" title="계명태권도 대표 영상" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            <div class="video-body">
-              <b>계명태권도 대표 영상</b>
-              <p>수련 분위기와 핵심 포인트를 한 번에 보여주는 소개 영상(예시)입니다.</p>
-            </div>
-          </article>
-
-          <article class="video-card">
-            <div class="video-embed">
-              <iframe src="https://www.youtube.com/embed/aHZSZ1YHIAY" title="계명태권도 하이라이트" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            <div class="video-body">
-              <b>수련/심사 하이라이트</b>
-              <p>아이들의 성장 기록을 담은 하이라이트 영상(예시)입니다.</p>
-            </div>
-          </article>
-        </div>
+        <div class="video-grid" id="videoGrid"></div>
 
         <div class="moreRow">
-          <button class="btn gold" id="btnMoreVideos" type="button">📺 영상 더보기</button>
-          <button class="btn" id="btnHideVideos" type="button" style="display:none">접기</button>
-          <button class="btn" id="btnOpenPlaylist" type="button">▶ 플레이리스트 새창</button>
-        </div>
-
-        <div id="playlistBox" style="display:none; margin-top:12px; border:1px solid var(--line); border-radius:18px; overflow:hidden; background:rgba(0,0,0,.18)">
-          <div style="padding:10px 12px; border-bottom:1px solid rgba(255,255,255,.10); display:flex; align-items:center; justify-content:space-between; gap:10px">
-            <div style="min-width:0">
-              <b style="display:block; font-size:14px">계명태권도 플레이리스트</b>
-              <small style="color:var(--muted)">자동 로드 · 모바일 반응형</small>
-            </div>
-            <button class="btn" id="btnCopyPlaylist" type="button">🔗 플레이리스트 링크 복사</button>
-          </div>
-          <div style="position:relative; width:100%; aspect-ratio:16/9; background:#000">
-            <iframe id="playlistFrame" src="" title="계명태권도 플레이리스트" style="position:absolute; inset:0; width:100%; height:100%; border:0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
-        </div>
-
-        <div class="note">
-          <b style="color:rgba(255,255,255,.86)">사진 추가 방법(초간단)</b><br/>
-          아래 코드의 <b>PHOTO_URLS 배열</b>에 Wix 이미지 링크를 한 줄 추가하면 끝입니다.<br/>
-          예) <code>"https://static.wixstatic.com/media/....jpg",</code><br/><br/>
-          <b>대표 사진(커버)</b>은 배열의 1번째(0번)로 자동 지정됩니다. 대표로 쓰고 싶은 사진을 맨 위로 올리면 됩니다.
+          <button class="btn gold" id="btnMoreVideos" type="button">📺 영상 더보기(채널)</button>
+          <button class="btn" id="btnCopyChannel" type="button">🔗 채널 링크 복사</button>
         </div>
       </div>
     </section>
@@ -635,9 +561,7 @@
 
   <script>
     /* ===============================
-      ✅ [CHANGE ZONE] 1) 사진 추가/관리: 여기만 수정하면 끝!
-      - Wix 링크를 아래 배열에 추가하세요.
-      - 대표 사진(커버)은 0번째(맨 위) 사진이 자동 적용됩니다.
+      ✅ 사진 목록 (Wix 링크만 넣으면 자동 정렬)
     =============================== */
     const PHOTO_URLS = [
       "https://static.wixstatic.com/media/abf917_38e0bc3b3d804b3caa6aa8363163950d~mv2.jpg",
@@ -669,48 +593,50 @@
       "https://static.wixstatic.com/media/abf917_e4bebbb49dd74e0ab31456847d2a7d7e~mv2.jpg",
       "https://static.wixstatic.com/media/abf917_835bfff455f34d148c2fe1ce8ef52f83~mv2.jpg",
       "https://static.wixstatic.com/media/abf917_0cb4ed6dc39146b9ac2e0228fc5fe88d~mv2.jpg",
-        "https://static.wixstatic.com/media/abf917_e7290c711ce34aa0bfca02dbfcca38c7~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_6cd28e87e2a54dbbabcb8da80a7a44cc~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_32491e26f36e4132bbdb3328aecb2b57~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_e2f5b672c035423e9056d979c43a9d65~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_65a65d7169154d5d853ab794109ec6c3~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_37ddae6938ca4529b4cfa959fe129fe6~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_d35765d3f0894f999515b014f6294d82~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_d052486b3ffc49ddb1af9ee2c195a0a2~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_dd10b43205644cc281e8f988d2c2167e~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_b73f1b66c05e43c1b26b5c0dd0629cfe~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_3e623ec836b74e0f87c94a1569feea89~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_e8e2e4341d144f10b64dffd279ab9366~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_d7a2df1936ff4519ad0f72a6c55596e8~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_332d067dac7144a79be1f451cf93fe94~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_04fc8aef9eba4f9a88647b3a8ca5fa47~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_a1dda041cd654311a9e5192e078029aa~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_341bf5072ca544199dca607c1ca80fef~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_c2995f2c374b45c28718afd5d919cb88~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_bd581ecf20184c1e9b021ad2952e0684~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_4ae80219dc0a481191a678926255794d~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_c94c7115c70148f5af5cbfcfb632dd61~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_7b3b0abdb74f42f4ac7eab5651501a46~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_97ff96a1b7d04d13b60ccc2f7d94ed23~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_9b5b622b14b84338bf4dbe27b8638103~mv2.jpg",
-  "https://static.wixstatic.com/media/abf917_7eb8f1ca103b4cb58430b11a3c921f65~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_f811763b2f0743c08b1ab73801f181be~mv2.jpg"
+      "https://static.wixstatic.com/media/abf917_f811763b2f0743c08b1ab73801f181be~mv2.jpg",
+
+      /* 추가분 */
+      "https://static.wixstatic.com/media/abf917_e7290c711ce34aa0bfca02dbfcca38c7~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_6cd28e87e2a54dbbabcb8da80a7a44cc~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_32491e26f36e4132bbdb3328aecb2b57~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_e2f5b672c035423e9056d979c43a9d65~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_65a65d7169154d5d853ab794109ec6c3~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_37ddae6938ca4529b4cfa959fe129fe6~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_d35765d3f0894f999515b014f6294d82~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_d052486b3ffc49ddb1af9ee2c195a0a2~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_dd10b43205644cc281e8f988d2c2167e~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_b73f1b66c05e43c1b26b5c0dd0629cfe~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_3e623ec836b74e0f87c94a1569feea89~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_e8e2e4341d144f10b64dffd279ab9366~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_d7a2df1936ff4519ad0f72a6c55596e8~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_332d067dac7144a79be1f451cf93fe94~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_04fc8aef9eba4f9a88647b3a8ca5fa47~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_a1dda041cd654311a9e5192e078029aa~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_341bf5072ca544199dca607c1ca80fef~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_c2995f2c374b45c28718afd5d919cb88~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_bd581ecf20184c1e9b021ad2952e0684~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_4ae80219dc0a481191a678926255794d~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_c94c7115c70148f5af5cbfcfb632dd61~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_7b3b0abdb74f42f4ac7eab5651501a46~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_97ff96a1b7d04d13b60ccc2f7d94ed23~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_9b5b622b14b84338bf4dbe27b8638103~mv2.jpg",
+      "https://static.wixstatic.com/media/abf917_7eb8f1ca103b4cb58430b11a3c921f65~mv2.jpg"
     ];
 
     /* ===============================
-      ✅ [CHANGE ZONE] 2) 유튜브 플레이리스트 설정
-      - 아래 PLAYLIST_ID만 바꾸면 “영상 더보기”가 자동으로 바뀝니다.
-      - 전총재님 채널 플레이리스트 ID를 알려주시면 제가 정확히 넣어드릴게요.
+      ✅ 유튜브 영상 재설정 (전총재님 제공 4개)
     =============================== */
-    const PLAYLIST_ID = "PL9tY0BWXOZ2EXAMPLE_REPLACE_ME"; // ★ 교체 필요
-    const PLAYLIST_URL = `https://www.youtube.com/playlist?list=${PLAYLIST_ID}`;
-    const PLAYLIST_EMBED = `https://www.youtube.com/embed/videoseries?list=${PLAYLIST_ID}`;
+    const VIDEO_LIST = [
+      { id: "D3kDXF-sNJA", title: "계명태권도 영상 1" },
+      { id: "wWIAPVvrnSw", title: "계명태권도 영상 2" },
+      { id: "lUpmY5jfEIc", title: "계명태권도 영상 3" },
+      { id: "YSWIds8fmzE", title: "계명태권도 영상 4" }
+    ];
 
-    /* ===============================
-      ✅ 0) 공통 데이터 만들기
-    =============================== */
+    // 채널(더보기) 링크: 필요 시 수정 가능
+    const CHANNEL_URL = "https://www.youtube.com/@%EA%B3%84%EB%AA%85%ED%83%9C%EA%B6%8C%EB%8F%84%EC%9A%B8%EC%82%B0/videos";
+
     function autoCategory(i){
-      // 임시 분배: 0~9 수련 / 10~19 심사 / 20~ 행사
       if(i < 10) return "수련";
       if(i < 20) return "심사";
       return "행사";
@@ -722,9 +648,7 @@
       title: `계명태권도 기록 #${String(i+1).padStart(2,'0')}`
     }));
 
-    /* ===============================
-      ✅ Toast
-    =============================== */
+    /* Toast */
     let toastTimer;
     const toastEl = document.getElementById("toast");
     function toast(msg){
@@ -738,19 +662,13 @@
       catch(e){ toast("복사 실패 😅 주소창에서 복사해주세요."); }
     }
 
-    /* ===============================
-      ✅ 1) Top buttons
-    =============================== */
+    /* Top */
     document.getElementById("btnScrollTop").addEventListener("click", ()=>{
       window.scrollTo({top:0, behavior:"smooth"});
     });
 
-    /* ===============================
-      ✅ 2) Cover + thumbs
-    =============================== */
+    /* Cover + thumbs */
     const coverImg = document.getElementById("coverImg");
-    const coverTitle = document.getElementById("coverTitle");
-    const coverSub = document.getElementById("coverSub");
     const thumbs = document.getElementById("thumbs");
     const thumbCount = document.getElementById("thumbCount");
     const btnCoverPrev = document.getElementById("btnCoverPrev");
@@ -763,11 +681,7 @@
 
     function setCover(idx){
       coverIndex = (idx + ITEMS.length) % ITEMS.length;
-      const it = ITEMS[coverIndex];
-      coverImg.src = it.url;
-      coverTitle.textContent = it.title;
-      coverSub.textContent = `카테고리: ${it.sub} · ${coverIndex+1}/${ITEMS.length}`;
-
+      coverImg.src = ITEMS[coverIndex].url;
       [...thumbs.querySelectorAll(".titem")].forEach((el,i)=>{
         el.classList.toggle("active", i === coverIndex);
       });
@@ -776,11 +690,10 @@
     function renderThumbs(){
       thumbs.innerHTML = ITEMS.map((it, i)=>`
         <div class="titem ${i===0?'active':''}" data-i="${i}" title="썸네일 클릭">
-          <img loading="lazy" src="${it.url}" alt="${it.title}">
+          <img loading="lazy" src="${it.url}" alt="thumb-${i+1}">
         </div>
       `).join("");
       thumbCount.textContent = String(ITEMS.length);
-
       [...thumbs.querySelectorAll(".titem")].forEach(el=>{
         el.addEventListener("click", ()=> setCover(Number(el.dataset.i)));
       });
@@ -788,51 +701,41 @@
 
     btnCoverPrev.addEventListener("click", ()=> setCover(coverIndex-1));
     btnCoverNext.addEventListener("click", ()=> setCover(coverIndex+1));
-    btnOpenCover.addEventListener("click", ()=> openLightboxByUrl(ITEMS[coverIndex].url, ITEMS[coverIndex].title, `대표 사진 · ${ITEMS[coverIndex].sub}`));
+    btnOpenCover.addEventListener("click", ()=> openLightboxByUrl(ITEMS[coverIndex].url, "대표 사진", ""));
     btnCopyCover.addEventListener("click", ()=> copyText(ITEMS[coverIndex].url));
 
     btnShuffleThumbs.addEventListener("click", ()=>{
-      // shuffle ITEMS order (copy)
       const shuffled = [...ITEMS];
       for(let i=shuffled.length-1; i>0; i--){
         const j = Math.floor(Math.random()*(i+1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
       }
-      // apply shuffled to PHOTO_URLS via rebuild approach (visual only)
-      // easiest: re-render thumbs from shuffled list and set cover to first
       thumbs.innerHTML = shuffled.map((it, i)=>`
         <div class="titem ${i===0?'active':''}" data-i="${i}">
-          <img loading="lazy" src="${it.url}" alt="${it.title}">
+          <img loading="lazy" src="${it.url}" alt="thumb-shuffled-${i+1}">
         </div>
       `).join("");
       thumbCount.textContent = String(shuffled.length);
+
       coverIndex = 0;
       coverImg.src = shuffled[0].url;
-      coverTitle.textContent = shuffled[0].title;
-      coverSub.textContent = `카테고리: ${shuffled[0].sub} · 1/${shuffled.length}`;
 
-      // click: set cover based on shuffled
       [...thumbs.querySelectorAll(".titem")].forEach(el=>{
         el.addEventListener("click", ()=>{
           const i = Number(el.dataset.i);
           coverIndex = i;
           coverImg.src = shuffled[i].url;
-          coverTitle.textContent = shuffled[i].title;
-          coverSub.textContent = `카테고리: ${shuffled[i].sub} · ${i+1}/${shuffled.length}`;
           [...thumbs.querySelectorAll(".titem")].forEach((x,idx)=>x.classList.toggle("active", idx===i));
         });
       });
 
-      // also update open/copy buttons to use current shuffled item
-      btnOpenCover.onclick = ()=> openLightboxByUrl(shuffled[coverIndex].url, shuffled[coverIndex].title, `대표 사진 · ${shuffled[coverIndex].sub}`);
+      btnOpenCover.onclick = ()=> openLightboxByUrl(shuffled[coverIndex].url, "대표 사진", "");
       btnCopyCover.onclick = ()=> copyText(shuffled[coverIndex].url);
 
       toast("썸네일을 섞었습니다 🎲");
     });
 
-    /* ===============================
-      ✅ 3) Slideshow
-    =============================== */
+    /* Slideshow */
     const slideTitle = document.getElementById("slideTitle");
     const slideSub = document.getElementById("slideSub");
     const imgA = document.getElementById("slideImgA");
@@ -858,7 +761,7 @@
       const it = ITEMS[slideIndex];
 
       slideTitle.textContent = it.title;
-      slideSub.textContent = `카테고리: ${it.sub} · ${slideIndex+1}/${ITEMS.length}`;
+      slideSub.textContent = `(${it.sub}) ${slideIndex+1}/${ITEMS.length}`;
 
       const target = showingA ? imgA : imgB;
       const other  = showingA ? imgB : imgA;
@@ -882,10 +785,9 @@
     }
     function toggleSpeed(){
       speedIdx = (speedIdx + 1) % speeds.length;
-      const label = `${Math.round(speeds[speedIdx]/1000)}초`;
-      btnSpeed.textContent = `⏱ ${label}`;
+      btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
       if(timer){ pause(); play(); }
-      toast(`재생 속도: ${label}`);
+      toast(`재생 속도 변경`);
     }
 
     btnPrev.addEventListener("click", ()=> setSlide(slideIndex-1));
@@ -895,12 +797,10 @@
     btnPlay.addEventListener("click", play);
     btnPause.addEventListener("click", pause);
     btnSpeed.addEventListener("click", toggleSpeed);
-    btnOpenSlide.addEventListener("click", ()=> openLightboxByUrl(ITEMS[slideIndex].url, ITEMS[slideIndex].title, `슬라이드 쇼 · ${ITEMS[slideIndex].sub}`));
+    btnOpenSlide.addEventListener("click", ()=> openLightboxByUrl(ITEMS[slideIndex].url, "슬라이드 쇼", ""));
     btnCopySlide.addEventListener("click", ()=> copyText(ITEMS[slideIndex].url));
 
-    /* ===============================
-      ✅ 4) Grid gallery
-    =============================== */
+    /* Grid gallery */
     const grid = document.getElementById("grid");
     const btnCopyPage = document.getElementById("btnCopyPage");
     const btnShuffleGrid = document.getElementById("btnShuffleGrid");
@@ -937,53 +837,34 @@
       toast("갤러리를 랜덤으로 섞었습니다 🎲");
     });
 
-    /* ===============================
-      ✅ 5) Videos - playlist more
-    =============================== */
-    const btnMoreVideos = document.getElementById("btnMoreVideos");
-    const btnHideVideos = document.getElementById("btnHideVideos");
-    const btnOpenPlaylist = document.getElementById("btnOpenPlaylist");
-    const btnCopyPlaylist = document.getElementById("btnCopyPlaylist");
-    const playlistBox = document.getElementById("playlistBox");
-    const playlistFrame = document.getElementById("playlistFrame");
+    /* Videos render */
+    const videoGrid = document.getElementById("videoGrid");
+    function renderVideos(){
+      videoGrid.innerHTML = VIDEO_LIST.map(v => `
+        <article class="video-card">
+          <div class="video-embed">
+            <iframe
+              src="https://www.youtube.com/embed/${v.id}"
+              title="${v.title}"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
+          </div>
+          <div class="video-body">
+            <b>${v.title}</b>
+            <p>계명태권도 공식 채널 영상</p>
+          </div>
+        </article>
+      `).join("");
+    }
 
-    btnMoreVideos.addEventListener("click", ()=>{
-      if(PLAYLIST_ID.includes("REPLACE_ME")){
-        toast("플레이리스트 ID를 먼저 넣어주세요 😅");
-        playlistBox.style.display = "block";
-        playlistFrame.src = "about:blank";
-        return;
-      }
-      playlistBox.style.display = "block";
-      playlistFrame.src = PLAYLIST_EMBED + "&rel=0";
-      btnHideVideos.style.display = "inline-flex";
-      toast("플레이리스트를 불러왔습니다 ✅");
-      playlistBox.scrollIntoView({behavior:"smooth", block:"start"});
+    document.getElementById("btnMoreVideos").addEventListener("click", ()=>{
+      window.open(CHANNEL_URL, "_blank", "noopener");
     });
-    btnHideVideos.addEventListener("click", ()=>{
-      playlistBox.style.display = "none";
-      playlistFrame.src = "about:blank";
-      btnHideVideos.style.display = "none";
-      toast("접었습니다 ✅");
-    });
-    btnOpenPlaylist.addEventListener("click", ()=>{
-      if(PLAYLIST_ID.includes("REPLACE_ME")){
-        toast("플레이리스트 ID를 먼저 넣어주세요 😅");
-        return;
-      }
-      window.open(PLAYLIST_URL, "_blank", "noopener");
-    });
-    btnCopyPlaylist.addEventListener("click", ()=>{
-      if(PLAYLIST_ID.includes("REPLACE_ME")){
-        toast("플레이리스트 ID를 먼저 넣어주세요 😅");
-        return;
-      }
-      copyText(PLAYLIST_URL);
+    document.getElementById("btnCopyChannel").addEventListener("click", ()=>{
+      copyText(CHANNEL_URL);
     });
 
-    /* ===============================
-      ✅ 6) Lightbox
-    =============================== */
+    /* Lightbox */
     const lb = document.getElementById("lb");
     const lbImg = document.getElementById("lbImg");
     const lbTitle = document.getElementById("lbTitle");
@@ -997,7 +878,7 @@
       lbUrl = url;
       lbImg.src = url;
       lbTitle.textContent = title || "사진";
-      lbSub.textContent = sub || "계명태권도 갤러리";
+      lbSub.textContent = sub || "";
       lbDownload.href = url;
 
       lb.classList.add("show");
@@ -1019,23 +900,20 @@
     });
     lbCopy.addEventListener("click", ()=> copyText(lbUrl));
 
-    /* ===============================
-      ✅ INIT
-    =============================== */
+    /* INIT */
     renderThumbs();
     setCover(0);
 
-    // slideshow init
     imgA.src = ITEMS[0].url;
     imgA.classList.add("show");
     slideTitle.textContent = ITEMS[0].title;
-    slideSub.textContent = `카테고리: ${ITEMS[0].sub} · 1/${ITEMS.length}`;
+    slideSub.textContent = `(${ITEMS[0].sub}) 1/${ITEMS.length}`;
     btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
 
-    // grid init
     renderGrid(ITEMS);
+    renderVideos();
 
-    // autoplay on load? (원하면 켜세요)
+    // 원하시면 자동재생 기본 ON:
     // play();
   </script>
 </body>
