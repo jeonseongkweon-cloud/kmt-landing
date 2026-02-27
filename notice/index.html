@@ -6,6 +6,7 @@
   <title>공지사항 | 계명태권도</title>
   <meta name="description" content="계명태권도 공지사항. 공개 안내/행사/운영 공지를 한 곳에서 확인합니다." />
   <meta name="theme-color" content="#0b0f19" />
+
   <style>
     :root{
       --bg:#0b0f19;
@@ -31,7 +32,12 @@
     }
     a{color:inherit;text-decoration:none}
     .wrap{max-width:var(--max); margin:0 auto; padding:18px 16px 36px}
-    .topbar{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0 14px; flex-wrap:wrap;}
+
+    /* Top */
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; padding:8px 0 14px; flex-wrap:wrap;
+    }
     .home{
       display:inline-flex; align-items:center; gap:10px;
       padding:10px 14px;
@@ -41,8 +47,10 @@
       box-shadow: 0 10px 30px rgba(0,0,0,.25);
       transition:.2s ease;
       font-weight:900;
+      white-space:nowrap;
     }
     .home:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.18)}
+
     .search{
       flex:1; min-width:220px;
       display:flex; gap:8px; align-items:center;
@@ -56,8 +64,10 @@
       background:transparent; color:var(--text);
       font-size:14px;
     }
+
     h1{margin:4px 0 6px; font-size:22px; letter-spacing:-.2px;}
     .lead{margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.6;}
+
     .filters{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 12px;}
     .chip{
       padding:8px 10px; border-radius:999px;
@@ -68,7 +78,13 @@
       cursor:pointer;
       user-select:none;
     }
-    .chip.on{border-color: rgba(216,183,102,.35); color:var(--text); background: rgba(216,183,102,.10);}
+    .chip.on{
+      border-color: rgba(216,183,102,.35);
+      color:var(--text);
+      background: rgba(216,183,102,.10);
+    }
+
+    /* Cards */
     .grid{display:grid; grid-template-columns:1fr; gap:10px;}
     @media (min-width:760px){ .grid{grid-template-columns:1fr 1fr;} }
 
@@ -90,17 +106,20 @@
       border:1px solid rgba(255,138,0,.22);
       color: rgba(255,255,255,.92);
       white-space:nowrap;
+      flex:0 0 auto;
     }
     .date{color:var(--muted); font-size:12px; margin-top:2px;}
     .title{font-size:14px; font-weight:950; line-height:1.35; margin-top:6px;}
     .meta{color:var(--muted); font-size:12px; line-height:1.55; margin-top:8px;}
+
     .cardBody{
       padding:0 14px 14px;
       color: rgba(255,255,255,.82);
-      font-size:12px;
-      line-height:1.7;
+      font-size:12.5px;
+      line-height:1.75;
       display:none;
     }
+
     .actions{
       display:flex; gap:8px; flex-wrap:wrap;
       padding:12px 14px 14px;
@@ -114,7 +133,12 @@
       background: rgba(255,255,255,.04);
       font-weight:900;
       font-size:12px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
     }
+
     footer{margin-top:18px; text-align:center; color:rgba(255,255,255,.55); font-size:12px;}
     .empty{
       margin-top:10px;
@@ -124,12 +148,36 @@
       color:var(--muted);
       text-align:center;
     }
+
+    /* Small polish */
+    .hint{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(74,163,255,.20);
+      background: rgba(74,163,255,.08);
+      color: rgba(255,255,255,.78);
+      font-size:12px;
+      line-height:1.6;
+    }
+    code.k{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      color: rgba(233,238,252,.92);
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      padding:2px 6px;
+      border-radius: 10px;
+    }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <div class="topbar">
-      <a class="home" href="../">← 홈으로</a>
+      <!-- ✅ 상단: 홈페이지 바로가기(홈) -->
+      <a class="home" href="../">← 홈페이지 바로가기</a>
+
       <div class="search" title="검색">
         🔎 <input id="q" type="search" placeholder="공지 검색 (예: 입학, 차량, 심사, 행사…)" />
       </div>
@@ -137,6 +185,11 @@
 
     <h1>공지사항</h1>
     <p class="lead">공개 가능한 안내/행사/운영 공지를 모아둡니다. (회원 전용 내용은 밴드에서 운영)</p>
+
+    <div class="hint">
+      ✅ 학부모에게 “딱 한 글” 바로 보여주기 링크 예시: <code class="k">/notice/#2026-02-27</code><br/>
+      (해당 날짜 공지가 자동으로 펼쳐지고 그 위치로 이동합니다)
+    </div>
 
     <div class="filters" id="filters"></div>
     <div class="grid" id="list"></div>
@@ -146,7 +199,9 @@
     <footer>© <span id="y"></span> 계명태권도</footer>
   </div>
 
+  <!-- ✅ 공지 데이터 -->
   <script src="./data.js"></script>
+
   <script>
     const $ = (s)=>document.querySelector(s);
     const listEl = $("#list");
@@ -173,14 +228,18 @@
       });
     }
 
+    // chips
     filtersEl.appendChild(chip("전체"));
     tags.forEach(t=>filtersEl.appendChild(chip(t)));
 
+    function safeText(v){ return (v==null) ? "" : String(v); }
+
     function render(){
       const q = (qEl.value||"").trim().toLowerCase();
+
       const filtered = sorted.filter(n=>{
         const tagOk = (activeTag==="전체") ? true : ((n.tag||"공지").trim()===activeTag);
-        const text = `${n.date||""} ${n.tag||""} ${n.title||""} ${n.meta||""} ${n.content||""}`.toLowerCase();
+        const text = `${safeText(n.date)} ${safeText(n.tag)} ${safeText(n.title)} ${safeText(n.meta)} ${safeText(n.content)}`.toLowerCase();
         const qOk = q ? text.includes(q) : true;
         return tagOk && qOk;
       });
@@ -191,12 +250,13 @@
       filtered.forEach((n, idx)=>{
         const card = document.createElement("div");
         card.className = "card";
-        const tag = (n.tag||"공지");
-        const date = (n.date||"");
-        const title = (n.title||"");
-        const meta = (n.meta||"");
-        const content = (n.content||"");
-        const url = (n.url && String(n.url).trim()) ? n.url : "";
+
+        const tag = safeText(n.tag || "공지");
+        const date = safeText(n.date || "");
+        const title = safeText(n.title || "");
+        const meta = safeText(n.meta || "");
+        const content = safeText(n.content || "");
+        const url = (n.url && String(n.url).trim()) ? String(n.url).trim() : "";
 
         card.innerHTML = `
           <div class="cardHead">
@@ -215,6 +275,7 @@
           <div class="actions">
             <button class="btn" data-toggle="${idx}">내용 보기</button>
             ${url ? `<a class="btn" href="${url}" target="_blank" rel="noopener">관련 링크</a>` : ``}
+            <button class="btn" data-copy="${date}">링크 복사</button>
           </div>
         `;
 
@@ -231,11 +292,48 @@
           btn.textContent = on ? "내용 보기" : "접기";
         });
       });
+
+      // copy link by date
+      listEl.querySelectorAll("[data-copy]").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const date = btn.getAttribute("data-copy");
+          const link = `${location.origin}${location.pathname}#${encodeURIComponent(date)}`;
+          try{
+            await navigator.clipboard.writeText(link);
+            btn.textContent = "복사 완료!";
+            setTimeout(()=>btn.textContent="링크 복사", 1200);
+          }catch(e){
+            // fallback
+            prompt("아래 링크를 복사하세요:", link);
+          }
+        });
+      });
     }
 
     qEl.addEventListener("input", render);
     document.getElementById("y").textContent = new Date().getFullYear();
     render();
+    updateChips();
+
+    // ✅ 해시(#YYYY-MM-DD)로 특정 공지 자동 오픈 + 스크롤 이동
+    (function openByHash(){
+      const hash = decodeURIComponent(location.hash || "").replace("#","").trim();
+      if(!hash) return;
+
+      // date가 hash와 같은 첫 공지를 찾기
+      const cards = document.querySelectorAll(".card");
+      for(const card of cards){
+        const dateEl = card.querySelector(".date");
+        const toggleBtn = card.querySelector("[data-toggle]");
+        if(dateEl && toggleBtn && dateEl.textContent.trim() === hash){
+          // 펼치기
+          toggleBtn.click();
+          // 스크롤 이동
+          card.scrollIntoView({behavior:"smooth", block:"start"});
+          break;
+        }
+      }
+    })();
   </script>
 </body>
 </html>
