@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>신입생 학부모 안내 | 계명태권도</title>
+  <meta name="description" content="2026 신학기 초등 1학년 하교 시간/차량 픽업/방과후·돌봄 관련 안내. 필요한 기관명/연락처 안내 포함." />
+  <meta name="theme-color" content="#0b0f19" />
+
+  <!-- OG -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="신입생 학부모 안내 | 계명태권도" />
+  <meta property="og:description" content="하교 시간 확정(3/3 입학식 이후) · 차량 픽업 · 방과후/돌봄 기관명·연락처 안내" />
+
+  <style>
+    :root{
+      --bg:#0b0f19;
+      --card:#10172a;
+      --line:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.72);
+      --gold:#d8b766;
+      --blue:#4aa3ff;
+      --radius:18px;
+      --shadow: 0 18px 55px rgba(0,0,0,.35);
+      --max: 920px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Pretendard,Noto Sans KR,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 10% 10%, rgba(74,163,255,.16), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, rgba(216,183,102,.14), transparent 60%),
+        var(--bg);
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:18px 16px 36px}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; padding:10px 0 8px;
+    }
+    .home{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius:999px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      transition:.2s ease;
+      font-weight:700;
+    }
+    .home:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.18)}
+    .badge{
+      font-size:12px; letter-spacing:.2px;
+      padding:8px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      color:var(--muted);
+      background: rgba(255,255,255,.03);
+    }
+
+    header{
+      margin-top:10px;
+      padding:22px 18px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
+    }
+    h1{
+      margin:0 0 8px;
+      font-size:clamp(22px, 4.5vw, 34px);
+      letter-spacing:-.4px;
+    }
+    .lead{
+      margin:0;
+      color:var(--muted);
+      line-height:1.6;
+      font-size:15px;
+    }
+    .card{
+      margin-top:14px;
+      padding:18px;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(16,23,42,.72);
+      box-shadow: 0 14px 45px rgba(0,0,0,.32);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:18px;
+      letter-spacing:-.2px;
+    }
+    .card p, .card li{color:var(--text); line-height:1.75}
+    .muted{color:var(--muted)}
+    ul{margin:10px 0 0 18px}
+    .info{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .pill{
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+    }
+    .pill b{color:#fff}
+    .accent{
+      color: var(--gold);
+      font-weight:800;
+    }
+    .note{
+      border-left:3px solid var(--blue);
+      padding:10px 12px;
+      background: rgba(74,163,255,.08);
+      border-radius: 12px;
+      color: var(--muted);
+      margin-top:12px;
+    }
+    footer{
+      margin-top:16px;
+      color:rgba(255,255,255,.55);
+      font-size:12px;
+      text-align:center;
+      padding:10px 6px;
+    }
+    .btnRow{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top:12px;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px 14px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      font-weight:800;
+      transition:.2s ease;
+    }
+    .btn:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.18)}
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(216,183,102,.22), rgba(74,163,255,.18));
+      border-color: rgba(216,183,102,.25);
+    }
+    @media (min-width: 760px){
+      .info{grid-template-columns: 1fr 1fr 1fr}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <!-- ✅ 페이지 최상단: 홈으로 -->
+      <a class="home" href="./">← 홈으로</a>
+      <div class="badge">2026 신학기 안내</div>
+    </div>
+
+    <header>
+      <h1>초등 1학년 신입생 학부모 안내</h1>
+      <p class="lead">
+        입학을 진심으로 축하드립니다 🌸<br />
+        신학기에는 방과 후·돌봄·특별 프로그램 여부에 따라 하교 시간이 달라질 수 있어
+        차량 픽업과 관련된 안내를 드립니다.
+      </p>
+    </header>
+
+    <section class="card">
+      <h2>1) 하교 시간은 언제 확정되나요?</h2>
+      <p>
+        <span class="accent">3월 3일 입학식 이후</span> 학교에서 실제 하교 흐름(하원 시간/동선)이 확인되면,
+        그 일정에 맞춰 도장 차량 운행 및 수업 시간을 보다 정확하게 조정합니다.
+      </p>
+      <div class="note">
+        ※ 현재는 학교/프로그램별 시간이 완전히 확정되기 전이라 “예상” 단계일 수 있습니다.
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2) 방과 후·돌봄에서 기관명/연락처를 요청할 때</h2>
+      <p class="muted">기관명, 인솔자 연락처, 기관 전화번호 등을 요청받으면 아래처럼 안내해 주세요.</p>
+
+      <div class="info">
+        <div class="pill"><b>기관명</b><br />계명태권도</div>
+        <div class="pill"><b>인솔자</b><br />관장 (성함)</div>
+        <div class="pill"><b>연락처</b><br />(관장 휴대폰 번호)</div>
+      </div>
+
+      <div class="note">
+        원하시면 위 “성함/번호”는 도장 기준으로 통일된 문구로 정리해드릴게요.
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3) 세시부 수업 시간 변경 가능 안내</h2>
+      <p>
+        2026년도에는 아이들의 하교 시간에 맞추어
+        <span class="accent">세시부 수업의 시작·종료 시간이 일부 조정</span>될 수 있습니다.
+        확정되는 내용은 홈페이지와 도장 밴드 공지를 통해 가장 먼저 안내드립니다.
+      </p>
+
+      <div class="btnRow">
+        <a class="btn primary" href="./">홈으로 돌아가기</a>
+        <!-- 밴드/공지 게시판 URL이 있으면 아래 href만 바꿔주세요 -->
+        <a class="btn" href="./">공지 확인하기</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>4) 공지는 어디서 확인하면 가장 빠를까요?</h2>
+      <p>
+        계명태권도 홈페이지에서는 중요한 공지사항이 첫 화면 상단에 안내되어
+        바쁜 신학기에도 놓치지 않도록 구성되어 있습니다.
+      </p>
+      <p class="muted">
+        아이들의 새 출발이 안전하고 즐겁게 이어지도록, 늘 곁에서 함께하겠습니다.
+      </p>
+    </section>
+
+    <footer>
+      © <span id="y"></span> 계명태권도. All rights reserved.
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById("y").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
