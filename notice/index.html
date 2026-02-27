@@ -136,6 +136,11 @@
       align-items:center;
       justify-content:center;
     }
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(255,138,0,.95), rgba(255,138,0,.75));
+      border-color: rgba(255,138,0,.35);
+      color:#101019;
+    }
 
     .empty{
       margin-top:10px;
@@ -159,7 +164,10 @@
 <body>
   <div class="wrap" id="wrap">
     <div class="topbar">
+      <!-- ✅ 상단: 홈페이지 바로가기 -->
       <a class="home" href="../">← 홈페이지 바로가기</a>
+
+      <!-- 검색 (딱 한 글 모드에서는 자동 숨김) -->
       <div class="search" title="검색">
         🔎 <input id="q" type="search" placeholder="공지 검색 (예: 입학, 차량, 심사, 행사…)" />
       </div>
@@ -176,7 +184,7 @@
     <footer>© <span id="y"></span> 계명태권도</footer>
   </div>
 
-  <!-- ✅ 공지 데이터 -->
+  <!-- ✅ 공지 데이터 로드 -->
   <script src="./data.js"></script>
 
   <script>
@@ -187,6 +195,7 @@
     const qEl = $("#q");
     const filtersEl = $("#filters");
 
+    // ✅ data.js가 window.notices로 올라오면 여기서 바로 읽습니다.
     const all = Array.isArray(window.notices) ? window.notices : [];
     const sorted = [...all].sort((a,b)=> String(b.date||"").localeCompare(String(a.date||"")));
 
@@ -266,16 +275,17 @@
             <div class="tag">${tag}</div>
           </div>
 
-          <div class="cardBody" id="body-${idx}">
-            ${content}
-          </div>
+          <div class="cardBody" id="body-${idx}"></div>
 
           <div class="actions">
-            <button class="btn" data-toggle="${idx}">내용 보기</button>
+            <button class="btn primary" data-toggle="${idx}">내용 보기</button>
             ${url ? `<a class="btn" href="${url}" target="_blank" rel="noopener">관련 링크</a>` : ``}
             <button class="btn" data-copy="${date}">링크 복사</button>
           </div>
         `;
+
+        // ✅ content는 HTML 허용이므로 innerHTML로 주입
+        card.querySelector(`#body-${idx}`).innerHTML = content;
 
         listEl.appendChild(card);
       });
@@ -288,6 +298,7 @@
           const on = body.style.display === "block";
           body.style.display = on ? "none" : "block";
           btn.textContent = on ? "내용 보기" : "접기";
+          btn.classList.toggle("primary", on); // 접기일 때 기본으로
         });
       });
 
