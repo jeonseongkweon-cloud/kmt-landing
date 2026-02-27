@@ -1,1 +1,128 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>공지사항 | 계명태권도</title>
 
+<style>
+:root{
+  --bg:#0b0f19;
+  --card:#121a2f;
+  --line:rgba(255,255,255,.08);
+  --text:rgba(255,255,255,.9);
+  --muted:rgba(255,255,255,.6);
+  --gold:#d8b766;
+  --blue:#4aa3ff;
+}
+body{
+  margin:0;
+  font-family:Pretendard,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+.wrap{
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
+}
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+.home{
+  padding:10px 14px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  text-decoration:none;
+  color:#fff;
+}
+h1{
+  margin:10px 0 20px;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  padding:18px;
+  border-radius:16px;
+  margin-bottom:14px;
+  cursor:pointer;
+  transition:.2s;
+}
+.card:hover{
+  transform:translateY(-3px);
+  border-color:var(--gold);
+}
+.date{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:6px;
+}
+.title{
+  font-weight:700;
+  font-size:17px;
+}
+.content{
+  display:none;
+  margin-top:12px;
+  color:var(--muted);
+  line-height:1.7;
+}
+.footer{
+  text-align:center;
+  margin-top:40px;
+  font-size:12px;
+  color:var(--muted);
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+<div class="top">
+  <a href="../" class="home">← 홈으로</a>
+</div>
+
+<h1>공지사항</h1>
+
+<div id="noticeList"></div>
+
+<div class="footer">
+© <span id="year"></span> 계명태권도
+</div>
+
+</div>
+
+<script src="data.js"></script>
+
+<script>
+const container = document.getElementById("noticeList");
+
+notices.forEach((item, index) => {
+  const card = document.createElement("div");
+  card.className = "card";
+
+  card.innerHTML = `
+    <div class="date">${item.date}</div>
+    <div class="title">${item.title}</div>
+    <div class="content" id="content-${index}">
+      ${item.content}
+    </div>
+  `;
+
+  card.onclick = () => {
+    const content = document.getElementById(`content-${index}`);
+    content.style.display = content.style.display === "block" ? "none" : "block";
+  };
+
+  container.appendChild(card);
+});
+
+document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
