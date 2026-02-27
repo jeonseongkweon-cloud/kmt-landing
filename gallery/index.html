@@ -109,6 +109,8 @@
       overflow:hidden;
       background: rgba(0,0,0,.22);
       min-height: 240px;
+      height: 360px;         /* ✅ 기본 높이 */
+      max-height: 420px;     /* ✅ PC에서 너무 커지지 않게 상한 */
     }
     .coverMain img{
       width:100%;
@@ -120,6 +122,14 @@
     }
     /* ✅ 대표사진 “설명/문구” 완전 비표시 */
     .coverMain .cap{display:none !important;}
+
+    /* ✅ PC에서 대표사진이 “거대”해지지 않도록 추가 제한 */
+    @media (min-width: 980px){
+      .coverMain{ height: 420px; max-height: 420px; }
+    }
+    @media (min-width: 1280px){
+      .coverMain{ height: 440px; max-height: 440px; }
+    }
 
     .thumbRail{
       border:1px solid var(--line);
@@ -226,62 +236,6 @@
     .navBtn.prev{left:10px}
     .navBtn.next{right:10px}
 
-    /* Gallery Grid */
-    .grid{
-      margin-top:12px;
-      display:grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap:10px;
-    }
-    @media (min-width: 720px){
-      .grid{grid-template-columns: repeat(3, 1fr); gap:12px}
-    }
-    @media (min-width: 1024px){
-      .grid{grid-template-columns: repeat(4, 1fr); gap:12px}
-    }
-    .gcard{
-      position:relative;
-      border-radius: 16px;
-      overflow:hidden;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      box-shadow: 0 10px 28px rgba(0,0,0,.28);
-      cursor:pointer;
-    }
-    .gcard img{
-      width:100%;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-      display:block;
-      transition: transform .25s ease, filter .25s ease;
-      filter: saturate(1.02) contrast(1.02);
-    }
-    .gcard:hover img{transform: scale(1.03); filter: saturate(1.07) contrast(1.06)}
-    .gcard .overlay{
-      position:absolute; inset:auto 0 0 0;
-      padding:10px 10px 9px;
-      background: linear-gradient(180deg, transparent, rgba(0,0,0,.72));
-      display:flex; align-items:flex-end; justify-content:space-between; gap:10px;
-    }
-    .overlay .meta{
-      display:flex; flex-direction:column; gap:2px;
-      min-width:0;
-    }
-    .overlay .meta b{
-      font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .overlay .meta small{color: rgba(255,255,255,.72); font-size:12px}
-    .badge{
-      padding:6px 8px;
-      border-radius: 999px;
-      border:1px solid rgba(215,181,109,.35);
-      background: rgba(215,181,109,.12);
-      color: rgba(255,255,255,.88);
-      font-size:11.5px;
-      font-weight:750;
-      flex:0 0 auto;
-    }
-
     /* Videos */
     .video-grid{
       display:grid;
@@ -313,7 +267,7 @@
       padding:12px 12px 14px;
       display:flex; flex-direction:column; gap:6px;
     }
-    .video-body b{font-size:14px}
+    .video-body b{font-size:14px; line-height:1.35}
     .video-body p{margin:0; color:var(--muted); font-size:13px; line-height:1.5}
     .moreRow{
       margin-top:12px;
@@ -395,10 +349,12 @@
     @media (max-width: 980px){
       .cover{grid-template-columns: 1fr}
       .thumbs{grid-template-columns: repeat(6, 1fr)}
+      .coverMain{height: 320px; max-height: 360px;}
     }
     @media (max-width: 520px){
       .thumbs{grid-template-columns: repeat(4, 1fr)}
       .btn{padding:10px 11px}
+      .coverMain{height: 280px; max-height: 320px;}
     }
   </style>
 </head>
@@ -423,7 +379,7 @@
       <div class="head">
         <div>
           <h2>대표 사진</h2>
-          <p>대표 1장 크게 + 썸네일 선택. (대표 사진 위 설명/문구는 표시되지 않습니다)</p>
+          <p>PC에서는 대표사진 높이를 자동 제한하여 보기 좋게 표시됩니다.</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap">
           <button class="btn" id="btnCoverPrev" type="button">‹ 이전</button>
@@ -498,30 +454,12 @@
       </div>
     </section>
 
-    <!-- 3) GRID GALLERY -->
-    <section class="cardBox">
-      <div class="head">
-        <div>
-          <h2>전체 갤러리</h2>
-          <p>사진 크기 상관없이 카드형으로 자동 통일됩니다.</p>
-        </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap">
-          <button class="btn" id="btnCopyPage" type="button">🔗 페이지 링크 복사</button>
-          <button class="btn" id="btnShuffleGrid" type="button">🎲 랜덤 보기</button>
-        </div>
-      </div>
-
-      <div class="body">
-        <div class="grid" id="grid"></div>
-      </div>
-    </section>
-
-    <!-- 4) VIDEO -->
+    <!-- 3) VIDEO -->
     <section class="cardBox">
       <div class="head">
         <div>
           <h2>영상</h2>
-          <p>전총재님이 주신 4개 영상으로 재설정 완료 ✅</p>
+          <p>유튜브 제목을 자동으로 불러와서 그대로 표시합니다. (수동 입력 X)</p>
         </div>
       </div>
 
@@ -543,7 +481,7 @@
       <div class="lb-top">
         <div class="title">
           <b id="lbTitle">사진</b>
-          <small id="lbSub">계명태권도 갤러리</small>
+          <small id="lbSub"></small>
         </div>
         <div class="lb-actions">
           <button class="iconbtn" id="lbCopy" type="button">🔗 링크복사</button>
@@ -595,7 +533,6 @@
       "https://static.wixstatic.com/media/abf917_0cb4ed6dc39146b9ac2e0228fc5fe88d~mv2.jpg",
       "https://static.wixstatic.com/media/abf917_f811763b2f0743c08b1ab73801f181be~mv2.jpg",
 
-      /* 추가분 */
       "https://static.wixstatic.com/media/abf917_e7290c711ce34aa0bfca02dbfcca38c7~mv2.jpg",
       "https://static.wixstatic.com/media/abf917_6cd28e87e2a54dbbabcb8da80a7a44cc~mv2.jpg",
       "https://static.wixstatic.com/media/abf917_32491e26f36e4132bbdb3328aecb2b57~mv2.jpg",
@@ -624,17 +561,28 @@
     ];
 
     /* ===============================
-      ✅ 유튜브 영상 재설정 (전총재님 제공 4개)
+      ✅ 유튜브 영상 4개 + 제목 자동 불러오기 (oEmbed)
+      - 제목/작성자/썸네일을 유튜브에서 자동 가져옵니다.
     =============================== */
-    const VIDEO_LIST = [
-      { id: "D3kDXF-sNJA", title: "계명태권도 영상 1" },
-      { id: "wWIAPVvrnSw", title: "계명태권도 영상 2" },
-      { id: "lUpmY5jfEIc", title: "계명태권도 영상 3" },
-      { id: "YSWIds8fmzE", title: "계명태권도 영상 4" }
+    const VIDEO_URLS = [
+      "https://www.youtube.com/watch?v=D3kDXF-sNJA",
+      "https://www.youtube.com/watch?v=wWIAPVvrnSw",
+      "https://youtu.be/lUpmY5jfEIc",
+      "https://youtu.be/YSWIds8fmzE"
     ];
 
-    // 채널(더보기) 링크: 필요 시 수정 가능
+    // 채널(더보기) 링크
     const CHANNEL_URL = "https://www.youtube.com/@%EA%B3%84%EB%AA%85%ED%83%9C%EA%B6%8C%EB%8F%84%EC%9A%B8%EC%82%B0/videos";
+
+    function getYouTubeId(url){
+      try{
+        const u = new URL(url);
+        if(u.hostname.includes("youtu.be")) return u.pathname.replace("/","");
+        return u.searchParams.get("v");
+      }catch(e){
+        return "";
+      }
+    }
 
     function autoCategory(i){
       if(i < 10) return "수련";
@@ -642,10 +590,8 @@
       return "행사";
     }
     const ITEMS = PHOTO_URLS.map((url, i) => ({
-      id: i+1,
       url,
-      sub: autoCategory(i),
-      title: `계명태권도 기록 #${String(i+1).padStart(2,'0')}`
+      sub: autoCategory(i)
     }));
 
     /* Toast */
@@ -701,7 +647,7 @@
 
     btnCoverPrev.addEventListener("click", ()=> setCover(coverIndex-1));
     btnCoverNext.addEventListener("click", ()=> setCover(coverIndex+1));
-    btnOpenCover.addEventListener("click", ()=> openLightboxByUrl(ITEMS[coverIndex].url, "대표 사진", ""));
+    btnOpenCover.addEventListener("click", ()=> openLightboxByUrl(ITEMS[coverIndex].url, "사진", ""));
     btnCopyCover.addEventListener("click", ()=> copyText(ITEMS[coverIndex].url));
 
     btnShuffleThumbs.addEventListener("click", ()=>{
@@ -729,7 +675,7 @@
         });
       });
 
-      btnOpenCover.onclick = ()=> openLightboxByUrl(shuffled[coverIndex].url, "대표 사진", "");
+      btnOpenCover.onclick = ()=> openLightboxByUrl(shuffled[coverIndex].url, "사진", "");
       btnCopyCover.onclick = ()=> copyText(shuffled[coverIndex].url);
 
       toast("썸네일을 섞었습니다 🎲");
@@ -760,7 +706,7 @@
       slideIndex = (idx + ITEMS.length) % ITEMS.length;
       const it = ITEMS[slideIndex];
 
-      slideTitle.textContent = it.title;
+      slideTitle.textContent = `갤러리 ${slideIndex+1}`;
       slideSub.textContent = `(${it.sub}) ${slideIndex+1}/${ITEMS.length}`;
 
       const target = showingA ? imgA : imgB;
@@ -787,7 +733,7 @@
       speedIdx = (speedIdx + 1) % speeds.length;
       btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
       if(timer){ pause(); play(); }
-      toast(`재생 속도 변경`);
+      toast("재생 속도 변경");
     }
 
     btnPrev.addEventListener("click", ()=> setSlide(slideIndex-1));
@@ -797,64 +743,57 @@
     btnPlay.addEventListener("click", play);
     btnPause.addEventListener("click", pause);
     btnSpeed.addEventListener("click", toggleSpeed);
-    btnOpenSlide.addEventListener("click", ()=> openLightboxByUrl(ITEMS[slideIndex].url, "슬라이드 쇼", ""));
+    btnOpenSlide.addEventListener("click", ()=> openLightboxByUrl(ITEMS[slideIndex].url, "사진", ""));
     btnCopySlide.addEventListener("click", ()=> copyText(ITEMS[slideIndex].url));
 
-    /* Grid gallery */
-    const grid = document.getElementById("grid");
-    const btnCopyPage = document.getElementById("btnCopyPage");
-    const btnShuffleGrid = document.getElementById("btnShuffleGrid");
+    /* Videos render + YouTube title auto */
+    const videoGrid = document.getElementById("videoGrid");
 
-    function renderGrid(list){
-      grid.innerHTML = list.map((it)=>`
-        <div class="gcard" data-url="${it.url}" data-title="${it.title}" data-sub="${it.sub}">
-          <img loading="lazy" src="${it.url}" alt="${it.title}">
-          <div class="overlay">
-            <div class="meta">
-              <b>${it.title}</b>
-              <small>${it.sub}</small>
+    function renderVideosShell(){
+      videoGrid.innerHTML = VIDEO_URLS.map((url, idx)=>{
+        const id = getYouTubeId(url);
+        const safe = id || "";
+        return `
+          <article class="video-card" data-video-url="${url}">
+            <div class="video-embed">
+              <iframe
+                src="https://www.youtube.com/embed/${safe}"
+                title="계명태권도 영상"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen></iframe>
             </div>
-            <span class="badge">${it.sub}</span>
-          </div>
-        </div>
-      `).join("");
-
-      [...grid.querySelectorAll(".gcard")].forEach(el=>{
-        el.addEventListener("click", ()=>{
-          openLightboxByUrl(el.dataset.url, el.dataset.title, el.dataset.sub);
-        });
-      });
+            <div class="video-body">
+              <b class="yt-title">제목 불러오는 중…</b>
+              <p class="yt-meta">잠시만요 ✅</p>
+            </div>
+          </article>
+        `;
+      }).join("");
     }
 
-    btnCopyPage.addEventListener("click", ()=> copyText(location.href));
-    btnShuffleGrid.addEventListener("click", ()=>{
-      const shuffled = [...ITEMS];
-      for(let i=shuffled.length-1; i>0; i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      renderGrid(shuffled);
-      toast("갤러리를 랜덤으로 섞었습니다 🎲");
-    });
+    async function fillYouTubeTitles(){
+      const cards = [...videoGrid.querySelectorAll(".video-card")];
+      await Promise.all(cards.map(async (card)=>{
+        const url = card.getAttribute("data-video-url");
+        const titleEl = card.querySelector(".yt-title");
+        const metaEl = card.querySelector(".yt-meta");
 
-    /* Videos render */
-    const videoGrid = document.getElementById("videoGrid");
-    function renderVideos(){
-      videoGrid.innerHTML = VIDEO_LIST.map(v => `
-        <article class="video-card">
-          <div class="video-embed">
-            <iframe
-              src="https://www.youtube.com/embed/${v.id}"
-              title="${v.title}"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen></iframe>
-          </div>
-          <div class="video-body">
-            <b>${v.title}</b>
-            <p>계명태권도 공식 채널 영상</p>
-          </div>
-        </article>
-      `).join("");
+        // YouTube oEmbed (API Key 불필요)
+        const oembed = `https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(url)}`;
+
+        try{
+          const res = await fetch(oembed, { mode: "cors" });
+          if(!res.ok) throw new Error("oEmbed not ok");
+          const data = await res.json();
+
+          titleEl.textContent = data.title || "계명태권도 영상";
+          metaEl.textContent = data.author_name ? `YouTube · ${data.author_name}` : "YouTube";
+        }catch(e){
+          // 실패 시: 최소한 링크는 유지
+          titleEl.textContent = "계명태권도 영상";
+          metaEl.textContent = "YouTube";
+        }
+      }));
     }
 
     document.getElementById("btnMoreVideos").addEventListener("click", ()=>{
@@ -906,12 +845,12 @@
 
     imgA.src = ITEMS[0].url;
     imgA.classList.add("show");
-    slideTitle.textContent = ITEMS[0].title;
+    slideTitle.textContent = "갤러리 1";
     slideSub.textContent = `(${ITEMS[0].sub}) 1/${ITEMS.length}`;
     btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
 
-    renderGrid(ITEMS);
-    renderVideos();
+    renderVideosShell();
+    fillYouTubeTitles();
 
     // 원하시면 자동재생 기본 ON:
     // play();
