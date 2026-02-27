@@ -175,13 +175,8 @@
   </div>
 
 <script>
-/**
- * ✅ 여기만 바꾸면 끝!
- * 아래 CHANGE_ME 를 "웹에 게시"에서 나온 CSV 링크로 교체하세요.
- * 형태 예:
- * https://docs.google.com/spreadsheets/d/e/2PACX-.../pub?gid=0&single=true&output=csv
- */
-const RAW_CSV = "CHANGE_ME_PASTE_YOUR_PUBLISHED_CSV_URL_HERE";
+/* ✅ 전총재님이 보내주신 “웹에 게시 CSV 링크” */
+const RAW_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=0&single=true&output=csv";
 
 /**
  * GitHub Pages에서 Google CSV 직접 fetch가 막히는 경우가 있어,
@@ -227,10 +222,6 @@ function splitCSVLine(line){
 
 /* ---------- 데이터 로드 ---------- */
 async function fetchRows(){
-  if(!RAW_CSV || RAW_CSV.includes("CHANGE_ME")){
-    throw new Error("RAW_CSV not set");
-  }
-
   const res = await fetch(CSV_URL, { cache: "no-store" });
   if(!res.ok) throw new Error("CSV fetch failed: " + res.status);
 
@@ -250,7 +241,6 @@ async function fetchRows(){
 
 /* ---------- UI ---------- */
 function renderCard(row){
-  // 컬럼:
   // 0 아이디, 1 이름, 2 생년월일, 3 태권도단증, 4 경호무술단증, 5 검도단증,
   // 6 포토링크, 7 현재포인트, 8 보유자격증, 9 보유인증서
   const id = clean(row[0]);
@@ -321,11 +311,7 @@ async function searchStudent(){
     rows = await fetchRows();
   }catch(e){
     console.error(e);
-    if((e.message||"").includes("RAW_CSV not set")){
-      resultEl.innerHTML = `<div class="message">구글시트 CSV 링크가 아직 설정되지 않았습니다.<br>verification/index.html에서 RAW_CSV를 최신 CSV 링크로 교체하세요.</div>`;
-    }else{
-      resultEl.innerHTML = `<div class="message">데이터를 불러오지 못했습니다.</div>`;
-    }
+    resultEl.innerHTML = `<div class="message">데이터를 불러오지 못했습니다.</div>`;
     return;
   }
 
@@ -340,7 +326,7 @@ async function searchStudent(){
     }
   }
 
-  // 부분일치(예: 김예담(무언가) 대비)
+  // 부분일치
   if(!found){
     for(let i=1;i<rows.length;i++){
       const rn = normName(rows[i][1]);
