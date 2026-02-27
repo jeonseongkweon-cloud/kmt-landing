@@ -25,11 +25,64 @@
   }
   h1{
     text-align:center;
-    margin:8px 0 18px;
+    margin:8px 0 10px;
     letter-spacing:-.5px;
     font-size:34px;
     font-weight:900;
   }
+
+  .topbar{
+    max-width:560px;
+    margin:0 auto 10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .status{
+    font-size:12px;
+    color:rgba(255,255,255,.78);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    min-height:20px;
+  }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.05);
+    color:rgba(255,255,255,.85);
+    font-weight:900;
+  }
+  .pill.good{ border-color: rgba(246,201,69,.35); background: rgba(246,201,69,.10); }
+  .pill.bad{ border-color: rgba(255,99,99,.35); background: rgba(255,99,99,.10); }
+
+  .actions{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .miniBtn{
+    padding:8px 10px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.05);
+    color:rgba(255,255,255,.90);
+    font-weight:900;
+    font-size:12px;
+    cursor:pointer;
+  }
+  .miniBtn:active{transform:translateY(1px)}
+  .miniBtn.gold{
+    border-color: rgba(246,201,69,.35);
+    background: rgba(246,201,69,.14);
+  }
+
   .search-box{
     display:flex;
     justify-content:center;
@@ -51,7 +104,7 @@
     border-color:rgba(246,201,69,.55);
     box-shadow:0 0 0 3px rgba(246,201,69,.15);
   }
-  button{
+  button.big{
     padding:12px 16px;
     border:0;
     border-radius:10px;
@@ -61,7 +114,8 @@
     cursor:pointer;
     min-width:72px;
   }
-  button:active{transform:translateY(1px)}
+  button.big:active{transform:translateY(1px)}
+
   #result{margin-top:14px}
   .message{
     text-align:center;
@@ -102,7 +156,12 @@
     color:rgba(255,255,255,.55);
     font-weight:800;
   }
-  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .photo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
   .nameblock h2{
     margin:0 0 6px;
     font-size:22px;
@@ -163,28 +222,54 @@
 <body>
   <h1>수련생 조회</h1>
 
+  <div class="topbar">
+    <div class="status" id="statusLine">
+      <span class="pill" id="dataPill">데이터: 준비중</span>
+      <span id="statusText">페이지가 열리면 자동으로 1회 불러옵니다.</span>
+    </div>
+    <div class="actions">
+      <button class="miniBtn gold" id="refreshBtn" type="button">데이터 새로고침</button>
+      <button class="miniBtn" id="clearCacheBtn" type="button">캐시 삭제</button>
+    </div>
+  </div>
+
   <div class="search-box">
-    <input id="searchName" type="text" placeholder="이름 입력 (예: 김예담)" autocomplete="off" />
-    <button onclick="searchStudent()">조회</button>
+    <input id="searchName" type="text" placeholder="이름 또는 아이디 입력 (예: 김예담 / KM001)" autocomplete="off" />
+    <button class="big" id="searchBtn" type="button">조회</button>
   </div>
 
   <div id="result"></div>
 
   <div class="hint">
-    ※ 주소 끝에 <b>?debug=1</b> 을 붙이면(예: /verification/?debug=1) 불러온 행 수/이름 일부가 표시됩니다.
+    ※ 주소 끝에 <b>?debug=1</b> 을 붙이면(예: /verification/?debug=1) 불러온 행 수/일부 이름이 표시됩니다.<br/>
+    ※ 이 페이지는 “처음 1회”만 구글시트를 불러오고, 그 다음 조회는 휴대폰 안(로컬)에서 즉시 처리합니다.
   </div>
 
 <script>
-/* ✅ 전총재님이 보내주신 “웹에 게시 CSV 링크” */
+/* =========================================================
+  ✅ 전총재님 구글 시트 (웹에 게시 CSV)
+========================================================= */
 const RAW_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=0&single=true&output=csv";
 
-/**
- * GitHub Pages에서 Google CSV 직접 fetch가 막히는 경우가 있어,
- * allorigins 프록시를 씁니다.
- */
-const CSV_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(RAW_CSV);
+/* =========================================================
+  ✅ 캐시/재시도/타임아웃 설정
+========================================================= */
+const CACHE_KEY = "KMT_STUDENTS_CACHE_V2";     // 버전 올리면 기존 캐시 자동 무효화
+const CACHE_TTL_MS = 10 * 60 * 1000;          // 10분 캐시 (원하면 30분/1시간으로 늘리면 됨)
+const FETCH_TIMEOUT_MS = 8000;                // 8초 타임아웃
+const RETRY_COUNT = 2;                        // 실패 시 추가 재시도 횟수 (총 1+2=3회 시도)
 
+/* debug */
 const DEBUG = new URLSearchParams(location.search).get("debug") === "1";
+
+/* 상태 */
+const $ = (id)=>document.getElementById(id);
+const statusText = $("statusText");
+const dataPill = $("dataPill");
+const resultEl = $("result");
+
+let DATA_ROWS = null;          // header 제외한 실제 데이터 배열(행)
+let LOADING_PROMISE = null;    // 중복 fetch 방지
 
 /* ---------- 문자열 정리 ---------- */
 function clean(v){
@@ -195,11 +280,11 @@ function clean(v){
     .replace(/^"|"$/g, "")      // 양끝 따옴표
     .trim();
 }
-function normName(v){
-  return clean(v).replace(/\s+/g, "");
+function norm(v){
+  return clean(v).replace(/\s+/g,"").toLowerCase();
 }
 
-/* ---------- CSV 라인 파서(따옴표/콤마 안전) ---------- */
+/* ---------- CSV 파서(따옴표/콤마 안전) ---------- */
 function splitCSVLine(line){
   const out = [];
   let cur = "";
@@ -219,14 +304,7 @@ function splitCSVLine(line){
   out.push(cur);
   return out;
 }
-
-/* ---------- 데이터 로드 ---------- */
-async function fetchRows(){
-  const res = await fetch(CSV_URL, { cache: "no-store" });
-  if(!res.ok) throw new Error("CSV fetch failed: " + res.status);
-
-  const text = await res.text();
-
+function parseCSV(text){
   const lines = text
     .split("\n")
     .map(l => l.replace(/\r/g,""))
@@ -239,7 +317,127 @@ async function fetchRows(){
   return rows;
 }
 
-/* ---------- UI ---------- */
+/* ---------- 캐시 ---------- */
+function readCache(){
+  try{
+    const raw = localStorage.getItem(CACHE_KEY);
+    if(!raw) return null;
+    const obj = JSON.parse(raw);
+    if(!obj || !obj.savedAt || !Array.isArray(obj.rows)) return null;
+    if(Date.now() - obj.savedAt > CACHE_TTL_MS) return null;
+    return obj.rows;
+  }catch{
+    return null;
+  }
+}
+function writeCache(rows){
+  try{
+    localStorage.setItem(CACHE_KEY, JSON.stringify({
+      savedAt: Date.now(),
+      rows
+    }));
+  }catch{}
+}
+function clearCache(){
+  try{ localStorage.removeItem(CACHE_KEY); }catch{}
+}
+
+/* ---------- fetch with timeout ---------- */
+async function fetchWithTimeout(url, ms){
+  const ctrl = new AbortController();
+  const t = setTimeout(()=>ctrl.abort(), ms);
+  try{
+    const res = await fetch(url, { signal: ctrl.signal, cache: "no-store" });
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    return await res.text();
+  }finally{
+    clearTimeout(t);
+  }
+}
+
+/* ---------- CSV 로딩: direct → 실패 시 allorigins fallback ---------- */
+async function fetchCSVText(){
+  // 1) direct
+  try{
+    return await fetchWithTimeout(RAW_CSV, FETCH_TIMEOUT_MS);
+  }catch(e1){
+    // 2) fallback via allorigins
+    const proxied = "https://api.allorigins.win/raw?url=" + encodeURIComponent(RAW_CSV);
+    return await fetchWithTimeout(proxied, FETCH_TIMEOUT_MS);
+  }
+}
+
+/* ---------- 1회만 로딩 (중복 방지) ---------- */
+async function loadOnce({force=false}={}){
+  if(DATA_ROWS && !force) return DATA_ROWS;
+
+  if(!force){
+    const cached = readCache();
+    if(cached){
+      DATA_ROWS = cached;
+      setStatus("good", `캐시 사용 (${cached.length}명)`, `데이터 준비 완료 · 조회는 즉시 됩니다`);
+      if(DEBUG) renderDebug(cached, true);
+      return DATA_ROWS;
+    }
+  }
+
+  if(LOADING_PROMISE) return LOADING_PROMISE;
+
+  setStatus("loading", "불러오는 중", "구글 시트 데이터를 불러오는 중입니다…");
+
+  LOADING_PROMISE = (async ()=>{
+    let lastErr = null;
+
+    for(let i=0;i<=RETRY_COUNT;i++){
+      try{
+        const csvText = await fetchCSVText();
+        const rows = parseCSV(csvText);
+
+        // rows[0] = header
+        const data = rows.slice(1).filter(r => r && r.length && clean(r[0]) !== "");
+        DATA_ROWS = data;
+        writeCache(data);
+
+        setStatus("good", `데이터 준비 (${data.length}명)`, "이제 조회는 휴대폰 안에서 즉시 처리됩니다");
+        if(DEBUG) renderDebug(data, false);
+        return DATA_ROWS;
+      }catch(err){
+        lastErr = err;
+        setStatus("loading", "재시도", `불러오기 실패… 재시도 중 (${i+1}/${RETRY_COUNT+1})`);
+        await new Promise(r => setTimeout(r, 500 * (i+1)));
+      }
+    }
+
+    throw lastErr;
+  })();
+
+  try{
+    return await LOADING_PROMISE;
+  }finally{
+    LOADING_PROMISE = null;
+  }
+}
+
+/* ---------- 상태 UI ---------- */
+function setStatus(type, pillText, msg){
+  if(type === "good"){
+    dataPill.className = "pill good";
+  }else if(type === "bad"){
+    dataPill.className = "pill bad";
+  }else{
+    dataPill.className = "pill";
+  }
+  dataPill.textContent = "데이터: " + pillText;
+  statusText.textContent = msg || "";
+}
+
+/* ---------- 카드 ---------- */
+function escapeHtml(str){
+  return String(str ?? "").replace(/[&<>"']/g, s => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[s]));
+}
+
 function renderCard(row){
   // 0 아이디, 1 이름, 2 생년월일, 3 태권도단증, 4 경호무술단증, 5 검도단증,
   // 6 포토링크, 7 현재포인트, 8 보유자격증, 9 보유인증서
@@ -258,84 +456,98 @@ function renderCard(row){
     <div class="card">
       <div class="top">
         <div class="photo">
-          ${photo ? `<img src="${photo}" alt="사진" referrerpolicy="no-referrer">` : `NO PHOTO`}
+          ${
+            photo
+              ? `<img src="${escapeHtml(photo)}"
+                      alt="사진"
+                      loading="lazy"
+                      decoding="async"
+                      referrerpolicy="no-referrer" />`
+              : `NO PHOTO`
+          }
         </div>
         <div class="nameblock">
-          <h2>${name}</h2>
-          <p class="sub">아이디: <b>${id || "-"}</b> · 생년월일: <b>${birth || "-"}</b></p>
+          <h2>${escapeHtml(name)}</h2>
+          <p class="sub">아이디: <b>${escapeHtml(id || "-")}</b> · 생년월일: <b>${escapeHtml(birth || "-")}</b></p>
           <div class="badge">현재 상태 조회 완료</div>
         </div>
       </div>
 
       <div class="grid">
-        <div class="row"><span class="label">태권도단증</span><span class="val">${tkd || "-"}</span></div>
-        <div class="row"><span class="label">경호무술단증</span><span class="val">${pm || "-"}</span></div>
-        <div class="row"><span class="label">검도단증</span><span class="val">${kendo || "-"}</span></div>
-        <div class="row"><span class="label">현재포인트</span><span class="val">${point || "0"}</span></div>
-        <div class="row"><span class="label">보유자격증</span><span class="val">${cert || "-"}</span></div>
-        <div class="row"><span class="label">보유인증서</span><span class="val">${doc || "-"}</span></div>
+        <div class="row"><span class="label">태권도단증</span><span class="val">${escapeHtml(tkd || "-")}</span></div>
+        <div class="row"><span class="label">경호무술단증</span><span class="val">${escapeHtml(pm || "-")}</span></div>
+        <div class="row"><span class="label">검도단증</span><span class="val">${escapeHtml(kendo || "-")}</span></div>
+        <div class="row"><span class="label">현재포인트</span><span class="val">${escapeHtml(point || "0")}</span></div>
+        <div class="row"><span class="label">보유자격증</span><span class="val">${escapeHtml(cert || "-")}</span></div>
+        <div class="row"><span class="label">보유인증서</span><span class="val">${escapeHtml(doc || "-")}</span></div>
       </div>
     </div>
   `;
 }
 
-function renderDebug(rows){
-  const names = rows.slice(1).map(r => clean(r[1])).filter(Boolean);
+/* ---------- 디버그 ---------- */
+function renderDebug(dataRows, fromCache){
+  const names = dataRows.map(r => clean(r[1])).filter(Boolean);
   const txt = [
     "DEBUG MODE ON",
-    `rows: ${rows.length}`,
+    `source: ${fromCache ? "localStorage cache" : "network fetch"}`,
+    `rows: ${dataRows.length}`,
     "first 10 names:",
     ...names.slice(0,10).map((n,i)=>`${i+1}. ${n}`)
   ].join("\n");
 
-  const dbg = document.createElement("div");
-  dbg.className = "debug";
+  let dbg = document.querySelector(".debug");
+  if(!dbg){
+    dbg = document.createElement("div");
+    dbg.className = "debug";
+    document.body.appendChild(dbg);
+  }
   dbg.textContent = txt;
-  document.body.appendChild(dbg);
 }
 
-/* ---------- 검색 ---------- */
+/* ---------- 로컬 검색 ---------- */
+function findStudent(keyword){
+  const k = norm(keyword);
+  if(!k) return null;
+
+  // 우선: 아이디 완전일치
+  for(const row of DATA_ROWS){
+    if(norm(row[0]) === k) return row;
+  }
+  // 다음: 이름 완전일치
+  for(const row of DATA_ROWS){
+    if(norm(row[1]) === k) return row;
+  }
+  // 마지막: 부분일치(이름/아이디)
+  for(const row of DATA_ROWS){
+    const id = norm(row[0]);
+    const name = norm(row[1]);
+    if((id && id.includes(k)) || (name && name.includes(k))) return row;
+  }
+  return null;
+}
+
+/* ---------- 검색 실행 ---------- */
 async function searchStudent(){
-  const input = document.getElementById("searchName").value;
-  const target = normName(input);
-  const resultEl = document.getElementById("result");
+  const input = $("searchName").value;
   resultEl.innerHTML = "";
 
-  if(!target){
-    resultEl.innerHTML = `<div class="message">이름을 입력해주세요.</div>`;
+  if(!clean(input)){
+    resultEl.innerHTML = `<div class="message">이름 또는 아이디를 입력해주세요.</div>`;
     return;
   }
 
-  let rows;
+  // 데이터가 없으면 먼저 1회 로딩
   try{
-    rows = await fetchRows();
+    await loadOnce({force:false});
   }catch(e){
     console.error(e);
-    resultEl.innerHTML = `<div class="message">데이터를 불러오지 못했습니다.</div>`;
+    setStatus("bad", "오류", "데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.");
+    resultEl.innerHTML = `<div class="message">데이터를 불러오지 못했습니다.<br/>오른쪽 위 <b>데이터 새로고침</b>을 눌러보세요.</div>`;
     return;
   }
 
-  if(DEBUG) renderDebug(rows);
-
-  // 완전일치(공백 제거 기준)
-  let found = null;
-  for(let i=1;i<rows.length;i++){
-    if(normName(rows[i][1]) === target){
-      found = rows[i];
-      break;
-    }
-  }
-
-  // 부분일치
-  if(!found){
-    for(let i=1;i<rows.length;i++){
-      const rn = normName(rows[i][1]);
-      if(rn && rn.includes(target)){
-        found = rows[i];
-        break;
-      }
-    }
-  }
+  const found = findStudent(input);
 
   if(!found){
     resultEl.innerHTML = `<div class="message">조회 결과가 없습니다.</div>`;
@@ -345,9 +557,40 @@ async function searchStudent(){
   resultEl.innerHTML = renderCard(found);
 }
 
+/* ---------- 버튼/이벤트 ---------- */
+$("searchBtn").addEventListener("click", searchStudent);
+
 // 엔터키로 조회
 document.addEventListener("keydown",(e)=>{
   if(e.key==="Enter") searchStudent();
+});
+
+// 데이터 새로고침(강제로 네트워크 재로딩)
+$("refreshBtn").addEventListener("click", async ()=>{
+  resultEl.innerHTML = "";
+  try{
+    clearCache();
+    DATA_ROWS = null;
+    await loadOnce({force:true});
+  }catch(e){
+    console.error(e);
+    setStatus("bad", "오류", "새로고침 실패… 네트워크 상태를 확인해주세요.");
+  }
+});
+
+// 캐시 삭제(데이터만 지움, 새로고침은 안 함)
+$("clearCacheBtn").addEventListener("click", ()=>{
+  clearCache();
+  DATA_ROWS = null;
+  setStatus("loading", "캐시 삭제됨", "다음 조회 시 새로 불러옵니다.");
+});
+
+// 페이지 진입 시: 자동 1회 로딩 (조회 체감 속도 ↑)
+window.addEventListener("DOMContentLoaded", ()=>{
+  loadOnce({force:false}).catch(e=>{
+    console.error(e);
+    setStatus("bad", "대기", "자동 불러오기에 실패했습니다. 조회 버튼을 누르거나 ‘데이터 새로고침’을 눌러주세요.");
+  });
 });
 </script>
 </body>
