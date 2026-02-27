@@ -13,17 +13,8 @@ body{
   margin:0;
   padding:20px;
 }
-
-h1{
-  text-align:center;
-  margin-bottom:25px;
-}
-
-.search-box{
-  text-align:center;
-  margin-bottom:20px;
-}
-
+h1{ text-align:center; margin-bottom:25px; }
+.search-box{ text-align:center; margin-bottom:20px; }
 input{
   padding:10px;
   width:220px;
@@ -31,7 +22,6 @@ input{
   border:none;
   font-size:16px;
 }
-
 button{
   padding:10px 15px;
   border:none;
@@ -41,7 +31,6 @@ button{
   cursor:pointer;
   margin-left:8px;
 }
-
 .card{
   background:#111827;
   padding:20px;
@@ -50,24 +39,14 @@ button{
   margin:25px auto;
   box-shadow:0 0 15px rgba(0,0,0,0.5);
 }
-
 .card img{
   width:120px;
   border-radius:10px;
   display:block;
   margin:0 auto 15px;
 }
-
-.label{
-  font-weight:bold;
-  color:gold;
-}
-
-.message{
-  text-align:center;
-  margin-top:20px;
-  font-size:15px;
-}
+.label{ font-weight:bold; color:gold; }
+.message{ text-align:center; margin-top:20px; }
 </style>
 </head>
 
@@ -83,9 +62,13 @@ button{
 <div id="result"></div>
 
 <script>
-const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYhWbNhlhFmg2tNyaaRJRRlxYGCgUawZUeytRZ-aH9nusJSAUHYYozgO6aO/pub?gid=0&single=true&output=csv";
 
-/* ===== 문자열 정리 함수 ===== */
+// 🔥 Google CSV 주소
+const rawURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYhWbNhlhFmg2tNyaaRJRRlxYGCgUawZUeytRZ-aH9nusJSAUHYYozgO6aO/pub?gid=0&single=true&output=csv";
+
+// 🔥 CORS 우회 프록시
+const sheetURL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(rawURL);
+
 function clean(v){
   return (v ?? "")
     .toString()
@@ -95,70 +78,29 @@ function clean(v){
     .trim();
 }
 
-/* ===== CSV 한 줄 파서 ===== */
-function splitCSVLine(line){
-  const out = [];
-  let cur = "";
-  let inQuotes = false;
-
-  for (let i = 0; i < line.length; i++){
-    const ch = line[i];
-
-    if (ch === '"'){
-      if (inQuotes && line[i+1] === '"'){
-        cur += '"';
-        i++;
-      } else {
-        inQuotes = !inQuotes;
-      }
-    } 
-    else if (ch === ',' && !inQuotes){
-      out.push(cur);
-      cur = "";
-    } 
-    else {
-      cur += ch;
-    }
-  }
-  out.push(cur);
-  return out;
-}
-
-/* ===== CSV 불러오기 ===== */
 async function fetchData(){
-  const res = await fetch(sheetURL, { cache: "no-store" });
-  if(!res.ok){
-    throw new Error("CSV 불러오기 실패: " + res.status);
-  }
+  const res = await fetch(sheetURL);
+  if(!res.ok) throw new Error("불러오기 실패");
 
   const text = await res.text();
-  const lines = text
-    .split("\n")
-    .map(l => l.replace(/\r/g,""))
-    .filter(l => l.trim() !== "");
-
-  const rows = lines
-    .map(splitCSVLine)
-    .map(r => r.map(clean));
-
-  return rows;
+  const lines = text.split("\n").filter(l => l.trim() !== "");
+  return lines.map(l => l.split(",").map(clean));
 }
 
-/* ===== 조회 기능 ===== */
 async function searchStudent(){
   const name = clean(document.getElementById("searchName").value);
   const resultEl = document.getElementById("result");
   resultEl.innerHTML = "";
 
   if(!name){
-    resultEl.innerHTML = "<div class='message'>이름을 입력해주세요.</div>";
+    resultEl.innerHTML = "<div class='message'>이름을 입력하세요.</div>";
     return;
   }
 
   let rows;
   try{
     rows = await fetchData();
-  } catch(e){
+  }catch(e){
     resultEl.innerHTML = "<div class='message'>데이터를 불러오지 못했습니다.</div>";
     console.error(e);
     return;
@@ -167,7 +109,7 @@ async function searchStudent(){
   let found = null;
 
   for(let i=1; i<rows.length; i++){
-    if(clean(rows[i][1]) === name){
+    if(rows[i][1] === name){
       found = rows[i];
       break;
     }
@@ -178,23 +120,22 @@ async function searchStudent(){
     return;
   }
 
-  const photo = clean(found[6]);
-
   resultEl.innerHTML = `
     <div class="card">
-      ${photo ? `<img src="${photo}" alt="사진">` : ""}
-      <p><span class="label">아이디:</span> ${clean(found[0])}</p>
-      <p><span class="label">이름:</span> ${clean(found[1])}</p>
-      <p><span class="label">생년월일:</span> ${clean(found[2])}</p>
-      <p><span class="label">태권도단증:</span> ${clean(found[3])}</p>
-      <p><span class="label">경호무술단증:</span> ${clean(found[4])}</p>
-      <p><span class="label">검도단증:</span> ${clean(found[5])}</p>
-      <p><span class="label">현재포인트:</span> ${clean(found[7])}</p>
-      <p><span class="label">보유자격증:</span> ${clean(found[8])}</p>
-      <p><span class="label">보유인증서:</span> ${clean(found[9])}</p>
+      ${found[6] ? `<img src="${found[6]}" alt="사진">` : ""}
+      <p><span class="label">아이디:</span> ${found[0]}</p>
+      <p><span class="label">이름:</span> ${found[1]}</p>
+      <p><span class="label">생년월일:</span> ${found[2]}</p>
+      <p><span class="label">태권도단증:</span> ${found[3]}</p>
+      <p><span class="label">경호무술단증:</span> ${found[4]}</p>
+      <p><span class="label">검도단증:</span> ${found[5]}</p>
+      <p><span class="label">현재포인트:</span> ${found[7]}</p>
+      <p><span class="label">보유자격증:</span> ${found[8]}</p>
+      <p><span class="label">보유인증서:</span> ${found[9]}</p>
     </div>
   `;
 }
+
 </script>
 
 </body>
