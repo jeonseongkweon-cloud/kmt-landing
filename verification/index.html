@@ -13,40 +13,81 @@
     --text:#ffffff;
     --muted:rgba(255,255,255,.72);
     --gold:#f6c945;
+    --blue:#60a5fa;
   }
   *{box-sizing:border-box}
   body{
-    margin:0; padding:22px 18px;
+    margin:0; padding:18px 16px 28px;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     background: radial-gradient(900px 600px at 50% 0%, rgba(246,201,69,.12), transparent 55%),
                 radial-gradient(900px 600px at 10% 20%, rgba(59,130,246,.10), transparent 55%),
                 var(--bg);
     color:var(--text);
   }
-  h1{
-    text-align:center;
-    margin:8px 0 10px;
-    letter-spacing:-.5px;
-    font-size:34px;
-    font-weight:900;
-  }
+  a{color:inherit;text-decoration:none}
 
-  .topbar{
-    max-width:560px;
+  /* ✅ 상단 바(홈 바로가기) */
+  .nav{
+    max-width:860px;
     margin:0 auto 10px;
     display:flex;
     justify-content:space-between;
     align-items:center;
     gap:10px;
+  }
+  .nav .left{
+    display:flex;align-items:center;gap:10px;min-width:0;
+  }
+  .brand{
+    font-weight:950;
+    letter-spacing:-.3px;
+    font-size:14px;
+    color:rgba(255,255,255,.92);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .homeBtn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.06);
+    font-weight:950;
+    font-size:13px;
+  }
+  .homeBtn:active{transform:translateY(1px)}
+
+  h1{
+    text-align:center;
+    margin:6px 0 12px;
+    letter-spacing:-.6px;
+    font-size:34px;
+    font-weight:950;
+  }
+
+  .wrap{
+    max-width:860px;
+    margin:0 auto;
+  }
+
+  /* 상태/버튼 바 */
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
     flex-wrap:wrap;
+    margin-bottom:12px;
   }
   .status{
     font-size:12px;
-    color:rgba(255,255,255,.78);
+    color:rgba(255,255,255,.80);
     display:flex;
     align-items:center;
     gap:8px;
     min-height:20px;
+    flex-wrap:wrap;
   }
   .pill{
     display:inline-flex;
@@ -56,11 +97,12 @@
     border-radius:999px;
     border:1px solid rgba(255,255,255,.12);
     background:rgba(255,255,255,.05);
-    color:rgba(255,255,255,.85);
-    font-weight:900;
+    color:rgba(255,255,255,.88);
+    font-weight:950;
   }
   .pill.good{ border-color: rgba(246,201,69,.35); background: rgba(246,201,69,.10); }
   .pill.bad{ border-color: rgba(255,99,99,.35); background: rgba(255,99,99,.10); }
+  .pill.blue{ border-color: rgba(96,165,250,.35); background: rgba(96,165,250,.12); }
 
   .actions{
     display:flex;
@@ -68,12 +110,12 @@
     flex-wrap:wrap;
   }
   .miniBtn{
-    padding:8px 10px;
+    padding:9px 10px;
     border-radius:12px;
     border:1px solid rgba(255,255,255,.12);
     background:rgba(255,255,255,.05);
-    color:rgba(255,255,255,.90);
-    font-weight:900;
+    color:rgba(255,255,255,.92);
+    font-weight:950;
     font-size:12px;
     cursor:pointer;
   }
@@ -83,19 +125,59 @@
     background: rgba(246,201,69,.14);
   }
 
-  .search-box{
-    display:flex;
-    justify-content:center;
+  /* ✅ 입력 UI */
+  .form{
+    display:grid;
+    grid-template-columns: 1fr;
     gap:10px;
-    margin:0 auto 14px;
-    max-width:560px;
+    margin:0 auto 12px;
+  }
+  @media (min-width:720px){
+    .form{
+      grid-template-columns: 1.2fr 1fr auto;
+      align-items:end;
+      gap:10px;
+    }
+  }
+  .field{
+    background: rgba(255,255,255,.04);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:10px 12px;
+  }
+  .label{
+    font-size:12px;
+    color: rgba(255,255,255,.78);
+    font-weight:900;
+    margin-bottom:8px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .req{
+    font-size:11px;
+    color: rgba(246,201,69,.90);
+    border:1px solid rgba(246,201,69,.35);
+    background: rgba(246,201,69,.10);
+    padding:3px 8px;
+    border-radius:999px;
+    font-weight:950;
+    white-space:nowrap;
+  }
+
+  .inputWrap{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:8px;
   }
   input{
-    width:min(360px, 70vw);
-    padding:12px 14px;
-    border-radius:10px;
-    border:1px solid var(--line);
-    background:rgba(255,255,255,.04);
+    width:100%;
+    padding:12px 40px 12px 12px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(0,0,0,.18);
     color:var(--text);
     font-size:16px;
     outline:none;
@@ -104,41 +186,71 @@
     border-color:rgba(246,201,69,.55);
     box-shadow:0 0 0 3px rgba(246,201,69,.15);
   }
+  .clearBtn{
+    position:absolute;
+    right:10px;
+    width:28px;height:28px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.08);
+    color:rgba(255,255,255,.92);
+    font-weight:950;
+    cursor:pointer;
+    display:none;
+    align-items:center;
+    justify-content:center;
+  }
+  .clearBtn:active{transform:translateY(1px)}
+  .help{
+    margin-top:8px;
+    font-size:12px;
+    color:rgba(255,255,255,.70);
+    line-height:1.45;
+  }
+
+  .cta{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:stretch;
+  }
   button.big{
-    padding:12px 16px;
+    width:100%;
+    padding:14px 16px;
     border:0;
-    border-radius:10px;
+    border-radius:14px;
     background:var(--gold);
     color:#111;
-    font-weight:900;
+    font-weight:950;
     cursor:pointer;
-    min-width:72px;
+    min-width:120px;
+    font-size:15px;
   }
   button.big:active{transform:translateY(1px)}
+  .note{
+    margin-top:10px;
+    font-size:12px;
+    color:rgba(255,255,255,.70);
+    line-height:1.5;
+    text-align:center;
+  }
 
-  #result{margin-top:14px}
+  /* 결과 */
+  #result{margin-top:10px}
   .message{
     text-align:center;
-    margin-top:16px;
+    margin-top:14px;
     color:var(--muted);
     line-height:1.5;
-  }
-  .hint{
-    max-width:720px;
-    margin:14px auto 0;
-    font-size:13px;
-    color:rgba(255,255,255,.68);
-    line-height:1.55;
-    text-align:center;
   }
 
   .card{
     background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
     border:1px solid var(--line);
-    border-radius:16px;
+    border-radius:18px;
     padding:16px;
-    max-width:520px;
-    margin:16px auto 0;
+    max-width:720px;
+    margin:14px auto 0;
     box-shadow: 0 14px 30px rgba(0,0,0,.35);
   }
   .top{
@@ -147,14 +259,14 @@
     align-items:center;
   }
   .photo{
-    width:110px;height:110px;border-radius:14px;
+    width:110px;height:110px;border-radius:16px;
     background: rgba(255,255,255,.06);
     border:1px solid var(--line);
     overflow:hidden;
     flex:0 0 auto;
     display:flex;align-items:center;justify-content:center;
     color:rgba(255,255,255,.55);
-    font-weight:800;
+    font-weight:900;
   }
   .photo img{
     width:100%;
@@ -164,8 +276,8 @@
   }
   .nameblock h2{
     margin:0 0 6px;
-    font-size:22px;
-    font-weight:900;
+    font-size:24px;
+    font-weight:950;
     letter-spacing:-.3px;
   }
   .nameblock .sub{
@@ -173,24 +285,6 @@
     color:rgba(255,255,255,.72);
     font-size:13px;
   }
-  .grid{
-    margin-top:14px;
-    display:grid;
-    grid-template-columns:1fr;
-    gap:8px;
-  }
-  .row{
-    display:flex;
-    justify-content:space-between;
-    gap:10px;
-    padding:10px 12px;
-    border-radius:12px;
-    background: rgba(17,24,39,.55);
-    border:1px solid rgba(255,255,255,.07);
-    font-size:14px;
-  }
-  .label{color:rgba(255,255,255,.70);font-weight:800}
-  .val{color:#fff;font-weight:800;text-align:right}
   .badge{
     display:inline-flex;
     align-items:center;
@@ -202,89 +296,220 @@
     background: rgba(246,201,69,.10);
     color: rgba(255,255,255,.90);
     font-size:12px;
-    font-weight:800;
+    font-weight:900;
   }
-  .debug{
-    max-width:760px;
-    margin:14px auto 0;
-    background:#0f172a;
-    border:1px solid rgba(255,255,255,.10);
+
+  .grid{
+    margin-top:14px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+  .row{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:11px 12px;
     border-radius:14px;
+    background: rgba(17,24,39,.55);
+    border:1px solid rgba(255,255,255,.07);
+    font-size:14px;
+  }
+  .rlabel{color:rgba(255,255,255,.70);font-weight:900}
+  .rval{color:#fff;font-weight:900;text-align:right; word-break:break-word;}
+
+  /* ✅ 동명이인 리스트 */
+  .list{
+    max-width:720px;
+    margin:14px auto 0;
+    display:grid;
+    gap:10px;
+  }
+  .pick{
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.04);
     padding:12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    cursor:pointer;
+    transition: transform .10s ease, border-color .15s ease;
+  }
+  .pick:hover{ transform: translateY(-1px); border-color: rgba(246,201,69,.35); }
+  .pick:active{ transform: translateY(0); }
+  .pLeft{
+    display:flex; align-items:center; gap:12px; min-width:0;
+  }
+  .thumb{
+    width:54px; height:54px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.06);
+    overflow:hidden;
+    flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,.55);
+    font-weight:950;
     font-size:12px;
-    white-space:pre-wrap;
-    overflow:auto;
-    color:rgba(255,255,255,.90);
+  }
+  .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .pInfo{ min-width:0; }
+  .pName{ font-weight:950; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pMeta{ font-size:12px; color: rgba(255,255,255,.72); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pGo{
+    font-weight:950;
+    font-size:12px;
+    color: rgba(255,255,255,.92);
+    border:1px solid rgba(246,201,69,.28);
+    background: rgba(246,201,69,.10);
+    padding:7px 10px;
+    border-radius:999px;
+    white-space:nowrap;
   }
 </style>
 </head>
 
 <body>
+
+  <!-- ✅ 상단 홈바 -->
+  <div class="nav">
+    <div class="left">
+      <a class="homeBtn" id="homeBtn" href="../">🏠 홈 바로가기</a>
+      <div class="brand">계명태권도 · 수련생 조회</div>
+    </div>
+  </div>
+
   <h1>수련생 조회</h1>
 
-  <div class="topbar">
-    <div class="status" id="statusLine">
-      <span class="pill" id="dataPill">데이터: 준비중</span>
-      <span id="statusText">페이지가 열리면 자동으로 1회 불러옵니다.</span>
+  <div class="wrap">
+
+    <div class="topbar">
+      <div class="status">
+        <span class="pill" id="dataPill">데이터: 준비중</span>
+        <span class="pill blue" id="timePill" style="display:none;"></span>
+        <span id="statusText">페이지가 열리면 자동으로 1회 불러옵니다.</span>
+      </div>
+      <div class="actions">
+        <button class="miniBtn gold" id="refreshBtn" type="button">데이터 새로고침</button>
+        <button class="miniBtn" id="clearCacheBtn" type="button">캐시 삭제</button>
+      </div>
     </div>
-    <div class="actions">
-      <button class="miniBtn gold" id="refreshBtn" type="button">데이터 새로고침</button>
-      <button class="miniBtn" id="clearCacheBtn" type="button">캐시 삭제</button>
+
+    <!-- ✅ 입력 폼 -->
+    <div class="form">
+      <div class="field">
+        <div class="label">
+          <span>이름 또는 아이디</span>
+          <span class="req">필수</span>
+        </div>
+        <div class="inputWrap">
+          <input id="qNameOrId" type="text" placeholder="예: 김예성 / KM002 / km002" autocomplete="off" />
+          <button class="clearBtn" id="clearName" type="button" aria-label="clear">✕</button>
+        </div>
+        <div class="help">※ 아이디는 대소문자 상관없이 검색됩니다.</div>
+      </div>
+
+      <div class="field">
+        <div class="label">
+          <span>생년월일</span>
+          <span class="req">필수</span>
+        </div>
+        <div class="inputWrap">
+          <input id="qBirth" type="text" placeholder="예: 11.02.13 또는 2011.02.13" autocomplete="off" inputmode="numeric" />
+          <button class="clearBtn" id="clearBirth" type="button" aria-label="clear">✕</button>
+        </div>
+        <div class="help">※ 점(.) 없이 입력해도 됩니다. (예: 110213)</div>
+      </div>
+
+      <div class="cta">
+        <button class="big" id="searchBtn" type="button">조회</button>
+      </div>
     </div>
-  </div>
 
-  <div class="search-box">
-    <input id="searchName" type="text" placeholder="이름 또는 아이디 입력 (예: 김예담 / KM001)" autocomplete="off" />
-    <button class="big" id="searchBtn" type="button">조회</button>
-  </div>
+    <div id="result"></div>
 
-  <div id="result"></div>
+    <div class="note">
+      개인정보 보호를 위해 <b>이름(또는 아이디) + 생년월일</b>이 모두 일치해야 조회됩니다.
+    </div>
 
-  <div class="hint">
-    ※ 주소 끝에 <b>?debug=1</b> 을 붙이면(예: /verification/?debug=1) 불러온 행 수/일부 이름이 표시됩니다.<br/>
-    ※ 이 페이지는 “처음 1회”만 구글시트를 불러오고, 그 다음 조회는 휴대폰 안(로컬)에서 즉시 처리합니다.
   </div>
 
 <script>
 /* =========================================================
-  ✅ 전총재님 구글 시트 (웹에 게시 CSV)
+  ✅ Google Sheet (Publish CSV)
 ========================================================= */
 const RAW_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=0&single=true&output=csv";
 
 /* =========================================================
-  ✅ 캐시/재시도/타임아웃 설정
+  ✅ Cache/Retry/Timeout
 ========================================================= */
-const CACHE_KEY = "KMT_STUDENTS_CACHE_V2";     // 버전 올리면 기존 캐시 자동 무효화
-const CACHE_TTL_MS = 10 * 60 * 1000;          // 10분 캐시 (원하면 30분/1시간으로 늘리면 됨)
-const FETCH_TIMEOUT_MS = 8000;                // 8초 타임아웃
-const RETRY_COUNT = 2;                        // 실패 시 추가 재시도 횟수 (총 1+2=3회 시도)
+const CACHE_KEY = "KMT_STUDENTS_CACHE_V3";
+const CACHE_TTL_MS = 10 * 60 * 1000;     // 10분
+const FETCH_TIMEOUT_MS = 8000;           // 8초
+const RETRY_COUNT = 2;                   // 총 3회 시도
 
-/* debug */
-const DEBUG = new URLSearchParams(location.search).get("debug") === "1";
-
-/* 상태 */
 const $ = (id)=>document.getElementById(id);
-const statusText = $("statusText");
 const dataPill = $("dataPill");
+const timePill = $("timePill");
+const statusText = $("statusText");
 const resultEl = $("result");
 
-let DATA_ROWS = null;          // header 제외한 실제 데이터 배열(행)
-let LOADING_PROMISE = null;    // 중복 fetch 방지
+let DATA_ROWS = null;            // 헤더 제외 rows
+let LOADING_PROMISE = null;
+let LAST_LOADED_AT = null;       // Date
+let LAST_SOURCE = null;          // "cache" | "network"
 
-/* ---------- 문자열 정리 ---------- */
+/* ---------- utils ---------- */
 function clean(v){
   return (v ?? "")
     .toString()
-    .replace(/^\uFEFF/, "")     // BOM
-    .replace(/\r/g, "")         // CR
-    .replace(/^"|"$/g, "")      // 양끝 따옴표
+    .replace(/^\uFEFF/, "")
+    .replace(/\r/g, "")
+    .replace(/^"|"$/g, "")
     .trim();
 }
 function norm(v){
   return clean(v).replace(/\s+/g,"").toLowerCase();
 }
+function onlyDigits(v){
+  return clean(v).replace(/[^\d]/g,"");
+}
+/* 생년월일 정규화:
+   - "11.02.13" -> "110213"
+   - "2011.02.13" -> "110213"
+   - "110213" -> "110213"
+*/
+function normBirth(v){
+  const d = onlyDigits(v);
+  if(!d) return "";
+  if(d.length === 6) return d;                    // yymmdd
+  if(d.length === 8) return d.slice(2);           // yyyymmdd -> yymmdd
+  // 혹시 7자리/5자리 등 애매하면 그대로(일치 실패)
+  return d;
+}
 
-/* ---------- CSV 파서(따옴표/콤마 안전) ---------- */
+function escapeHtml(str){
+  return String(str ?? "").replace(/[&<>"']/g, s => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[s]));
+}
+
+function fmtTime(dt){
+  try{
+    const y = dt.getFullYear();
+    const m = String(dt.getMonth()+1).padStart(2,"0");
+    const d = String(dt.getDate()).padStart(2,"0");
+    const hh = String(dt.getHours()).padStart(2,"0");
+    const mm = String(dt.getMinutes()).padStart(2,"0");
+    return `${y}-${m}-${d} ${hh}:${mm}`;
+  }catch{
+    return "";
+  }
+}
+
+/* ---------- CSV parse ---------- */
 function splitCSVLine(line){
   const out = [];
   let cur = "";
@@ -317,7 +542,7 @@ function parseCSV(text){
   return rows;
 }
 
-/* ---------- 캐시 ---------- */
+/* ---------- cache ---------- */
 function readCache(){
   try{
     const raw = localStorage.getItem(CACHE_KEY);
@@ -325,15 +550,15 @@ function readCache(){
     const obj = JSON.parse(raw);
     if(!obj || !obj.savedAt || !Array.isArray(obj.rows)) return null;
     if(Date.now() - obj.savedAt > CACHE_TTL_MS) return null;
-    return obj.rows;
+    return obj;
   }catch{
     return null;
   }
 }
-function writeCache(rows){
+function writeCache(rows, savedAt){
   try{
     localStorage.setItem(CACHE_KEY, JSON.stringify({
-      savedAt: Date.now(),
+      savedAt: savedAt || Date.now(),
       rows
     }));
   }catch{}
@@ -355,35 +580,59 @@ async function fetchWithTimeout(url, ms){
   }
 }
 
-/* ---------- CSV 로딩: direct → 실패 시 allorigins fallback ---------- */
+/* ---------- direct → fallback allorigins ---------- */
 async function fetchCSVText(){
-  // 1) direct
   try{
     return await fetchWithTimeout(RAW_CSV, FETCH_TIMEOUT_MS);
   }catch(e1){
-    // 2) fallback via allorigins
     const proxied = "https://api.allorigins.win/raw?url=" + encodeURIComponent(RAW_CSV);
     return await fetchWithTimeout(proxied, FETCH_TIMEOUT_MS);
   }
 }
 
-/* ---------- 1회만 로딩 (중복 방지) ---------- */
+/* ---------- status UI ---------- */
+function setStatus(type, pillText, msg){
+  if(type === "good"){
+    dataPill.className = "pill good";
+  }else if(type === "bad"){
+    dataPill.className = "pill bad";
+  }else{
+    dataPill.className = "pill";
+  }
+  dataPill.textContent = "데이터: " + pillText;
+  statusText.textContent = msg || "";
+}
+
+function setTimePill(){
+  if(!LAST_LOADED_AT){
+    timePill.style.display = "none";
+    return;
+  }
+  timePill.style.display = "inline-flex";
+  const src = LAST_SOURCE === "cache" ? "캐시" : "최신";
+  timePill.textContent = `업데이트: ${fmtTime(LAST_LOADED_AT)} · ${src}`;
+}
+
+/* ---------- load once ---------- */
 async function loadOnce({force=false}={}){
   if(DATA_ROWS && !force) return DATA_ROWS;
 
   if(!force){
     const cached = readCache();
     if(cached){
-      DATA_ROWS = cached;
-      setStatus("good", `캐시 사용 (${cached.length}명)`, `데이터 준비 완료 · 조회는 즉시 됩니다`);
-      if(DEBUG) renderDebug(cached, true);
+      DATA_ROWS = cached.rows;
+      LAST_LOADED_AT = new Date(cached.savedAt);
+      LAST_SOURCE = "cache";
+      setStatus("good", `준비(${DATA_ROWS.length}명)`, `조회는 휴대폰 안에서 즉시 처리됩니다`);
+      setTimePill();
       return DATA_ROWS;
     }
   }
 
   if(LOADING_PROMISE) return LOADING_PROMISE;
 
-  setStatus("loading", "불러오는 중", "구글 시트 데이터를 불러오는 중입니다…");
+  setStatus("loading", "불러오는 중", "데이터를 불러오는 중입니다…");
+  timePill.style.display = "none";
 
   LOADING_PROMISE = (async ()=>{
     let lastErr = null;
@@ -392,14 +641,15 @@ async function loadOnce({force=false}={}){
       try{
         const csvText = await fetchCSVText();
         const rows = parseCSV(csvText);
-
-        // rows[0] = header
         const data = rows.slice(1).filter(r => r && r.length && clean(r[0]) !== "");
-        DATA_ROWS = data;
-        writeCache(data);
 
-        setStatus("good", `데이터 준비 (${data.length}명)`, "이제 조회는 휴대폰 안에서 즉시 처리됩니다");
-        if(DEBUG) renderDebug(data, false);
+        DATA_ROWS = data;
+        LAST_LOADED_AT = new Date();
+        LAST_SOURCE = "network";
+        writeCache(data, Date.now());
+
+        setStatus("good", `준비(${DATA_ROWS.length}명)`, "조회는 휴대폰 안에서 즉시 처리됩니다");
+        setTimePill();
         return DATA_ROWS;
       }catch(err){
         lastErr = err;
@@ -418,29 +668,39 @@ async function loadOnce({force=false}={}){
   }
 }
 
-/* ---------- 상태 UI ---------- */
-function setStatus(type, pillText, msg){
-  if(type === "good"){
-    dataPill.className = "pill good";
-  }else if(type === "bad"){
-    dataPill.className = "pill bad";
-  }else{
-    dataPill.className = "pill";
+/* =========================================================
+  ✅ Matching logic (이름/아이디/생년월일)
+  - 전총재님 요청: "이름 + 생년월일" 같이 입력해야 조회되게!
+  - 여기서 '이름 또는 아이디' + '생년월일'이 둘 다 필수
+========================================================= */
+function matchRows(qNameOrId, qBirth){
+  const q1 = norm(qNameOrId);
+  const qb = normBirth(qBirth);
+
+  if(!q1 || !qb) return [];
+
+  // 시트 기준 열:
+  // 0 아이디, 1 이름, 2 생년월일(예: 11.02.13), ...
+  const out = [];
+  for(const r of DATA_ROWS){
+    const id = norm(r[0]);                 // KM002 -> km002
+    const name = norm(r[1]);               // 김예성
+    const birth = normBirth(r[2]);         // 11.02.13 -> 110213
+
+    // ✅ (이름 또는 아이디) AND (생년월일) 동시 일치
+    const okNameOrId = (id && id === q1) || (name && name === q1) || (name && name.includes(q1)) || (id && id.includes(q1));
+    const okBirth = (birth && birth === qb);
+
+    if(okNameOrId && okBirth) out.push(r);
   }
-  dataPill.textContent = "데이터: " + pillText;
-  statusText.textContent = msg || "";
+
+  // 정렬: 이름 동일이면 아이디 순
+  out.sort((a,b)=> String(a[1]||"").localeCompare(String(b[1]||"")) || String(a[0]||"").localeCompare(String(b[0]||"")));
+  return out;
 }
 
-/* ---------- 카드 ---------- */
-function escapeHtml(str){
-  return String(str ?? "").replace(/[&<>"']/g, s => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  }[s]));
-}
-
+/* ---------- UI render ---------- */
 function renderCard(row){
-  // 0 아이디, 1 이름, 2 생년월일, 3 태권도단증, 4 경호무술단증, 5 검도단증,
-  // 6 포토링크, 7 현재포인트, 8 보유자격증, 9 보유인증서
   const id = clean(row[0]);
   const name = clean(row[1]);
   const birth = clean(row[2]);
@@ -462,7 +722,8 @@ function renderCard(row){
                       alt="사진"
                       loading="lazy"
                       decoding="async"
-                      referrerpolicy="no-referrer" />`
+                      referrerpolicy="no-referrer"
+                      onerror="this.onerror=null;this.style.display='none';this.parentElement.textContent='NO PHOTO';" />`
               : `NO PHOTO`
           }
         </div>
@@ -474,103 +735,129 @@ function renderCard(row){
       </div>
 
       <div class="grid">
-        <div class="row"><span class="label">태권도단증</span><span class="val">${escapeHtml(tkd || "-")}</span></div>
-        <div class="row"><span class="label">경호무술단증</span><span class="val">${escapeHtml(pm || "-")}</span></div>
-        <div class="row"><span class="label">검도단증</span><span class="val">${escapeHtml(kendo || "-")}</span></div>
-        <div class="row"><span class="label">현재포인트</span><span class="val">${escapeHtml(point || "0")}</span></div>
-        <div class="row"><span class="label">보유자격증</span><span class="val">${escapeHtml(cert || "-")}</span></div>
-        <div class="row"><span class="label">보유인증서</span><span class="val">${escapeHtml(doc || "-")}</span></div>
+        <div class="row"><span class="rlabel">태권도단증</span><span class="rval">${escapeHtml(tkd || "-")}</span></div>
+        <div class="row"><span class="rlabel">경호무술단증</span><span class="rval">${escapeHtml(pm || "-")}</span></div>
+        <div class="row"><span class="rlabel">검도단증</span><span class="rval">${escapeHtml(kendo || "-")}</span></div>
+        <div class="row"><span class="rlabel">현재포인트</span><span class="rval">${escapeHtml(point || "0")}</span></div>
+        <div class="row"><span class="rlabel">보유자격증</span><span class="rval">${escapeHtml(cert || "-")}</span></div>
+        <div class="row"><span class="rlabel">보유인증서</span><span class="rval">${escapeHtml(doc || "-")}</span></div>
       </div>
     </div>
   `;
 }
 
-/* ---------- 디버그 ---------- */
-function renderDebug(dataRows, fromCache){
-  const names = dataRows.map(r => clean(r[1])).filter(Boolean);
-  const txt = [
-    "DEBUG MODE ON",
-    `source: ${fromCache ? "localStorage cache" : "network fetch"}`,
-    `rows: ${dataRows.length}`,
-    "first 10 names:",
-    ...names.slice(0,10).map((n,i)=>`${i+1}. ${n}`)
-  ].join("\n");
+function renderPickList(rows){
+  const list = rows.map((r, idx)=>{
+    const id = clean(r[0]);
+    const name = clean(r[1]);
+    const birth = clean(r[2]);
+    const photo = clean(r[6]);
 
-  let dbg = document.querySelector(".debug");
-  if(!dbg){
-    dbg = document.createElement("div");
-    dbg.className = "debug";
-    document.body.appendChild(dbg);
-  }
-  dbg.textContent = txt;
+    return `
+      <div class="pick" data-idx="${idx}">
+        <div class="pLeft">
+          <div class="thumb">
+            ${
+              photo
+                ? `<img src="${escapeHtml(photo)}" alt="사진" loading="lazy" decoding="async" referrerpolicy="no-referrer"
+                        onerror="this.onerror=null;this.style.display='none';this.parentElement.textContent='NO';" />`
+                : `NO`
+            }
+          </div>
+          <div class="pInfo">
+            <div class="pName">${escapeHtml(name || "-")}</div>
+            <div class="pMeta">아이디: ${escapeHtml(id || "-")} · 생년월일: ${escapeHtml(birth || "-")}</div>
+          </div>
+        </div>
+        <div class="pGo">선택</div>
+      </div>
+    `;
+  }).join("");
+
+  return `<div class="message">동일 조건으로 <b>${rows.length}명</b>이 조회되었습니다. 아래에서 선택해주세요.</div>
+          <div class="list" id="pickList">${list}</div>`;
 }
 
-/* ---------- 로컬 검색 ---------- */
-function findStudent(keyword){
-  const k = norm(keyword);
-  if(!k) return null;
+/* ---------- search ---------- */
+async function runSearch(){
+  const q1 = $("qNameOrId").value;
+  const qb = $("qBirth").value;
 
-  // 우선: 아이디 완전일치
-  for(const row of DATA_ROWS){
-    if(norm(row[0]) === k) return row;
-  }
-  // 다음: 이름 완전일치
-  for(const row of DATA_ROWS){
-    if(norm(row[1]) === k) return row;
-  }
-  // 마지막: 부분일치(이름/아이디)
-  for(const row of DATA_ROWS){
-    const id = norm(row[0]);
-    const name = norm(row[1]);
-    if((id && id.includes(k)) || (name && name.includes(k))) return row;
-  }
-  return null;
-}
-
-/* ---------- 검색 실행 ---------- */
-async function searchStudent(){
-  const input = $("searchName").value;
   resultEl.innerHTML = "";
 
-  if(!clean(input)){
-    resultEl.innerHTML = `<div class="message">이름 또는 아이디를 입력해주세요.</div>`;
+  if(!clean(q1) || !clean(qb)){
+    resultEl.innerHTML = `<div class="message">이름(또는 아이디)과 생년월일을 모두 입력해주세요.</div>`;
     return;
   }
 
-  // 데이터가 없으면 먼저 1회 로딩
   try{
     await loadOnce({force:false});
   }catch(e){
     console.error(e);
     setStatus("bad", "오류", "데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.");
-    resultEl.innerHTML = `<div class="message">데이터를 불러오지 못했습니다.<br/>오른쪽 위 <b>데이터 새로고침</b>을 눌러보세요.</div>`;
+    resultEl.innerHTML = `<div class="message">데이터를 불러오지 못했습니다.<br/>상단의 <b>데이터 새로고침</b>을 눌러 다시 시도해주세요.</div>`;
     return;
   }
 
-  const found = findStudent(input);
+  const rows = matchRows(q1, qb);
 
-  if(!found){
+  if(rows.length === 0){
     resultEl.innerHTML = `<div class="message">조회 결과가 없습니다.</div>`;
     return;
   }
 
-  resultEl.innerHTML = renderCard(found);
+  // 1명: 바로 상세
+  if(rows.length === 1){
+    resultEl.innerHTML = renderCard(rows[0]);
+    return;
+  }
+
+  // 여러 명: 선택 리스트
+  resultEl.innerHTML = renderPickList(rows);
+
+  const pickList = $("pickList");
+  if(pickList){
+    pickList.addEventListener("click", (e)=>{
+      const el = e.target.closest(".pick");
+      if(!el) return;
+      const idx = Number(el.getAttribute("data-idx"));
+      const chosen = rows[idx];
+      if(chosen) resultEl.innerHTML = renderCard(chosen);
+    });
+  }
 }
 
-/* ---------- 버튼/이벤트 ---------- */
-$("searchBtn").addEventListener("click", searchStudent);
+/* ---------- clear buttons ---------- */
+function bindClear(inputId, btnId){
+  const input = $(inputId);
+  const btn = $(btnId);
 
-// 엔터키로 조회
+  function sync(){
+    btn.style.display = input.value ? "inline-flex" : "none";
+  }
+  input.addEventListener("input", sync);
+  btn.addEventListener("click", ()=>{
+    input.value = "";
+    input.focus();
+    sync();
+  });
+  sync();
+}
+
+/* ---------- events ---------- */
+$("searchBtn").addEventListener("click", runSearch);
+
 document.addEventListener("keydown",(e)=>{
-  if(e.key==="Enter") searchStudent();
+  if(e.key === "Enter") runSearch();
 });
 
-// 데이터 새로고침(강제로 네트워크 재로딩)
 $("refreshBtn").addEventListener("click", async ()=>{
   resultEl.innerHTML = "";
   try{
     clearCache();
     DATA_ROWS = null;
+    LAST_LOADED_AT = null;
+    LAST_SOURCE = null;
     await loadOnce({force:true});
   }catch(e){
     console.error(e);
@@ -578,18 +865,23 @@ $("refreshBtn").addEventListener("click", async ()=>{
   }
 });
 
-// 캐시 삭제(데이터만 지움, 새로고침은 안 함)
 $("clearCacheBtn").addEventListener("click", ()=>{
   clearCache();
   DATA_ROWS = null;
+  LAST_LOADED_AT = null;
+  LAST_SOURCE = null;
+  timePill.style.display = "none";
   setStatus("loading", "캐시 삭제됨", "다음 조회 시 새로 불러옵니다.");
 });
 
-// 페이지 진입 시: 자동 1회 로딩 (조회 체감 속도 ↑)
+bindClear("qNameOrId", "clearName");
+bindClear("qBirth", "clearBirth");
+
+/* 페이지 진입 시: 자동 1회 로딩 */
 window.addEventListener("DOMContentLoaded", ()=>{
   loadOnce({force:false}).catch(e=>{
     console.error(e);
-    setStatus("bad", "대기", "자동 불러오기에 실패했습니다. 조회 버튼을 누르거나 ‘데이터 새로고침’을 눌러주세요.");
+    setStatus("bad", "대기", "자동 불러오기에 실패했습니다. 상단 ‘데이터 새로고침’을 눌러주세요.");
   });
 });
 </script>
