@@ -6,136 +6,206 @@
 <title>수련생 조회</title>
 
 <style>
-body{
-  font-family: Arial, sans-serif;
-  background:#0b0f19;
-  color:white;
-  margin:0;
-  padding:20px;
-}
-h1{ text-align:center; margin-bottom:25px; }
-.search-box{ text-align:center; margin-bottom:20px; }
-input{
-  padding:10px;
-  width:220px;
-  border-radius:6px;
-  border:none;
-  font-size:16px;
-}
-button{
-  padding:10px 15px;
-  border:none;
-  border-radius:6px;
-  background:gold;
-  font-weight:bold;
-  cursor:pointer;
-  margin-left:8px;
-}
-.card{
-  background:#111827;
-  padding:20px;
-  border-radius:12px;
-  max-width:420px;
-  margin:25px auto;
-  box-shadow:0 0 15px rgba(0,0,0,0.5);
-}
-.card img{
-  width:120px;
-  border-radius:10px;
-  display:block;
-  margin:0 auto 15px;
-}
-.label{ font-weight:bold; color:gold; }
-.message{ text-align:center; margin-top:20px; }
+  body{font-family:Arial, sans-serif;background:#0b0f19;color:#fff;margin:0;padding:20px}
+  h1{text-align:center;margin:0 0 22px}
+  .search-box{text-align:center;margin:0 0 16px}
+  input{padding:10px 12px;width:240px;border-radius:8px;border:none;font-size:16px}
+  button{padding:10px 14px;border:none;border-radius:8px;background:gold;font-weight:800;cursor:pointer;margin-left:8px}
+  .card{background:#111827;padding:18px 18px;border-radius:14px;max-width:460px;margin:18px auto;box-shadow:0 0 18px rgba(0,0,0,.45)}
+  .card img{width:120px;height:120px;object-fit:cover;border-radius:12px;display:block;margin:0 auto 12px}
+  .label{font-weight:800;color:gold}
+  .message{text-align:center;margin-top:14px;opacity:.95}
+  .hint{max-width:520px;margin:12px auto 0;font-size:13px;opacity:.75;line-height:1.45}
+  .debug{max-width:720px;margin:14px auto 0;background:#0f172a;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;font-size:12px;white-space:pre-wrap;overflow:auto}
+  .rowline{margin:2px 0}
 </style>
 </head>
 
 <body>
+  <h1>수련생 조회</h1>
 
-<h1>수련생 조회</h1>
+  <div class="search-box">
+    <input type="text" id="searchName" placeholder="이름 입력 (예: 김예담)">
+    <button onclick="searchStudent()">조회</button>
+  </div>
 
-<div class="search-box">
-  <input type="text" id="searchName" placeholder="이름 입력">
-  <button onclick="searchStudent()">조회</button>
-</div>
+  <div id="result"></div>
 
-<div id="result"></div>
+  <div class="hint">
+    ※ 검색이 안 되면 이름 앞/뒤 공백 또는 따옴표 문제일 수 있어요. (이 페이지는 자동으로 정리해서 비교합니다)<br>
+    ※ 디버그 확인: 주소 끝에 <b>?debug=1</b> 을 붙이면 불러온 이름 목록/행 수가 보입니다.
+  </div>
 
 <script>
+/** =============================
+ *  1) 구글시트 CSV 주소 + CORS 우회
+ * ============================== */
+const RAW_CSV =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYhWbNhlhFmg2tNyaaRJRRlxYGCgUawZUeytRZ-aH9nusJSAUHYYozgO6aO/pub?gid=0&single=true&output=csv";
 
-// 🔥 Google CSV 주소
-const rawURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYhWbNhlhFmg2tNyaaRJRRlxYGCgUawZUeytRZ-aH9nusJSAUHYYozgO6aO/pub?gid=0&single=true&output=csv";
+// GitHub Pages → Google 직접 fetch는 CORS가 막힐 수 있어 프록시 사용
+const CSV_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(RAW_CSV);
 
-// 🔥 CORS 우회 프록시
-const sheetURL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(rawURL);
+const DEBUG = new URLSearchParams(location.search).get("debug") === "1";
 
+/** =============================
+ *  2) 문자열 정리/정규화
+ * ============================== */
 function clean(v){
   return (v ?? "")
     .toString()
-    .replace(/^\uFEFF/, "")
-    .replace(/\r/g, "")
-    .replace(/^"|"$/g, "")
+    .replace(/^\uFEFF/, "")    // BOM 제거
+    .replace(/\r/g, "")        // \r 제거
+    .replace(/^"|"$/g, "")     // 양끝 따옴표 제거
     .trim();
 }
 
-async function fetchData(){
-  const res = await fetch(sheetURL);
-  if(!res.ok) throw new Error("불러오기 실패");
-
-  const text = await res.text();
-  const lines = text.split("\n").filter(l => l.trim() !== "");
-  return lines.map(l => l.split(",").map(clean));
+// 비교용 정규화: 공백 전부 제거 + 따옴표 제거 + trim
+function normName(v){
+  return clean(v).replace(/\s+/g, "");
 }
 
+/** =============================
+ *  3) CSV 한 줄 파싱(따옴표/콤마 안전)
+ * ============================== */
+function splitCSVLine(line){
+  const out = [];
+  let cur = "";
+  let inQuotes = false;
+
+  for(let i=0;i<line.length;i++){
+    const ch = line[i];
+    if(ch === '"'){
+      // "" -> " 처리
+      if(inQuotes && line[i+1] === '"'){ cur += '"'; i++; }
+      else inQuotes = !inQuotes;
+    } else if(ch === "," && !inQuotes){
+      out.push(cur);
+      cur = "";
+    } else {
+      cur += ch;
+    }
+  }
+  out.push(cur);
+  return out;
+}
+
+/** =============================
+ *  4) 데이터 로드
+ * ============================== */
+async function fetchRows(){
+  const res = await fetch(CSV_URL, { cache: "no-store" });
+  if(!res.ok) throw new Error("CSV fetch failed: " + res.status);
+
+  const text = await res.text();
+  const lines = text
+    .split("\n")
+    .map(l => l.replace(/\r/g,""))
+    .filter(l => l.trim() !== "");
+
+  const rows = lines
+    .map(splitCSVLine)
+    .map(cols => cols.map(clean));
+
+  return rows;
+}
+
+/** =============================
+ *  5) UI 출력
+ * ============================== */
+function renderCard(row){
+  // 컬럼 인덱스:
+  // 0 아이디, 1 이름, 2 생년월일, 3 태권도단증, 4 경호무술단증, 5 검도단증, 6 포토링크, 7 현재포인트, 8 보유자격증, 9 보유인증서
+  const photo = clean(row[6]);
+
+  return `
+    <div class="card">
+      ${photo ? `<img src="${photo}" alt="사진" referrerpolicy="no-referrer">` : ""}
+      <p><span class="label">아이디:</span> ${clean(row[0])}</p>
+      <p><span class="label">이름:</span> ${clean(row[1])}</p>
+      <p><span class="label">생년월일:</span> ${clean(row[2])}</p>
+      <p><span class="label">태권도단증:</span> ${clean(row[3])}</p>
+      <p><span class="label">경호무술단증:</span> ${clean(row[4])}</p>
+      <p><span class="label">검도단증:</span> ${clean(row[5])}</p>
+      <p><span class="label">현재포인트:</span> ${clean(row[7])}</p>
+      <p><span class="label">보유자격증:</span> ${clean(row[8])}</p>
+      <p><span class="label">보유인증서:</span> ${clean(row[9])}</p>
+    </div>
+  `;
+}
+
+function renderDebug(rows){
+  const names = rows.slice(1).map(r => clean(r[1])).filter(Boolean);
+  const html = [
+    `DEBUG MODE ON`,
+    `rows: ${rows.length}`,
+    `first 10 names:`,
+    ...names.slice(0,10).map((n,i)=>`${i+1}. ${n}`)
+  ].join("\n");
+
+  const dbg = document.createElement("div");
+  dbg.className = "debug";
+  dbg.textContent = html;
+  document.body.appendChild(dbg);
+}
+
+/** =============================
+ *  6) 검색
+ * ============================== */
 async function searchStudent(){
-  const name = clean(document.getElementById("searchName").value);
+  const input = document.getElementById("searchName").value;
+  const target = normName(input);
   const resultEl = document.getElementById("result");
   resultEl.innerHTML = "";
 
-  if(!name){
-    resultEl.innerHTML = "<div class='message'>이름을 입력하세요.</div>";
+  if(!target){
+    resultEl.innerHTML = `<div class="message">이름을 입력해주세요.</div>`;
     return;
   }
 
   let rows;
   try{
-    rows = await fetchData();
+    rows = await fetchRows();
   }catch(e){
-    resultEl.innerHTML = "<div class='message'>데이터를 불러오지 못했습니다.</div>";
     console.error(e);
+    resultEl.innerHTML = `<div class="message">데이터를 불러오지 못했습니다.</div>`;
     return;
   }
 
-  let found = null;
+  if(DEBUG) renderDebug(rows);
 
-  for(let i=1; i<rows.length; i++){
-    if(rows[i][1] === name){
+  // 1) 완전일치(공백 제거 기준)
+  let found = null;
+  for(let i=1;i<rows.length;i++){
+    if(normName(rows[i][1]) === target){
       found = rows[i];
       break;
     }
   }
 
+  // 2) 그래도 없으면 부분일치(혹시 ‘김예담(무언가)’ 형태 대비)
   if(!found){
-    resultEl.innerHTML = "<div class='message'>조회 결과가 없습니다.</div>";
+    for(let i=1;i<rows.length;i++){
+      const rn = normName(rows[i][1]);
+      if(rn && rn.includes(target)){
+        found = rows[i];
+        break;
+      }
+    }
+  }
+
+  if(!found){
+    resultEl.innerHTML = `<div class="message">조회 결과가 없습니다.</div>`;
     return;
   }
 
-  resultEl.innerHTML = `
-    <div class="card">
-      ${found[6] ? `<img src="${found[6]}" alt="사진">` : ""}
-      <p><span class="label">아이디:</span> ${found[0]}</p>
-      <p><span class="label">이름:</span> ${found[1]}</p>
-      <p><span class="label">생년월일:</span> ${found[2]}</p>
-      <p><span class="label">태권도단증:</span> ${found[3]}</p>
-      <p><span class="label">경호무술단증:</span> ${found[4]}</p>
-      <p><span class="label">검도단증:</span> ${found[5]}</p>
-      <p><span class="label">현재포인트:</span> ${found[7]}</p>
-      <p><span class="label">보유자격증:</span> ${found[8]}</p>
-      <p><span class="label">보유인증서:</span> ${found[9]}</p>
-    </div>
-  `;
+  resultEl.innerHTML = renderCard(found);
 }
 
+// 엔터키로 조회
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter") searchStudent();
+});
 </script>
 
 </body>
