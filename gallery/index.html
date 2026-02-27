@@ -3,857 +3,516 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>갤러리 & 영상 | 계명태권도</title>
-  <meta name="description" content="계명태권도 공식 갤러리 & 영상. 수련, 심사, 행사, 성장 기록을 한 곳에서 확인하세요." />
+  <title>갤러리 조회 | 계명태권도</title>
+  <meta name="description" content="이름 검색으로 사진을 빠르게 찾고, 모바일에서 스와이프로 페이지를 넘겨 확인할 수 있습니다." />
   <meta name="theme-color" content="#0b0f19" />
-
-  <!-- OG -->
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="계명태권도 | 갤러리 & 영상" />
-  <meta property="og:description" content="수련·심사·행사·성장 기록. 모바일 최적화 갤러리." />
-  <meta property="og:image" content="https://static.wixstatic.com/media/abf917_38e0bc3b3d804b3caa6aa8363163950d~mv2.jpg" />
 
   <style>
     :root{
       --bg:#0b0f19;
-      --line:rgba(255,255,255,.10);
+      --panel:#111a2e;
+      --panel2:#0f1629;
+      --line:rgba(255,255,255,.12);
       --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.68);
-      --gold:#d7b56d;
-      --blue:#66b3ff;
-      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --muted:rgba(255,255,255,.70);
+      --gold:#d7b76a;
+      --blue:#4da3ff;
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
       --r:18px;
     }
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", "Malgun Gothic", sans-serif;
-      background: radial-gradient(1200px 700px at 18% -10%, rgba(102,179,255,.15), transparent 55%),
-                  radial-gradient(900px 650px at 100% 0%, rgba(215,181,109,.14), transparent 58%),
-                  linear-gradient(180deg, #070b14, var(--bg));
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Malgun Gothic", Arial, sans-serif;
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(77,163,255,.15), transparent 55%),
+        radial-gradient(900px 600px at 85% 20%, rgba(215,183,106,.12), transparent 55%),
+        var(--bg);
       color:var(--text);
     }
     a{color:inherit; text-decoration:none}
-    .wrap{max-width:1100px; margin:0 auto; padding:20px 16px 90px}
+    .wrap{max-width:1100px; margin:0 auto; padding:18px 14px 28px;}
 
-    /* Top Bar */
     .topbar{
-      position:sticky; top:0; z-index:50;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; padding:10px 12px;
+      border:1px solid var(--line); background:rgba(17,26,46,.65);
       backdrop-filter: blur(10px);
-      background: rgba(11,15,25,.68);
-      border-bottom:1px solid var(--line);
-    }
-    .topbar .inner{
-      max-width:1100px; margin:0 auto;
-      display:flex; align-items:center; gap:10px;
-      padding:10px 16px;
-    }
-    .brand{display:flex; flex-direction:column; gap:2px}
-    .brand b{letter-spacing:.2px}
-    .brand small{color:var(--muted)}
-    .spacer{flex:1}
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center; gap:8px;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      color:var(--text);
-      cursor:pointer;
-      user-select:none;
-      transition: transform .15s ease, border-color .15s ease, background .15s ease;
-      font-weight:650;
-      white-space:nowrap;
-    }
-    .btn:hover{transform: translateY(-1px); border-color: rgba(215,181,109,.35)}
-    .btn:active{transform: translateY(0px)}
-    .btn.primary{
-      border-color: rgba(102,179,255,.35);
-      background: linear-gradient(180deg, rgba(102,179,255,.16), rgba(255,255,255,.03));
-    }
-    .btn.gold{
-      border-color: rgba(215,181,109,.45);
-      background: linear-gradient(180deg, rgba(215,181,109,.18), rgba(255,255,255,.03));
-    }
-
-    /* Section Cards */
-    .cardBox{
-      margin-top:18px;
-      border:1px solid var(--line);
       border-radius: var(--r);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
       box-shadow: var(--shadow);
-      overflow:hidden;
     }
-    .cardBox .head{
-      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
-      padding:16px 16px 12px;
-      border-bottom:1px solid var(--line);
+    .brand{display:flex; align-items:center; gap:10px; min-width:0;}
+    .badge{
+      width:38px; height:38px; border-radius:12px;
+      background: linear-gradient(135deg, rgba(215,183,106,.95), rgba(77,163,255,.9));
+      display:grid; place-items:center; color:#07101f; font-weight:900;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      flex:0 0 auto;
     }
-    .cardBox .head h2{margin:0; font-size:18px}
-    .cardBox .head p{margin:0; color:var(--muted); font-size:13px; line-height:1.55}
-    .cardBox .body{padding:14px 14px 16px}
+    .brand h1{font-size:15px; margin:0; line-height:1.15}
+    .brand p{margin:0; font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 
-    /* COVER + THUMBS */
-    .cover{
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap:12px;
-      align-items:stretch;
-    }
-    .coverMain{
-      position:relative;
+    .btn{
       border:1px solid var(--line);
-      border-radius: 18px;
-      overflow:hidden;
-      background: rgba(0,0,0,.22);
-      min-height: 240px;
-      height: 360px;         /* ✅ 기본 높이 */
-      max-height: 420px;     /* ✅ PC에서 너무 커지지 않게 상한 */
+      background: rgba(15,22,41,.7);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius: 14px;
+      font-weight:800;
+      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      transition:.15s transform ease, .15s opacity ease, .15s border-color ease;
+      user-select:none;
     }
-    .coverMain img{
+    .btn:hover{transform: translateY(-1px); border-color: rgba(77,163,255,.45)}
+    .btn:active{transform: translateY(0px); opacity:.9}
+    .btn .miniDot{
+      width:8px; height:8px; border-radius:999px;
+      background: var(--blue);
+      box-shadow: 0 0 0 3px rgba(77,163,255,.15);
+    }
+
+    .card{
+      margin-top:14px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(17,26,46,.75), rgba(15,22,41,.55));
+      border-radius: var(--r);
+      padding:14px;
+      box-shadow: var(--shadow);
+    }
+    .card h2{margin:0 0 8px; font-size:16px}
+    .muted{color:var(--muted); font-size:12px; margin:0}
+    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:10px;}
+
+    .searchBox{
+      flex: 1 1 280px;
+      display:flex; align-items:center; gap:10px;
+      border:1px solid var(--line);
+      background: rgba(11,15,25,.55);
+      border-radius: 16px;
+      padding:10px 12px;
+    }
+    .searchBox input{
       width:100%;
-      height:100%;
-      object-fit: cover;
-      display:block;
-      filter: contrast(1.02) saturate(1.03);
-      transform: scale(1.01);
+      border:0; outline:0;
+      background:transparent;
+      color:var(--text);
+      font-size:15px;
     }
-    /* ✅ 대표사진 “설명/문구” 완전 비표시 */
-    .coverMain .cap{display:none !important;}
+    .xBtn{
+      border:0;
+      background: rgba(255,255,255,.08);
+      color:var(--text);
+      width:34px; height:34px;
+      border-radius: 12px;
+      font-weight:900;
+      cursor:pointer;
+      display:grid; place-items:center;
+    }
 
-    /* ✅ PC에서 대표사진이 “거대”해지지 않도록 추가 제한 */
-    @media (min-width: 980px){
-      .coverMain{ height: 420px; max-height: 420px; }
+    .status{
+      display:flex; justify-content:space-between; gap:10px; align-items:center;
+      margin-top:10px;
+      padding-top:10px;
+      border-top:1px solid var(--line);
+      flex-wrap:wrap;
     }
-    @media (min-width: 1280px){
-      .coverMain{ height: 440px; max-height: 440px; }
-    }
-
-    .thumbRail{
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
       border:1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(0,0,0,.18);
-      padding:10px;
+      background: rgba(11,15,25,.4);
+      border-radius: 999px;
+      padding:8px 10px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .pill b{color:var(--text)}
+    .help{font-size:12px; color:var(--muted)}
+
+    /* ✅ 스와이프 페이지 */
+    .pager{
+      margin-top:12px;
+      border:1px solid var(--line);
+      background: rgba(11,15,25,.35);
+      border-radius: var(--r);
+      overflow:hidden;
+    }
+    .slides{
       display:flex;
-      flex-direction:column;
+      overflow-x:auto;
+      scroll-snap-type:x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width:none;
+    }
+    .slides::-webkit-scrollbar{display:none;}
+    .page{
+      scroll-snap-align:start;
+      flex: 0 0 100%;
+      padding:12px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap:10px;
     }
-    .thumbTitle{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:0 4px;
+    @media (min-width: 720px){
+      .page{padding:16px;}
+      .grid{grid-template-columns: repeat(4, minmax(0, 1fr)); gap:12px;}
     }
-    .thumbTitle b{font-size:14px}
-    .thumbTitle small{color:var(--muted)}
-    .thumbs{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:8px;
-      overflow:auto;
-      padding-right:2px;
-    }
-    .titem{
+    .thumb{
       position:relative;
-      border-radius: 14px;
+      border-radius: 16px;
       overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
       cursor:pointer;
-      transform: translateZ(0);
-    }
-    .titem img{
-      width:100%;
       aspect-ratio: 1 / 1;
-      object-fit: cover;
       display:block;
-      transition: transform .2s ease, filter .2s ease;
-      filter: saturate(1.02);
     }
-    .titem:hover img{transform: scale(1.05); filter: saturate(1.08)}
-    .titem.active{border-color: rgba(102,179,255,.45)}
-    .titem.active::after{
-      content:"";
-      position:absolute; inset:0;
-      box-shadow: inset 0 0 0 2px rgba(102,179,255,.55);
-      border-radius: 14px;
-      pointer-events:none;
-    }
-
-    /* SLIDESHOW */
-    .slideshow{
-      margin-top:12px;
-      border:1px solid var(--line);
-      border-radius: 18px;
-      overflow:hidden;
-      background: rgba(0,0,0,.18);
-    }
-    .slideTop{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:10px 12px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-    }
-    .slideTop .info{
-      display:flex; flex-direction:column; gap:2px;
-      min-width:0;
-    }
-    .slideTop .info b{
-      font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .slideTop .info small{color:var(--muted); font-size:12px}
-    .controls{
-      display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;
-    }
-    .slideBox{
-      position:relative;
-      width:100%;
-      aspect-ratio: 16 / 9;
-      background:#000;
-    }
-    .slideBox img{
-      position:absolute; inset:0;
+    .thumb img{
       width:100%; height:100%;
-      object-fit: cover;
+      object-fit:cover;
       display:block;
-      opacity:0;
-      transition: opacity .35s ease;
+      transform: scale(1.01);
+      transition: transform .25s ease;
     }
-    .slideBox img.show{opacity:1}
-    .navBtn{
-      position:absolute;
-      top:50%;
-      transform: translateY(-50%);
-      width:44px; height:44px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.35);
+    .thumb:hover img{transform: scale(1.06);}
+    .cap{
+      position:absolute; left:8px; right:8px; bottom:8px;
+      background: rgba(0,0,0,.45);
+      backdrop-filter: blur(6px);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 12px;
+      padding:6px 8px;
+      font-size:12px;
       color: rgba(255,255,255,.92);
-      display:grid; place-items:center;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+
+    /* ✅ 도트 */
+    .dots{
+      display:flex; justify-content:center; gap:8px;
+      padding:10px 10px 12px;
+      border-top:1px solid var(--line);
+    }
+    .dot{
+      width:8px; height:8px; border-radius:999px;
+      background: rgba(255,255,255,.22);
+      border:1px solid rgba(255,255,255,.18);
+      transition: transform .18s ease, background .18s ease, opacity .18s ease;
       cursor:pointer;
-      user-select:none;
     }
-    .navBtn:hover{border-color: rgba(215,181,109,.45)}
-    .navBtn.prev{left:10px}
-    .navBtn.next{right:10px}
-
-    /* Videos */
-    .video-grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:12px;
-    }
-    @media (min-width: 900px){
-      .video-grid{grid-template-columns: 1fr 1fr}
-    }
-    .video-card{
-      border:1px solid var(--line);
-      border-radius: var(--r);
-      overflow:hidden;
-      background: rgba(255,255,255,.03);
-      box-shadow: var(--shadow);
-    }
-    .video-embed{
-      position:relative;
-      width:100%;
-      aspect-ratio: 16 / 9;
-      background: #000;
-    }
-    .video-embed iframe{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      border:0;
-    }
-    .video-body{
-      padding:12px 12px 14px;
-      display:flex; flex-direction:column; gap:6px;
-    }
-    .video-body b{font-size:14px; line-height:1.35}
-    .video-body p{margin:0; color:var(--muted); font-size:13px; line-height:1.5}
-    .moreRow{
-      margin-top:12px;
-      display:flex; gap:10px; flex-wrap:wrap;
+    .dot.active{
+      background: rgba(77,163,255,.92);
+      border-color: rgba(77,163,255,.55);
+      transform: scale(1.25);
     }
 
-    /* Lightbox */
-    .lb{
+    /* ✅ 모달(확대 보기) */
+    .modal{
       position:fixed; inset:0;
-      background: rgba(0,0,0,.78);
+      background: rgba(0,0,0,.75);
       display:none;
-      z-index: 9999;
-      padding: 16px;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index:99;
     }
-    .lb.show{display:flex}
-    .lb .panel{
-      margin:auto;
+    .modal.on{display:flex;}
+    .modalCard{
       width:min(980px, 100%);
-      border-radius: 18px;
+      border-radius: 20px;
       overflow:hidden;
       border:1px solid rgba(255,255,255,.14);
-      background: rgba(15,22,42,.88);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 30px 120px rgba(0,0,0,.65);
+      background: rgba(15,22,41,.92);
+      box-shadow: 0 30px 80px rgba(0,0,0,.6);
     }
-    .lb-top{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    .modalTop{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
       padding:10px 12px;
       border-bottom:1px solid rgba(255,255,255,.12);
     }
-    .lb-top .title{
-      display:flex; flex-direction:column; gap:2px;
-      min-width:0;
-    }
-    .lb-top .title b{font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-    .lb-top .title small{color:rgba(255,255,255,.70); font-size:12px}
-    .lb-actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
-    .iconbtn{
-      padding:9px 10px;
-      border-radius: 12px;
+    .modalTop .t{font-weight:900; font-size:13px;}
+    .closeBtn{
       border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.20);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius: 14px;
+      font-weight:900;
       cursor:pointer;
-      color: rgba(255,255,255,.88);
-      font-weight:750;
-      white-space:nowrap;
     }
-    .iconbtn:hover{border-color: rgba(102,179,255,.35)}
-    .lb-body{background: rgba(0,0,0,.35)}
-    .lb-img{
+    .modalImg{
       width:100%;
-      max-height: calc(100vh - 220px);
-      object-fit: contain;
+      max-height: 76vh;
+      object-fit:contain;
       display:block;
-      margin: 0 auto;
-      background: rgba(0,0,0,.30);
+      background:#000;
+    }
+    .modalBottom{
+      padding:10px 12px 14px;
+      color: var(--muted);
+      font-size:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
     }
 
-    /* Toast */
-    #toast{
-      position:fixed;
-      left:50%;
-      bottom:18px;
-      transform: translateX(-50%);
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(15,22,42,.88);
-      backdrop-filter: blur(10px);
-      color: rgba(255,255,255,.92);
-      font-weight:750;
-      box-shadow: 0 18px 60px rgba(0,0,0,.45);
-      z-index: 10000;
-      opacity:0;
-      transition: opacity .2s ease;
-      pointer-events:none;
-    }
-
-    @media (max-width: 980px){
-      .cover{grid-template-columns: 1fr}
-      .thumbs{grid-template-columns: repeat(6, 1fr)}
-      .coverMain{height: 320px; max-height: 360px;}
-    }
-    @media (max-width: 520px){
-      .thumbs{grid-template-columns: repeat(4, 1fr)}
-      .btn{padding:10px 11px}
-      .coverMain{height: 280px; max-height: 320px;}
+    footer{
+      margin-top:14px;
+      color: rgba(255,255,255,.55);
+      font-size:12px;
+      text-align:center;
     }
   </style>
 </head>
+
 <body>
-
-  <div class="topbar">
-    <div class="inner">
+  <div class="wrap">
+    <div class="topbar">
       <div class="brand">
-        <b>계명태권도</b>
-        <small>Gallery & Video</small>
+        <div class="badge">KM</div>
+        <div style="min-width:0">
+          <h1>계명태권도 · 갤러리 조회</h1>
+          <p>이름 검색 → 썸네일 확인 → 옆으로 밀어 페이지 이동</p>
+        </div>
       </div>
-      <div class="spacer"></div>
-      <a class="btn gold" href="../index.html">🏠 홈으로</a>
-      <button class="btn primary" id="btnScrollTop" type="button">⬆️</button>
+
+      <div style="display:flex; gap:8px; align-items:center;">
+        <a class="btn" href="../"><span class="miniDot"></span>홈</a>
+      </div>
     </div>
+
+    <section class="card">
+      <h2>이름으로 사진 찾기</h2>
+      <p class="muted">예) “홍길동” 처럼 입력하면 해당 이름의 사진만 표시됩니다. (부분 입력도 가능)</p>
+
+      <div class="row">
+        <div class="searchBox" role="search">
+          <span style="opacity:.85">🔎</span>
+          <input id="q" type="text" placeholder="이름을 입력하세요" autocomplete="off" />
+          <button class="xBtn" id="clearBtn" aria-label="입력 지우기">✕</button>
+        </div>
+        <button class="btn" id="showAllBtn" title="전체 보기"><span class="miniDot"></span>전체 보기</button>
+      </div>
+
+      <div class="status">
+        <div class="pill">검색 결과: <b id="count">0</b>장</div>
+        <div class="help">페이지는 <b>옆으로 밀어서</b> 넘길 수 있어요.</div>
+      </div>
+
+      <div class="pager" id="pager" style="display:none">
+        <div class="slides" id="slides" aria-label="사진 페이지"></div>
+        <div class="dots" id="dots" aria-label="페이지 표시"></div>
+      </div>
+
+      <div id="empty" class="card" style="margin-top:12px; display:none; background:rgba(11,15,25,.35)">
+        <h2 style="margin:0 0 6px; font-size:15px;">검색 결과가 없습니다</h2>
+        <p class="muted">이름 철자를 확인해 주세요. (예: 띄어쓰기 없이 “홍길동”)</p>
+      </div>
+    </section>
+
+    <footer>구조 &gt;&gt; 교차원리, 교차원리 기반 무도</footer>
   </div>
 
-  <main class="wrap">
-
-    <!-- 1) COVER + THUMBS -->
-    <section class="cardBox">
-      <div class="head">
-        <div>
-          <h2>대표 사진</h2>
-          <p>PC에서는 대표사진 높이를 자동 제한하여 보기 좋게 표시됩니다.</p>
-        </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap">
-          <button class="btn" id="btnCoverPrev" type="button">‹ 이전</button>
-          <button class="btn" id="btnCoverNext" type="button">다음 ›</button>
-          <button class="btn" id="btnOpenCover" type="button">🔍 확대</button>
-        </div>
+  <!-- ✅ 모달 -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="사진 확대 보기">
+    <div class="modalCard">
+      <div class="modalTop">
+        <div class="t" id="modalTitle">사진</div>
+        <button class="closeBtn" id="closeModal">닫기</button>
       </div>
-
-      <div class="body">
-        <div class="cover">
-          <div class="coverMain" id="coverMain">
-            <img id="coverImg" src="" alt="대표 사진" />
-            <div class="cap">
-              <div class="txt">
-                <b id="coverTitle">—</b>
-                <small id="coverSub">—</small>
-              </div>
-              <div class="pill" id="coverPill">대표</div>
-            </div>
-          </div>
-
-          <aside class="thumbRail">
-            <div class="thumbTitle">
-              <b>썸네일</b>
-              <small><span id="thumbCount">0</span>장</small>
-            </div>
-            <div class="thumbs" id="thumbs"></div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:2px">
-              <button class="btn" id="btnCopyCover" type="button">🔗 링크복사</button>
-              <button class="btn" id="btnShuffleThumbs" type="button">🎲 섞기</button>
-            </div>
-          </aside>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2) SLIDESHOW -->
-    <section class="cardBox">
-      <div class="head">
-        <div>
-          <h2>갤러리 슬라이드 쇼</h2>
-          <p>자동 재생(기본 4초) · 일시정지/이전/다음/속도 조절</p>
-        </div>
-        <div class="controls">
-          <button class="btn" id="btnPrev" type="button">⟵</button>
-          <button class="btn primary" id="btnPlay" type="button">▶ 자동재생</button>
-          <button class="btn" id="btnPause" type="button">⏸ 정지</button>
-          <button class="btn" id="btnNext" type="button">⟶</button>
-          <button class="btn" id="btnSpeed" type="button">⏱ 4초</button>
-          <button class="btn" id="btnOpenSlide" type="button">🔍 확대</button>
-        </div>
-      </div>
-
-      <div class="body">
-        <div class="slideshow">
-          <div class="slideTop">
-            <div class="info">
-              <b id="slideTitle">—</b>
-              <small id="slideSub">—</small>
-            </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap">
-              <button class="btn" id="btnCopySlide" type="button">🔗 링크복사</button>
-            </div>
-          </div>
-          <div class="slideBox" id="slideBox">
-            <img id="slideImgA" src="" alt="슬라이드 A" />
-            <img id="slideImgB" src="" alt="슬라이드 B" />
-            <div class="navBtn prev" id="navPrev">‹</div>
-            <div class="navBtn next" id="navNext">›</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3) VIDEO -->
-    <section class="cardBox">
-      <div class="head">
-        <div>
-          <h2>영상</h2>
-          <p>유튜브 제목을 자동으로 불러와서 그대로 표시합니다. (수동 입력 X)</p>
-        </div>
-      </div>
-
-      <div class="body">
-        <div class="video-grid" id="videoGrid"></div>
-
-        <div class="moreRow">
-          <button class="btn gold" id="btnMoreVideos" type="button">📺 영상 더보기(채널)</button>
-          <button class="btn" id="btnCopyChannel" type="button">🔗 채널 링크 복사</button>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Lightbox -->
-  <div class="lb" id="lb" aria-hidden="true">
-    <div class="panel" role="dialog" aria-modal="true" aria-label="이미지 확대 보기">
-      <div class="lb-top">
-        <div class="title">
-          <b id="lbTitle">사진</b>
-          <small id="lbSub"></small>
-        </div>
-        <div class="lb-actions">
-          <button class="iconbtn" id="lbCopy" type="button">🔗 링크복사</button>
-          <a class="iconbtn" id="lbDownload" href="#" download target="_blank" rel="noopener">⬇️ 다운로드</a>
-          <button class="iconbtn" id="lbClose" type="button">✕ 닫기</button>
-        </div>
-      </div>
-      <div class="lb-body">
-        <img class="lb-img" id="lbImg" src="" alt="확대 이미지" />
+      <img id="modalImg" class="modalImg" alt="확대 사진" />
+      <div class="modalBottom">
+        <div id="modalInfo"> </div>
+        <a id="openOriginal" class="btn" href="#" target="_blank" rel="noopener">원본 열기</a>
       </div>
     </div>
   </div>
 
-  <div id="toast">복사 완료</div>
-
+  <script src="./data.js"></script>
   <script>
-    /* ===============================
-      ✅ 사진 목록 (Wix 링크만 넣으면 자동 정렬)
-    =============================== */
-    const PHOTO_URLS = [
-      "https://static.wixstatic.com/media/abf917_38e0bc3b3d804b3caa6aa8363163950d~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_951d85fca9694590a8f2fd38ff592b39~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_47a49706d5f7405fa0b86c569a4b4a86~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_2edf0bc5b46147949f9bbfe826dfb7a3~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_0d0eac21a7824d48a0db82c006fbb375~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_06f2ae7d70114b29bdf872a19b97a7f6~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_487f495e59b648eab51c773696f71bee~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_4f20b9e1c7764cf5aa53e9ff16cb9a73~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_660214461f0f4038b03d21771f4f464a~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_793e9454aab6410e995582f449a4d39b~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_ebf78e91cc4644dcb596cc0cfb33e152~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_d3893ce8f75d4d2d9c0e0c137b4e643b~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_4a7549f31a4843229d9cc89707b81c9c~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_5f5dff08c8c14a03bbaeca6cd3004221~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_b7319f215e454b178b0c5144339cc542~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_73615ce2de16474b8319269341cde789~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_08ee40ffffa44677b843d2e40e31e7a9~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_93b4cedd1808446cafe27dda156265a6~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_f11c89342f0a499abd89211afeaa22dd~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_c8fab836b1e24f6bac8721a55aef0299~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_3258b2202c69466d961ec9a5ed2f5ff8~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_b038304bfe8144ac97b686933da74210~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_c789e417707447a4af719cd1d8640e19~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_840168eb34f8469cb257dad25b54d97f~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_6348ccc36ec74228ae74e6b829fb1c28~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_61d046155d6e421fa4990041ab4571d5~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_e4bebbb49dd74e0ab31456847d2a7d7e~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_835bfff455f34d148c2fe1ce8ef52f83~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_0cb4ed6dc39146b9ac2e0228fc5fe88d~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_f811763b2f0743c08b1ab73801f181be~mv2.jpg",
+    const ALL = Array.isArray(window.GALLERY_PHOTOS) ? window.GALLERY_PHOTOS : [];
 
-      "https://static.wixstatic.com/media/abf917_e7290c711ce34aa0bfca02dbfcca38c7~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_6cd28e87e2a54dbbabcb8da80a7a44cc~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_32491e26f36e4132bbdb3328aecb2b57~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_e2f5b672c035423e9056d979c43a9d65~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_65a65d7169154d5d853ab794109ec6c3~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_37ddae6938ca4529b4cfa959fe129fe6~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_d35765d3f0894f999515b014f6294d82~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_d052486b3ffc49ddb1af9ee2c195a0a2~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_dd10b43205644cc281e8f988d2c2167e~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_b73f1b66c05e43c1b26b5c0dd0629cfe~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_3e623ec836b74e0f87c94a1569feea89~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_e8e2e4341d144f10b64dffd279ab9366~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_d7a2df1936ff4519ad0f72a6c55596e8~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_332d067dac7144a79be1f451cf93fe94~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_04fc8aef9eba4f9a88647b3a8ca5fa47~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_a1dda041cd654311a9e5192e078029aa~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_341bf5072ca544199dca607c1ca80fef~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_c2995f2c374b45c28718afd5d919cb88~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_bd581ecf20184c1e9b021ad2952e0684~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_4ae80219dc0a481191a678926255794d~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_c94c7115c70148f5af5cbfcfb632dd61~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_7b3b0abdb74f42f4ac7eab5651501a46~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_97ff96a1b7d04d13b60ccc2f7d94ed23~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_9b5b622b14b84338bf4dbe27b8638103~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_7eb8f1ca103b4cb58430b11a3c921f65~mv2.jpg"
-    ];
+    const $q = document.getElementById('q');
+    const $count = document.getElementById('count');
+    const $pager = document.getElementById('pager');
+    const $slides = document.getElementById('slides');
+    const $dots = document.getElementById('dots');
+    const $empty = document.getElementById('empty');
 
-    /* ===============================
-      ✅ 유튜브 영상 4개 + 제목 자동 불러오기 (oEmbed)
-      - 제목/작성자/썸네일을 유튜브에서 자동 가져옵니다.
-    =============================== */
-    const VIDEO_URLS = [
-      "https://www.youtube.com/watch?v=D3kDXF-sNJA",
-      "https://www.youtube.com/watch?v=wWIAPVvrnSw",
-      "https://youtu.be/lUpmY5jfEIc",
-      "https://youtu.be/YSWIds8fmzE"
-    ];
+    const $clearBtn = document.getElementById('clearBtn');
+    const $showAllBtn = document.getElementById('showAllBtn');
 
-    // 채널(더보기) 링크
-    const CHANNEL_URL = "https://www.youtube.com/@%EA%B3%84%EB%AA%85%ED%83%9C%EA%B6%8C%EB%8F%84%EC%9A%B8%EC%82%B0/videos";
+    const $modal = document.getElementById('modal');
+    const $modalImg = document.getElementById('modalImg');
+    const $modalTitle = document.getElementById('modalTitle');
+    const $modalInfo = document.getElementById('modalInfo');
+    const $openOriginal = document.getElementById('openOriginal');
+    const $closeModal = document.getElementById('closeModal');
 
-    function getYouTubeId(url){
-      try{
-        const u = new URL(url);
-        if(u.hostname.includes("youtu.be")) return u.pathname.replace("/","");
-        return u.searchParams.get("v");
-      }catch(e){
-        return "";
+    const PER_PAGE_MOBILE = 9;   // 3x3
+    const PER_PAGE_DESKTOP = 12; // 4x3
+
+    function perPage(){
+      return (window.matchMedia && window.matchMedia('(min-width:720px)').matches)
+        ? PER_PAGE_DESKTOP
+        : PER_PAGE_MOBILE;
+    }
+
+    function norm(s){ return String(s||"").trim().toLowerCase(); }
+
+    function match(item, q){
+      if(!q) return true;
+      const name = norm(item.name);
+      return name.includes(q);
+    }
+
+    function chunk(arr, size){
+      const out = [];
+      for(let i=0;i<arr.length;i+=size) out.push(arr.slice(i,i+size));
+      return out;
+    }
+
+    function openModal(item, idx){
+      $modalTitle.textContent = `${item.name || "사진"} · #${idx+1}`;
+      $modalInfo.textContent = item.url ? item.url : "";
+      $modalImg.src = item.url || item.thumb || "";
+      $openOriginal.href = item.url || item.thumb || "#";
+      $modal.classList.add('on');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(){
+      $modal.classList.remove('on');
+      document.body.style.overflow = '';
+      $modalImg.src = "";
+    }
+
+    function render(list){
+      const size = perPage();
+      const pages = chunk(list, size);
+
+      $count.textContent = String(list.length);
+
+      $slides.innerHTML = "";
+      $dots.innerHTML = "";
+
+      if(list.length === 0){
+        $pager.style.display = "none";
+        $empty.style.display = "block";
+        return;
       }
-    }
 
-    function autoCategory(i){
-      if(i < 10) return "수련";
-      if(i < 20) return "심사";
-      return "행사";
-    }
-    const ITEMS = PHOTO_URLS.map((url, i) => ({
-      url,
-      sub: autoCategory(i)
-    }));
+      $empty.style.display = "none";
+      $pager.style.display = "block";
 
-    /* Toast */
-    let toastTimer;
-    const toastEl = document.getElementById("toast");
-    function toast(msg){
-      toastEl.textContent = msg;
-      toastEl.style.opacity = "1";
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=>{ toastEl.style.opacity="0"; }, 1500);
-    }
-    async function copyText(t){
-      try{ await navigator.clipboard.writeText(t); toast("복사 완료 ✅"); }
-      catch(e){ toast("복사 실패 😅 주소창에서 복사해주세요."); }
-    }
+      pages.forEach((pageItems, pi) => {
+        const page = document.createElement('div');
+        page.className = "page";
+        page.dataset.page = String(pi);
 
-    /* Top */
-    document.getElementById("btnScrollTop").addEventListener("click", ()=>{
-      window.scrollTo({top:0, behavior:"smooth"});
-    });
+        const grid = document.createElement('div');
+        grid.className = "grid";
 
-    /* Cover + thumbs */
-    const coverImg = document.getElementById("coverImg");
-    const thumbs = document.getElementById("thumbs");
-    const thumbCount = document.getElementById("thumbCount");
-    const btnCoverPrev = document.getElementById("btnCoverPrev");
-    const btnCoverNext = document.getElementById("btnCoverNext");
-    const btnOpenCover = document.getElementById("btnOpenCover");
-    const btnCopyCover = document.getElementById("btnCopyCover");
-    const btnShuffleThumbs = document.getElementById("btnShuffleThumbs");
+        pageItems.forEach((item, localIdx) => {
+          const globalIdx = pi*size + localIdx;
+          const a = document.createElement('a');
+          a.className = "thumb";
+          a.href = "javascript:void(0)";
+          a.setAttribute('role','button');
+          a.setAttribute('aria-label', `${item.name || "사진"} 보기`);
 
-    let coverIndex = 0;
+          const img = document.createElement('img');
+          img.loading = "lazy";
+          img.src = item.thumb || item.url || "";
+          img.alt = item.name || "사진";
 
-    function setCover(idx){
-      coverIndex = (idx + ITEMS.length) % ITEMS.length;
-      coverImg.src = ITEMS[coverIndex].url;
-      [...thumbs.querySelectorAll(".titem")].forEach((el,i)=>{
-        el.classList.toggle("active", i === coverIndex);
-      });
-    }
+          const cap = document.createElement('div');
+          cap.className = "cap";
+          cap.textContent = item.name || "사진";
 
-    function renderThumbs(){
-      thumbs.innerHTML = ITEMS.map((it, i)=>`
-        <div class="titem ${i===0?'active':''}" data-i="${i}" title="썸네일 클릭">
-          <img loading="lazy" src="${it.url}" alt="thumb-${i+1}">
-        </div>
-      `).join("");
-      thumbCount.textContent = String(ITEMS.length);
-      [...thumbs.querySelectorAll(".titem")].forEach(el=>{
-        el.addEventListener("click", ()=> setCover(Number(el.dataset.i)));
-      });
-    }
+          a.appendChild(img);
+          a.appendChild(cap);
+          a.addEventListener('click', () => openModal(item, globalIdx));
 
-    btnCoverPrev.addEventListener("click", ()=> setCover(coverIndex-1));
-    btnCoverNext.addEventListener("click", ()=> setCover(coverIndex+1));
-    btnOpenCover.addEventListener("click", ()=> openLightboxByUrl(ITEMS[coverIndex].url, "사진", ""));
-    btnCopyCover.addEventListener("click", ()=> copyText(ITEMS[coverIndex].url));
-
-    btnShuffleThumbs.addEventListener("click", ()=>{
-      const shuffled = [...ITEMS];
-      for(let i=shuffled.length-1; i>0; i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      thumbs.innerHTML = shuffled.map((it, i)=>`
-        <div class="titem ${i===0?'active':''}" data-i="${i}">
-          <img loading="lazy" src="${it.url}" alt="thumb-shuffled-${i+1}">
-        </div>
-      `).join("");
-      thumbCount.textContent = String(shuffled.length);
-
-      coverIndex = 0;
-      coverImg.src = shuffled[0].url;
-
-      [...thumbs.querySelectorAll(".titem")].forEach(el=>{
-        el.addEventListener("click", ()=>{
-          const i = Number(el.dataset.i);
-          coverIndex = i;
-          coverImg.src = shuffled[i].url;
-          [...thumbs.querySelectorAll(".titem")].forEach((x,idx)=>x.classList.toggle("active", idx===i));
+          grid.appendChild(a);
         });
+
+        page.appendChild(grid);
+        $slides.appendChild(page);
+
+        const dot = document.createElement('div');
+        dot.className = "dot" + (pi===0 ? " active" : "");
+        dot.title = `${pi+1} 페이지`;
+        dot.addEventListener('click', () => {
+          const target = $slides.querySelector(`.page[data-page="${pi}"]`);
+          if(target) target.scrollIntoView({behavior:'smooth', inline:'start'});
+        });
+        $dots.appendChild(dot);
       });
 
-      btnOpenCover.onclick = ()=> openLightboxByUrl(shuffled[coverIndex].url, "사진", "");
-      btnCopyCover.onclick = ()=> copyText(shuffled[coverIndex].url);
+      // ✅ 현재 페이지 감지 -> 도트 활성화
+      const pagesEls = Array.from($slides.querySelectorAll('.page'));
+      const dotEls = Array.from($dots.querySelectorAll('.dot'));
 
-      toast("썸네일을 섞었습니다 🎲");
-    });
-
-    /* Slideshow */
-    const slideTitle = document.getElementById("slideTitle");
-    const slideSub = document.getElementById("slideSub");
-    const imgA = document.getElementById("slideImgA");
-    const imgB = document.getElementById("slideImgB");
-    const btnPrev = document.getElementById("btnPrev");
-    const btnNext = document.getElementById("btnNext");
-    const btnPlay = document.getElementById("btnPlay");
-    const btnPause = document.getElementById("btnPause");
-    const btnSpeed = document.getElementById("btnSpeed");
-    const btnOpenSlide = document.getElementById("btnOpenSlide");
-    const btnCopySlide = document.getElementById("btnCopySlide");
-    const navPrev = document.getElementById("navPrev");
-    const navNext = document.getElementById("navNext");
-
-    let slideIndex = 0;
-    let showingA = true;
-    let timer = null;
-    const speeds = [3000, 4000, 6000, 8000];
-    let speedIdx = 1;
-
-    function setSlide(idx){
-      slideIndex = (idx + ITEMS.length) % ITEMS.length;
-      const it = ITEMS[slideIndex];
-
-      slideTitle.textContent = `갤러리 ${slideIndex+1}`;
-      slideSub.textContent = `(${it.sub}) ${slideIndex+1}/${ITEMS.length}`;
-
-      const target = showingA ? imgA : imgB;
-      const other  = showingA ? imgB : imgA;
-
-      target.src = it.url;
-      target.classList.add("show");
-      other.classList.remove("show");
-
-      showingA = !showingA;
-    }
-
-    function play(){
-      if(timer) return;
-      timer = setInterval(()=> setSlide(slideIndex+1), speeds[speedIdx]);
-      toast("자동재생 시작 ▶");
-    }
-    function pause(){
-      clearInterval(timer);
-      timer = null;
-      toast("자동재생 정지 ⏸");
-    }
-    function toggleSpeed(){
-      speedIdx = (speedIdx + 1) % speeds.length;
-      btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
-      if(timer){ pause(); play(); }
-      toast("재생 속도 변경");
-    }
-
-    btnPrev.addEventListener("click", ()=> setSlide(slideIndex-1));
-    btnNext.addEventListener("click", ()=> setSlide(slideIndex+1));
-    navPrev.addEventListener("click", ()=> setSlide(slideIndex-1));
-    navNext.addEventListener("click", ()=> setSlide(slideIndex+1));
-    btnPlay.addEventListener("click", play);
-    btnPause.addEventListener("click", pause);
-    btnSpeed.addEventListener("click", toggleSpeed);
-    btnOpenSlide.addEventListener("click", ()=> openLightboxByUrl(ITEMS[slideIndex].url, "사진", ""));
-    btnCopySlide.addEventListener("click", ()=> copyText(ITEMS[slideIndex].url));
-
-    /* Videos render + YouTube title auto */
-    const videoGrid = document.getElementById("videoGrid");
-
-    function renderVideosShell(){
-      videoGrid.innerHTML = VIDEO_URLS.map((url, idx)=>{
-        const id = getYouTubeId(url);
-        const safe = id || "";
-        return `
-          <article class="video-card" data-video-url="${url}">
-            <div class="video-embed">
-              <iframe
-                src="https://www.youtube.com/embed/${safe}"
-                title="계명태권도 영상"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen></iframe>
-            </div>
-            <div class="video-body">
-              <b class="yt-title">제목 불러오는 중…</b>
-              <p class="yt-meta">잠시만요 ✅</p>
-            </div>
-          </article>
-        `;
-      }).join("");
-    }
-
-    async function fillYouTubeTitles(){
-      const cards = [...videoGrid.querySelectorAll(".video-card")];
-      await Promise.all(cards.map(async (card)=>{
-        const url = card.getAttribute("data-video-url");
-        const titleEl = card.querySelector(".yt-title");
-        const metaEl = card.querySelector(".yt-meta");
-
-        // YouTube oEmbed (API Key 불필요)
-        const oembed = `https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(url)}`;
-
-        try{
-          const res = await fetch(oembed, { mode: "cors" });
-          if(!res.ok) throw new Error("oEmbed not ok");
-          const data = await res.json();
-
-          titleEl.textContent = data.title || "계명태권도 영상";
-          metaEl.textContent = data.author_name ? `YouTube · ${data.author_name}` : "YouTube";
-        }catch(e){
-          // 실패 시: 최소한 링크는 유지
-          titleEl.textContent = "계명태권도 영상";
-          metaEl.textContent = "YouTube";
+      const io = new IntersectionObserver((entries) => {
+        // 가장 많이 보이는 page를 active로
+        let best = null;
+        for(const e of entries){
+          if(!best || e.intersectionRatio > best.intersectionRatio) best = e;
         }
-      }));
+        if(best && best.isIntersecting){
+          const idx = Number(best.target.dataset.page || 0);
+          dotEls.forEach((d,i)=> d.classList.toggle('active', i===idx));
+        }
+      }, { root: $slides, threshold: [0.55, 0.75, 0.9] });
+
+      pagesEls.forEach(p => io.observe(p));
     }
 
-    document.getElementById("btnMoreVideos").addEventListener("click", ()=>{
-      window.open(CHANNEL_URL, "_blank", "noopener");
-    });
-    document.getElementById("btnCopyChannel").addEventListener("click", ()=>{
-      copyText(CHANNEL_URL);
-    });
+    function applyQuery(){
+      const q = norm($q.value);
+      const filtered = ALL.filter(it => match(it, q));
+      render(filtered);
 
-    /* Lightbox */
-    const lb = document.getElementById("lb");
-    const lbImg = document.getElementById("lbImg");
-    const lbTitle = document.getElementById("lbTitle");
-    const lbSub = document.getElementById("lbSub");
-    const lbClose = document.getElementById("lbClose");
-    const lbCopy = document.getElementById("lbCopy");
-    const lbDownload = document.getElementById("lbDownload");
-
-    let lbUrl = "";
-    function openLightboxByUrl(url, title, sub){
-      lbUrl = url;
-      lbImg.src = url;
-      lbTitle.textContent = title || "사진";
-      lbSub.textContent = sub || "";
-      lbDownload.href = url;
-
-      lb.classList.add("show");
-      lb.setAttribute("aria-hidden","false");
-      document.body.style.overflow="hidden";
+      // ✅ 검색어를 주소에 반영(공유용)
+      const url = new URL(location.href);
+      if(q) url.searchParams.set('q', q);
+      else url.searchParams.delete('q');
+      history.replaceState(null, "", url.toString());
     }
-    function closeLightbox(){
-      lb.classList.remove("show");
-      lb.setAttribute("aria-hidden","true");
-      document.body.style.overflow="";
-      lbImg.src = "";
-      lbUrl = "";
-    }
-    lbClose.addEventListener("click", closeLightbox);
-    lb.addEventListener("click", (e)=>{ if(e.target === lb) closeLightbox(); });
-    window.addEventListener("keydown", (e)=>{
-      if(!lb.classList.contains("show")) return;
-      if(e.key === "Escape") closeLightbox();
+
+    // ✅ 이벤트
+    $q.addEventListener('input', () => applyQuery());
+    $clearBtn.addEventListener('click', () => { $q.value=""; $q.focus(); applyQuery(); });
+    $showAllBtn.addEventListener('click', () => { $q.value=""; applyQuery(); });
+
+    $closeModal.addEventListener('click', closeModal);
+    $modal.addEventListener('click', (e) => { if(e.target === $modal) closeModal(); });
+    window.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeModal(); });
+
+    // ✅ 초기: URL에 ?q=홍길동 있으면 자동 검색
+    (function init(){
+      const params = new URLSearchParams(location.search);
+      const q = params.get('q');
+      if(q){ $q.value = q; }
+      render(ALL);
+      if($q.value) applyQuery();
+    })();
+
+    // ✅ 화면 크기 바뀌면 페이지당 개수 재계산
+    window.addEventListener('resize', () => {
+      // 현재 검색 유지
+      const current = norm($q.value);
+      const filtered = ALL.filter(it => match(it, current));
+      render(filtered);
     });
-    lbCopy.addEventListener("click", ()=> copyText(lbUrl));
-
-    /* INIT */
-    renderThumbs();
-    setCover(0);
-
-    imgA.src = ITEMS[0].url;
-    imgA.classList.add("show");
-    slideTitle.textContent = "갤러리 1";
-    slideSub.textContent = `(${ITEMS[0].sub}) 1/${ITEMS.length}`;
-    btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
-
-    renderVideosShell();
-    fillYouTubeTitles();
-
-    // 원하시면 자동재생 기본 ON:
-    // play();
   </script>
 </body>
 </html>
