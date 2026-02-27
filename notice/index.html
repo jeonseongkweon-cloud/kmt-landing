@@ -1,128 +1,241 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>공지사항 | 계명태권도</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>공지사항 | 계명태권도</title>
+  <meta name="description" content="계명태권도 공지사항. 공개 안내/행사/운영 공지를 한 곳에서 확인합니다." />
+  <meta name="theme-color" content="#0b0f19" />
+  <style>
+    :root{
+      --bg:#0b0f19;
+      --card:#10172a;
+      --line:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.72);
+      --gold:#d8b766;
+      --blue:#4aa3ff;
+      --radius:18px;
+      --shadow: 0 18px 55px rgba(0,0,0,.35);
+      --max: 980px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 10% 10%, rgba(74,163,255,.16), transparent 60%),
+        radial-gradient(900px 500px at 90% 0%, rgba(216,183,102,.14), transparent 60%),
+        var(--bg);
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:18px 16px 36px}
+    .topbar{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0 14px; flex-wrap:wrap;}
+    .home{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius:999px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      transition:.2s ease;
+      font-weight:900;
+    }
+    .home:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.18)}
+    .search{
+      flex:1; min-width:220px;
+      display:flex; gap:8px; align-items:center;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+    }
+    .search input{
+      width:100%; border:0; outline:0;
+      background:transparent; color:var(--text);
+      font-size:14px;
+    }
+    h1{margin:4px 0 6px; font-size:22px; letter-spacing:-.2px;}
+    .lead{margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.6;}
+    .filters{display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 12px;}
+    .chip{
+      padding:8px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:12px; font-weight:800;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip.on{border-color: rgba(216,183,102,.35); color:var(--text); background: rgba(216,183,102,.10);}
+    .grid{display:grid; grid-template-columns:1fr; gap:10px;}
+    @media (min-width:760px){ .grid{grid-template-columns:1fr 1fr;} }
 
-<style>
-:root{
-  --bg:#0b0f19;
-  --card:#121a2f;
-  --line:rgba(255,255,255,.08);
-  --text:rgba(255,255,255,.9);
-  --muted:rgba(255,255,255,.6);
-  --gold:#d8b766;
-  --blue:#4aa3ff;
-}
-body{
-  margin:0;
-  font-family:Pretendard,system-ui,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
-.wrap{
-  max-width:1000px;
-  margin:auto;
-  padding:20px;
-}
-.top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
-}
-.home{
-  padding:10px 14px;
-  border:1px solid var(--line);
-  border-radius:999px;
-  text-decoration:none;
-  color:#fff;
-}
-h1{
-  margin:10px 0 20px;
-}
-.card{
-  background:var(--card);
-  border:1px solid var(--line);
-  padding:18px;
-  border-radius:16px;
-  margin-bottom:14px;
-  cursor:pointer;
-  transition:.2s;
-}
-.card:hover{
-  transform:translateY(-3px);
-  border-color:var(--gold);
-}
-.date{
-  color:var(--muted);
-  font-size:13px;
-  margin-bottom:6px;
-}
-.title{
-  font-weight:700;
-  font-size:17px;
-}
-.content{
-  display:none;
-  margin-top:12px;
-  color:var(--muted);
-  line-height:1.7;
-}
-.footer{
-  text-align:center;
-  margin-top:40px;
-  font-size:12px;
-  color:var(--muted);
-}
-</style>
+    .card{
+      border:1px solid var(--line);
+      background: rgba(16,23,42,.72);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cardHead{
+      padding:14px 14px 10px;
+      display:flex; justify-content:space-between; gap:10px; align-items:flex-start;
+    }
+    .tag{
+      font-size:11px; font-weight:950;
+      padding:6px 10px; border-radius:999px;
+      background: rgba(255,138,0,.12);
+      border:1px solid rgba(255,138,0,.22);
+      color: rgba(255,255,255,.92);
+      white-space:nowrap;
+    }
+    .date{color:var(--muted); font-size:12px; margin-top:2px;}
+    .title{font-size:14px; font-weight:950; line-height:1.35; margin-top:6px;}
+    .meta{color:var(--muted); font-size:12px; line-height:1.55; margin-top:8px;}
+    .cardBody{
+      padding:0 14px 14px;
+      color: rgba(255,255,255,.82);
+      font-size:12px;
+      line-height:1.7;
+      display:none;
+    }
+    .actions{
+      display:flex; gap:8px; flex-wrap:wrap;
+      padding:12px 14px 14px;
+      border-top:1px solid rgba(255,255,255,.06);
+      background: rgba(255,255,255,.02);
+    }
+    .btn{
+      padding:9px 11px;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      font-weight:900;
+      font-size:12px;
+    }
+    footer{margin-top:18px; text-align:center; color:rgba(255,255,255,.55); font-size:12px;}
+    .empty{
+      margin-top:10px;
+      padding:14px;
+      border:1px dashed rgba(255,255,255,.18);
+      border-radius:16px;
+      color:var(--muted);
+      text-align:center;
+    }
+  </style>
 </head>
-
 <body>
-<div class="wrap">
-
-<div class="top">
-  <a href="../" class="home">← 홈으로</a>
-</div>
-
-<h1>공지사항</h1>
-
-<div id="noticeList"></div>
-
-<div class="footer">
-© <span id="year"></span> 계명태권도
-</div>
-
-</div>
-
-<script src="data.js"></script>
-
-<script>
-const container = document.getElementById("noticeList");
-
-notices.forEach((item, index) => {
-  const card = document.createElement("div");
-  card.className = "card";
-
-  card.innerHTML = `
-    <div class="date">${item.date}</div>
-    <div class="title">${item.title}</div>
-    <div class="content" id="content-${index}">
-      ${item.content}
+  <div class="wrap">
+    <div class="topbar">
+      <a class="home" href="../">← 홈으로</a>
+      <div class="search" title="검색">
+        🔎 <input id="q" type="search" placeholder="공지 검색 (예: 입학, 차량, 심사, 행사…)" />
+      </div>
     </div>
-  `;
 
-  card.onclick = () => {
-    const content = document.getElementById(`content-${index}`);
-    content.style.display = content.style.display === "block" ? "none" : "block";
-  };
+    <h1>공지사항</h1>
+    <p class="lead">공개 가능한 안내/행사/운영 공지를 모아둡니다. (회원 전용 내용은 밴드에서 운영)</p>
 
-  container.appendChild(card);
-});
+    <div class="filters" id="filters"></div>
+    <div class="grid" id="list"></div>
 
-document.getElementById("year").textContent = new Date().getFullYear();
-</script>
+    <div class="empty" id="empty" style="display:none;">검색 결과가 없습니다.</div>
 
+    <footer>© <span id="y"></span> 계명태권도</footer>
+  </div>
+
+  <script src="./data.js"></script>
+  <script>
+    const $ = (s)=>document.querySelector(s);
+    const listEl = $("#list");
+    const emptyEl = $("#empty");
+    const qEl = $("#q");
+    const filtersEl = $("#filters");
+
+    const all = Array.isArray(window.notices) ? window.notices : [];
+    const sorted = [...all].sort((a,b)=> String(b.date||"").localeCompare(String(a.date||"")));
+
+    const tags = Array.from(new Set(sorted.map(n=> (n.tag||"공지").trim()))).filter(Boolean);
+    let activeTag = "전체";
+
+    function chip(label){
+      const d = document.createElement("div");
+      d.className = "chip" + (label===activeTag ? " on" : "");
+      d.textContent = label;
+      d.onclick = ()=>{ activeTag = label; render(); updateChips(); };
+      return d;
+    }
+    function updateChips(){
+      [...filtersEl.children].forEach(ch=>{
+        ch.classList.toggle("on", ch.textContent===activeTag);
+      });
+    }
+
+    filtersEl.appendChild(chip("전체"));
+    tags.forEach(t=>filtersEl.appendChild(chip(t)));
+
+    function render(){
+      const q = (qEl.value||"").trim().toLowerCase();
+      const filtered = sorted.filter(n=>{
+        const tagOk = (activeTag==="전체") ? true : ((n.tag||"공지").trim()===activeTag);
+        const text = `${n.date||""} ${n.tag||""} ${n.title||""} ${n.meta||""} ${n.content||""}`.toLowerCase();
+        const qOk = q ? text.includes(q) : true;
+        return tagOk && qOk;
+      });
+
+      listEl.innerHTML = "";
+      emptyEl.style.display = filtered.length ? "none" : "block";
+
+      filtered.forEach((n, idx)=>{
+        const card = document.createElement("div");
+        card.className = "card";
+        const tag = (n.tag||"공지");
+        const date = (n.date||"");
+        const title = (n.title||"");
+        const meta = (n.meta||"");
+        const content = (n.content||"");
+        const url = (n.url && String(n.url).trim()) ? n.url : "";
+
+        card.innerHTML = `
+          <div class="cardHead">
+            <div style="min-width:0; flex:1;">
+              <div class="date">${date}</div>
+              <div class="title">${title}</div>
+              ${meta ? `<div class="meta">${meta}</div>` : ``}
+            </div>
+            <div class="tag">${tag}</div>
+          </div>
+
+          <div class="cardBody" id="body-${idx}">
+            ${content}
+          </div>
+
+          <div class="actions">
+            <button class="btn" data-toggle="${idx}">내용 보기</button>
+            ${url ? `<a class="btn" href="${url}" target="_blank" rel="noopener">관련 링크</a>` : ``}
+          </div>
+        `;
+
+        listEl.appendChild(card);
+      });
+
+      // toggle
+      listEl.querySelectorAll("[data-toggle]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const i = btn.getAttribute("data-toggle");
+          const body = document.getElementById(`body-${i}`);
+          const on = body.style.display === "block";
+          body.style.display = on ? "none" : "block";
+          btn.textContent = on ? "내용 보기" : "접기";
+        });
+      });
+    }
+
+    qEl.addEventListener("input", render);
+    document.getElementById("y").textContent = new Date().getFullYear();
+    render();
+  </script>
 </body>
 </html>
