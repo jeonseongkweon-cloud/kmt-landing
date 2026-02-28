@@ -1325,5 +1325,20 @@
       }
     })();
   </script>
+  <script>
+(function(){
+  if (!('serviceWorker' in navigator)) return;
+
+  // ✅ 도메인 루트 / GitHub 프로젝트 경로 자동 대응
+  const base = location.pathname.includes('/kmt-landing/') ? '/kmt-landing/' : '/';
+  const swUrl = base + 'service-worker.js';
+
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register(swUrl)
+      .then(() => console.log('KMT SW registered:', swUrl))
+      .catch((e) => console.log('KMT SW register failed:', e));
+  });
+})();
+</script>
 </body>
 </html>
