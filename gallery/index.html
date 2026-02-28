@@ -95,7 +95,7 @@
     .cardBox .head p{margin:0; color:var(--muted); font-size:13px; line-height:1.55}
     .cardBox .body{padding:14px 14px 16px}
 
-    /* ✅ NEW: 조회 UI */
+    /* Search */
     .searchRow{
       display:flex; gap:10px; flex-wrap:wrap;
       align-items:center;
@@ -136,7 +136,7 @@
       line-height:1.5;
     }
 
-    /* ✅ NEW: 결과 캐러셀(스와이프 + 점) */
+    /* Result carousel (NO captions) */
     .resultTop{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
       padding:10px 12px;
@@ -194,17 +194,6 @@
       filter: saturate(1.02);
     }
     .pitem:hover img{transform: scale(1.05); filter:saturate(1.08)}
-    .pcap{
-      position:absolute;
-      left:0; right:0; bottom:0;
-      padding:7px 8px;
-      font-size:11px;
-      background: linear-gradient(180deg, transparent, rgba(0,0,0,.58));
-      color: rgba(255,255,255,.92);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
     .dotsRow{
       display:flex; align-items:center; justify-content:center; gap:7px;
       padding:10px 10px 12px;
@@ -233,8 +222,8 @@
       overflow:hidden;
       background: rgba(0,0,0,.22);
       min-height: 240px;
-      height: 360px;         /* ✅ 기본 높이 */
-      max-height: 420px;     /* ✅ PC에서 너무 커지지 않게 상한 */
+      height: 360px;
+      max-height: 420px;
     }
     .coverMain img{
       width:100%;
@@ -244,10 +233,8 @@
       filter: contrast(1.02) saturate(1.03);
       transform: scale(1.01);
     }
-    /* ✅ 대표사진 “설명/문구” 완전 비표시 */
     .coverMain .cap{display:none !important;}
 
-    /* ✅ PC에서 대표사진이 “거대”해지지 않도록 추가 제한 */
     @media (min-width: 980px){
       .coverMain{ height: 420px; max-height: 420px; }
     }
@@ -498,12 +485,12 @@
 
   <main class="wrap">
 
-    <!-- ✅ NEW) 사진 조회 서비스 (이름 검색 → 결과 썸네일 스와이프 + 점) -->
+    <!-- ✅ 사진 조회(검색은 가능하지만, 이름은 화면에 절대 표시하지 않음) -->
     <section class="cardBox" id="searchSection">
       <div class="head">
         <div>
           <h2>사진 조회</h2>
-          <p>이름을 입력하면 관련 사진이 썸네일로 표시됩니다. (좌우로 밀어서 페이지 이동)</p>
+          <p>내부관리용 검색(이름/키워드). 결과는 사진만 표시됩니다.</p>
         </div>
       </div>
 
@@ -511,7 +498,7 @@
         <div class="searchRow">
           <div class="field">
             🔎
-            <input id="q" type="text" inputmode="search" autocomplete="off" placeholder="예) 홍길동 / 김서린_심사 / 단체사진_2026-02" />
+            <input id="q" type="text" inputmode="search" autocomplete="off" placeholder="예) 김우리 / 단체_유치부 / 합숙훈련" />
             <button class="xbtn" id="btnClear" type="button" title="지우기">✕</button>
           </div>
           <button class="btn primary" id="btnSearch" type="button">조회</button>
@@ -519,8 +506,8 @@
         </div>
 
         <div class="hint">
-          ✅ 검색 팁: 띄어쓰기/대소문자 상관없이 매칭됩니다.<br/>
-          ✅ 결과가 많으면 자동으로 “페이지(스와이프)”로 나뉘고 아래 점으로 위치가 표시됩니다.
+          ✅ 검색은 내부 데이터(이름/키워드) 기준으로 동작하지만, 화면에는 이름이 표시되지 않습니다.<br/>
+          ✅ 결과가 많으면 자동으로 페이지(스와이프)로 나뉘고 아래 점으로 위치가 표시됩니다.
         </div>
 
         <div id="resultArea" style="display:none;">
@@ -546,17 +533,17 @@
 
         <div id="emptyArea" class="hint" style="display:none; margin-top:12px;">
           검색 결과가 없습니다 😅<br/>
-          이름 표기(띄어쓰기/특수문자)를 바꿔서 다시 시도해보세요.
+          (띄어쓰기/언더바/철자를 바꿔서 다시 시도해보세요)
         </div>
       </div>
     </section>
 
-    <!-- 1) COVER + THUMBS (기존 유지) -->
+    <!-- 대표 사진 -->
     <section class="cardBox">
       <div class="head">
         <div>
           <h2>대표 사진</h2>
-          <p>PC에서는 대표사진 높이를 자동 제한하여 보기 좋게 표시됩니다.</p>
+          <p>대표 영역/썸네일/슬라이드 어디에도 이름이 노출되지 않습니다.</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap">
           <button class="btn" id="btnCoverPrev" type="button">‹ 이전</button>
@@ -569,13 +556,7 @@
         <div class="cover">
           <div class="coverMain" id="coverMain">
             <img id="coverImg" src="" alt="대표 사진" />
-            <div class="cap">
-              <div class="txt">
-                <b id="coverTitle">—</b>
-                <small id="coverSub">—</small>
-              </div>
-              <div class="pill" id="coverPill">대표</div>
-            </div>
+            <div class="cap"></div>
           </div>
 
           <aside class="thumbRail">
@@ -593,7 +574,7 @@
       </div>
     </section>
 
-    <!-- 2) SLIDESHOW (기존 유지) -->
+    <!-- 슬라이드 쇼 -->
     <section class="cardBox">
       <div class="head">
         <div>
@@ -614,7 +595,7 @@
         <div class="slideshow">
           <div class="slideTop">
             <div class="info">
-              <b id="slideTitle">—</b>
+              <b id="slideTitle">사진</b>
               <small id="slideSub">—</small>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap">
@@ -631,12 +612,12 @@
       </div>
     </section>
 
-    <!-- 3) VIDEO (기존 유지) -->
+    <!-- 영상 -->
     <section class="cardBox">
       <div class="head">
         <div>
           <h2>영상</h2>
-          <p>유튜브 제목을 자동으로 불러와서 그대로 표시합니다. (수동 입력 X)</p>
+          <p>유튜브 제목을 자동으로 불러와서 표시합니다.</p>
         </div>
       </div>
 
@@ -674,91 +655,196 @@
 
   <div id="toast">복사 완료</div>
 
-  <!-- ✅ NEW: 조회 데이터 -->
-  <script src="data.js"></script>
-
   <script>
-    /* ===============================
-      ✅ (1) 사진 목록
-      - 1순위: gallery/data.js의 window.GALLERY_ITEMS
-      - 2순위: 아래 PHOTO_URLS (기존 유지/백업)
-    =============================== */
-    const PHOTO_URLS = [
-      "https://static.wixstatic.com/media/abf917_38e0bc3b3d804b3caa6aa8363163950d~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_951d85fca9694590a8f2fd38ff592b39~mv2.jpg",
-      "https://static.wixstatic.com/media/abf917_47a49706d5f7405fa0b86c569a4b4a86~mv2.jpg"
-      // (전총재님 기존 목록 계속 붙어있어도 OK)
+    /* =========================================================
+      ✅ 내부관리용 데이터 (화면에는 절대 표시하지 않음)
+      - 중복 이름 자동: 김우리01, 김우리02...
+      - URL에 공백/줄바꿈 섞여 있어도 자동 정리
+      - 전총재님은 나중에 이 HTML에서 이름으로 검색해서
+        특정 항목(줄) 삭제/교체하면 됩니다.
+    ========================================================= */
+    const RAW_LIST = [
+      ["김우리","https://static.wixstatic.com/media/abf917_38e0bc3b3d804b3caa6aa8363163950d~mv2.jpg"],
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_951d85fca9694590a8f2fd38ff592b39~mv2.jpg"],
+      ["김우리","https://static.wixstatic.com/media/abf917_47a49706d5f7405fa0b86c569a4b4a86~mv2.jpg"],
+      ["김재윤","https://static.wixstatic.com/media/abf917_2edf0bc5b46147949f9bbfe826dfb7a3~mv2.jpg"],
+      ["유강령","https://static.wixstatic.com/media/abf917_06f2ae7d70114b29bdf872a19b97a7f6~mv2.jpg"],
+      ["김하준","https://static.wixstatic.com/media/abf917_0d0eac21a7824d48a0db82c006fbb375~mv2.jpg"],
+      ["백지운","https://static.wixstatic.com/media/abf917_487f495e59b648eab51c773696f71bee~mv2.jpg"],
+      ["김우리","https://static.wixstatic.com/media/abf917_4f20b9e1c7764cf5aa53e9ff16cb9a73~mv2.jpg"],
+      ["전하루","https://static.wixstatic.com/media/abf917_4f20b9e1c7764cf5aa53e9ff16cb9a73~mv2.jpg"],
+      ["이지훈","https://static.wixstatic.com/media/abf917_793e9454aab6410e995582f449a4d39b~mv2.jpg"],
+      ["김재윤","https://static.wixstatic.com/media/abf917_793e9454aab6410e995582f449a4d39b~mv2.jpg"],
+      ["김동언","https://static.wixstatic.com/media/abf917_d3893ce8f75d4d2d9c0e0c137b4e643b~mv2.jpg"],
+      ["김우리","https://static.wixstatic.com/media/abf917_4a7549f31a4843229d9cc89707b81c9c~mv2.jpg"],
+      ["김사랑","https://static.wixstatic.com/media/abf917_5f5dff08c8c14a03bbaeca6cd3004221~mv2.jpg"],
+      ["박헌수","https://static.wixstatic.com/media/abf917_b7319f215e454b178b0c5144339cc542~mv2.jpg"],
+      ["윤겸","https://static.wixstatic.com/media/abf917_73615ce2de16474b8319269341cde789~mv2.jpg"],
+      ["김민준","https://static.wixstatic.com/media/abf917_08ee40ffffa44677b843d2e40e31e7a9~mv2.jpg"],
+      ["박재희","https://static.wixstatic.com/media/abf917_93b4cedd1808446cafe27dda156265a6~mv2.jpg"],
+      ["천시유","https://static.wixstatic.com/media/abf917_f11c89342f0a499abd89211afeaa22dd~mv2.jpg"],
+      ["김예담","https://static.wixstatic.com/media/abf917_c8fab836b1e24f6bac8721a55aef0299~mv2.jpg"],
+      ["김우리","https://static.wixstatic.com/media/abf917_3258b2202c69466d961ec9a5ed2f5ff8~mv2.jpg"],
+      ["김민규","https://static.wixstatic.com/media/abf917_c789e417707447a4af719cd1d8640e19~mv2.jpg"],
+      ["천시유","https://static.wixstatic.com/media/abf917_b038304bfe8144ac97b686933da74210~mv2.jpg"],
+      ["유하준","https://static.wixstatic.com/media/abf917_840168eb34f8469cb257dad25b54d97f~mv2.jpg"],
+      ["단체01","https://static.wixstatic.com/media/abf917_6348ccc36ec74228ae74e6b829fb1c28~mv2.jpg"],
+      ["하석진","https://static.wixstatic.com/media/abf917_61d046155d6e421fa4990041ab4571d5~mv2.jpg"],
+      ["백다현","https://static.wixstatic.com/media/abf917_e4bebbb49dd74e0ab31456847d2a7d7e~mv2.jpg"],
+      ["장은우","https://static.wixstatic.com/media/abf917_835bfff455f34d148c2fe1ce8ef52f83~mv2.jpg"],
+      ["이주형","https://static.wixstatic.com/media/abf917_0cb4ed6dc39146b9ac2e0228fc5fe88d~mv2.jpg"],
+      ["홍나경_김태은","https://static.wixstatic.com/media/abf917_f811763b2f0743c08b1ab73801f181be~mv2.jpg"],
+      ["김태은","https://static.wixstatic.com/media/abf917_e7290c711ce34aa0bfca02dbfcca38c7~mv2.jpg"],
+      ["홍나경","https://static.wixstatic.com/media/abf917_6cd28e87e2a54dbbabcb8da80a7a44cc~mv2.jpg"],
+      ["김예담","https://static.wixstatic.com/media/abf917_e2f5b672c035423e9056d979c43a9d65~mv2.jpg"],
+      ["백지운","https://static.wixstatic.com/media/abf917_37ddae6938ca4529b4cfa959fe129fe6~mv2.jpg"],
+      ["강찬희","https://static.wixstatic.com/media/abf917_65a65d7169154d5d853ab794109ec6c3~mv2.jpg"],
+      ["김규민","https://static.wixstatic.com/media/abf917_d35765d3f0894f999515b014f6294d82~mv2.jpg"],
+      ["김동언","https://static.wixstatic.com/media/abf917_d052486b3ffc49ddb1af9ee2c195a0a2~mv2.jpg"],
+      ["정은재","https://static.wixstatic.com/media/abf917_dd10b43205644cc281e8f988d2c2167e~mv2.jpg"],
+      ["윤유진","https://static.wixstatic.com/media/abf917_b73f1b66c05e43c1b26b5c0dd0629cfe~mv2.jpg"],
+      ["권유준","https://static.wixstatic.com/media/abf917_3e623ec836b74e0f87c94a1569feea89~mv2.jpg"],
+      ["김예담","https://static.wixstatic.com/media/abf917_2111ef384bb54528982bb98959d069be~mv2.jpg"],
+      ["김우리","https://static.wixstatic.com/media/abf917_e8e2e4341d144f10b64dffd279ab9366~mv2.jpg"],
+      ["전하루","https://static.wixstatic.com/media/abf917_d7a2df1936ff4519ad0f72a6c55596e8~mv2.jpg"],
+      ["유가령","https://static.wixstatic.com/media/abf917_332d067dac7144a79be1f451cf93fe94~mv2.jpg"],
+      ["이도경","https://static.wixstatic.com/media/abf917_04fc8aef9eba4f9a88647b3a8ca5fa47~mv2.jpg"],
+      ["이도경","https://static.wixstatic.com/media/abf917_a1dda041cd654311a9e5192e078029aa~mv2.jpg"],
+      ["김예담_김예성","https://static.wixstatic.com/media/abf917_341bf5072ca544199dca607c1ca80fef~mv2.jpg"],
+      ["김예담","https://static.wixstatic.com/media/abf917_c2995f2c374b45c28718afd5d919cb88~mv2.jpg"],
+      ["김민규","https://static.wixstatic.com/media/abf917_bd581ecf20184c1e9b021ad2952e0684~mv2.jpg"],
+      ["윤겸","https://static.wixstatic.com/media/abf917_c94c7115c70148f5af5cbfcfb632dd61~mv2.jpg"],
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_7b3b0abdb74f42f4ac7eab5651501a46~mv2.jpg"],
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_97ff96a1b7d04d13b60ccc2f7d94ed23~mv2.jpg"],
+      ["최기영","https://static.wixstatic.com/media/abf917_7eb8f1ca103b4cb58430b11a3c921f65~mv2.jpg"],
+      ["황찬규","https://static.wixstatic.com/media/abf917_9afd7745e5e841e7bd5c20d7b116228c~mv2.jpg"],
+      ["하석진","https://static.wixstatic.com/media/abf917_e993d9f7717b40d0bf878052780a3cb0~mv2.jpg"],
+      ["전하루","https://static.wixstatic.com/media/abf917_84f35ee2add34f35a5906902186fde31~mv2.jpg"],
+      ["최지우","https://static.wixstatic.com/media/abf917_a6e9f03a943f4ff0a1dcc2980a70e5eb~mv2.jpg"],
+      ["장은우","https://static.wixstatic.com/media/abf917_5f46791d3fad4a5387ab370133323bed~mv2.jpg"],
+      ["천시유","https://static.wixstatic.com/media/abf917_b7a5b9b1b7bc4559bf08e7d0e1aa7c45~mv2.jpg"],
+      ["이영진","https://static.wixstatic.com/media/abf917_b8d11f6c07a54dfd81dc7fd7e6ac5a20~mv2.jpg"],
+      ["이서안","https://static.wixstatic.com/media/abf917_7d13e4d155d44f529c22640db4534d82~mv2.jpg"],
+      ["이도경","https://static.wixstatic.com/media/abf917_5eed7d2b0f0e49b6b96334831fcc4d33~mv2.jpg"],
+      ["이영진","https://static.wixstatic.com/media/abf917_4cf073c9dfce4c6d8474dee921e0399e~mv2.jpg"],
+      ["윤유은","https://static.wixstatic.com/media/abf917_05866f88184a4409900bc5aa49d6ab3d~mv2.jpg"],
+      ["윤우진","https://static.wixstatic.com/media/abf917_c011f2bd756d484f8bd8f795b81e4498~mv2.jpg"],
+      ["윤겸","https://static.wixstatic.com/media/abf917_a2a9c807551045089e8f485a4571326d~mv2.jpg"],
+      ["유가령","https://static.wixstatic.com/media/abf917_7ae350c3a76e435caf5cd8b774aca116~mv2.jpg"],
+      ["오연서","https://static.wixstatic.com/media/abf917_aa905ed610534e73ad7a44a9b1ce1052~mv2.jpg"],
+      ["오연서","https://static.wixstatic.com/media/abf917_4ad7323156c846dcb14bb9a9077bdb99~mv2.jpg"],
+      ["오승윤","https://static.wixstatic.com/media/abf917_9b9a8e227e38443894df712a9b1b230d~mv2.jpg"],
+      ["오리온","https://static.wixstatic.com/media/abf917_2d2a35307e7845c688c09216662af100~mv2.jpg"],
+      ["방서희","https://static.wixstatic.com/media/abf917_2115ceaab3d241d89c29ca476608ba0f~mv2.jpg"],
+      ["오승윤","https://static.wixstatic.com/media/abf917_99ddb8a0b1504464a754f38e6768ede4~mv2.jpg"],
+      ["윤겸","https://static.wixstatic.com/media/abf917_ea7d619cc322499baf5ee81798134274~mv2.jpg"],
+      ["김주원","https://static.wixstatic.com/media/abf917_899650ec80b74375a149a05938f606b8~mv2.jpg"],
+      ["박기범","https://static.wixstatic.com/media/abf917_6a8e16c991ed4fd796db0a792e16af32~mv2.jpg"],
+      ["김동언","https://static.wixstatic.com/media/abf917_5be0d8014abb47d5bb34b6fe9360d7ab~mv2.jpg"],
+      ["김강민","https://static.wixstatic.com/media/abf917_f951f87d9cc44fbfbeb8699ad9bf06cd~mv2.jpg"],
+      ["관장님","https://static.wixstatic.com/media/abf917_1af9a88474b847608294f6494718bbb0~mv2.jpg"],
+      ["관장님","https://static.wixstatic.com/media/abf917_cbc95063ebb24c9eb3f91bcdbed0e686~mv2.jpg"],
+      ["강찬희","https://static.wixstatic.com/media/abf917_ff8c02641a3e4f5b91ac1fe8b5fac472~mv2.jpg"],
+      ["단체","https://static.wixstatic.com/media/abf917_894bca394ece4f6d900f2aafe097ae66~mv2.jpg"],
+      ["단체_태권검도","https://static.wixstatic.com/media/abf917_29fa533fce1c4c1bae87c48e67930c94~mv2.jpg"],
+      ["단체_품새","https://static.wixstatic.com/media/abf917_80d4ba4be03c48678a827c8325ea8747~mv2.jpg"],
+      ["단체_외부","https://static.wixstatic.com/media/abf917_b2bcbb99c47a4dc0a72f5fb673d2b8b6~mv2.jpg"],
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_4f8c4472343a44a99aba379ee67c65da~mv2.jpg"],
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_4f8c4472343a44a99aba379ee67c65da~mv2.jpg"],
+      ["단체_태권검도","https://static.wixstatic.com/media/abf917_1c884e37bd6240e49928432d4a637854~mv2.jpg"],
+      ["단체_학교체육","https://static.wixstatic.com/media/abf917_2a722fa6ac3347da8c6b1bf0a8ca9ff0~mv2.jpg"],
+      ["단체_학교체육","https://static.wixstatic.com/media/abf917_1544f9919c1b45448120b2b079918224~mv2.jpg"],
+      ["단체_만들기","https://static.wixstatic.com/media/abf917_d50d2b126f4c469386a5cf98a3c72dfd~mv2.jpg"],
+      ["단체_줄넘기","https://static.wixstatic.com/media/abf917_93cf0e597fae40e6a62a6b1283bf32bf~mv2.jpg"],
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_d8083128163c40608b2e8ef4f17ed088~mv2.jpg"],
+      ["단체_초등부","https://static.wixstatic.com/media/abf917_a2ec6bee671e4a878388dde54df08f38~mv2.jpg"],
+      ["단체_초등부","https://static.wixstatic.com/media/abf917_21bdad5617c044d28e7fcc876c610a9e~mv2.jpg"],
+      ["단체_초등부","https://static.wixstatic.com/media/abf917_2a777b17eb2b46f5945894b763b7ee7b~mv2.jpg"],
+      ["단체_초등부","https://static.wixstatic.com/media/abf917_f8343a32314f4ee09e53d51d048f931e~mv2.jpg"],
+      ["단체_초등부","https://static.wixstatic.com/media/abf917_863f76a0de2d4378b62b4c90e8c29651~mv2.jpg"],
+      ["단체_초등부","https://static.wixstatic.com/media/abf917_f3827dafacb04513a3e3c81cbc4fdf5c~mv2.jpg"],
+      ["단체_합숙훈련","https://static.wixstatic.com/media/abf917_8426b33441de48aea01d4310124cb7c3~mv2.jpg"],
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_68b94b899e1f4eceb1bfe6e561c3f1a4~mv2.jpg"],
+      ["단체_합숙훈련","https://static.wixstatic.com/media/abf917_6aaf2c7b14ca423cae18314408febd0a~mv2.jpg"],
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_6aaf2c7b14ca423cae18314408febd0a~mv2.jpg"],
+      ["단체_초등부","https://static.wixstatic.com/media/abf917_d8e6bde0ca0e46948da8a66592a048b3~mv2.jpg"],
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_d8e6bde0ca0e46948da8a a66592a048b3~mv2.jpg"], /* (오타/공백 있어도 아래에서 자동 정리됨) */
+      ["박정민","https://static.wixstatic.com/media/abf917_fbc02b48f2be45288687030c4af2fba0~mv2.jpg"],
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_c6306929a4424c83a5212ed4dacb5dda~mv2.jpg"],
+      ["단체_공인단심사","https://static.wixstatic.com/media/abf917_086249c10282432b997d08db41bb5918~mv2.jpg"],
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_ddb868647a5246fc9aec55eb374d6ca2~mv2.jpg"],
+      ["김예담_이서안","https://static.wixstatic.com/media/abf917_5e671d5f53b44fa19ef1a9a172b4ccee~mv2.jpg"],
+      ["단체_태권검도","https://static.wixstatic.com/media/abf917_f7c8483c66b44408b6cdbf2c1590688b~mv2.jpg"],
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_d373e38f4c044bab867acb84a451fb12~mv2.jpg"],
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_1855fe25f00343b3b4379e08a3c364bf~mv2.jpg"]
     ];
 
-    /* ===============================
-      ✅ (2) 유튜브 영상 4개 + 제목 자동 불러오기 (oEmbed)
-    =============================== */
-    const VIDEO_URLS = [
-      "https://www.youtube.com/watch?v=D3kDXF-sNJA",
-      "https://www.youtube.com/watch?v=wWIAPVvrnSw",
-      "https://youtu.be/lUpmY5jfEIc",
-      "https://youtu.be/YSWIds8fmzE"
-    ];
-    const CHANNEL_URL = "https://www.youtube.com/@%EA%B3%84%EB%AA%85%ED%83%9C%EA%B6%8C%EB%8F%84%EC%9A%B8%EC%82%B0/videos";
-
-    function getYouTubeId(url){
-      try{
-        const u = new URL(url);
-        if(u.hostname.includes("youtu.be")) return u.pathname.replace("/","");
-        return u.searchParams.get("v");
-      }catch(e){
-        return "";
-      }
-    }
-
-    /* ✅ 카테고리 자동(기존 유지) */
-    function autoCategory(i){
-      if(i < 10) return "수련";
-      if(i < 20) return "심사";
-      return "행사";
-    }
-
-    /* ✅ ITEMS 구성: data.js 있으면 그걸로, 없으면 URL 배열로 */
-    function buildItems(){
-      const arr = Array.isArray(window.GALLERY_ITEMS) ? window.GALLERY_ITEMS : [];
-      if(arr.length){
-        return arr.map((x, i)=>({
-          name: String(x.name || `사진 ${i+1}`),
-          url: String(x.url || ""),
-          tags: Array.isArray(x.tags) ? x.tags.map(String) : [],
-          sub: (x.tags && x.tags[0]) ? String(x.tags[0]) : autoCategory(i)
-        })).filter(x=>x.url);
-      }
-      return PHOTO_URLS.map((url, i)=>({
-        name: `갤러리 ${i+1}`,
-        url,
-        tags: [],
-        sub: autoCategory(i)
-      }));
-    }
-
-    let ITEMS = buildItems();
-
-    /* Toast */
-    let toastTimer;
-    const toastEl = document.getElementById("toast");
+    /* ====== 공통 유틸 ====== */
     function toast(msg){
-      toastEl.textContent = msg;
-      toastEl.style.opacity = "1";
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=>{ toastEl.style.opacity="0"; }, 1500);
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.style.opacity = "1";
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(()=>{ el.style.opacity="0"; }, 1500);
     }
     async function copyText(t){
       try{ await navigator.clipboard.writeText(t); toast("복사 완료 ✅"); }
       catch(e){ toast("복사 실패 😅 주소창에서 복사해주세요."); }
     }
+    function norm(s){
+      return String(s||"")
+        .toLowerCase()
+        .replace(/\s+/g,"")
+        .replace(/[._\-]/g,"");
+    }
+    function cleanUrl(u){
+      return String(u||"").replace(/\s+/g,"").trim();
+    }
+    function pad2(n){ return String(n).padStart(2,"0"); }
+
+    /* ====== (핵심) 중복 이름 자동 01,02 처리 ====== */
+    function buildItemsFromRaw(raw){
+      const cleaned = raw
+        .map(([name,url])=> [String(name||"").trim(), cleanUrl(url)])
+        .filter(([name,url])=> name && url);
+
+      // 이름별 총 개수
+      const totalByName = {};
+      cleaned.forEach(([name])=>{
+        totalByName[name] = (totalByName[name]||0) + 1;
+      });
+
+      // 등장 순서대로 01,02...
+      const seenByName = {};
+      const items = cleaned.map(([name,url], idx)=>{
+        seenByName[name] = (seenByName[name]||0) + 1;
+        const needSuffix = (totalByName[name]||0) > 1;
+        const internalName = needSuffix ? `${name}${pad2(seenByName[name])}` : name;
+
+        // 키워드 태그: 언더바 기준 + 원본이름 + 내부이름
+        const parts = String(name).split("_").map(s=>s.trim()).filter(Boolean);
+        const tags = Array.from(new Set([name, internalName, ...parts]));
+
+        return {
+          id: idx+1,
+          name: internalName,   // 내부관리용(화면 표시 X)
+          base: name,           // 내부관리용(화면 표시 X)
+          url,
+          tags
+        };
+      });
+
+      return items;
+    }
+
+    const ITEMS = buildItemsFromRaw(RAW_LIST);
 
     /* Top */
     document.getElementById("btnScrollTop").addEventListener("click", ()=>{
       window.scrollTo({top:0, behavior:"smooth"});
     });
 
-    /* ✅ NEW: 검색 기능 */
+    /* ====== 검색(이름은 화면에 안 나옴) ====== */
     const q = document.getElementById("q");
     const btnClear = document.getElementById("btnClear");
     const btnSearch = document.getElementById("btnSearch");
@@ -771,27 +857,20 @@
     const dotsRow = document.getElementById("dotsRow");
     const btnCopyQueryLink = document.getElementById("btnCopyQueryLink");
 
-    function norm(s){
-      return String(s||"")
-        .toLowerCase()
-        .replace(/\s+/g,"")
-        .replace(/[._\-]/g,"");
-    }
-
     function matchItem(item, query){
       const nq = norm(query);
       if(!nq) return true;
+      // 내부 데이터(이름/태그)로만 매칭
       const nname = norm(item.name);
-      const ntags = norm((item.tags||[]).join(""));
-      return nname.includes(nq) || ntags.includes(nq);
+      const nbase = norm(item.base);
+      const ntags = norm((item.tags||[]).join(" "));
+      return nname.includes(nq) || nbase.includes(nq) || ntags.includes(nq);
     }
-
     function chunk(arr, size){
       const out = [];
       for(let i=0; i<arr.length; i+=size) out.push(arr.slice(i, i+size));
       return out;
     }
-
     function buildDots(n){
       dotsRow.innerHTML = "";
       for(let i=0;i<n;i++){
@@ -804,52 +883,60 @@
         dotsRow.appendChild(d);
       }
     }
-
     function setDotActive(idx){
       [...dotsRow.children].forEach((d,i)=> d.classList.toggle("on", i===idx));
     }
 
-    function renderCarousel(list, queryLabel){
-      // 페이지당 썸네일 수(모바일 길이 방지 핵심)
-      const PER_PAGE = 12;
+    function openLightboxByUrl(url){
+      const lb = document.getElementById("lb");
+      const lbImg = document.getElementById("lbImg");
+      const lbTitle = document.getElementById("lbTitle");
+      const lbSub = document.getElementById("lbSub");
+      const lbDownload = document.getElementById("lbDownload");
 
+      lbImg.src = url;
+      lbTitle.textContent = "사진";
+      lbSub.textContent = "";
+      lbDownload.href = url;
+
+      lb.classList.add("show");
+      lb.setAttribute("aria-hidden","false");
+      document.body.style.overflow="hidden";
+      window.__lbUrl = url;
+    }
+
+    function renderCarousel(list, queryLabel){
+      const PER_PAGE = 12;
       const pages = chunk(list, PER_PAGE);
-      pagesEl.innerHTML = pages.map((page, pi)=>{
-        const thumbs = page.map((it)=>{
-          const safeName = String(it.name || "");
-          return `
-            <div class="pitem" data-url="${it.url}" data-name="${safeName}">
-              <img loading="lazy" src="${it.url}" alt="${safeName}">
-              <div class="pcap">${safeName}</div>
-            </div>
-          `;
-        }).join("");
+
+      pagesEl.innerHTML = pages.map((page)=> {
+        const thumbs = page.map((it)=> `
+          <div class="pitem" data-url="${it.url}">
+            <img loading="lazy" src="${it.url}" alt="갤러리 사진">
+          </div>
+        `).join("");
 
         return `
-          <div class="page" data-page="${pi}">
+          <div class="page">
             <div class="gridThumb">${thumbs}</div>
           </div>
         `;
       }).join("");
 
-      // 썸네일 클릭 → 라이트박스
       pagesEl.querySelectorAll(".pitem").forEach(el=>{
         el.addEventListener("click", ()=>{
           const url = el.getAttribute("data-url") || "";
-          const name = el.getAttribute("data-name") || "사진";
-          openLightboxByUrl(url, name, "");
+          openLightboxByUrl(url);
         });
       });
 
       buildDots(pages.length);
 
-      // 스크롤로 페이지 바뀌면 점 업데이트
-      const onScroll = ()=>{
+      pagesEl.onscroll = ()=>{
         const w = pagesEl.clientWidth || 1;
         const idx = Math.round(pagesEl.scrollLeft / w);
         setDotActive(Math.max(0, Math.min(pages.length-1, idx)));
       };
-      pagesEl.onscroll = onScroll;
 
       resultTitle.textContent = queryLabel;
       resultMeta.textContent = `총 ${list.length}장 · ${pages.length}페이지 (좌우로 밀기)`;
@@ -857,14 +944,13 @@
       resultArea.style.display = "block";
       emptyArea.style.display = "none";
 
-      // 결과 시작으로 스크롤
       setTimeout(()=>{ document.getElementById("searchSection").scrollIntoView({behavior:"smooth", block:"start"}); }, 80);
     }
 
     function runSearch(query){
       const queryText = String(query||"").trim();
-
       const filtered = ITEMS.filter(it=> matchItem(it, queryText));
+
       if(!filtered.length){
         resultArea.style.display = "none";
         emptyArea.style.display = "block";
@@ -872,11 +958,9 @@
         return;
       }
 
-      // 결과는 최신 유지 위해 원본 순서 유지(원하면 여기서 정렬 가능)
-      const label = queryText ? `검색 결과: "${queryText}"` : "전체 사진";
+      const label = queryText ? `검색 결과` : "전체 사진";
       renderCarousel(filtered, label);
 
-      // URL에 쿼리 저장(?q=)
       const u = new URL(location.href);
       if(queryText) u.searchParams.set("q", queryText);
       else u.searchParams.delete("q");
@@ -890,16 +974,10 @@
     });
     btnSearch.addEventListener("click", ()=> runSearch(q.value));
     btnShowAll.addEventListener("click", ()=>{ q.value=""; runSearch(""); });
+    q.addEventListener("keydown", (e)=>{ if(e.key === "Enter") runSearch(q.value); });
 
-    q.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter") runSearch(q.value);
-    });
+    btnCopyQueryLink.addEventListener("click", ()=> copyText(location.href));
 
-    btnCopyQueryLink.addEventListener("click", ()=>{
-      copyText(location.href);
-    });
-
-    // 페이지 로드 시 ?q= 있으면 자동 검색
     (function autoRunFromQuery(){
       const u = new URL(location.href);
       const qq = u.searchParams.get("q");
@@ -907,13 +985,12 @@
         q.value = qq;
         runSearch(qq);
       }else{
-        // 처음엔 결과 숨김(원하면 전체 보여주도록 변경 가능)
         resultArea.style.display = "none";
         emptyArea.style.display = "none";
       }
     })();
 
-    /* Cover + thumbs (기존 유지) */
+    /* ====== Cover + thumbs ====== */
     const coverImg = document.getElementById("coverImg");
     const thumbs = document.getElementById("thumbs");
     const thumbCount = document.getElementById("thumbCount");
@@ -935,8 +1012,8 @@
 
     function renderThumbs(){
       thumbs.innerHTML = ITEMS.map((it, i)=>`
-        <div class="titem ${i===0?'active':''}" data-i="${i}" title="썸네일 클릭">
-          <img loading="lazy" src="${it.url}" alt="thumb-${i+1}">
+        <div class="titem ${i===0?'active':''}" data-i="${i}" title="썸네일">
+          <img loading="lazy" src="${it.url}" alt="thumb">
         </div>
       `).join("");
       thumbCount.textContent = String(ITEMS.length);
@@ -947,7 +1024,7 @@
 
     btnCoverPrev.addEventListener("click", ()=> setCover(coverIndex-1));
     btnCoverNext.addEventListener("click", ()=> setCover(coverIndex+1));
-    btnOpenCover.addEventListener("click", ()=> openLightboxByUrl(ITEMS[coverIndex].url, ITEMS[coverIndex].name || "사진", ""));
+    btnOpenCover.addEventListener("click", ()=> openLightboxByUrl(ITEMS[coverIndex].url));
     btnCopyCover.addEventListener("click", ()=> copyText(ITEMS[coverIndex].url));
 
     btnShuffleThumbs.addEventListener("click", ()=>{
@@ -959,7 +1036,7 @@
 
       thumbs.innerHTML = shuffled.map((it, i)=>`
         <div class="titem ${i===0?'active':''}" data-i="${i}">
-          <img loading="lazy" src="${it.url}" alt="thumb-shuffled-${i+1}">
+          <img loading="lazy" src="${it.url}" alt="thumb">
         </div>
       `).join("");
       thumbCount.textContent = String(shuffled.length);
@@ -976,13 +1053,13 @@
         });
       });
 
-      btnOpenCover.onclick = ()=> openLightboxByUrl(shuffled[coverIndex].url, shuffled[coverIndex].name || "사진", "");
+      btnOpenCover.onclick = ()=> openLightboxByUrl(shuffled[coverIndex].url);
       btnCopyCover.onclick = ()=> copyText(shuffled[coverIndex].url);
 
       toast("썸네일을 섞었습니다 🎲");
     });
 
-    /* Slideshow (기존 유지) */
+    /* ====== Slideshow (NO names shown) ====== */
     const slideTitle = document.getElementById("slideTitle");
     const slideSub = document.getElementById("slideSub");
     const imgA = document.getElementById("slideImgA");
@@ -1007,8 +1084,9 @@
       slideIndex = (idx + ITEMS.length) % ITEMS.length;
       const it = ITEMS[slideIndex];
 
-      slideTitle.textContent = it.name ? it.name : `갤러리 ${slideIndex+1}`;
-      slideSub.textContent = `(${it.sub || ""}) ${slideIndex+1}/${ITEMS.length}`;
+      // ✅ 이름 노출 금지: 번호만
+      slideTitle.textContent = `사진 ${slideIndex+1}`;
+      slideSub.textContent = `${slideIndex+1}/${ITEMS.length}`;
 
       const target = showingA ? imgA : imgB;
       const other  = showingA ? imgB : imgA;
@@ -1044,21 +1122,38 @@
     btnPlay.addEventListener("click", play);
     btnPause.addEventListener("click", pause);
     btnSpeed.addEventListener("click", toggleSpeed);
-    btnOpenSlide.addEventListener("click", ()=> openLightboxByUrl(ITEMS[slideIndex].url, ITEMS[slideIndex].name || "사진", ""));
+    btnOpenSlide.addEventListener("click", ()=> openLightboxByUrl(ITEMS[slideIndex].url));
     btnCopySlide.addEventListener("click", ()=> copyText(ITEMS[slideIndex].url));
 
-    /* Videos render + YouTube title auto (기존 유지) */
+    /* ====== Videos ====== */
+    const VIDEO_URLS = [
+      "https://www.youtube.com/watch?v=D3kDXF-sNJA",
+      "https://www.youtube.com/watch?v=wWIAPVvrnSw",
+      "https://youtu.be/lUpmY5jfEIc",
+      "https://youtu.be/YSWIds8fmzE"
+    ];
+    const CHANNEL_URL = "https://www.youtube.com/@%EA%B3%84%EB%AA%85%ED%83%9C%EA%B6%8C%EB%8F%84%EC%9A%B8%EC%82%B0/videos";
+
+    function getYouTubeId(url){
+      try{
+        const u = new URL(url);
+        if(u.hostname.includes("youtu.be")) return u.pathname.replace("/","");
+        return u.searchParams.get("v");
+      }catch(e){
+        return "";
+      }
+    }
+
     const videoGrid = document.getElementById("videoGrid");
 
     function renderVideosShell(){
       videoGrid.innerHTML = VIDEO_URLS.map((url)=>{
         const id = getYouTubeId(url);
-        const safe = id || "";
         return `
           <article class="video-card" data-video-url="${url}">
             <div class="video-embed">
               <iframe
-                src="https://www.youtube.com/embed/${safe}"
+                src="https://www.youtube.com/embed/${id}"
                 title="계명태권도 영상"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen></iframe>
@@ -1078,14 +1173,12 @@
         const url = card.getAttribute("data-video-url");
         const titleEl = card.querySelector(".yt-title");
         const metaEl = card.querySelector(".yt-meta");
-
         const oembed = `https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(url)}`;
 
         try{
           const res = await fetch(oembed, { mode: "cors" });
           if(!res.ok) throw new Error("oEmbed not ok");
           const data = await res.json();
-
           titleEl.textContent = data.title || "계명태권도 영상";
           metaEl.textContent = data.author_name ? `YouTube · ${data.author_name}` : "YouTube";
         }catch(e){
@@ -1102,51 +1195,29 @@
       copyText(CHANNEL_URL);
     });
 
-    /* Lightbox */
+    /* ====== Lightbox events ====== */
     const lb = document.getElementById("lb");
-    const lbImg = document.getElementById("lbImg");
-    const lbTitle = document.getElementById("lbTitle");
-    const lbSub = document.getElementById("lbSub");
-    const lbClose = document.getElementById("lbClose");
-    const lbCopy = document.getElementById("lbCopy");
-    const lbDownload = document.getElementById("lbDownload");
-
-    let lbUrl = "";
-    function openLightboxByUrl(url, title, sub){
-      lbUrl = url;
-      lbImg.src = url;
-      lbTitle.textContent = title || "사진";
-      lbSub.textContent = sub || "";
-      lbDownload.href = url;
-
-      lb.classList.add("show");
-      lb.setAttribute("aria-hidden","false");
-      document.body.style.overflow="hidden";
-    }
-    function closeLightbox(){
+    document.getElementById("lbClose").addEventListener("click", ()=>{
       lb.classList.remove("show");
       lb.setAttribute("aria-hidden","true");
       document.body.style.overflow="";
-      lbImg.src = "";
-      lbUrl = "";
-    }
-    lbClose.addEventListener("click", closeLightbox);
-    lb.addEventListener("click", (e)=>{ if(e.target === lb) closeLightbox(); });
-    window.addEventListener("keydown", (e)=>{
-      if(!lb.classList.contains("show")) return;
-      if(e.key === "Escape") closeLightbox();
+      document.getElementById("lbImg").src = "";
+      window.__lbUrl = "";
     });
-    lbCopy.addEventListener("click", ()=> copyText(lbUrl));
+    lb.addEventListener("click", (e)=>{ if(e.target === lb) document.getElementById("lbClose").click(); });
+    window.addEventListener("keydown", (e)=>{ if(lb.classList.contains("show") && e.key==="Escape") document.getElementById("lbClose").click(); });
+    document.getElementById("lbCopy").addEventListener("click", ()=> copyText(window.__lbUrl || ""));
 
     /* INIT */
-    // 대표/썸네일/슬라이드 초기화
     renderThumbs();
     setCover(0);
 
-    imgA.src = ITEMS[0]?.url || "";
-    imgA.classList.add("show");
-    slideTitle.textContent = ITEMS[0]?.name || "갤러리 1";
-    slideSub.textContent = `(${ITEMS[0]?.sub || ""}) 1/${ITEMS.length}`;
+    if(ITEMS.length){
+      imgA.src = ITEMS[0].url;
+      imgA.classList.add("show");
+      slideTitle.textContent = "사진 1";
+      slideSub.textContent = `1/${ITEMS.length}`;
+    }
     btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
 
     renderVideosShell();
