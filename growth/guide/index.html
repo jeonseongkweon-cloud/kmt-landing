@@ -1,1 +1,174 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>운영 안내 | 성장 포인트 | 계명태권도</title>
+  <meta name="description" content="계명태권도 성장 포인트 운영 방식 안내. 조회 기준, 누적 확장형, 도복 단계, 유보 기준을 확인하세요." />
+  <meta name="theme-color" content="#0b0f19" />
+  <style>
+    :root{
+      --bg:#070a12; --panel:#0b1020; --line:rgba(255,255,255,.12);
+      --text:rgba(255,255,255,.92); --muted:rgba(255,255,255,.68); --muted2:rgba(255,255,255,.56);
+      --gold:#f5c45a; --blue:#49a6ff; --ok:#34d399; --warn:#fbbf24;
+      --r:22px; --r2:16px; --max:1060px;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--font); color:var(--text);
+      background:
+        radial-gradient(900px 520px at 18% 10%, rgba(73,166,255,.18), transparent 55%),
+        radial-gradient(900px 520px at 82% 18%, rgba(245,196,90,.14), transparent 55%),
+        linear-gradient(180deg, #060911 0%, #070a12 55%, #050713 100%);
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:18px 16px 60px}
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter:saturate(1.2) blur(10px);
+      background:linear-gradient(180deg, rgba(7,10,18,.88), rgba(7,10,18,.55));
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .topbar .wrap{padding:14px 16px}
+    .row{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+    .title{display:flex; align-items:center; gap:10px}
+    .dot{
+      width:14px; height:14px; border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, rgba(245,196,90,.95), rgba(73,166,255,.75));
+      box-shadow: 0 10px 30px rgba(73,166,255,.18);
+    }
+    .title h1{margin:0; font-size:15px; letter-spacing:.2px}
+    .title .sub{margin:2px 0 0; font-size:12px; color:var(--muted2)}
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 12px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: 0 10px 26px rgba(0,0,0,.28);
+      font-weight:800; font-size:13px;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.primary{border-color: rgba(73,166,255,.45); background: linear-gradient(180deg, rgba(73,166,255,.22), rgba(73,166,255,.10));}
+    .btn.gold{border-color: rgba(245,196,90,.45); background: linear-gradient(180deg, rgba(245,196,90,.22), rgba(245,196,90,.10));}
+    .card{
+      margin-top:14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.035));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hd{padding:16px 16px 10px; border-bottom:1px solid rgba(255,255,255,.08)}
+    .hd h2{margin:0; font-size:18px; letter-spacing:.2px}
+    .hd p{margin:8px 0 0; color:var(--muted2); line-height:1.55; font-size:13px}
+    .bd{padding:14px 16px 16px}
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:920px){.grid{grid-template-columns:1fr}}
+    .panel{
+      border-radius: var(--r2);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding:14px;
+    }
+    .panel h3{margin:0 0 8px; font-size:14px}
+    .panel p, .panel li{color:var(--muted); line-height:1.6; font-size:13px}
+    ul{margin:8px 0 0; padding-left:18px}
+    .callout{
+      margin-top:12px;
+      border-radius: 18px;
+      border:1px solid rgba(73,166,255,.28);
+      background: rgba(73,166,255,.10);
+      padding:12px 12px;
+      color: rgba(255,255,255,.88);
+      font-size:13px;
+      line-height:1.6;
+    }
+    .foot{margin-top:14px; color:var(--muted2); font-size:12px; line-height:1.6}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap">
+      <div class="row">
+        <div class="title">
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <h1>운영 안내</h1>
+            <div class="sub">성장 포인트 시스템 운영 방식</div>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="../../index.html">🏠 홈으로</a>
+          <a class="btn primary" href="../index.html">← 포인트 조회로</a>
+          <a class="btn gold" href="../items/">📋 포인트 항목</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <main class="wrap">
+    <section class="card">
+      <div class="hd">
+        <h2>한눈에 보는 운영 원칙</h2>
+        <p>
+          이 제도는 “선물”이 아니라 <b>노력과 성장의 기록</b>입니다.
+          포인트는 누적되며 초기화되지 않습니다.
+        </p>
+      </div>
+      <div class="bd">
+        <div class="grid">
+          <div class="panel">
+            <h3>✅ 조회 방식</h3>
+            <ul>
+              <li><b>아이디</b>로 조회 (예: KM002 / 대소문자 무관)</li>
+              <li><b>이름 + 생년월일(8자리)</b>로 조회</li>
+              <li>정보가 정확히 일치할 때만 결과가 표시됩니다.</li>
+            </ul>
+          </div>
+
+          <div class="panel">
+            <h3>✅ 포인트 운영</h3>
+            <ul>
+              <li>일일 과다 지급을 방지하기 위해 <b>운영 기준</b>을 둡니다.</li>
+              <li>포인트는 현금이 아니며 <b>양도·거래 불가</b>입니다.</li>
+              <li>학부모 인증 미션은 <b>구글폼</b>으로 제출합니다.</li>
+            </ul>
+          </div>
+
+          <div class="panel">
+            <h3>🥋 도복 단계 (누적 확장형)</h3>
+            <ul>
+              <li><b>30,000점</b> : 일반 도복 (30,000원)</li>
+              <li><b>60,000점</b> : 유단자 도복 (40,000원)</li>
+              <li><b>90,000점</b> : 고단자 도복(어깨 삼선) (45,000원)</li>
+              <li>이후에도 누적은 계속됩니다.</li>
+            </ul>
+          </div>
+
+          <div class="panel">
+            <h3>⏸ 지급 유보(예시)</h3>
+            <ul>
+              <li>출석률 미달 또는 장기 결석</li>
+              <li>반복적인 수련 태도 문제</li>
+              <li>규정 위반 사항 발생</li>
+              <li>유보 시 재도전 기회가 제공될 수 있습니다.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout">
+          <b>학부모님께</b><br/>
+          포인트는 아이의 “성장 기록”입니다. 결과보다 과정이 중요하며, 꾸준함이 쌓이면 자연스럽게 도복 목표에 도달합니다.
+        </div>
+
+        <div class="foot">
+          ※ 상세 항목은 <b>포인트 항목/점수</b> 페이지에서 확인 가능합니다.
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
