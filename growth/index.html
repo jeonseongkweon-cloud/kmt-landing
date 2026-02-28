@@ -7,12 +7,32 @@
   <meta name="description" content="계명태권도 성장 포인트 조회. 누적 포인트, 등급, 도복 목표 진행률을 한 번에 확인하세요." />
   <meta name="theme-color" content="#0b0f19" />
 
-  <!-- OG (카톡 공유용) -->
+  <!-- ✅ Canonical (공유/검색 안정성) -->
+  <link rel="canonical" href="https://계명태권도.com/points/" />
+
+  <!-- ✅ OG (카톡 공유용) : 초고급 완성 세트 -->
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="계명태권도" />
   <meta property="og:title" content="계명태권도 | 성장 포인트 조회" />
   <meta property="og:description" content="누적 포인트·등급·도복 목표 진행률을 한 번에 확인하세요." />
-  <!-- ✅ 필요 시 OG 이미지 넣기: 아래 content에 이미지 URL -->
-  <meta property="og:image" content="" />
+  <meta property="og:url" content="https://계명태권도.com/points/" />
+
+  <!-- ✅ OG 이미지 (카톡 미리보기 핵심) -->
+  <meta property="og:image" content="https://static.wixstatic.com/media/abf917_9cddee23300c4238bcaec82c00bbf08a~mv2.jpg" />
+  <meta property="og:image:secure_url" content="https://static.wixstatic.com/media/abf917_9cddee23300c4238bcaec82c00bbf08a~mv2.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="계명태권도 성장 포인트 조회" />
+
+  <!-- ✅ Twitter (미리보기 보정) -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="계명태권도 | 성장 포인트 조회" />
+  <meta name="twitter:description" content="누적 포인트·등급·도복 목표 진행률을 한 번에 확인하세요." />
+  <meta name="twitter:image" content="https://static.wixstatic.com/media/abf917_9cddee23300c4238bcaec82c00bbf08a~mv2.jpg" />
+
+  <!-- ✅ (선택) 파비콘: 없으면 지워도 OK
+  <link rel="icon" href="../assets/images/favicon.ico" />
+  -->
 
   <style>
     :root{
@@ -35,6 +55,7 @@
       --r2:16px;
       --max:1120px;
       --font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      --glow: 0 0 0 1px rgba(255,255,255,.06), 0 22px 70px rgba(0,0,0,.55);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -53,15 +74,13 @@
     .wrap{max-width:var(--max); margin:0 auto; padding:18px 16px 60px}
     .topbar{
       position:sticky; top:0; z-index:50;
-      backdrop-filter:saturate(1.2) blur(10px);
+      backdrop-filter:saturate(1.2) blur(12px);
       background:linear-gradient(180deg, rgba(7,10,18,.88), rgba(7,10,18,.55));
       border-bottom:1px solid rgba(255,255,255,.08);
     }
     .topbar .wrap{padding:14px 16px}
     .row{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
-    .brand{
-      display:flex; align-items:center; gap:12px; min-width:260px;
-    }
+    .brand{display:flex; align-items:center; gap:12px; min-width:260px;}
     .badge{
       width:42px; height:42px; border-radius:14px;
       background:
@@ -72,6 +91,7 @@
       box-shadow: 0 16px 40px rgba(0,0,0,.35);
       position:relative;
       overflow:hidden;
+      transform: translateZ(0);
     }
     .badge:before{
       content:"";
@@ -92,15 +112,16 @@
       background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
       box-shadow: 0 10px 26px rgba(0,0,0,.28);
       color:var(--text);
-      font-weight:700;
+      font-weight:800;
       font-size:13px;
       cursor:pointer;
       user-select:none;
-      transition:transform .12s ease, border-color .12s ease, background .12s ease;
+      transition:transform .12s ease, border-color .12s ease, background .12s ease, filter .12s ease;
       white-space:nowrap;
+      -webkit-tap-highlight-color: transparent;
     }
     .btn:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.22)}
-    .btn:active{transform:translateY(0px)}
+    .btn:active{transform:translateY(0px); filter:saturate(1.05)}
     .btn.primary{
       border-color: rgba(73,166,255,.45);
       background: linear-gradient(180deg, rgba(73,166,255,.22), rgba(73,166,255,.10));
@@ -143,17 +164,24 @@
       overflow:hidden;
       position:relative;
     }
+    .card:after{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(420px 180px at 18% 0%, rgba(73,166,255,.10), transparent 55%),
+                  radial-gradient(420px 180px at 82% 0%, rgba(245,196,90,.08), transparent 55%);
+      pointer-events:none;
+      opacity:.85;
+      mix-blend-mode: screen;
+    }
     .card .hd{
+      position:relative;
       padding:16px 16px 10px;
       border-bottom:1px solid rgba(255,255,255,.08);
       display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
       flex-wrap:wrap;
+      z-index:1;
     }
-    .card .hd .t{
-      margin:0;
-      font-size:16px;
-      letter-spacing:.2px;
-    }
+    .card .hd .t{ margin:0; font-size:16px; letter-spacing:.2px; }
     .card .hd .d{
       margin:6px 0 0;
       font-size:12.5px;
@@ -161,13 +189,8 @@
       line-height:1.5;
       max-width:720px;
     }
-    .card .bd{padding:14px 16px 16px}
-    .hint{
-      margin:8px 0 0;
-      font-size:12px;
-      color:var(--muted2);
-      line-height:1.55;
-    }
+    .card .bd{position:relative; padding:14px 16px 16px; z-index:1;}
+    .hint{ margin:8px 0 0; font-size:12px; color:var(--muted2); line-height:1.55; }
 
     /* Search UI */
     .tabs{ display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 0; }
@@ -177,11 +200,12 @@
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.04);
       color: var(--muted);
-      font-weight:800;
+      font-weight:900;
       font-size:13px;
       cursor:pointer;
       user-select:none;
       transition:transform .12s ease, border-color .12s ease, background .12s ease;
+      -webkit-tap-highlight-color: transparent;
     }
     .tab:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.2)}
     .tab.active{
@@ -208,6 +232,7 @@
     input:focus{
       border-color: rgba(73,166,255,.48);
       background: rgba(6,10,20,.75);
+      transform: translateY(-1px);
     }
     .clear{
       position:absolute;
@@ -222,6 +247,7 @@
       opacity:0;
       pointer-events:none;
       transition:opacity .12s ease, transform .12s ease;
+      -webkit-tap-highlight-color: transparent;
     }
     .clear:hover{transform:translateY(-50%) scale(1.03)}
     .inwrap.hasValue .clear{opacity:1; pointer-events:auto}
@@ -248,6 +274,7 @@
       border:1px solid rgba(255,255,255,.12);
       background: linear-gradient(180deg, rgba(11,16,32,.62), rgba(11,16,32,.42));
       overflow:hidden;
+      box-shadow: var(--glow);
     }
     .result.show{display:block}
     .resTop{
@@ -255,7 +282,7 @@
       border-bottom:1px solid rgba(255,255,255,.08);
       display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;
     }
-    .name{ font-size:18px; font-weight:900; letter-spacing:.2px; margin:0; }
+    .name{ font-size:18px; font-weight:950; letter-spacing:.2px; margin:0; }
     .meta{
       margin:6px 0 0;
       color: var(--muted2);
@@ -302,7 +329,7 @@
       padding:12px 12px;
     }
     .kpi .l{font-size:12px; color:var(--muted2); margin:0}
-    .kpi .v{font-size:20px; font-weight:900; margin:6px 0 0}
+    .kpi .v{font-size:20px; font-weight:950; margin:6px 0 0}
     .kpi .v small{font-size:12px; color:var(--muted2); font-weight:800}
     .barWrap{margin-top:12px}
     .barTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:12.5px; color: var(--muted2); }
@@ -332,7 +359,7 @@
       display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
     }
     .ms .left{display:flex; flex-direction:column; gap:4px}
-    .ms .t{font-weight:900}
+    .ms .t{font-weight:950}
     .ms .s{font-size:12px; color:var(--muted2)}
     .ms .right{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
     .tag{
@@ -357,10 +384,11 @@
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       padding:12px 12px;
       display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
-      transition: transform .12s ease, border-color .12s ease;
+      transition: transform .12s ease, border-color .12s ease, filter .12s ease;
+      -webkit-tap-highlight-color: transparent;
     }
-    .linkCard:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.20)}
-    .linkCard .tt{font-weight:900; margin:0; font-size:14px}
+    .linkCard:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.20); filter:saturate(1.05)}
+    .linkCard .tt{font-weight:950; margin:0; font-size:14px}
     .linkCard .dd{margin:6px 0 0; font-size:12px; color:var(--muted2); line-height:1.5}
     .arrow{opacity:.8}
 
@@ -376,6 +404,11 @@
     }
     .smallnote{font-size:12px; color:var(--muted2); margin-top:10px}
     .sep{height:1px; background:rgba(255,255,255,.08); margin:14px 0}
+
+    /* ✅ 아주 살짝 “고급” 스크롤바(지원 브라우저만) */
+    ::-webkit-scrollbar{height:10px;width:10px}
+    ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12); border-radius:999px}
+    ::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}
 
     @media (prefers-reduced-motion: reduce){
       *{transition:none !important; animation:none !important}
@@ -485,7 +518,7 @@
           </div>
 
           <!-- RESULT -->
-          <div class="result" id="result">
+          <div class="result" id="result" aria-live="polite">
             <div class="resTop">
               <div>
                 <p class="name" id="resName">-</p>
@@ -560,7 +593,7 @@
                 <div class="panel">
                   <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;">
                     <div>
-                      <div style="font-weight:900; font-size:14px;">바로가기</div>
+                      <div style="font-weight:950; font-size:14px;">바로가기</div>
                       <div class="smallnote">규정·항목·등급 안내를 한 번에 확인하세요.</div>
                     </div>
                     <a class="btn" href="./guide/">📌 운영 안내</a>
@@ -632,7 +665,7 @@
         </div>
         <div class="bd">
           <div class="panel" style="margin-bottom:12px">
-            <div style="font-weight:900; margin-bottom:6px">✅ 엄마 미션 인증이 필요할 때</div>
+            <div style="font-weight:950; margin-bottom:6px">✅ 엄마 미션 인증이 필요할 때</div>
             <div class="smallnote" style="margin-top:0">
               관장님 카톡 공지로 “오늘 미션”이 열릴 수 있습니다. <br/>
               미션 완료 후 아래 버튼으로 인증을 제출해주세요.
@@ -644,7 +677,7 @@
           </div>
 
           <div class="panel">
-            <div style="font-weight:900; margin-bottom:6px">🎯 올해 도복 목표(누적 확장형)</div>
+            <div style="font-weight:950; margin-bottom:6px">🎯 올해 도복 목표(누적 확장형)</div>
             <div class="smallnote" style="margin-top:0">
               • 30,000점: 일반 도복<br/>
               • 60,000점: 유단자 도복<br/>
@@ -665,7 +698,7 @@
     </div>
   </main>
 
-  <!-- ✅ 데이터 로드: growth/data/data.js -->
+  <!-- ✅ 데이터 로드: points/data/data.js -->
   <script src="./data/data.js"></script>
 
   <script>
@@ -681,7 +714,6 @@
 
     // ✅ 이름: 공백 제거 + 앞뒤 트림
     const normName = (s) => (s||"").replace(/\s+/g,"").trim();
-
     const normDob = (s) => (s||"").replace(/\D/g,"").trim();
 
     function safeDB(){
@@ -722,11 +754,9 @@
       return "다음 단계 (누적 확장)";
     }
 
-    // ✅ 입력이 "김민구20170123" / "김민구 20170123" 이면
-    //    자동으로 "김민구_20170123" 키를 만들어서 우선 검색(언더바 자동 처리)
     function parseNameMaybeWithDob(raw){
       const s = String(raw||"");
-      const cleaned = s.replace(/\s+/g,"").trim();   // 공백 제거
+      const cleaned = s.replace(/\s+/g,"").trim();
       const dob = (cleaned.match(/(\d{8})$/) || [])[1] || "";
       if(dob){
         const name = cleaned.slice(0, -8);
@@ -735,7 +765,6 @@
       return { name: normName(cleaned), dob: "" };
     }
 
-    // ✅ 학생 레코드에서 이름 부분만 뽑기 (name이 "김민구_20170123" 형태여도 OK)
     function studentNameOnly(stu){
       const name = stu?.name ?? "";
       const n = String(name);
@@ -746,13 +775,11 @@
     // ---------- DOM ----------
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    // Set form URL everywhere
     ["momFormBtn","momFormBtn2","momFormCard"].forEach(id=>{
       const el = document.getElementById(id);
       if(el) el.href = MOM_FORM_URL;
     });
 
-    // Tabs
     const tabName = document.getElementById("tabName");
     const tabId = document.getElementById("tabId");
     const tabNameDob = document.getElementById("tabNameDob");
@@ -801,7 +828,6 @@
       });
     });
 
-    // Clear buttons
     document.querySelectorAll(".clear").forEach(btn=>{
       btn.addEventListener("click", ()=>{
         const target = btn.getAttribute("data-clear");
@@ -811,7 +837,6 @@
       });
     });
 
-    // Add hasValue state
     function hookWrap(inputId, wrapId){
       const input = document.getElementById(inputId);
       const wrap = document.getElementById(wrapId);
@@ -824,7 +849,6 @@
     hookWrap("inputName","wrapName");
     hookWrap("inputDob","wrapDob");
 
-    // Status message
     const statusMsg = document.getElementById("statusMsg");
     function setStatus(text, tone){
       statusMsg.className = "msg";
@@ -833,12 +857,10 @@
       statusMsg.innerHTML = text;
     }
 
-    // Last updated
     const lastUpdatedEl = document.getElementById("lastUpdated");
     const db = safeDB();
     lastUpdatedEl.textContent = (db.meta && db.meta.updatedAt) ? db.meta.updatedAt : "수동 데이터";
 
-    // Result elements
     const result = document.getElementById("result");
     const resName = document.getElementById("resName");
     const resMeta = document.getElementById("resMeta");
@@ -869,7 +891,6 @@
       const prog = clamp(((total - base) / denom) * 100, 0, 100);
       const remain = Math.max(0, next - total);
 
-      // 이름 표시: name이 "김민구_20170123"여도 화면에는 김민구만 보여주기
       const displayName = (()=>{
         const n = String(stu.name || "-");
         return n.includes("_") ? n.split("_")[0] : n;
@@ -910,14 +931,12 @@
       setStatus("조회가 완료되었습니다. 아래에서 등급과 도복 목표 진행률을 확인하세요.", "good");
     }
 
-    // ✅ 검색: 아이디
     function findById(id){
       const students = db.students || [];
       const key = normId(id);
       return students.find(s => normId(s.id) === key || normId(s.key) === key || normId(s.aiki) === key);
     }
 
-    // ✅ 검색: 이름+생년월일
     function findByNameDob(name, dob){
       const students = db.students || [];
       const n = normName(name);
@@ -925,12 +944,10 @@
       return students.find(s => (studentNameOnly(s) === n) && (normDob(s.dob) === d));
     }
 
-    // ✅ 검색: 이름만
     function findByNameOnly(raw){
       const students = db.students || [];
       const parsed = parseNameMaybeWithDob(raw);
 
-      // 1) 이름+생년월일이 같이 들어온 입력이면, 먼저 강하게 매칭 시도
       if(parsed.dob && parsed.name){
         const exact = findByNameDob(parsed.name, parsed.dob);
         if(exact) return exact;
@@ -945,7 +962,6 @@
         if(byKey) return byKey;
       }
 
-      // 2) 이름만 매칭
       const n = parsed.name;
       if(!n) return null;
 
@@ -962,7 +978,6 @@
       return null;
     }
 
-    // Buttons
     const btnSearch = document.getElementById("btnSearch");
     const btnReset = document.getElementById("btnReset");
 
@@ -981,14 +996,13 @@
       hideResult();
 
       if(!db.students || db.students.length === 0){
-        setStatus("데이터가 아직 연결되지 않았습니다. (관리자) growth/data/data.js의 데이터 형식을 확인해주세요.", "bad");
-        console.warn("[growth] DB not loaded or empty. Please check window.KMT_GROWTH_DB in ./data/data.js");
+        setStatus("데이터가 아직 연결되지 않았습니다. (관리자) points/data/data.js의 데이터 형식을 확인해주세요.", "bad");
+        console.warn("[points] DB not loaded or empty. Please check window.KMT_GROWTH_DB in ./data/data.js");
         return;
       }
 
       const mode = currentMode();
 
-      // ✅ 이름만
       if(mode === "name"){
         const raw = String(inputNameOnly.value||"");
         const parsed = parseNameMaybeWithDob(raw);
@@ -1014,7 +1028,6 @@
         return;
       }
 
-      // ✅ 아이디
       if(mode === "id"){
         const id = String(inputId.value||"").trim();
         if(!id){
@@ -1030,7 +1043,6 @@
         return;
       }
 
-      // ✅ 이름+생년월일
       const name = String(inputName.value||"").trim();
       const dob = String(inputDob.value||"").trim();
       if(!name || !dob){
@@ -1067,19 +1079,16 @@
       setMode("name");
     });
 
-    // Enter triggers search
     [inputNameOnly, inputId, inputName, inputDob].forEach(el=>{
       el.addEventListener("keydown", (e)=>{
         if(e.key === "Enter"){ e.preventDefault(); doSearch(); }
       });
     });
 
-    // DOB digits only
     inputDob.addEventListener("input", ()=>{
       inputDob.value = normDob(inputDob.value).slice(0,8);
     });
 
-    // ✅ 이름 입력 중 공백 자동 제거(바로 눈에 보이게)
     inputNameOnly.addEventListener("input", ()=>{
       const v = String(inputNameOnly.value||"");
       const trimmed = v.replace(/\s+/g,"");
@@ -1091,7 +1100,6 @@
       if(v !== trimmed) inputName.value = trimmed;
     });
 
-    // default mode: name
     setMode("name");
   </script>
 </body>
