@@ -926,8 +926,6 @@
     }
 
     // ✅ 검색: 이름만
-    // - students[].name이 "김민구"이든 "김민구_20170123"이든 OK
-    // - 사용자가 "김민구20170123"처럼 넣으면 자동으로 name+dob로도 먼저 시도(언더바 자동 처리)
     function findByNameOnly(raw){
       const students = db.students || [];
       const parsed = parseNameMaybeWithDob(raw);
@@ -937,9 +935,13 @@
         const exact = findByNameDob(parsed.name, parsed.dob);
         if(exact) return exact;
 
-        // 혹시 DB가 "아이키"를 id처럼 저장한 경우 대비: "김민구_20170123"
         const key = `${parsed.name}_${parsed.dob}`;
-        const byKey = students.find(s => normId(s.id) === normId(key) || normId(s.key) === normId(key) || normId(s.aiki) === normId(key) || normName(String(s.name||"")) === normName(key));
+        const byKey = students.find(s =>
+          normId(s.id) === normId(key) ||
+          normId(s.key) === normId(key) ||
+          normId(s.aiki) === normId(key) ||
+          normName(String(s.name||"")) === normName(key)
+        );
         if(byKey) return byKey;
       }
 
@@ -947,11 +949,9 @@
       const n = parsed.name;
       if(!n) return null;
 
-      // 이름만으로 1명만 딱 잡히면 반환, 여러명이면 null(동명이인 안전)
       const hits = students.filter(s => studentNameOnly(s) === n);
       if(hits.length === 1) return hits[0];
 
-      // 3) 혹시 데이터가 name에 공백/언더바가 섞여있어도 최대한 흡수
       const hits2 = students.filter(s => {
         const rawName = String(s.name||"");
         const head = rawName.split("_")[0];
@@ -959,7 +959,6 @@
       });
       if(hits2.length === 1) return hits2[0];
 
-      // 동명이인/다수면 안전하게 실패 처리
       return null;
     }
 
@@ -1002,7 +1001,6 @@
         const stu = findByNameOnly(raw);
 
         if(!stu){
-          // 동명이인 가능성 안내
           const hits = (db.students||[]).filter(s => studentNameOnly(s) === parsed.name);
           if(hits.length >= 2){
             setStatus("동명이인이 있습니다. 안전을 위해 ‘이름 + 생년월일’ 탭에서 조회해주세요.", "bad");
