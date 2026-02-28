@@ -3,7 +3,16 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>수련생 조회</title>
+<title>수련생 조회 | 계명태권도</title>
+<meta name="description" content="계명태권도 수련생 조회. 이름/아이디 + 생년월일로 안전하게 조회합니다." />
+<meta name="theme-color" content="#0b0f19" />
+
+<!-- OG -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="계명태권도" />
+<meta property="og:title" content="수련생 조회 | 계명태권도" />
+<meta property="og:description" content="이름/아이디 + 생년월일로 안전하게 조회합니다." />
+<meta property="og:image" content="" />
 
 <style>
   :root{
@@ -20,7 +29,7 @@
   *{box-sizing:border-box}
   body{
     margin:0; padding:18px 16px 28px;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
     background: radial-gradient(900px 600px at 50% 0%, rgba(246,201,69,.12), transparent 55%),
                 radial-gradient(900px 600px at 10% 20%, rgba(59,130,246,.10), transparent 55%),
                 var(--bg);
@@ -522,7 +531,7 @@
   <!-- ✅ 상단 홈바 -->
   <div class="nav">
     <div class="left">
-      <a class="homeBtn" id="homeBtn" href="../">🏠 홈 바로가기</a>
+      <a class="homeBtn" id="homeBtn" href="../index.html">🏠 홈 바로가기</a>
       <div class="brand">계명태권도 · 수련생 조회</div>
     </div>
   </div>
@@ -588,10 +597,8 @@
 ========================================================= */
 const RAW_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=0&single=true&output=csv";
 
-// 하단 "사진 바로보기(조회)" 버튼이 이동할 갤러리 경로
-// (예: ../gallery/ 또는 ../gallery/index.html 등 실제 폴더에 맞게 수정)
-const GALLERY_BASE = "../gallery/"; // 기본: ../gallery/
-const GALLERY_QUERY_KEY = "id";     // 갤러리에서 받을 파라미터 키 (id 추천)
+const GALLERY_BASE = "../gallery/";
+const GALLERY_QUERY_KEY = "id";
 
 /* =========================================================
   ✅ Cache/Retry/Timeout
@@ -607,10 +614,10 @@ const timePill = $("timePill");
 const statusText = $("statusText");
 const resultEl = $("result");
 
-let DATA_ROWS = null;            // 헤더 제외 rows
+let DATA_ROWS = null;
 let LOADING_PROMISE = null;
-let LAST_LOADED_AT = null;       // Date
-let LAST_SOURCE = null;          // "cache" | "network"
+let LAST_LOADED_AT = null;
+let LAST_SOURCE = null;
 
 /* ---------- utils ---------- */
 function clean(v){
@@ -627,16 +634,11 @@ function norm(v){
 function onlyDigits(v){
   return clean(v).replace(/[^\d]/g,"");
 }
-/* 생년월일 정규화:
-   - "11.02.13" -> "110213"
-   - "2011.02.13" -> "110213"
-   - "110213" -> "110213"
-*/
 function normBirth(v){
   const d = onlyDigits(v);
   if(!d) return "";
-  if(d.length === 6) return d;                    // yymmdd
-  if(d.length === 8) return d.slice(2);           // yyyymmdd -> yymmdd
+  if(d.length === 6) return d;
+  if(d.length === 8) return d.slice(2);
   return d;
 }
 function escapeHtml(str){
@@ -657,13 +659,11 @@ function fmtTime(dt){
   }
 }
 
-/* 날짜 파싱 (YYYY-MM-DD 또는 YYYY.MM.DD) */
 function parseDateAny(v){
   const s = clean(v);
   if(!s) return null;
   if(/미정/i.test(s)) return null;
   const digits = s.replace(/[^\d]/g,"");
-  // 기대: 20260314
   if(digits.length === 8){
     const y = Number(digits.slice(0,4));
     const m = Number(digits.slice(4,6));
@@ -671,7 +671,6 @@ function parseDateAny(v){
     if(!y || !m || !d) return null;
     return new Date(y, m-1, d);
   }
-  // 기대: 2026-03-14
   const m = s.match(/^(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})$/);
   if(m){
     const y = Number(m[1]);
@@ -691,16 +690,14 @@ function fmtDateShort(dt){
 function ddayText(dt){
   if(!dt) return { label:"미정", cls:"" };
   const today = new Date();
-  // 날짜 기준(시간 제거)
   const a = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const b = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
-  const diff = Math.round((b - a) / (1000*60*60*24)); // 일수
+  const diff = Math.round((b - a) / (1000*60*60*24));
   if(diff === 0) return { label:"D-Day", cls:"good" };
   if(diff > 0) return { label:`D-${diff}`, cls:"" };
   return { label:`D+${Math.abs(diff)}`, cls:"bad" };
 }
 
-/* SHA-256 (blockchain 느낌) */
 async function sha256Hex(text){
   try{
     const enc = new TextEncoder().encode(text);
@@ -782,8 +779,6 @@ async function fetchWithTimeout(url, ms){
     clearTimeout(t);
   }
 }
-
-/* ---------- direct → fallback allorigins ---------- */
 async function fetchCSVText(){
   try{
     return await fetchWithTimeout(RAW_CSV, FETCH_TIMEOUT_MS);
@@ -879,11 +874,6 @@ function matchRows(qNameOrId, qBirth){
 
   if(!q1 || !qb) return [];
 
-  // 시트 기준 열:
-  // 0 아이디, 1 이름, 2 생년월일,
-  // 3 태권도단증, 4 경호무술단증, 5 검도단증,
-  // 6 프로필링크, 7 현재포인트, 8 수상기록, 9 보유인증서,
-  // 10 next_exam_tkd, 11 next_exam_ipma, 12 next_exam_tkkd
   const out = [];
   for(const r of DATA_ROWS){
     const id = norm(r[0]);
@@ -931,14 +921,14 @@ function renderCard(row){
   const name = clean(row[1]);
   const birth = clean(row[2]);
 
-  const tkd = clean(row[3]);     // 태권도단증
-  const ipma = clean(row[4]);    // 경호무술단증
-  const tkkd = clean(row[5]);    // 태권검도/검도단증
-  const photo = clean(row[6]);   // 프로필링크
+  const tkd = clean(row[3]);
+  const ipma = clean(row[4]);
+  const tkkd = clean(row[5]);
+  const photo = clean(row[6]);
 
-  const point = clean(row[7]);   // 현재포인트
-  const awards = clean(row[8]);  // 수상기록
-  const cert = clean(row[9]);    // 보유인증서
+  const point = clean(row[7]);
+  const awards = clean(row[8]);
+  const cert = clean(row[9]);
 
   const nextTkd = clean(row[10]);
   const nextIpma = clean(row[11]);
@@ -1047,7 +1037,6 @@ function renderPickList(rows){
           <div class="list" id="pickList">${list}</div>`;
 }
 
-/* 해시 적용 */
 async function applyHashToCurrentCard(){
   const card = resultEl.querySelector(".card");
   if(!card) return;
@@ -1057,7 +1046,6 @@ async function applyHashToCurrentCard(){
   out.textContent = "생성중…";
   const hex = await sha256Hex(src);
   if(hex){
-    // 너무 길면 보기 좋게 일부만
     const pretty = `${hex.slice(0,8)}-${hex.slice(8,16)}-${hex.slice(16,24)}-${hex.slice(24,32)}…`;
     out.textContent = pretty;
   }else{
@@ -1147,10 +1135,7 @@ function bindClear(inputId, btnId){
 
 /* ---------- events ---------- */
 $("searchBtn").addEventListener("click", runSearch);
-
-document.addEventListener("keydown",(e)=>{
-  if(e.key === "Enter") runSearch();
-});
+document.addEventListener("keydown",(e)=>{ if(e.key === "Enter") runSearch(); });
 
 $("refreshBtn").addEventListener("click", async ()=>{
   resultEl.innerHTML = "";
@@ -1178,7 +1163,6 @@ $("clearCacheBtn").addEventListener("click", ()=>{
 bindClear("qNameOrId", "clearName");
 bindClear("qBirth", "clearBirth");
 
-/* 페이지 진입 시: 자동 1회 로딩 */
 window.addEventListener("DOMContentLoaded", ()=>{
   loadOnce({force:false}).catch(e=>{
     console.error(e);
