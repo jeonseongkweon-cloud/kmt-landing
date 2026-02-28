@@ -10,10 +10,29 @@
   <!-- ✅ NAVER site verification (소유확인) -->
   <meta name="naver-site-verification" content="2a572f93dfd846891eef198177054b9bb2a11934" />
 
+  <!-- =====================================================
+    ✅ ICON / FAVICON / APP ICON  (전총재님 로고 링크 적용)
+    - 브라우저 탭(파비콘): 48
+    - 안드로이드/크롬 PWA: 192/512
+    - 아이폰 홈화면(터치아이콘): 192(또는 180도 가능하지만 192도 무난)
+  ====================================================== -->
+  <link rel="icon" type="image/png" sizes="48x48"
+        href="https://static.wixstatic.com/media/abf917_56b8e2a4f59d406c95d03ef8b46be646~mv2.png" />
+  <link rel="icon" type="image/png" sizes="192x192"
+        href="https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png" />
+  <link rel="icon" type="image/png" sizes="512x512"
+        href="https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png" />
+  <link rel="apple-touch-icon" sizes="192x192"
+        href="https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png" />
+  <meta name="msapplication-TileColor" content="#0b0f19" />
+  <meta name="msapplication-TileImage"
+        content="https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png" />
+
   <!-- ✅ OG (카톡/문자 공유 시 '계명태권도'로 보이게) -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="계명태권도 | 공식 홈페이지" />
   <meta property="og:description" content="유치부·초등 저학년 맞춤 | 안전하고 따뜻한 지도 | 영상/시간표/문의" />
+  <!-- OG 이미지는 48/192 말고, 공유용(큰 이미지)로 유지하는 게 유리 -->
   <meta property="og:image" content="https://static.wixstatic.com/media/abf917_9a323d3a71994964a4b962b29393fbf9~mv2.jpg" />
   <meta property="og:url" content="https://계명태권도.com" />
 
@@ -29,7 +48,8 @@
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+  <!-- ✅ 기존 로컬 아이콘 대신, 전총재님 192 로고 링크로도 동작하게 교체 -->
+  <link rel="apple-touch-icon" href="https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png" />
 
   <!-- =====================================================
    ✅ 수정할 부분 (여기만 바꾸면 전체 자동 반영)
@@ -63,8 +83,9 @@
       // ✅ NEW: 갤러리 조회 폴더
       galleryPageUrl: "gallery/",
 
-      // 로고
-      logoImage: "https://static.wixstatic.com/media/abf917_f835f132f9cb46f782ebb43bd5dc6cca~mv2.png",
+      // ✅ 로고 (상단 왼쪽 44px 영역)
+      // - 48 전용은 너무 작아서 여기엔 192/512 쪽이 더 선명함
+      logoImage: "https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png",
 
       // ✅ 1080*1350 (4:5) 이미지 8장
       heroImages: [
@@ -571,8 +592,6 @@
 
     /* =====================================================
        ✅ NEW: "바탕화면에 추가" 얌전한 배너 (기존 톤 유지)
-       - hero 바로 아래에 한 줄짜리로 조용히 안내
-       - 안드로이드 지원 시에만 '한 번에 추가' 버튼 노출
     ====================================================== */
     .pwaBar{
       margin-top:12px;
@@ -740,7 +759,6 @@
 
     <!-- =====================================================
       ✅ NEW: 바탕화면 추가 안내 배너 (얌전하게)
-      - 지원 기기(안드로이드/크롬)면 '한 번에 추가' 버튼도 자동 표시
     ====================================================== -->
     <section class="pwaBar" id="pwaBar" aria-label="바탕화면 추가 안내">
       <div class="pwaInner">
@@ -798,8 +816,6 @@
       <a class="tile" href="exam/"><div class="ico">🏅</div><div class="label">승급·승단심사안내</div><div class="sub">절차</div></a>
 
       <a class="tile" href="verification/"><div class="ico">🔎</div><div class="label">수련생 조회</div><div class="sub">이름으로 확인</div></a>
-
-      <!-- ✅ 성장 포인트 조회 타일 -->
       <a class="tile" href="growth/"><div class="ico">⭐</div><div class="label">성장 포인트 조회</div><div class="sub">이름으로 확인</div></a>
 
       <a class="tile" href="gallery/"><div class="ico">🖼️</div><div class="label">갤러리&영상</div><div class="sub">분위기</div></a>
@@ -908,8 +924,6 @@
         <a class="btn" id="bandBtn" href="#" target="_blank" rel="noopener">🟢 밴드 바로가기</a>
 
         <a class="btn primary" id="verifyBtn" href="verification/">🔎 수련생 조회</a>
-
-        <!-- ✅ 성장 포인트 조회 -->
         <a class="btn" id="growthBtn" href="growth/">⭐ 성장 포인트 조회</a>
 
         <a class="btn" id="galleryBtn" href="gallery/">🖼️ 갤러리 조회</a>
@@ -939,8 +953,6 @@
       <a class="bbtn" id="bandBottom" href="#" target="_blank" rel="noopener">🟢 밴드</a>
 
       <a class="bbtn" id="verifyBottom" href="verification/">🔎 조회</a>
-
-      <!-- ✅ 성장 포인트 -->
       <a class="bbtn" id="growthBottom" href="growth/">⭐ 포인트</a>
 
       <a class="bbtn" id="galleryBottom" href="gallery/">🖼️ 갤러리</a>
@@ -1189,11 +1201,7 @@
     });
 
     /* =====================================================
-       ✅ NEW: PWA 설치/안내 스크립트 (최소/안전)
-       - 안드로이드 크롬: beforeinstallprompt 지원 시 "한 번에 추가" 가능
-       - 아이폰: 수동 안내(사파리 공유 → 홈화면 추가)
-       - 배너 '나중에' 누르면 14일 동안 숨김
-       - service worker는 상대경로로 등록 (프로젝트 페이지도 안전)
+       ✅ PWA 설치/안내 스크립트 (최소/안전)
     ====================================================== */
     (function PWA_SETUP(){
       const bar = $("pwaBar");
@@ -1214,11 +1222,9 @@
       const HIDE_KEY = "kmt_pwa_hide_until";
       const now = Date.now();
 
-      // 이미 standalone(설치된 상태)면 배너 숨김
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
       if(isStandalone && bar) bar.classList.add("pwaHide");
 
-      // "나중에" 눌렀으면 숨김(14일)
       const hideUntil = Number(localStorage.getItem(HIDE_KEY) || "0");
       if(hideUntil && now < hideUntil && bar) bar.classList.add("pwaHide");
 
@@ -1269,12 +1275,10 @@
       tabIOS && tabIOS.addEventListener("click", ()=>setTab("ios"));
 
       hideBtn && hideBtn.addEventListener("click", ()=>{
-        // 14일 숨김
         localStorage.setItem(HIDE_KEY, String(Date.now() + 14*24*60*60*1000));
         bar && bar.classList.add("pwaHide");
       });
 
-      // install prompt (Android/Chromium)
       let deferredPrompt = null;
 
       function showInstallButtons(){
@@ -1289,7 +1293,6 @@
 
       async function doInstall(){
         if(!deferredPrompt){
-          // 지원 안 되면 안내만
           openModal(guessTab());
           return;
         }
@@ -1315,7 +1318,6 @@
         localStorage.removeItem(HIDE_KEY);
       });
 
-      // service worker register (safe for GitHub project pages)
       if("serviceWorker" in navigator){
         window.addEventListener("load", ()=>{
           navigator.serviceWorker.register("service-worker.js").catch(()=>{});
