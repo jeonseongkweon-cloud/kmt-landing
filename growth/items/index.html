@@ -1,1 +1,253 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>포인트 항목·점수 | 성장 포인트 | 계명태권도</title>
+  <meta name="description" content="계명태권도 성장 포인트 항목과 점수 기준. 평상시 항목, 특별 미션(부모 인증형) 운영을 확인하세요." />
+  <meta name="theme-color" content="#0b0f19" />
+  <style>
+    :root{
+      --bg:#070a12; --text:rgba(255,255,255,.92); --muted:rgba(255,255,255,.66); --muted2:rgba(255,255,255,.56);
+      --gold:#f5c45a; --blue:#49a6ff; --ok:#34d399; --warn:#fbbf24;
+      --r:22px; --r2:16px; --max:1100px;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--font); color:var(--text);
+      background:
+        radial-gradient(900px 520px at 20% 10%, rgba(73,166,255,.18), transparent 55%),
+        radial-gradient(900px 520px at 80% 18%, rgba(245,196,90,.14), transparent 55%),
+        linear-gradient(180deg, #060911 0%, #070a12 55%, #050713 100%);
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:18px 16px 60px}
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter:saturate(1.2) blur(10px);
+      background:linear-gradient(180deg, rgba(7,10,18,.88), rgba(7,10,18,.55));
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .topbar .wrap{padding:14px 16px}
+    .row{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+    .title{display:flex; align-items:center; gap:10px}
+    .dot{
+      width:14px; height:14px; border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, rgba(245,196,90,.95), rgba(73,166,255,.75));
+      box-shadow: 0 10px 30px rgba(73,166,255,.18);
+    }
+    .title h1{margin:0; font-size:15px}
+    .title .sub{margin:2px 0 0; font-size:12px; color:var(--muted2)}
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 12px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: 0 10px 26px rgba(0,0,0,.28);
+      font-weight:800; font-size:13px;
+    }
+    .btn.primary{border-color: rgba(73,166,255,.45); background: linear-gradient(180deg, rgba(73,166,255,.22), rgba(73,166,255,.10));}
+    .btn.gold{border-color: rgba(245,196,90,.45); background: linear-gradient(180deg, rgba(245,196,90,.22), rgba(245,196,90,.10));}
 
+    .card{
+      margin-top:14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.035));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hd{padding:16px 16px 10px; border-bottom:1px solid rgba(255,255,255,.08)}
+    .hd h2{margin:0; font-size:18px}
+    .hd p{margin:8px 0 0; color:var(--muted2); line-height:1.55; font-size:13px}
+    .bd{padding:14px 16px 18px}
+
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+    .panel{
+      border-radius: var(--r2);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding:14px;
+    }
+    .panel h3{margin:0 0 8px; font-size:14px}
+    .panel p{margin:8px 0 0; color:var(--muted); font-size:13px; line-height:1.6}
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+    }
+    th,td{
+      padding:12px 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      font-size:13px;
+      vertical-align:top;
+    }
+    th{color:rgba(255,255,255,.90); text-align:left; background:rgba(255,255,255,.04)}
+    td{color:var(--muted)}
+    tr:last-child td{border-bottom:none}
+    .k{color:rgba(255,255,255,.88); font-weight:900}
+    .p{color:rgba(255,255,255,.90); font-weight:900}
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .chip.ok{border-color: rgba(52,211,153,.28); background: rgba(52,211,153,.10); color: rgba(255,255,255,.86)}
+    .chip.warn{border-color: rgba(251,191,36,.28); background: rgba(251,191,36,.10); color: rgba(255,255,255,.86)}
+    .note{
+      margin-top:12px;
+      border-radius: 18px;
+      border:1px solid rgba(73,166,255,.28);
+      background: rgba(73,166,255,.10);
+      padding:12px 12px;
+      color: rgba(255,255,255,.88);
+      font-size:13px;
+      line-height:1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap">
+      <div class="row">
+        <div class="title">
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <h1>포인트 항목 · 점수</h1>
+            <div class="sub">평상시 항목 / 특별 미션(부모 인증형)</div>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="../../index.html">🏠 홈으로</a>
+          <a class="btn primary" href="../index.html">← 포인트 조회로</a>
+          <a class="btn gold" href="../rules/">📌 운영 규정</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="hd">
+        <h2>포인트는 “성장 기록”입니다</h2>
+        <p>
+          포인트는 누적되며 초기화되지 않습니다. 도복 단계는 누적 30,000점 단위로 상승합니다.
+        </p>
+      </div>
+      <div class="bd">
+        <div class="grid">
+          <div class="panel">
+            <h3>✅ 평상시 항목 (도장 생활 중심)</h3>
+            <div class="chip ok">추천 운영: 일상은 꾸준히 · 과다 지급은 방지</div>
+            <table aria-label="평상시 항목">
+              <thead>
+                <tr>
+                  <th style="width:44%">항목</th>
+                  <th style="width:16%">점수</th>
+                  <th>기준(요약)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="k">주간 개근</td>
+                  <td class="p">200</td>
+                  <td>한 주(기준 요일) 모두 출석</td>
+                </tr>
+                <tr>
+                  <td class="k">그날 최우수 관원생</td>
+                  <td class="p">100</td>
+                  <td>하루 1~2명 (태도·집중·예절)</td>
+                </tr>
+                <tr>
+                  <td class="k">도장생활 모범 (인사/정리/배려/용기)</td>
+                  <td class="p">50</td>
+                  <td>수시 지급 (기준 충족 시)</td>
+                </tr>
+                <tr>
+                  <td class="k">자세/집중 향상</td>
+                  <td class="p">100</td>
+                  <td>눈에 띄는 향상 및 태도 개선</td>
+                </tr>
+                <tr>
+                  <td class="k">학교 수상</td>
+                  <td class="p">300</td>
+                  <td>상장 등 확인 가능한 경우</td>
+                </tr>
+                <tr>
+                  <td class="k">승급심사 합격</td>
+                  <td class="p">500</td>
+                  <td>심사 합격 시 자동 부여(운영 기준)</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>※ 위 점수는 “1년 30,000점” 목표에 맞춘 권장 기준입니다. 운영 상황에 따라 조정될 수 있습니다.</p>
+          </div>
+
+          <div class="panel">
+            <h3>🔥 특별 미션 항목 (부모 인증형 중심)</h3>
+            <div class="chip warn">관장님 카톡 공지로 수시 오픈 (기다림 + 몰입)</div>
+            <table aria-label="특별 미션 항목">
+              <thead>
+                <tr>
+                  <th style="width:44%">미션</th>
+                  <th style="width:16%">점수</th>
+                  <th>운영 방식</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="k">부모님께 효도하기 (예: 마사지/도움)</td>
+                  <td class="p">300</td>
+                  <td>부모님이 구글폼으로 인증 제출</td>
+                </tr>
+                <tr>
+                  <td class="k">감사편지/감사 말하기</td>
+                  <td class="p">300</td>
+                  <td>부모님 확인 후 인증 제출</td>
+                </tr>
+                <tr>
+                  <td class="k">집안일 3가지</td>
+                  <td class="p">300</td>
+                  <td>사진/설명 등 인증 제출</td>
+                </tr>
+                <tr>
+                  <td class="k">스마트폰 줄이기(당일)</td>
+                  <td class="p">200</td>
+                  <td>미션 공지 날짜 내 제출</td>
+                </tr>
+                <tr>
+                  <td class="k">합숙/행사 미션(보물찾기/팀워크)</td>
+                  <td class="p">500~800</td>
+                  <td>행사 당일 결과 반영 (운영 기준)</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>※ 특별 미션은 “남발 금지”가 핵심입니다. 가끔 열릴수록 아이들이 더 기다립니다.</p>
+          </div>
+        </div>
+
+        <div class="note">
+          <b>포인트 항목 운영 팁</b><br/>
+          • 평상시 항목은 “꾸준함” 중심으로, 특별 미션은 “기대감” 중심으로 운영합니다.<br/>
+          • 목표는 단 하나: <b>누적 30,000점 단위로 도복 단계 상승</b> (누적 확장형).<br/>
+          • 미션 인증은 조회 페이지의 <b>엄마 미션 인증(구글폼)</b> 버튼을 사용합니다.
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
