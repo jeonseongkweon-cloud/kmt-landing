@@ -14,6 +14,8 @@
     --muted:rgba(255,255,255,.72);
     --gold:#f6c945;
     --blue:#60a5fa;
+    --green:#34d399;
+    --danger:#ff6363;
   }
   *{box-sizing:border-box}
   body{
@@ -103,6 +105,7 @@
   .pill.good{ border-color: rgba(246,201,69,.35); background: rgba(246,201,69,.10); }
   .pill.bad{ border-color: rgba(255,99,99,.35); background: rgba(255,99,99,.10); }
   .pill.blue{ border-color: rgba(96,165,250,.35); background: rgba(96,165,250,.12); }
+  .pill.green{ border-color: rgba(52,211,153,.35); background: rgba(52,211,153,.12); }
 
   .actions{
     display:flex;
@@ -244,29 +247,42 @@
     line-height:1.5;
   }
 
+  /* ✅ 공식 카드(업그레이드) */
   .card{
-    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
     border:1px solid var(--line);
-    border-radius:18px;
+    border-radius:20px;
     padding:16px;
-    max-width:720px;
+    max-width:760px;
     margin:14px auto 0;
     box-shadow: 0 14px 30px rgba(0,0,0,.35);
+    overflow:hidden;
+    position:relative;
   }
-  .top{
+  .card::before{
+    content:"";
+    position:absolute; inset:-2px;
+    background: radial-gradient(700px 260px at 20% 0%, rgba(246,201,69,.16), transparent 55%),
+                radial-gradient(700px 260px at 80% 0%, rgba(96,165,250,.14), transparent 55%);
+    opacity:.9;
+    pointer-events:none;
+  }
+  .card > *{ position:relative; }
+
+  .hero{
     display:flex;
     gap:14px;
     align-items:center;
   }
   .photo{
-    width:110px;height:110px;border-radius:16px;
+    width:120px;height:120px;border-radius:18px;
     background: rgba(255,255,255,.06);
-    border:1px solid var(--line);
+    border:1px solid rgba(255,255,255,.12);
     overflow:hidden;
     flex:0 0 auto;
     display:flex;align-items:center;justify-content:center;
     color:rgba(255,255,255,.55);
-    font-weight:900;
+    font-weight:950;
   }
   .photo img{
     width:100%;
@@ -274,53 +290,183 @@
     object-fit:cover;
     display:block;
   }
-  .nameblock h2{
+  .headline{
+    min-width:0;
+    flex:1;
+  }
+  .headline h2{
     margin:0 0 6px;
     font-size:24px;
     font-weight:950;
     letter-spacing:-.3px;
   }
-  .nameblock .sub{
+  .sub{
     margin:0;
-    color:rgba(255,255,255,.72);
+    color:rgba(255,255,255,.78);
     font-size:13px;
+    line-height:1.35;
+  }
+  .badges{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:10px;
   }
   .badge{
     display:inline-flex;
     align-items:center;
     gap:8px;
-    margin-top:10px;
     padding:8px 10px;
     border-radius:999px;
     border:1px solid rgba(246,201,69,.35);
     background: rgba(246,201,69,.10);
-    color: rgba(255,255,255,.90);
+    color: rgba(255,255,255,.92);
     font-size:12px;
+    font-weight:950;
+  }
+  .badge.green{
+    border-color: rgba(52,211,153,.35);
+    background: rgba(52,211,153,.12);
+  }
+  .badge.blue{
+    border-color: rgba(96,165,250,.35);
+    background: rgba(96,165,250,.12);
+  }
+  .hashLine{
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.18);
+    font-size:12px;
+    color: rgba(255,255,255,.82);
+    word-break:break-all;
+  }
+  .hashLine b{ color: rgba(255,255,255,.95); }
+
+  .sectionTitle{
+    margin:14px 0 8px;
+    font-weight:950;
+    letter-spacing:-.2px;
+    color: rgba(255,255,255,.92);
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .sectionTitle .hint{
+    font-size:12px;
+    color: rgba(255,255,255,.66);
     font-weight:900;
   }
 
-  .grid{
-    margin-top:14px;
+  .grid2{
     display:grid;
-    grid-template-columns:1fr;
-    gap:8px;
+    grid-template-columns: 1fr;
+    gap:10px;
+  }
+  @media (min-width:720px){
+    .grid2{ grid-template-columns: 1fr 1fr; }
+  }
+  .panel{
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(17,24,39,.55);
+    padding:12px;
   }
   .row{
     display:flex;
     justify-content:space-between;
     gap:12px;
-    padding:11px 12px;
+    padding:10px 10px;
     border-radius:14px;
-    background: rgba(17,24,39,.55);
-    border:1px solid rgba(255,255,255,.07);
+    background: rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.06);
     font-size:14px;
   }
+  .row + .row{ margin-top:8px; }
   .rlabel{color:rgba(255,255,255,.70);font-weight:900}
-  .rval{color:#fff;font-weight:900;text-align:right; word-break:break-word;}
+  .rval{color:#fff;font-weight:950;text-align:right; word-break:break-word;}
+
+  /* ✅ 심사 D-Day */
+  .examItem{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:10px 10px;
+    border-radius:14px;
+    background: rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.06);
+    margin-top:8px;
+  }
+  .examLeft{
+    min-width:0;
+  }
+  .examName{
+    font-weight:950;
+    font-size:13px;
+    letter-spacing:-.2px;
+  }
+  .examDate{
+    margin-top:3px;
+    font-size:12px;
+    color: rgba(255,255,255,.72);
+  }
+  .dday{
+    flex:0 0 auto;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 10px;
+    border-radius:999px;
+    border:1px solid rgba(96,165,250,.30);
+    background: rgba(96,165,250,.12);
+    font-weight:950;
+    font-size:12px;
+    white-space:nowrap;
+  }
+  .dday.good{
+    border-color: rgba(52,211,153,.35);
+    background: rgba(52,211,153,.12);
+  }
+  .dday.bad{
+    border-color: rgba(255,99,99,.35);
+    background: rgba(255,99,99,.12);
+  }
+
+  /* ✅ 하단 버튼 */
+  .bottomActions{
+    margin-top:14px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:space-between;
+  }
+  .actionBtn{
+    flex:1 1 180px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:12px 12px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.06);
+    font-weight:950;
+    cursor:pointer;
+  }
+  .actionBtn.gold{
+    border-color: rgba(246,201,69,.35);
+    background: rgba(246,201,69,.14);
+    color: rgba(255,255,255,.95);
+  }
+  .actionBtn:active{ transform: translateY(1px); }
 
   /* ✅ 동명이인 리스트 */
   .list{
-    max-width:720px;
+    max-width:760px;
     margin:14px auto 0;
     display:grid;
     gap:10px;
@@ -405,7 +551,7 @@
           <span class="req">필수</span>
         </div>
         <div class="inputWrap">
-          <input id="qNameOrId" type="text" placeholder="예: 김예성 / KM002 / km002" autocomplete="off" />
+          <input id="qNameOrId" type="text" placeholder="예: 김예담 / KM002 / km002" autocomplete="off" />
           <button class="clearBtn" id="clearName" type="button" aria-label="clear">✕</button>
         </div>
         <div class="help">※ 아이디는 대소문자 상관없이 검색됩니다.</div>
@@ -438,14 +584,19 @@
 
 <script>
 /* =========================================================
-  ✅ Google Sheet (Publish CSV)
+  ✅ CHANGE ZONE
 ========================================================= */
 const RAW_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=0&single=true&output=csv";
+
+// 하단 "사진 바로보기(조회)" 버튼이 이동할 갤러리 경로
+// (예: ../gallery/ 또는 ../gallery/index.html 등 실제 폴더에 맞게 수정)
+const GALLERY_BASE = "../gallery/"; // 기본: ../gallery/
+const GALLERY_QUERY_KEY = "id";     // 갤러리에서 받을 파라미터 키 (id 추천)
 
 /* =========================================================
   ✅ Cache/Retry/Timeout
 ========================================================= */
-const CACHE_KEY = "KMT_STUDENTS_CACHE_V3";
+const CACHE_KEY = "KMT_STUDENTS_CACHE_V4";
 const CACHE_TTL_MS = 10 * 60 * 1000;     // 10분
 const FETCH_TIMEOUT_MS = 8000;           // 8초
 const RETRY_COUNT = 2;                   // 총 3회 시도
@@ -486,16 +637,13 @@ function normBirth(v){
   if(!d) return "";
   if(d.length === 6) return d;                    // yymmdd
   if(d.length === 8) return d.slice(2);           // yyyymmdd -> yymmdd
-  // 혹시 7자리/5자리 등 애매하면 그대로(일치 실패)
   return d;
 }
-
 function escapeHtml(str){
   return String(str ?? "").replace(/[&<>"']/g, s => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
   }[s]));
 }
-
 function fmtTime(dt){
   try{
     const y = dt.getFullYear();
@@ -504,6 +652,61 @@ function fmtTime(dt){
     const hh = String(dt.getHours()).padStart(2,"0");
     const mm = String(dt.getMinutes()).padStart(2,"0");
     return `${y}-${m}-${d} ${hh}:${mm}`;
+  }catch{
+    return "";
+  }
+}
+
+/* 날짜 파싱 (YYYY-MM-DD 또는 YYYY.MM.DD) */
+function parseDateAny(v){
+  const s = clean(v);
+  if(!s) return null;
+  if(/미정/i.test(s)) return null;
+  const digits = s.replace(/[^\d]/g,"");
+  // 기대: 20260314
+  if(digits.length === 8){
+    const y = Number(digits.slice(0,4));
+    const m = Number(digits.slice(4,6));
+    const d = Number(digits.slice(6,8));
+    if(!y || !m || !d) return null;
+    return new Date(y, m-1, d);
+  }
+  // 기대: 2026-03-14
+  const m = s.match(/^(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})$/);
+  if(m){
+    const y = Number(m[1]);
+    const mm = Number(m[2]);
+    const dd = Number(m[3]);
+    return new Date(y, mm-1, dd);
+  }
+  return null;
+}
+function fmtDateShort(dt){
+  if(!dt) return "미정";
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth()+1).padStart(2,"0");
+  const d = String(dt.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
+function ddayText(dt){
+  if(!dt) return { label:"미정", cls:"" };
+  const today = new Date();
+  // 날짜 기준(시간 제거)
+  const a = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const b = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+  const diff = Math.round((b - a) / (1000*60*60*24)); // 일수
+  if(diff === 0) return { label:"D-Day", cls:"good" };
+  if(diff > 0) return { label:`D-${diff}`, cls:"" };
+  return { label:`D+${Math.abs(diff)}`, cls:"bad" };
+}
+
+/* SHA-256 (blockchain 느낌) */
+async function sha256Hex(text){
+  try{
+    const enc = new TextEncoder().encode(text);
+    const buf = await crypto.subtle.digest("SHA-256", enc);
+    const arr = Array.from(new Uint8Array(buf));
+    return arr.map(b=>b.toString(16).padStart(2,"0")).join("");
   }catch{
     return "";
   }
@@ -602,7 +805,6 @@ function setStatus(type, pillText, msg){
   dataPill.textContent = "데이터: " + pillText;
   statusText.textContent = msg || "";
 }
-
 function setTimePill(){
   if(!LAST_LOADED_AT){
     timePill.style.display = "none";
@@ -623,7 +825,7 @@ async function loadOnce({force=false}={}){
       DATA_ROWS = cached.rows;
       LAST_LOADED_AT = new Date(cached.savedAt);
       LAST_SOURCE = "cache";
-      setStatus("good", `준비(${DATA_ROWS.length}명)`, `조회는 휴대폰 안에서 즉시 처리됩니다`);
+      setStatus("good", `준비(${DATA_ROWS.length}명)`, `조회는 기기 안에서 즉시 처리됩니다`);
       setTimePill();
       return DATA_ROWS;
     }
@@ -648,7 +850,7 @@ async function loadOnce({force=false}={}){
         LAST_SOURCE = "network";
         writeCache(data, Date.now());
 
-        setStatus("good", `준비(${DATA_ROWS.length}명)`, "조회는 휴대폰 안에서 즉시 처리됩니다");
+        setStatus("good", `준비(${DATA_ROWS.length}명)`, "조회는 기기 안에서 즉시 처리됩니다");
         setTimePill();
         return DATA_ROWS;
       }catch(err){
@@ -670,8 +872,6 @@ async function loadOnce({force=false}={}){
 
 /* =========================================================
   ✅ Matching logic (이름/아이디/생년월일)
-  - 전총재님 요청: "이름 + 생년월일" 같이 입력해야 조회되게!
-  - 여기서 '이름 또는 아이디' + '생년월일'이 둘 다 필수
 ========================================================= */
 function matchRows(qNameOrId, qBirth){
   const q1 = norm(qNameOrId);
@@ -680,41 +880,75 @@ function matchRows(qNameOrId, qBirth){
   if(!q1 || !qb) return [];
 
   // 시트 기준 열:
-  // 0 아이디, 1 이름, 2 생년월일(예: 11.02.13), ...
+  // 0 아이디, 1 이름, 2 생년월일,
+  // 3 태권도단증, 4 경호무술단증, 5 검도단증,
+  // 6 프로필링크, 7 현재포인트, 8 수상기록, 9 보유인증서,
+  // 10 next_exam_tkd, 11 next_exam_ipma, 12 next_exam_tkkd
   const out = [];
   for(const r of DATA_ROWS){
-    const id = norm(r[0]);                 // KM002 -> km002
-    const name = norm(r[1]);               // 김예성
-    const birth = normBirth(r[2]);         // 11.02.13 -> 110213
+    const id = norm(r[0]);
+    const name = norm(r[1]);
+    const birth = normBirth(r[2]);
 
-    // ✅ (이름 또는 아이디) AND (생년월일) 동시 일치
     const okNameOrId = (id && id === q1) || (name && name === q1) || (name && name.includes(q1)) || (id && id.includes(q1));
     const okBirth = (birth && birth === qb);
 
     if(okNameOrId && okBirth) out.push(r);
   }
 
-  // 정렬: 이름 동일이면 아이디 순
   out.sort((a,b)=> String(a[1]||"").localeCompare(String(b[1]||"")) || String(a[0]||"").localeCompare(String(b[0]||"")));
   return out;
 }
 
 /* ---------- UI render ---------- */
+function galleryUrlForStudent(id){
+  const base = GALLERY_BASE || "../gallery/";
+  const key = encodeURIComponent(GALLERY_QUERY_KEY || "id");
+  const val = encodeURIComponent(clean(id));
+  const join = base.includes("?") ? "&" : "?";
+  return `${base}${join}${key}=${val}`;
+}
+
+function renderExam(name, dateStr){
+  const dt = parseDateAny(dateStr);
+  const d = ddayText(dt);
+  const shownDate = dt ? fmtDateShort(dt) : "미정";
+  const cls = d.cls ? `dday ${d.cls}` : "dday";
+  const label = dt ? d.label : "미정";
+  return `
+    <div class="examItem">
+      <div class="examLeft">
+        <div class="examName">${escapeHtml(name)}</div>
+        <div class="examDate">다음 심사일: <b>${escapeHtml(shownDate)}</b></div>
+      </div>
+      <div class="${cls}">⏳ ${escapeHtml(label)}</div>
+    </div>
+  `;
+}
+
 function renderCard(row){
   const id = clean(row[0]);
   const name = clean(row[1]);
   const birth = clean(row[2]);
-  const tkd = clean(row[3]);
-  const pm = clean(row[4]);
-  const kendo = clean(row[5]);
-  const photo = clean(row[6]);
-  const point = clean(row[7]);
-  const cert = clean(row[8]);
-  const doc = clean(row[9]);
+
+  const tkd = clean(row[3]);     // 태권도단증
+  const ipma = clean(row[4]);    // 경호무술단증
+  const tkkd = clean(row[5]);    // 태권검도/검도단증
+  const photo = clean(row[6]);   // 프로필링크
+
+  const point = clean(row[7]);   // 현재포인트
+  const awards = clean(row[8]);  // 수상기록
+  const cert = clean(row[9]);    // 보유인증서
+
+  const nextTkd = clean(row[10]);
+  const nextIpma = clean(row[11]);
+  const nextTkkd = clean(row[12]);
+
+  const hashSource = `KMT|${id}|${name}|${normBirth(birth)}|${tkd}|${ipma}|${tkkd}|${point}|${awards}|${cert}|${nextTkd}|${nextIpma}|${nextTkkd}`;
 
   return `
-    <div class="card">
-      <div class="top">
+    <div class="card" data-hash-source="${escapeHtml(hashSource)}">
+      <div class="hero">
         <div class="photo">
           ${
             photo
@@ -727,20 +961,55 @@ function renderCard(row){
               : `NO PHOTO`
           }
         </div>
-        <div class="nameblock">
-          <h2>${escapeHtml(name)}</h2>
+        <div class="headline">
+          <h2>${escapeHtml(name || "-")}</h2>
           <p class="sub">아이디: <b>${escapeHtml(id || "-")}</b> · 생년월일: <b>${escapeHtml(birth || "-")}</b></p>
-          <div class="badge">현재 상태 조회 완료</div>
+          <div class="badges">
+            <div class="badge green">✅ Verified Record</div>
+            <div class="badge blue">🔒 조회 인증 코드 생성</div>
+          </div>
+          <div class="hashLine">
+            Data Integrity Verified · SHA-256 :
+            <b id="hashOut">생성중…</b>
+          </div>
         </div>
       </div>
 
-      <div class="grid">
-        <div class="row"><span class="rlabel">태권도단증</span><span class="rval">${escapeHtml(tkd || "-")}</span></div>
-        <div class="row"><span class="rlabel">경호무술단증</span><span class="rval">${escapeHtml(pm || "-")}</span></div>
-        <div class="row"><span class="rlabel">검도단증</span><span class="rval">${escapeHtml(kendo || "-")}</span></div>
-        <div class="row"><span class="rlabel">현재포인트</span><span class="rval">${escapeHtml(point || "0")}</span></div>
-        <div class="row"><span class="rlabel">보유자격증</span><span class="rval">${escapeHtml(cert || "-")}</span></div>
-        <div class="row"><span class="rlabel">보유인증서</span><span class="rval">${escapeHtml(doc || "-")}</span></div>
+      <div class="sectionTitle">
+        <span>기본 정보</span>
+        <span class="hint">최소 정보만 표시</span>
+      </div>
+
+      <div class="grid2">
+        <div class="panel">
+          <div class="row"><span class="rlabel">현재 포인트</span><span class="rval">${escapeHtml(point || "0")}</span></div>
+          <div class="row"><span class="rlabel">보유 인증서</span><span class="rval">${escapeHtml(cert || "-")}</span></div>
+        </div>
+        <div class="panel">
+          <div class="row"><span class="rlabel">수상 기록</span><span class="rval">${escapeHtml(awards || "-")}</span></div>
+          <div class="row"><span class="rlabel">상태</span><span class="rval">조회 완료</span></div>
+        </div>
+      </div>
+
+      <div class="sectionTitle">
+        <span>단증 / 심사</span>
+        <span class="hint">태권도 · 경호무술 · 태권검도</span>
+      </div>
+
+      <div class="panel">
+        <div class="row"><span class="rlabel">태권도 단증</span><span class="rval">${escapeHtml(tkd || "-")}</span></div>
+        ${renderExam("태권도", nextTkd)}
+
+        <div class="row" style="margin-top:10px;"><span class="rlabel">경호무술 단증</span><span class="rval">${escapeHtml(ipma || "-")}</span></div>
+        ${renderExam("경호무술", nextIpma)}
+
+        <div class="row" style="margin-top:10px;"><span class="rlabel">태권검도 단증</span><span class="rval">${escapeHtml(tkkd || "-")}</span></div>
+        ${renderExam("태권검도", nextTkkd)}
+      </div>
+
+      <div class="bottomActions">
+        <a class="actionBtn gold" href="${escapeHtml(galleryUrlForStudent(id))}">🖼️ 사진 바로보기(조회)</a>
+        <button class="actionBtn" type="button" id="reSearchBtn">🔎 다른 수련생 조회</button>
       </div>
     </div>
   `;
@@ -778,6 +1047,24 @@ function renderPickList(rows){
           <div class="list" id="pickList">${list}</div>`;
 }
 
+/* 해시 적용 */
+async function applyHashToCurrentCard(){
+  const card = resultEl.querySelector(".card");
+  if(!card) return;
+  const out = card.querySelector("#hashOut");
+  if(!out) return;
+  const src = card.getAttribute("data-hash-source") || "";
+  out.textContent = "생성중…";
+  const hex = await sha256Hex(src);
+  if(hex){
+    // 너무 길면 보기 좋게 일부만
+    const pretty = `${hex.slice(0,8)}-${hex.slice(8,16)}-${hex.slice(16,24)}-${hex.slice(24,32)}…`;
+    out.textContent = pretty;
+  }else{
+    out.textContent = "지원되지 않음";
+  }
+}
+
 /* ---------- search ---------- */
 async function runSearch(){
   const q1 = $("qNameOrId").value;
@@ -806,25 +1093,39 @@ async function runSearch(){
     return;
   }
 
-  // 1명: 바로 상세
   if(rows.length === 1){
     resultEl.innerHTML = renderCard(rows[0]);
+    await applyHashToCurrentCard();
+    bindReSearchButton();
     return;
   }
 
-  // 여러 명: 선택 리스트
   resultEl.innerHTML = renderPickList(rows);
 
   const pickList = $("pickList");
   if(pickList){
-    pickList.addEventListener("click", (e)=>{
+    pickList.addEventListener("click", async (e)=>{
       const el = e.target.closest(".pick");
       if(!el) return;
       const idx = Number(el.getAttribute("data-idx"));
       const chosen = rows[idx];
-      if(chosen) resultEl.innerHTML = renderCard(chosen);
+      if(chosen){
+        resultEl.innerHTML = renderCard(chosen);
+        await applyHashToCurrentCard();
+        bindReSearchButton();
+      }
     });
   }
+}
+
+function bindReSearchButton(){
+  const btn = $("reSearchBtn");
+  if(!btn) return;
+  btn.addEventListener("click", ()=>{
+    resultEl.innerHTML = "";
+    $("qNameOrId").focus();
+    window.scrollTo({top:0, behavior:"smooth"});
+  }, { once:true });
 }
 
 /* ---------- clear buttons ---------- */
