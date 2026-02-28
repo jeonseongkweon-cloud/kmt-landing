@@ -95,7 +95,7 @@
     .cardBox .head p{margin:0; color:var(--muted); font-size:13px; line-height:1.55}
     .cardBox .body{padding:14px 14px 16px}
 
-    /* Search */
+    /* Search (NO internal hints shown) */
     .searchRow{
       display:flex; gap:10px; flex-wrap:wrap;
       align-items:center;
@@ -128,12 +128,6 @@
       cursor:pointer;
       display:grid; place-items:center;
       font-weight:800;
-    }
-    .hint{
-      margin-top:10px;
-      color: rgba(255,255,255,.72);
-      font-size:12px;
-      line-height:1.5;
     }
 
     /* Result carousel (NO captions) */
@@ -194,6 +188,7 @@
       filter: saturate(1.02);
     }
     .pitem:hover img{transform: scale(1.05); filter:saturate(1.08)}
+
     .dotsRow{
       display:flex; align-items:center; justify-content:center; gap:7px;
       padding:10px 10px 12px;
@@ -242,6 +237,7 @@
       .coverMain{ height: 440px; max-height: 440px; }
     }
 
+    /* ✅ THUMB RAIL: PAGED (5 rows only) */
     .thumbRail{
       border:1px solid var(--line);
       border-radius: 18px;
@@ -250,6 +246,7 @@
       display:flex;
       flex-direction:column;
       gap:10px;
+      min-width: 280px;
     }
     .thumbTitle{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
@@ -257,12 +254,64 @@
     }
     .thumbTitle b{font-size:14px}
     .thumbTitle small{color:var(--muted)}
-    .thumbs{
+
+    /* Rail controls */
+    .railTopRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:0 4px;
+    }
+    .railNav{
+      display:flex; gap:8px; flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+    .navMini{
+      width:40px; height:36px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.92);
+      cursor:pointer;
+      font-weight:900;
+      display:grid; place-items:center;
+      user-select:none;
+    }
+    .navMini:hover{ border-color: rgba(215,181,109,.35); transform: translateY(-1px); }
+    .navMini:active{ transform: translateY(0); }
+    .railMeta{
+      color: rgba(255,255,255,.70);
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    /* Rail pager */
+    .thumbPager{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: 16px;
+      overflow:hidden;
+      background: rgba(0,0,0,.12);
+    }
+    .thumbPages{
+      display:flex;
+      overflow-x:auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior:smooth;
+    }
+    .thumbPage{
+      scroll-snap-align: start;
+      flex:0 0 100%;
+      padding:8px;
+    }
+
+    /* 3 columns x 5 rows = 15 thumbs per page (fixed) */
+    .thumbGrid{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
       gap:8px;
-      overflow:auto;
-      padding-right:2px;
     }
     .titem{
       position:relative;
@@ -289,6 +338,13 @@
       box-shadow: inset 0 0 0 2px rgba(102,179,255,.55);
       border-radius: 14px;
       pointer-events:none;
+    }
+
+    .thumbDots{
+      display:flex; align-items:center; justify-content:center; gap:7px;
+      padding:10px 10px 10px;
+      border-top:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.10);
     }
 
     /* SLIDESHOW */
@@ -459,13 +515,7 @@
 
     @media (max-width: 980px){
       .cover{grid-template-columns: 1fr}
-      .thumbs{grid-template-columns: repeat(6, 1fr)}
-      .coverMain{height: 320px; max-height: 360px;}
-    }
-    @media (max-width: 520px){
-      .thumbs{grid-template-columns: repeat(4, 1fr)}
-      .btn{padding:10px 11px}
-      .coverMain{height: 280px; max-height: 320px;}
+      .thumbRail{min-width: auto}
     }
   </style>
 </head>
@@ -485,12 +535,12 @@
 
   <main class="wrap">
 
-    <!-- ✅ 사진 조회(검색은 가능하지만, 이름은 화면에 절대 표시하지 않음) -->
+    <!-- 검색(화면에 내부용 안내문구 없음) -->
     <section class="cardBox" id="searchSection">
       <div class="head">
         <div>
           <h2>사진 조회</h2>
-          <p>내부관리용 검색(이름/키워드). 결과는 사진만 표시됩니다.</p>
+          <p>이름/키워드로 검색 후 사진을 확인합니다.</p>
         </div>
       </div>
 
@@ -498,16 +548,11 @@
         <div class="searchRow">
           <div class="field">
             🔎
-            <input id="q" type="text" inputmode="search" autocomplete="off" placeholder="예) 김우리 / 단체_유치부 / 합숙훈련" />
+            <input id="q" type="text" inputmode="search" autocomplete="off" placeholder="검색어 입력" />
             <button class="xbtn" id="btnClear" type="button" title="지우기">✕</button>
           </div>
           <button class="btn primary" id="btnSearch" type="button">조회</button>
           <button class="btn" id="btnShowAll" type="button">전체</button>
-        </div>
-
-        <div class="hint">
-          ✅ 검색은 내부 데이터(이름/키워드) 기준으로 동작하지만, 화면에는 이름이 표시되지 않습니다.<br/>
-          ✅ 결과가 많으면 자동으로 페이지(스와이프)로 나뉘고 아래 점으로 위치가 표시됩니다.
         </div>
 
         <div id="resultArea" style="display:none;">
@@ -525,25 +570,20 @@
             <div class="pages" id="pages"></div>
             <div class="dotsRow" id="dotsRow"></div>
           </div>
-
-          <div class="hint" style="margin-top:10px;">
-            ※ 썸네일을 누르면 크게 보기(확대)로 열립니다.
-          </div>
         </div>
 
-        <div id="emptyArea" class="hint" style="display:none; margin-top:12px;">
-          검색 결과가 없습니다 😅<br/>
-          (띄어쓰기/언더바/철자를 바꿔서 다시 시도해보세요)
+        <div id="emptyArea" style="display:none; margin-top:12px; color:rgba(255,255,255,.72); font-size:12px;">
+          검색 결과가 없습니다.
         </div>
       </div>
     </section>
 
-    <!-- 대표 사진 -->
+    <!-- 대표 + 썸네일(페이지) -->
     <section class="cardBox">
       <div class="head">
         <div>
           <h2>대표 사진</h2>
-          <p>대표 영역/썸네일/슬라이드 어디에도 이름이 노출되지 않습니다.</p>
+          <p>썸네일은 5줄만 표시되며, 좌우로 넘겨 페이지 이동합니다.</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap">
           <button class="btn" id="btnCoverPrev" type="button">‹ 이전</button>
@@ -556,15 +596,27 @@
         <div class="cover">
           <div class="coverMain" id="coverMain">
             <img id="coverImg" src="" alt="대표 사진" />
-            <div class="cap"></div>
           </div>
 
           <aside class="thumbRail">
-            <div class="thumbTitle">
-              <b>썸네일</b>
-              <small><span id="thumbCount">0</span>장</small>
+            <div class="railTopRow">
+              <div class="thumbTitle" style="padding:0;">
+                <b>썸네일</b>
+                <small><span id="thumbCount">0</span>장</small>
+              </div>
+              <div class="railNav">
+                <button class="navMini" id="btnThumbPrev" type="button" aria-label="썸네일 이전 페이지">‹</button>
+                <button class="navMini" id="btnThumbNext" type="button" aria-label="썸네일 다음 페이지">›</button>
+              </div>
             </div>
-            <div class="thumbs" id="thumbs"></div>
+
+            <div class="railMeta" id="thumbMeta">1/1</div>
+
+            <div class="thumbPager">
+              <div class="thumbPages" id="thumbPages"></div>
+              <div class="thumbDots" id="thumbDots"></div>
+            </div>
+
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:2px">
               <button class="btn" id="btnCopyCover" type="button">🔗 링크복사</button>
               <button class="btn" id="btnShuffleThumbs" type="button">🎲 섞기</button>
@@ -657,21 +709,22 @@
 
   <script>
     /* =========================================================
-      ✅ 내부관리용 데이터 (화면에는 절대 표시하지 않음)
-      - 중복 이름 자동: 김우리01, 김우리02...
-      - URL에 공백/줄바꿈 섞여 있어도 자동 정리
-      - 전총재님은 나중에 이 HTML에서 이름으로 검색해서
-        특정 항목(줄) 삭제/교체하면 됩니다.
+      내부관리용 데이터:
+      - 중복 이름 자동 01,02...
+      - 화면에는 절대 표시하지 않음
     ========================================================= */
+
     const RAW_LIST = [
+      ["김우리","https://static.wixstatic.com/media/abf917_38e0bc3b3d804b3caa6aa8363163950d~mv2.jpg"],
       ["단체_유치부","https://static.wixstatic.com/media/abf917_951d85fca9694590a8f2fd38ff592b39~mv2.jpg"],
       ["김우리","https://static.wixstatic.com/media/abf917_47a49706d5f7405fa0b86c569a4b4a86~mv2.jpg"],
       ["김재윤","https://static.wixstatic.com/media/abf917_2edf0bc5b46147949f9bbfe826dfb7a3~mv2.jpg"],
-      ["김우리","https://static.wixstatic.com/media/abf917_38e0bc3b3d804b3caa6aa8363163950d~mv2.jpg"],
       ["유강령","https://static.wixstatic.com/media/abf917_06f2ae7d70114b29bdf872a19b97a7f6~mv2.jpg"],
       ["김하준","https://static.wixstatic.com/media/abf917_0d0eac21a7824d48a0db82c006fbb375~mv2.jpg"],
       ["백지운","https://static.wixstatic.com/media/abf917_487f495e59b648eab51c773696f71bee~mv2.jpg"],
+      ["김우리","https://static.wixstatic.com/media/abf917_4f20b9e1c7764cf5aa53e9ff16cb9a73~mv2.jpg"],
       ["전하루","https://static.wixstatic.com/media/abf917_4f20b9e1c7764cf5aa53e9ff16cb9a73~mv2.jpg"],
+      ["이지훈","https://static.wixstatic.com/media/abf917_793e9454aab6410e995582f449a4d39b~mv2.jpg"],
       ["김재윤","https://static.wixstatic.com/media/abf917_793e9454aab6410e995582f449a4d39b~mv2.jpg"],
       ["김동언","https://static.wixstatic.com/media/abf917_d3893ce8f75d4d2d9c0e0c137b4e643b~mv2.jpg"],
       ["김우리","https://static.wixstatic.com/media/abf917_4a7549f31a4843229d9cc89707b81c9c~mv2.jpg"],
@@ -766,7 +819,7 @@
       ["단체_합숙훈련","https://static.wixstatic.com/media/abf917_6aaf2c7b14ca423cae18314408febd0a~mv2.jpg"],
       ["단체_유치부","https://static.wixstatic.com/media/abf917_6aaf2c7b14ca423cae18314408febd0a~mv2.jpg"],
       ["단체_초등부","https://static.wixstatic.com/media/abf917_d8e6bde0ca0e46948da8a66592a048b3~mv2.jpg"],
-      ["단체_유치부","https://static.wixstatic.com/media/abf917_d8e6bde0ca0e46948da8a a66592a048b3~mv2.jpg"], /* (오타/공백 있어도 아래에서 자동 정리됨) */
+      ["단체_유치부","https://static.wixstatic.com/media/abf917_d8e6bde0ca0e46948da8a66592a048b3~mv2.jpg"],
       ["박정민","https://static.wixstatic.com/media/abf917_fbc02b48f2be45288687030c4af2fba0~mv2.jpg"],
       ["단체_유치부","https://static.wixstatic.com/media/abf917_c6306929a4424c83a5212ed4dacb5dda~mv2.jpg"],
       ["단체_공인단심사","https://static.wixstatic.com/media/abf917_086249c10282432b997d08db41bb5918~mv2.jpg"],
@@ -777,7 +830,7 @@
       ["단체_유치부","https://static.wixstatic.com/media/abf917_1855fe25f00343b3b4379e08a3c364bf~mv2.jpg"]
     ];
 
-    /* ====== 공통 유틸 ====== */
+    /* ====== utils ====== */
     function toast(msg){
       const el = document.getElementById("toast");
       el.textContent = msg;
@@ -800,39 +853,25 @@
     }
     function pad2(n){ return String(n).padStart(2,"0"); }
 
-    /* ====== (핵심) 중복 이름 자동 01,02 처리 ====== */
     function buildItemsFromRaw(raw){
       const cleaned = raw
         .map(([name,url])=> [String(name||"").trim(), cleanUrl(url)])
         .filter(([name,url])=> name && url);
 
-      // 이름별 총 개수
       const totalByName = {};
-      cleaned.forEach(([name])=>{
-        totalByName[name] = (totalByName[name]||0) + 1;
-      });
+      cleaned.forEach(([name])=> totalByName[name] = (totalByName[name]||0) + 1);
 
-      // 등장 순서대로 01,02...
       const seenByName = {};
-      const items = cleaned.map(([name,url], idx)=>{
+      return cleaned.map(([name,url], idx)=>{
         seenByName[name] = (seenByName[name]||0) + 1;
         const needSuffix = (totalByName[name]||0) > 1;
         const internalName = needSuffix ? `${name}${pad2(seenByName[name])}` : name;
 
-        // 키워드 태그: 언더바 기준 + 원본이름 + 내부이름
         const parts = String(name).split("_").map(s=>s.trim()).filter(Boolean);
         const tags = Array.from(new Set([name, internalName, ...parts]));
 
-        return {
-          id: idx+1,
-          name: internalName,   // 내부관리용(화면 표시 X)
-          base: name,           // 내부관리용(화면 표시 X)
-          url,
-          tags
-        };
+        return { id: idx+1, name: internalName, base: name, url, tags };
       });
-
-      return items;
     }
 
     const ITEMS = buildItemsFromRaw(RAW_LIST);
@@ -842,49 +881,7 @@
       window.scrollTo({top:0, behavior:"smooth"});
     });
 
-    /* ====== 검색(이름은 화면에 안 나옴) ====== */
-    const q = document.getElementById("q");
-    const btnClear = document.getElementById("btnClear");
-    const btnSearch = document.getElementById("btnSearch");
-    const btnShowAll = document.getElementById("btnShowAll");
-    const resultArea = document.getElementById("resultArea");
-    const emptyArea = document.getElementById("emptyArea");
-    const resultTitle = document.getElementById("resultTitle");
-    const resultMeta = document.getElementById("resultMeta");
-    const pagesEl = document.getElementById("pages");
-    const dotsRow = document.getElementById("dotsRow");
-    const btnCopyQueryLink = document.getElementById("btnCopyQueryLink");
-
-    function matchItem(item, query){
-      const nq = norm(query);
-      if(!nq) return true;
-      // 내부 데이터(이름/태그)로만 매칭
-      const nname = norm(item.name);
-      const nbase = norm(item.base);
-      const ntags = norm((item.tags||[]).join(" "));
-      return nname.includes(nq) || nbase.includes(nq) || ntags.includes(nq);
-    }
-    function chunk(arr, size){
-      const out = [];
-      for(let i=0; i<arr.length; i+=size) out.push(arr.slice(i, i+size));
-      return out;
-    }
-    function buildDots(n){
-      dotsRow.innerHTML = "";
-      for(let i=0;i<n;i++){
-        const d = document.createElement("div");
-        d.className = "dot" + (i===0 ? " on" : "");
-        d.addEventListener("click", ()=>{
-          const w = pagesEl.clientWidth;
-          pagesEl.scrollTo({ left: i*w, behavior:"smooth" });
-        });
-        dotsRow.appendChild(d);
-      }
-    }
-    function setDotActive(idx){
-      [...dotsRow.children].forEach((d,i)=> d.classList.toggle("on", i===idx));
-    }
-
+    /* Lightbox */
     function openLightboxByUrl(url){
       const lb = document.getElementById("lb");
       const lbImg = document.getElementById("lbImg");
@@ -902,8 +899,61 @@
       document.body.style.overflow="hidden";
       window.__lbUrl = url;
     }
+    function closeLightbox(){
+      const lb = document.getElementById("lb");
+      lb.classList.remove("show");
+      lb.setAttribute("aria-hidden","true");
+      document.body.style.overflow="";
+      document.getElementById("lbImg").src = "";
+      window.__lbUrl = "";
+    }
+    document.getElementById("lbClose").addEventListener("click", closeLightbox);
+    document.getElementById("lbCopy").addEventListener("click", ()=> copyText(window.__lbUrl||""));
+    document.getElementById("lb").addEventListener("click", (e)=>{ if(e.target.id==="lb") closeLightbox(); });
+    window.addEventListener("keydown", (e)=>{ if(document.getElementById("lb").classList.contains("show") && e.key==="Escape") closeLightbox(); });
 
-    function renderCarousel(list, queryLabel){
+    /* ===========================
+      (1) 검색 결과 캐러셀
+    =========================== */
+    const q = document.getElementById("q");
+    const btnClear = document.getElementById("btnClear");
+    const btnSearch = document.getElementById("btnSearch");
+    const btnShowAll = document.getElementById("btnShowAll");
+    const resultArea = document.getElementById("resultArea");
+    const emptyArea = document.getElementById("emptyArea");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultMeta = document.getElementById("resultMeta");
+    const pagesEl = document.getElementById("pages");
+    const dotsRow = document.getElementById("dotsRow");
+    const btnCopyQueryLink = document.getElementById("btnCopyQueryLink");
+
+    function matchItem(item, query){
+      const nq = norm(query);
+      if(!nq) return true;
+      const nname = norm(item.name);
+      const nbase = norm(item.base);
+      const ntags = norm((item.tags||[]).join(" "));
+      return nname.includes(nq) || nbase.includes(nq) || ntags.includes(nq);
+    }
+    function chunk(arr, size){
+      const out = [];
+      for(let i=0; i<arr.length; i+=size) out.push(arr.slice(i, i+size));
+      return out;
+    }
+    function buildDots(el, n, onClick){
+      el.innerHTML = "";
+      for(let i=0;i<n;i++){
+        const d = document.createElement("div");
+        d.className = "dot" + (i===0 ? " on" : "");
+        d.addEventListener("click", ()=> onClick(i));
+        el.appendChild(d);
+      }
+    }
+    function setDotActive(el, idx){
+      [...el.children].forEach((d,i)=> d.classList.toggle("on", i===idx));
+    }
+
+    function renderResultCarousel(list){
       const PER_PAGE = 12;
       const pages = chunk(list, PER_PAGE);
 
@@ -913,7 +963,6 @@
             <img loading="lazy" src="${it.url}" alt="갤러리 사진">
           </div>
         `).join("");
-
         return `
           <div class="page">
             <div class="gridThumb">${thumbs}</div>
@@ -928,21 +977,22 @@
         });
       });
 
-      buildDots(pages.length);
+      buildDots(dotsRow, pages.length, (i)=>{
+        const w = pagesEl.clientWidth || 1;
+        pagesEl.scrollTo({ left: i*w, behavior:"smooth" });
+      });
 
       pagesEl.onscroll = ()=>{
         const w = pagesEl.clientWidth || 1;
         const idx = Math.round(pagesEl.scrollLeft / w);
-        setDotActive(Math.max(0, Math.min(pages.length-1, idx)));
+        setDotActive(dotsRow, Math.max(0, Math.min(pages.length-1, idx)));
       };
 
-      resultTitle.textContent = queryLabel;
-      resultMeta.textContent = `총 ${list.length}장 · ${pages.length}페이지 (좌우로 밀기)`;
+      resultTitle.textContent = "검색 결과";
+      resultMeta.textContent = `총 ${list.length}장 · ${pages.length}페이지`;
 
       resultArea.style.display = "block";
       emptyArea.style.display = "none";
-
-      setTimeout(()=>{ document.getElementById("searchSection").scrollIntoView({behavior:"smooth", block:"start"}); }, 80);
     }
 
     function runSearch(query){
@@ -952,12 +1002,9 @@
       if(!filtered.length){
         resultArea.style.display = "none";
         emptyArea.style.display = "block";
-        resultMeta.textContent = "";
         return;
       }
-
-      const label = queryText ? `검색 결과` : "전체 사진";
-      renderCarousel(filtered, label);
+      renderResultCarousel(filtered);
 
       const u = new URL(location.href);
       if(queryText) u.searchParams.set("q", queryText);
@@ -965,32 +1012,17 @@
       history.replaceState({}, "", u.toString());
     }
 
-    btnClear.addEventListener("click", ()=>{
-      q.value = "";
-      q.focus();
-      runSearch("");
-    });
+    btnClear.addEventListener("click", ()=>{ q.value=""; q.focus(); runSearch(""); });
     btnSearch.addEventListener("click", ()=> runSearch(q.value));
     btnShowAll.addEventListener("click", ()=>{ q.value=""; runSearch(""); });
-    q.addEventListener("keydown", (e)=>{ if(e.key === "Enter") runSearch(q.value); });
+    q.addEventListener("keydown", (e)=>{ if(e.key==="Enter") runSearch(q.value); });
 
     btnCopyQueryLink.addEventListener("click", ()=> copyText(location.href));
 
-    (function autoRunFromQuery(){
-      const u = new URL(location.href);
-      const qq = u.searchParams.get("q");
-      if(qq){
-        q.value = qq;
-        runSearch(qq);
-      }else{
-        resultArea.style.display = "none";
-        emptyArea.style.display = "none";
-      }
-    })();
-
-    /* ====== Cover + thumbs ====== */
+    /* ===========================
+      (2) 대표 + 썸네일 레일(5줄 페이징)
+    =========================== */
     const coverImg = document.getElementById("coverImg");
-    const thumbs = document.getElementById("thumbs");
     const thumbCount = document.getElementById("thumbCount");
     const btnCoverPrev = document.getElementById("btnCoverPrev");
     const btnCoverNext = document.getElementById("btnCoverNext");
@@ -998,66 +1030,123 @@
     const btnCopyCover = document.getElementById("btnCopyCover");
     const btnShuffleThumbs = document.getElementById("btnShuffleThumbs");
 
+    const thumbPagesEl = document.getElementById("thumbPages");
+    const thumbDotsEl = document.getElementById("thumbDots");
+    const btnThumbPrev = document.getElementById("btnThumbPrev");
+    const btnThumbNext = document.getElementById("btnThumbNext");
+    const thumbMeta = document.getElementById("thumbMeta");
+
+    // 3열 * 5줄 = 15장
+    const THUMBS_PER_PAGE = 15;
+
     let coverIndex = 0;
+    let THUMB_ITEMS = [...ITEMS]; // 섞기 대비
+    let thumbPageCount = 1;
 
     function setCover(idx){
-      coverIndex = (idx + ITEMS.length) % ITEMS.length;
-      coverImg.src = ITEMS[coverIndex].url;
-      [...thumbs.querySelectorAll(".titem")].forEach((el,i)=>{
-        el.classList.toggle("active", i === coverIndex);
+      coverIndex = (idx + THUMB_ITEMS.length) % THUMB_ITEMS.length;
+      coverImg.src = THUMB_ITEMS[coverIndex].url;
+
+      // 현재 페이지의 active 처리 + 전체 active 동기
+      thumbPagesEl.querySelectorAll(".titem").forEach((el)=>{
+        el.classList.remove("active");
       });
+      // 현재 커버와 같은 url인 썸네일 active (페이지 넘어가 있으면 표시 안될 수 있음)
+      thumbPagesEl.querySelectorAll(`.titem[data-i="${coverIndex}"]`).forEach(el=> el.classList.add("active"));
     }
 
-    function renderThumbs(){
-      thumbs.innerHTML = ITEMS.map((it, i)=>`
-        <div class="titem ${i===0?'active':''}" data-i="${i}" title="썸네일">
-          <img loading="lazy" src="${it.url}" alt="thumb">
-        </div>
-      `).join("");
-      thumbCount.textContent = String(ITEMS.length);
-      [...thumbs.querySelectorAll(".titem")].forEach(el=>{
-        el.addEventListener("click", ()=> setCover(Number(el.dataset.i)));
+    function renderThumbPager(){
+      thumbCount.textContent = String(THUMB_ITEMS.length);
+
+      const pages = chunk(THUMB_ITEMS, THUMBS_PER_PAGE);
+      thumbPageCount = pages.length;
+
+      thumbPagesEl.innerHTML = pages.map((page, pi)=>{
+        const tiles = page.map((it)=>{
+          return `
+            <div class="titem" data-i="${it._globalIndex}" title="썸네일">
+              <img loading="lazy" src="${it.url}" alt="thumb">
+            </div>
+          `;
+        }).join("");
+
+        return `
+          <div class="thumbPage" data-page="${pi}">
+            <div class="thumbGrid">${tiles}</div>
+          </div>
+        `;
+      }).join("");
+
+      // dot
+      buildDots(thumbDotsEl, thumbPageCount, (i)=>{
+        const w = thumbPagesEl.clientWidth || 1;
+        thumbPagesEl.scrollTo({ left: i*w, behavior:"smooth" });
       });
+
+      // 클릭 이벤트(전역 인덱스)
+      thumbPagesEl.querySelectorAll(".titem").forEach(el=>{
+        el.addEventListener("click", ()=>{
+          const i = Number(el.getAttribute("data-i"));
+          setCover(i);
+        });
+      });
+
+      // 페이지 메타 + dot 연동
+      function updateThumbPagerUI(){
+        const w = thumbPagesEl.clientWidth || 1;
+        const pi = Math.round(thumbPagesEl.scrollLeft / w);
+        const clamped = Math.max(0, Math.min(thumbPageCount-1, pi));
+        setDotActive(thumbDotsEl, clamped);
+        thumbMeta.textContent = `${clamped+1}/${thumbPageCount}`;
+      }
+      thumbPagesEl.onscroll = updateThumbPagerUI;
+      updateThumbPagerUI();
+
+      // 커버가 0이면 0번 썸네일 active 표시
+      setCover(coverIndex);
     }
+
+    // THUMB_ITEMS에 전역 인덱스 부여(섞기 후에도 인덱스 통일)
+    function reindexThumbItems(){
+      THUMB_ITEMS = THUMB_ITEMS.map((it, idx)=> ({...it, _globalIndex: idx}));
+    }
+
+    btnThumbPrev.addEventListener("click", ()=>{
+      const w = thumbPagesEl.clientWidth || 1;
+      const pi = Math.round(thumbPagesEl.scrollLeft / w);
+      const target = Math.max(0, pi-1);
+      thumbPagesEl.scrollTo({ left: target*w, behavior:"smooth" });
+    });
+    btnThumbNext.addEventListener("click", ()=>{
+      const w = thumbPagesEl.clientWidth || 1;
+      const pi = Math.round(thumbPagesEl.scrollLeft / w);
+      const target = Math.min(thumbPageCount-1, pi+1);
+      thumbPagesEl.scrollTo({ left: target*w, behavior:"smooth" });
+    });
 
     btnCoverPrev.addEventListener("click", ()=> setCover(coverIndex-1));
     btnCoverNext.addEventListener("click", ()=> setCover(coverIndex+1));
-    btnOpenCover.addEventListener("click", ()=> openLightboxByUrl(ITEMS[coverIndex].url));
-    btnCopyCover.addEventListener("click", ()=> copyText(ITEMS[coverIndex].url));
+    btnOpenCover.addEventListener("click", ()=> openLightboxByUrl(THUMB_ITEMS[coverIndex].url));
+    btnCopyCover.addEventListener("click", ()=> copyText(THUMB_ITEMS[coverIndex].url));
 
     btnShuffleThumbs.addEventListener("click", ()=>{
-      const shuffled = [...ITEMS];
+      // shuffle
+      const shuffled = [...THUMB_ITEMS];
       for(let i=shuffled.length-1; i>0; i--){
         const j = Math.floor(Math.random()*(i+1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
       }
-
-      thumbs.innerHTML = shuffled.map((it, i)=>`
-        <div class="titem ${i===0?'active':''}" data-i="${i}">
-          <img loading="lazy" src="${it.url}" alt="thumb">
-        </div>
-      `).join("");
-      thumbCount.textContent = String(shuffled.length);
-
+      THUMB_ITEMS = shuffled;
+      reindexThumbItems();
       coverIndex = 0;
-      coverImg.src = shuffled[0].url;
-
-      [...thumbs.querySelectorAll(".titem")].forEach(el=>{
-        el.addEventListener("click", ()=>{
-          const i = Number(el.dataset.i);
-          coverIndex = i;
-          coverImg.src = shuffled[i].url;
-          [...thumbs.querySelectorAll(".titem")].forEach((x,idx)=>x.classList.toggle("active", idx===i));
-        });
-      });
-
-      btnOpenCover.onclick = ()=> openLightboxByUrl(shuffled[coverIndex].url);
-      btnCopyCover.onclick = ()=> copyText(shuffled[coverIndex].url);
-
+      renderThumbPager();
+      coverImg.src = THUMB_ITEMS[0].url;
       toast("썸네일을 섞었습니다 🎲");
     });
 
-    /* ====== Slideshow (NO names shown) ====== */
+    /* ===========================
+      (3) 슬라이드 쇼(이름 노출 금지)
+    =========================== */
     const slideTitle = document.getElementById("slideTitle");
     const slideSub = document.getElementById("slideSub");
     const imgA = document.getElementById("slideImgA");
@@ -1082,7 +1171,6 @@
       slideIndex = (idx + ITEMS.length) % ITEMS.length;
       const it = ITEMS[slideIndex];
 
-      // ✅ 이름 노출 금지: 번호만
       slideTitle.textContent = `사진 ${slideIndex+1}`;
       slideSub.textContent = `${slideIndex+1}/${ITEMS.length}`;
 
@@ -1123,7 +1211,9 @@
     btnOpenSlide.addEventListener("click", ()=> openLightboxByUrl(ITEMS[slideIndex].url));
     btnCopySlide.addEventListener("click", ()=> copyText(ITEMS[slideIndex].url));
 
-    /* ====== Videos ====== */
+    /* ===========================
+      (4) 영상
+    =========================== */
     const VIDEO_URLS = [
       "https://www.youtube.com/watch?v=D3kDXF-sNJA",
       "https://www.youtube.com/watch?v=wWIAPVvrnSw",
@@ -1172,7 +1262,6 @@
         const titleEl = card.querySelector(".yt-title");
         const metaEl = card.querySelector(".yt-meta");
         const oembed = `https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(url)}`;
-
         try{
           const res = await fetch(oembed, { mode: "cors" });
           if(!res.ok) throw new Error("oEmbed not ok");
@@ -1193,33 +1282,37 @@
       copyText(CHANNEL_URL);
     });
 
-    /* ====== Lightbox events ====== */
-    const lb = document.getElementById("lb");
-    document.getElementById("lbClose").addEventListener("click", ()=>{
-      lb.classList.remove("show");
-      lb.setAttribute("aria-hidden","true");
-      document.body.style.overflow="";
-      document.getElementById("lbImg").src = "";
-      window.__lbUrl = "";
-    });
-    lb.addEventListener("click", (e)=>{ if(e.target === lb) document.getElementById("lbClose").click(); });
-    window.addEventListener("keydown", (e)=>{ if(lb.classList.contains("show") && e.key==="Escape") document.getElementById("lbClose").click(); });
-    document.getElementById("lbCopy").addEventListener("click", ()=> copyText(window.__lbUrl || ""));
-
     /* INIT */
-    renderThumbs();
-    setCover(0);
+    (function init(){
+      // search query auto-run
+      const u = new URL(location.href);
+      const qq = u.searchParams.get("q");
+      if(qq){
+        q.value = qq;
+        runSearch(qq);
+      }
 
-    if(ITEMS.length){
-      imgA.src = ITEMS[0].url;
-      imgA.classList.add("show");
-      slideTitle.textContent = "사진 1";
-      slideSub.textContent = `1/${ITEMS.length}`;
-    }
-    btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
+      // thumb pager
+      reindexThumbItems();
+      renderThumbPager();
 
-    renderVideosShell();
-    fillYouTubeTitles();
+      // cover init
+      coverImg.src = THUMB_ITEMS[0]?.url || "";
+      setCover(0);
+
+      // slideshow init
+      if(ITEMS.length){
+        imgA.src = ITEMS[0].url;
+        imgA.classList.add("show");
+        slideTitle.textContent = "사진 1";
+        slideSub.textContent = `1/${ITEMS.length}`;
+      }
+      btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
+
+      // videos
+      renderVideosShell();
+      fillYouTubeTitles();
+    })();
   </script>
 </body>
 </html>
