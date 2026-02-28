@@ -37,13 +37,16 @@
       // ✅ 수련생 조회(verification)
       verificationPageUrl: "verification/",
 
+      // ✅ 성장 포인트 조회(growth)
+      growthPageUrl: "growth/",
+
       // 결제 폴더
       payPageUrl: "pay/",
 
       // ✅ 공지 폴더 (홈페이지 내부 공지)
       noticePageUrl: "notice/",
 
-      // ✅ NEW: 갤러리 조회 폴더(이번에 /gallery/를 조회형으로 사용)
+      // ✅ NEW: 갤러리 조회 폴더
       galleryPageUrl: "gallery/",
 
       // 로고
@@ -499,7 +502,7 @@
       }
     }
 
-    /* ✅ 최근 공지 3개 (첫 화면 자동 노출) */
+    /* ✅ 최근 공지 3개 */
     .recentNotice{
       margin-top:12px;
       border:1px solid rgba(36,52,90,.55);
@@ -576,10 +579,13 @@
           <a class="btn" id="kakaoTop" href="#" target="_blank" rel="noopener">🟡 카톡</a>
           <a class="btn" id="bandTop" href="#" target="_blank" rel="noopener">🟢 밴드</a>
 
-          <!-- ✅ 추가: 수련생 조회 -->
+          <!-- ✅ 수련생 조회 -->
           <a class="btn primary" id="verifyTop" href="verification/">🔎 조회</a>
 
-          <!-- ✅ NEW: 갤러리 조회(검색형) -->
+          <!-- ✅ 성장 포인트 조회 -->
+          <a class="btn" id="growthTop" href="growth/">⭐ 성장 포인트</a>
+
+          <!-- ✅ 갤러리 조회 -->
           <a class="btn" id="galleryTop" href="gallery/">🖼️ 갤러리 조회</a>
 
           <!-- ✅ 공지사항 -->
@@ -590,7 +596,7 @@
       </div>
     </div>
 
-    <!-- ✅ 공지사항(최근 5) 스크롤 (홈페이지 공지 데이터 기반) -->
+    <!-- ✅ 공지사항(최근 5) -->
     <section class="noticeBox" id="notice">
       <div class="noticeHead">
         <div class="left">
@@ -608,7 +614,7 @@
       </div>
     </section>
 
-    <!-- ✅ 첫 화면: 최근 공지 3개 자동 노출 -->
+    <!-- ✅ 첫 화면: 최근 공지 3개 -->
     <section class="recentNotice" id="recentNotice">
       <div class="recentNoticeHead">
         <b>최근 공지 (3)</b>
@@ -629,12 +635,12 @@
       <a class="tile" href="plan/"><div class="ico">📘</div><div class="label">수련계획표</div><div class="sub">월간</div></a>
       <a class="tile" href="exam/"><div class="ico">🏅</div><div class="label">승급·승단심사안내</div><div class="sub">절차</div></a>
 
-      <!-- ✅ 추가: 수련생 조회 타일 -->
       <a class="tile" href="verification/"><div class="ico">🔎</div><div class="label">수련생 조회</div><div class="sub">이름으로 확인</div></a>
 
-      <!-- ✅ (기존 유지) gallery/는 이제 '조회형 갤러리'로 사용 -->
-      <a class="tile" href="gallery/"><div class="ico">🖼️</div><div class="label">갤러리&영상</div><div class="sub">분위기</div></a>
+      <!-- ✅ 성장 포인트 조회 타일 -->
+      <a class="tile" href="growth/"><div class="ico">⭐</div><div class="label">성장 포인트 조회</div><div class="sub">이름으로 확인</div></a>
 
+      <a class="tile" href="gallery/"><div class="ico">🖼️</div><div class="label">갤러리&영상</div><div class="sub">분위기</div></a>
       <a class="tile" href="#faq"><div class="ico">❓</div><div class="label">Q&A 모음</div><div class="sub">바로 보기</div></a>
       <a class="tile" href="#shuttle"><div class="ico">🚌</div><div class="label">차량운행 문의</div><div class="sub">상담 후</div></a>
 
@@ -696,9 +702,9 @@
           <a class="btn" id="ytChannelBtn" href="#" target="_blank" rel="noopener">채널 바로가기</a>
         </div>
 
-        <!-- ✅ NEW: 갤러리 조회 바로가기(대표영상 아래에 하나 더) -->
         <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
           <a class="btn" id="galleryBtnMid" href="gallery/">🖼️ 이름으로 사진 찾기</a>
+          <a class="btn" id="growthBtnMid" href="growth/">⭐ 성장 포인트 조회</a>
         </div>
       </div>
     </section>
@@ -739,12 +745,12 @@
         <a class="btn" id="kakaoBtn" href="#" target="_blank" rel="noopener">🟡 카톡 문의</a>
         <a class="btn" id="bandBtn" href="#" target="_blank" rel="noopener">🟢 밴드 바로가기</a>
 
-        <!-- ✅ 추가: 수련생 조회 -->
         <a class="btn primary" id="verifyBtn" href="verification/">🔎 수련생 조회</a>
 
-        <!-- ✅ NEW: 갤러리 조회 -->
-        <a class="btn" id="galleryBtn" href="gallery/">🖼️ 갤러리 조회</a>
+        <!-- ✅ 성장 포인트 조회 -->
+        <a class="btn" id="growthBtn" href="growth/">⭐ 성장 포인트 조회</a>
 
+        <a class="btn" id="galleryBtn" href="gallery/">🖼️ 갤러리 조회</a>
         <a class="btn" id="noticeBtn" href="notice/">📢 공지사항</a>
         <a class="btn" id="ytBtn" href="#" target="_blank" rel="noopener">▶️ 유튜브 채널</a>
         <a class="btn" id="payBtn" href="pay/">💳 결제 안내</a>
@@ -770,12 +776,12 @@
       <a class="bbtn primary" id="kakaoBottom" href="#" target="_blank" rel="noopener">🟡 카톡</a>
       <a class="bbtn" id="bandBottom" href="#" target="_blank" rel="noopener">🟢 밴드</a>
 
-      <!-- ✅ 추가: 조회 -->
       <a class="bbtn" id="verifyBottom" href="verification/">🔎 조회</a>
 
-      <!-- ✅ NEW: 갤러리 조회 -->
-      <a class="bbtn" id="galleryBottom" href="gallery/">🖼️ 갤러리</a>
+      <!-- ✅ 성장 포인트 -->
+      <a class="bbtn" id="growthBottom" href="growth/">⭐ 포인트</a>
 
+      <a class="bbtn" id="galleryBottom" href="gallery/">🖼️ 갤러리</a>
       <a class="bbtn" href="notice/">📢 공지</a>
       <a class="bbtn" id="ytBottom" href="#" target="_blank" rel="noopener">▶️ 유튜브</a>
       <a class="bbtn" href="pay/">💳 결제</a>
@@ -794,25 +800,21 @@
       }[s]));
     }
 
-    // Text
     $("dojoName").textContent = KMT.dojoName;
     $("dojoName2").textContent = KMT.dojoName;
     $("subTitle").textContent = KMT.subTitle;
     $("slogan").textContent = KMT.slogan;
     $("trialText").textContent = KMT.trialText;
 
-    // Logo
     if(KMT.logoImage){
       $("logo").style.backgroundImage = `url('${KMT.logoImage}')`;
     }
 
-    // Phone
     const tel = `tel:${String(KMT.phone).replaceAll("-","")}`;
     $("callTop").href = tel;
     $("callBtn").href = tel;
     $("callBottom").href = tel;
 
-    // Links
     $("kakaoTop").href = KMT.kakaoUrl;
     $("kakaoBtn").href = KMT.kakaoUrl;
     $("kakaoBottom").href = KMT.kakaoUrl;
@@ -824,29 +826,31 @@
 
     $("noticeBandBtn").href = KMT.bandUrl;
 
-    // ✅ Verification links (한 곳만 바꾸면 자동 반영)
     const v = KMT.verificationPageUrl || "verification/";
     ["verifyTop","verifyBtn","verifyBottom"].forEach(id=>{
       const el = $(id);
       if(el) el.href = v;
     });
 
-    // ✅ NEW: Gallery links (한 곳만 바꾸면 자동 반영)
+    // ✅ 성장 포인트 링크 자동 반영
+    const gr = KMT.growthPageUrl || "growth/";
+    ["growthTop","growthBtn","growthBottom","growthBtnMid"].forEach(id=>{
+      const el = $(id);
+      if(el) el.href = gr;
+    });
+
     const g = KMT.galleryPageUrl || "gallery/";
     ["galleryTop","galleryBottom","galleryBtn","galleryBtnMid","galleryMoreBtn"].forEach(id=>{
       const el = $(id);
       if(el) el.href = g;
     });
 
-    // YouTube Channel Links
     const ytCh = KMT.youtubeChannelUrl || "https://www.youtube.com/";
-    const ytBtnIds = ["ytChannelBtn","ytBtn","ytBottom","ytTile"];
-    ytBtnIds.forEach(id=>{
+    ["ytChannelBtn","ytBtn","ytBottom","ytTile"].forEach(id=>{
       const el = $(id);
       if(el) el.href = ytCh;
     });
 
-    // Intro bullets
     const intro = $("introBullets");
     intro.innerHTML = "";
     (KMT.introPoints || []).forEach(t=>{
@@ -856,12 +860,10 @@
       intro.appendChild(d);
     });
 
-    // YouTube 대표영상
     if(KMT.youtubeVideoId){
       $("ytFrame").src = `https://www.youtube.com/embed/${KMT.youtubeVideoId}`;
     }
 
-    // Schedule
     const grid = $("scheduleGrid");
     grid.innerHTML = "";
     (KMT.scheduleCards || []).forEach(card=>{
@@ -878,7 +880,6 @@
       grid.appendChild(div);
     });
 
-    // FAQ
     const faqList = $("faqList");
     faqList.innerHTML = "";
     (KMT.faq || []).forEach(item=>{
@@ -891,9 +892,7 @@
       faqList.appendChild(d);
     });
 
-    // ✅ 공지(홈페이지 data.js)에서 최근 5/3 자동 렌더링
     function getHomeNotices(){
-      // notice/data.js의 전역 변수: notices (없으면 빈 배열)
       const arr = Array.isArray(window.notices) ? window.notices : [];
       const sorted = [...arr].sort((a,b)=> (String(b.date||"")).localeCompare(String(a.date||"")));
       return sorted;
@@ -946,7 +945,6 @@
       `).join("");
     })();
 
-    // Hero slider
     const hero = $("heroSlide");
     const dots = $("dots");
     const imgs = (KMT.heroImages || []).filter(Boolean);
@@ -978,7 +976,6 @@
       setInterval(()=>show((idx+1)%imgs.length), 3200);
     }
 
-    // smooth scroll (# only)
     document.querySelectorAll('a[href^="#"]').forEach(a=>{
       a.addEventListener('click', (e)=>{
         const id = a.getAttribute('href');
