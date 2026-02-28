@@ -1,1 +1,1011 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>성장 포인트 조회 | 계명태권도</title>
+  <meta name="description" content="계명태권도 성장 포인트 조회. 누적 포인트, 등급, 도복 목표 진행률을 한 번에 확인하세요." />
+  <meta name="theme-color" content="#0b0f19" />
 
+  <!-- OG (카톡 공유용) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="계명태권도 | 성장 포인트 조회" />
+  <meta property="og:description" content="누적 포인트·등급·도복 목표 진행률을 한 번에 확인하세요." />
+  <!-- ✅ 필요 시 OG 이미지 넣기: 아래 content에 이미지 URL -->
+  <meta property="og:image" content="" />
+
+  <style>
+    :root{
+      --bg:#070a12;
+      --panel:#0b1020;
+      --panel2:#0d1530;
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(255,255,255,.14);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.70);
+      --muted2:rgba(255,255,255,.58);
+      --gold:#f5c45a;
+      --blue:#49a6ff;
+      --blue2:#2d6bff;
+      --ok:#34d399;
+      --warn:#fbbf24;
+      --bad:#fb7185;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --r:22px;
+      --r2:16px;
+      --max:1120px;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(900px 520px at 18% 10%, rgba(73,166,255,.18), transparent 55%),
+        radial-gradient(900px 520px at 82% 18%, rgba(245,196,90,.14), transparent 55%),
+        radial-gradient(900px 520px at 60% 92%, rgba(45,107,255,.12), transparent 55%),
+        linear-gradient(180deg, #060911 0%, #070a12 55%, #050713 100%);
+      overflow-x:hidden;
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:18px 16px 60px}
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter:saturate(1.2) blur(10px);
+      background:linear-gradient(180deg, rgba(7,10,18,.88), rgba(7,10,18,.55));
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .topbar .wrap{padding:14px 16px}
+    .row{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+    .brand{
+      display:flex; align-items:center; gap:12px; min-width:260px;
+    }
+    .badge{
+      width:42px; height:42px; border-radius:14px;
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(245,196,90,.65), transparent 60%),
+        radial-gradient(22px 22px at 70% 70%, rgba(73,166,255,.55), transparent 60%),
+        linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 16px 40px rgba(0,0,0,.35);
+      position:relative;
+      overflow:hidden;
+    }
+    .badge:before{
+      content:"";
+      position:absolute; inset:-40px;
+      background:conic-gradient(from 180deg, rgba(73,166,255,.0), rgba(73,166,255,.22), rgba(245,196,90,.22), rgba(73,166,255,.0));
+      animation:spin 8s linear infinite;
+      opacity:.9;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .brand h1{margin:0; font-size:15px; letter-spacing:.2px}
+    .brand .sub{margin:2px 0 0; font-size:12px; color:var(--muted2)}
+    .actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: 0 10px 26px rgba(0,0,0,.28);
+      color:var(--text);
+      font-weight:700;
+      font-size:13px;
+      cursor:pointer;
+      user-select:none;
+      transition:transform .12s ease, border-color .12s ease, background .12s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.22)}
+    .btn:active{transform:translateY(0px)}
+    .btn.primary{
+      border-color: rgba(73,166,255,.45);
+      background: linear-gradient(180deg, rgba(73,166,255,.22), rgba(73,166,255,.10));
+    }
+    .btn.gold{
+      border-color: rgba(245,196,90,.45);
+      background: linear-gradient(180deg, rgba(245,196,90,.22), rgba(245,196,90,.10));
+    }
+    .btn.ghost{
+      background:transparent;
+      box-shadow:none;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .chip b{color:var(--text)}
+    .hero{
+      padding:18px 0 0;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      .brand{min-width:unset}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.035));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card .hd{
+      padding:16px 16px 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      flex-wrap:wrap;
+    }
+    .card .hd .t{
+      margin:0;
+      font-size:16px;
+      letter-spacing:.2px;
+    }
+    .card .hd .d{
+      margin:6px 0 0;
+      font-size:12.5px;
+      color:var(--muted2);
+      line-height:1.5;
+      max-width:720px;
+    }
+    .card .bd{padding:14px 16px 16px}
+    .hint{
+      margin:8px 0 0;
+      font-size:12px;
+      color:var(--muted2);
+      line-height:1.55;
+    }
+
+    /* Search UI */
+    .tabs{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin:10px 0 0;
+    }
+    .tab{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-weight:800;
+      font-size:13px;
+      cursor:pointer;
+      user-select:none;
+      transition:transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .tab:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.2)}
+    .tab.active{
+      color: var(--text);
+      border-color: rgba(73,166,255,.45);
+      background: linear-gradient(180deg, rgba(73,166,255,.18), rgba(73,166,255,.08));
+    }
+    .field{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width:720px){
+      .row2{grid-template-columns:1fr}
+    }
+    .inwrap{
+      position:relative;
+    }
+    input{
+      width:100%;
+      padding:14px 44px 14px 14px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(6,10,20,.55);
+      color: var(--text);
+      outline:none;
+      font-size:14px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
+      transition:border-color .12s ease, transform .12s ease, background .12s ease;
+    }
+    input:focus{
+      border-color: rgba(73,166,255,.48);
+      background: rgba(6,10,20,.75);
+    }
+    .clear{
+      position:absolute;
+      right:10px; top:50%; transform:translateY(-50%);
+      width:32px; height:32px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color:rgba(255,255,255,.85);
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .12s ease, transform .12s ease;
+    }
+    .clear:hover{transform:translateY(-50%) scale(1.03)}
+    .inwrap.hasValue .clear{opacity:1; pointer-events:auto}
+
+    .ctaRow{
+      display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;
+    }
+    .msg{
+      margin-top:12px;
+      padding:12px 12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size:13px;
+      line-height:1.55;
+    }
+    .msg.good{border-color: rgba(52,211,153,.35); background: rgba(52,211,153,.08); color: rgba(255,255,255,.88)}
+    .msg.bad{border-color: rgba(251,113,133,.35); background: rgba(251,113,133,.08); color: rgba(255,255,255,.88)}
+
+    /* Result */
+    .result{
+      display:none;
+      margin-top:14px;
+      border-radius: var(--r);
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(11,16,32,.62), rgba(11,16,32,.42));
+      overflow:hidden;
+    }
+    .result.show{display:block}
+    .resTop{
+      padding:14px 14px 12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .name{
+      font-size:18px;
+      font-weight:900;
+      letter-spacing:.2px;
+      margin:0;
+    }
+    .meta{
+      margin:6px 0 0;
+      color: var(--muted2);
+      font-size:12.5px;
+      line-height:1.5;
+    }
+    .pillRow{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      font-size:12px;
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .pill b{color:var(--text)}
+    .pill.gold{border-color:rgba(245,196,90,.35); background:rgba(245,196,90,.10)}
+    .pill.blue{border-color:rgba(73,166,255,.35); background:rgba(73,166,255,.10)}
+    .pill.ok{border-color:rgba(52,211,153,.35); background:rgba(52,211,153,.10)}
+    .pill.warn{border-color:rgba(251,191,36,.35); background:rgba(251,191,36,.10)}
+
+    .resBody{padding:14px}
+    .stats{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:12px;
+      align-items:stretch;
+    }
+    @media (max-width:900px){
+      .stats{grid-template-columns:1fr}
+    }
+    .panel{
+      border-radius: var(--r2);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding:14px;
+    }
+    .kpiRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width:520px){
+      .kpiRow{grid-template-columns:1fr}
+    }
+    .kpi{
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      padding:12px 12px;
+    }
+    .kpi .l{font-size:12px; color:var(--muted2); margin:0}
+    .kpi .v{font-size:20px; font-weight:900; margin:6px 0 0}
+    .kpi .v small{font-size:12px; color:var(--muted2); font-weight:800}
+    .barWrap{margin-top:12px}
+    .barTop{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      font-size:12.5px; color: var(--muted2);
+    }
+    .bar{
+      margin-top:8px;
+      height:14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      overflow:hidden;
+      position:relative;
+    }
+    .bar > i{
+      display:block; height:100%;
+      width:0%;
+      border-radius:999px;
+      background: linear-gradient(90deg, rgba(73,166,255,.95), rgba(245,196,90,.92));
+      box-shadow: 0 10px 30px rgba(73,166,255,.15);
+      transition: width .6s cubic-bezier(.2,.9,.2,1);
+    }
+    .milestones{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+    .ms{
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      padding:12px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .ms .left{display:flex; flex-direction:column; gap:4px}
+    .ms .t{font-weight:900}
+    .ms .s{font-size:12px; color:var(--muted2)}
+    .ms .right{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .tag{
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .tag.done{border-color:rgba(52,211,153,.35); background:rgba(52,211,153,.10); color:rgba(255,255,255,.88)}
+    .tag.next{border-color:rgba(73,166,255,.35); background:rgba(73,166,255,.10); color:rgba(255,255,255,.88)}
+    .tag.lock{border-color:rgba(255,255,255,.10); background:rgba(255,255,255,.04)}
+
+    /* Quick links */
+    .links{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+    @media (max-width:620px){
+      .links{grid-template-columns:1fr}
+    }
+    .linkCard{
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      padding:12px 12px;
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      transition: transform .12s ease, border-color .12s ease;
+    }
+    .linkCard:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.20)}
+    .linkCard .tt{font-weight:900; margin:0; font-size:14px}
+    .linkCard .dd{margin:6px 0 0; font-size:12px; color:var(--muted2); line-height:1.5}
+    .arrow{opacity:.8}
+
+    .foot{
+      margin-top:16px;
+      padding:14px 16px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: var(--muted2);
+      font-size:12px;
+      line-height:1.6;
+    }
+    .smallnote{font-size:12px; color:var(--muted2); margin-top:10px}
+    .sep{height:1px; background:rgba(255,255,255,.08); margin:14px 0}
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none !important; animation:none !important}
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ✅ 상단 고정 바 -->
+  <div class="topbar">
+    <div class="wrap">
+      <div class="row">
+        <div class="brand">
+          <div class="badge" aria-hidden="true"></div>
+          <div>
+            <h1>성장 포인트 조회</h1>
+            <div class="sub">누적 포인트 · 등급 · 도복 목표 진행률</div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <!-- ✅ CHANGE ZONE: 홈 버튼 링크(사이트 루트) -->
+          <a class="btn" href="../index.html" title="홈으로">🏠 홈으로</a>
+
+          <!-- ✅ CHANGE ZONE: 엄마 미션(구글폼) 링크를 실제 URL로 교체하세요 -->
+          <a class="btn gold" id="momFormBtn" href="#" target="_blank" rel="noopener" title="구글폼으로 미션 인증 보내기">📝 엄마 미션 인증</a>
+
+          <span class="chip" title="데이터 갱신 시각">
+            ⏱ 최신 데이터 <b id="lastUpdated">확인중…</b>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap hero">
+    <div class="grid">
+      <!-- LEFT: 조회 -->
+      <section class="card" aria-label="조회">
+        <div class="hd">
+          <div>
+            <h2 class="t">내 아이 포인트 조회</h2>
+            <p class="d">
+              조회는 <b>아이디</b> 또는 <b>이름 + 생년월일</b>로 가능합니다.
+              (다른 사람 정보는 보이지 않도록, 정확히 일치할 때만 결과가 표시됩니다.)
+            </p>
+            <div class="hint">※ 입력한 정보는 이 페이지 안에서만 처리되며, 별도로 저장되지 않습니다.</div>
+          </div>
+          <div class="pillRow">
+            <span class="pill blue"><b>목표</b> 매 30,000점 도복 단계 상승</span>
+            <span class="pill"><b>방식</b> 누적 확장형 (초기화 없음)</span>
+          </div>
+        </div>
+
+        <div class="bd">
+          <div class="tabs" role="tablist" aria-label="조회 방식">
+            <div class="tab active" id="tabId" role="tab" aria-selected="true" tabindex="0">아이디로 조회</div>
+            <div class="tab" id="tabNameDob" role="tab" aria-selected="false" tabindex="0">이름 + 생년월일로 조회</div>
+          </div>
+
+          <div class="field" id="modeId">
+            <div class="inwrap" id="wrapId">
+              <input id="inputId" inputmode="text" autocomplete="off" spellcheck="false"
+                     placeholder="예) KM002 / km002 (대소문자 무관)" />
+              <div class="clear" data-clear="inputId" title="지우기">✕</div>
+            </div>
+          </div>
+
+          <div class="field" id="modeNameDob" style="display:none">
+            <div class="row2">
+              <div class="inwrap" id="wrapName">
+                <input id="inputName" autocomplete="off" spellcheck="false" placeholder="이름 (예: 홍길동)" />
+                <div class="clear" data-clear="inputName" title="지우기">✕</div>
+              </div>
+              <div class="inwrap" id="wrapDob">
+                <input id="inputDob" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="생년월일 8자리 (예: 20170123)" />
+                <div class="clear" data-clear="inputDob" title="지우기">✕</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ctaRow">
+            <button class="btn primary" id="btnSearch" type="button">🔎 조회하기</button>
+            <button class="btn" id="btnReset" type="button">↺ 입력 초기화</button>
+            <a class="btn ghost" href="./items/" title="포인트 항목/점수 안내">포인트 항목 보기 →</a>
+          </div>
+
+          <div class="msg" id="statusMsg">
+            조회가 안 될 때는 <b>아이디</b> 또는 <b>이름 + 생년월일</b>이 정확한지 확인해주세요.
+          </div>
+
+          <!-- RESULT -->
+          <div class="result" id="result">
+            <div class="resTop">
+              <div>
+                <p class="name" id="resName">-</p>
+                <div class="meta" id="resMeta">-</div>
+              </div>
+              <div class="pillRow">
+                <span class="pill blue"><b>현재 등급</b> <span id="resRank">-</span></span>
+                <span class="pill gold"><b>누적</b> <span id="resTotal">-</span>점</span>
+                <span class="pill ok"><b>연속 달성</b> <span id="resStreak">-</span>회</span>
+              </div>
+            </div>
+
+            <div class="resBody">
+              <div class="stats">
+                <div class="panel">
+                  <div class="kpiRow">
+                    <div class="kpi">
+                      <p class="l">다음 목표(도복 단계)</p>
+                      <p class="v" id="nextGoal">-</p>
+                    </div>
+                    <div class="kpi">
+                      <p class="l">남은 점수</p>
+                      <p class="v" id="remain">-</p>
+                    </div>
+                  </div>
+
+                  <div class="barWrap">
+                    <div class="barTop">
+                      <span id="barLabel">진행률</span>
+                      <span><b id="barPct">0%</b></span>
+                    </div>
+                    <div class="bar" aria-label="진행률 바"><i id="barFill"></i></div>
+                    <div class="smallnote" id="barNote">-</div>
+                  </div>
+
+                  <div class="milestones" aria-label="도복 단계">
+                    <div class="ms">
+                      <div class="left">
+                        <div class="t">1단계 · 일반 도복</div>
+                        <div class="s">누적 30,000점 달성 시</div>
+                      </div>
+                      <div class="right">
+                        <span class="tag" id="m1Tag">미달성</span>
+                        <span class="tag">30,000원</span>
+                      </div>
+                    </div>
+
+                    <div class="ms">
+                      <div class="left">
+                        <div class="t">2단계 · 유단자 도복</div>
+                        <div class="s">누적 60,000점 달성 시</div>
+                      </div>
+                      <div class="right">
+                        <span class="tag" id="m2Tag">미달성</span>
+                        <span class="tag">40,000원</span>
+                      </div>
+                    </div>
+
+                    <div class="ms">
+                      <div class="left">
+                        <div class="t">3단계 · 고단자 도복(어깨 삼선)</div>
+                        <div class="s">누적 90,000점 달성 시</div>
+                      </div>
+                      <div class="right">
+                        <span class="tag" id="m3Tag">미달성</span>
+                        <span class="tag">45,000원</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="panel">
+                  <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+                    <div>
+                      <div style="font-weight:900; font-size:14px;">바로가기</div>
+                      <div class="smallnote">규정·항목·등급 안내를 한 번에 확인하세요.</div>
+                    </div>
+                    <a class="btn" href="./guide/">📌 운영 안내</a>
+                  </div>
+
+                  <div class="links">
+                    <a class="linkCard" href="./items/">
+                      <div>
+                        <p class="tt">포인트 항목 / 점수</p>
+                        <p class="dd">평상시·특별미션 항목과 지급 기준을 확인합니다.</p>
+                      </div>
+                      <div class="arrow">↗</div>
+                    </a>
+
+                    <a class="linkCard" href="./rank/">
+                      <div>
+                        <p class="tt">등급 체계(웹 표시)</p>
+                        <p class="dd">누적 확장형 등급 기준과 의미를 확인합니다.</p>
+                      </div>
+                      <div class="arrow">↗</div>
+                    </a>
+
+                    <a class="linkCard" href="./rules/">
+                      <div>
+                        <p class="tt">공식 운영 규정</p>
+                        <p class="dd">대상 기준·지급 조건·유보 기준을 확인합니다.</p>
+                      </div>
+                      <div class="arrow">↗</div>
+                    </a>
+
+                    <a class="linkCard" href="#" id="momFormCard" target="_blank" rel="noopener">
+                      <div>
+                        <p class="tt">엄마 미션 인증(구글폼)</p>
+                        <p class="dd">효도·생활 미션 인증을 제출합니다.</p>
+                      </div>
+                      <div class="arrow">↗</div>
+                    </a>
+                  </div>
+
+                  <div class="sep"></div>
+
+                  <div class="foot">
+                    <b style="color:rgba(255,255,255,.92)">안내</b><br/>
+                    • 포인트는 <b>누적형</b>이며 초기화되지 않습니다.<br/>
+                    • 도복 단계는 <b>누적 30,000점 단위</b>로 상승합니다.<br/>
+                    • 조회 결과는 해당 정보가 정확히 일치할 때만 표시됩니다.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div><!-- /result -->
+
+        </div>
+      </section>
+
+      <!-- RIGHT: 오늘의 안내 + 미션 버튼 강조 -->
+      <aside class="card" aria-label="오늘의 안내">
+        <div class="hd">
+          <div>
+            <h2 class="t">학부모님을 위한 한눈에 안내</h2>
+            <p class="d">
+              이 페이지는 <b>매일 확인하기 편하도록</b> 만들어졌습니다.
+              포인트는 아이의 성실함과 성장 기록이며, 도복은 1년 성장의 증표입니다.
+            </p>
+          </div>
+          <div class="pillRow">
+            <span class="pill warn"><b>TIP</b> 즐겨찾기/홈화면 추가</span>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="panel" style="margin-bottom:12px">
+            <div style="font-weight:900; margin-bottom:6px">✅ 엄마 미션 인증이 필요할 때</div>
+            <div class="smallnote" style="margin-top:0">
+              관장님 카톡 공지로 “오늘 미션”이 열릴 수 있습니다. <br/>
+              미션 완료 후 아래 버튼으로 인증을 제출해주세요.
+            </div>
+            <div class="ctaRow" style="margin-top:10px">
+              <a class="btn gold" id="momFormBtn2" href="#" target="_blank" rel="noopener">📝 구글폼 열기</a>
+              <a class="btn" href="./guide/">📌 운영 방식 보기</a>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div style="font-weight:900; margin-bottom:6px">🎯 올해 도복 목표(누적 확장형)</div>
+            <div class="smallnote" style="margin-top:0">
+              • 30,000점: 일반 도복<br/>
+              • 60,000점: 유단자 도복<br/>
+              • 90,000점: 고단자 도복(어깨 삼선)<br/>
+              <span style="color:rgba(255,255,255,.86); font-weight:800">한 번 달성하면 끝이 아니라, 계속 누적됩니다.</span>
+            </div>
+            <div class="sep"></div>
+            <div class="smallnote" style="margin-top:0">
+              조회가 자주 필요하시면, 상단에 있는 <b>홈으로</b> 버튼 옆에 즐겨찾기(⭐) 추가를 추천드립니다.
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="smallnote" style="margin-top:14px">
+      © <span id="year"></span> 계명태권도 · 성장 포인트 시스템
+    </div>
+  </main>
+
+  <!-- ✅ 데이터 로드: growth/data/data.js -->
+  <script src="./data/data.js"></script>
+
+  <script>
+    /* ===========================
+      ✅ CHANGE ZONE (필수)
+      1) 아래 구글폼 URL을 실제 주소로 바꾸세요.
+      2) data.js 형식은 아래 주석 참고.
+    ============================ */
+    const MOM_FORM_URL = "#"; // ← 여기에 구글폼 링크 넣기 (예: https://docs.google.com/forms/d/e/XXXX/viewform)
+
+    // data.js 권장 포맷(예시):
+    // window.KMT_GROWTH_DB = {
+    //   meta: { updatedAt: "2026-02-28 21:00" },
+    //   students: [
+    //     {
+    //       id: "KM002",
+    //       name: "홍길동",
+    //       dob: "20170123",
+    //       joined: "2025-03-01",
+    //       totalPoints: 64300,
+    //       streakAchieved: 2,         // 30,000점 달성 횟수(연속/누적) - 운영 방식에 맞게 기입
+    //       lastActivity: "2026-02-28" // 선택
+    //     }
+    //   ]
+    // };
+
+    // ---------- Helpers ----------
+    const fmt = (n) => (Number(n)||0).toLocaleString("ko-KR");
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const normId = (s) => (s||"").trim().toUpperCase();
+    const normName = (s) => (s||"").trim();
+    const normDob = (s) => (s||"").replace(/\D/g,"").trim();
+
+    function safeDB(){
+      const db = window.KMT_GROWTH_DB;
+      if(!db) return {meta:{}, students:[]};
+      // allow array-only legacy
+      if(Array.isArray(db)) return {meta:{}, students: db};
+      return {meta: db.meta || {}, students: db.students || []};
+    }
+
+    function calcRank(total){
+      // ✅ 웹 표시 등급(누적 30,000 기준 내/외 확장형)
+      // 1년 구조(0~30k) + 확장형(30k 이상)을 자연스럽게 연결
+      const t = Number(total)||0;
+      if(t >= 100000) return "KM 레전드";
+      if(t >= 75000)  return "KM 그랜드";
+      if(t >= 50000)  return "KM 마스터";
+      if(t >= 30000)  return "KM 챔피언";
+      if(t >= 20001)  return "블루마스터";
+      if(t >= 12001)  return "골드";
+      if(t >= 5001)   return "실버";
+      return "브론즈";
+    }
+
+    function nextMilestone(total){
+      const t = Number(total)||0;
+      const step = 30000;
+      const next = Math.ceil((t+1) / step) * step; // 다음 30,000 단위
+      // 만약 0이면 30000
+      return next || step;
+    }
+
+    function milestoneStatus(total){
+      const t = Number(total)||0;
+      return {
+        m1: t >= 30000,
+        m2: t >= 60000,
+        m3: t >= 90000
+      };
+    }
+
+    function uniformLabel(target){
+      if(target <= 30000) return "일반 도복 (30,000점)";
+      if(target <= 60000) return "유단자 도복 (60,000점)";
+      if(target <= 90000) return "고단자 도복·삼선 (90,000점)";
+      return "다음 단계 (누적 확장)";
+    }
+
+    // ---------- DOM ----------
+    const yearEl = document.getElementById("year");
+    yearEl.textContent = new Date().getFullYear();
+
+    // Set form URL everywhere
+    const momBtns = ["momFormBtn","momFormBtn2","momFormCard"].map(id => document.getElementById(id));
+    momBtns.forEach(el => { if(el){ el.href = MOM_FORM_URL; } });
+
+    // Tabs
+    const tabId = document.getElementById("tabId");
+    const tabNameDob = document.getElementById("tabNameDob");
+    const modeId = document.getElementById("modeId");
+    const modeNameDob = document.getElementById("modeNameDob");
+
+    function setMode(mode){
+      const isId = (mode === "id");
+      tabId.classList.toggle("active", isId);
+      tabNameDob.classList.toggle("active", !isId);
+      tabId.setAttribute("aria-selected", String(isId));
+      tabNameDob.setAttribute("aria-selected", String(!isId));
+      modeId.style.display = isId ? "block" : "none";
+      modeNameDob.style.display = isId ? "none" : "block";
+      setStatus("조회가 안 될 때는 아이디 또는 이름+생년월일이 정확한지 확인해주세요.", "neutral");
+      hideResult();
+    }
+    tabId.addEventListener("click", () => setMode("id"));
+    tabNameDob.addEventListener("click", () => setMode("nameDob"));
+    tabId.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); setMode("id"); }});
+    tabNameDob.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); setMode("nameDob"); }});
+
+    // Clear buttons
+    document.querySelectorAll(".clear").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        const target = btn.getAttribute("data-clear");
+        const el = document.getElementById(target);
+        if(el){ el.value=""; el.dispatchEvent(new Event("input")); el.focus(); }
+        hideResult();
+      });
+    });
+
+    // Add hasValue state
+    function hookWrap(inputId, wrapId){
+      const input = document.getElementById(inputId);
+      const wrap = document.getElementById(wrapId);
+      const fn = () => wrap.classList.toggle("hasValue", !!input.value.trim());
+      input.addEventListener("input", fn);
+      fn();
+    }
+    hookWrap("inputId","wrapId");
+    hookWrap("inputName","wrapName");
+    hookWrap("inputDob","wrapDob");
+
+    // Status message
+    const statusMsg = document.getElementById("statusMsg");
+    function setStatus(text, tone){
+      statusMsg.className = "msg";
+      if(tone==="good") statusMsg.classList.add("good");
+      if(tone==="bad") statusMsg.classList.add("bad");
+      statusMsg.innerHTML = text;
+    }
+
+    // Last updated
+    const lastUpdatedEl = document.getElementById("lastUpdated");
+    const db = safeDB();
+    lastUpdatedEl.textContent = (db.meta && db.meta.updatedAt) ? db.meta.updatedAt : "수동 데이터";
+
+    // Result elements
+    const result = document.getElementById("result");
+    const resName = document.getElementById("resName");
+    const resMeta = document.getElementById("resMeta");
+    const resRank = document.getElementById("resRank");
+    const resTotal = document.getElementById("resTotal");
+    const resStreak = document.getElementById("resStreak");
+    const nextGoalEl = document.getElementById("nextGoal");
+    const remainEl = document.getElementById("remain");
+    const barFill = document.getElementById("barFill");
+    const barPct = document.getElementById("barPct");
+    const barNote = document.getElementById("barNote");
+    const barLabel = document.getElementById("barLabel");
+    const m1Tag = document.getElementById("m1Tag");
+    const m2Tag = document.getElementById("m2Tag");
+    const m3Tag = document.getElementById("m3Tag");
+
+    function hideResult(){
+      result.classList.remove("show");
+      barFill.style.width = "0%";
+    }
+
+    function showStudent(stu){
+      const total = Number(stu.totalPoints ?? stu.total ?? 0) || 0;
+      const rank = calcRank(total);
+      const next = nextMilestone(total);
+      const base = next - 30000;
+      const denom = 30000;
+      const prog = clamp(((total - base) / denom) * 100, 0, 100);
+
+      const remain = Math.max(0, next - total);
+
+      resName.textContent = stu.name || "-";
+      const idText = stu.id ? `아이디: ${stu.id}` : "";
+      const joinText = stu.joined ? `등록: ${stu.joined}` : "";
+      const lastText = stu.lastActivity ? `최근기록: ${stu.lastActivity}` : "";
+      const metaParts = [idText, joinText, lastText].filter(Boolean);
+      resMeta.textContent = metaParts.length ? metaParts.join(" · ") : "조회되었습니다.";
+
+      resRank.textContent = rank;
+      resTotal.textContent = fmt(total);
+      resStreak.textContent = fmt(Number(stu.streakAchieved ?? stu.achievedCount ?? 0) || 0);
+
+      nextGoalEl.textContent = uniformLabel(next);
+      remainEl.textContent = `${fmt(remain)}점`;
+
+      barLabel.textContent = `다음 목표까지 진행률`;
+      barPct.textContent = `${Math.round(prog)}%`;
+      requestAnimationFrame(()=>{ barFill.style.width = `${prog}%`; });
+
+      barNote.textContent = `현재 구간: ${fmt(base)}점 ~ ${fmt(next)}점 · 다음 목표: ${fmt(next)}점`;
+
+      const ms = milestoneStatus(total);
+      m1Tag.textContent = ms.m1 ? "달성" : "미달성";
+      m2Tag.textContent = ms.m2 ? "달성" : "미달성";
+      m3Tag.textContent = ms.m3 ? "달성" : "미달성";
+
+      m1Tag.className = "tag " + (ms.m1 ? "done" : (next===30000 ? "next":"lock"));
+      m2Tag.className = "tag " + (ms.m2 ? "done" : (next===60000 ? "next":"lock"));
+      m3Tag.className = "tag " + (ms.m3 ? "done" : (next===90000 ? "next":"lock"));
+
+      result.classList.add("show");
+      setStatus("조회가 완료되었습니다. 아래에서 등급과 도복 목표 진행률을 확인하세요.", "good");
+    }
+
+    function findById(id){
+      const students = db.students || [];
+      const key = normId(id);
+      return students.find(s => normId(s.id) === key);
+    }
+    function findByNameDob(name, dob){
+      const students = db.students || [];
+      const n = normName(name);
+      const d = normDob(dob);
+      return students.find(s => (normName(s.name) === n) && (normDob(s.dob) === d));
+    }
+
+    // Buttons
+    const btnSearch = document.getElementById("btnSearch");
+    const btnReset = document.getElementById("btnReset");
+    const inputId = document.getElementById("inputId");
+    const inputName = document.getElementById("inputName");
+    const inputDob = document.getElementById("inputDob");
+
+    function currentMode(){
+      return tabId.classList.contains("active") ? "id" : "nameDob";
+    }
+
+    function doSearch(){
+      hideResult();
+
+      if(!db.students || db.students.length === 0){
+        setStatus("데이터가 아직 연결되지 않았습니다. (관리자) growth/data/data.js의 데이터 형식을 확인해주세요.", "bad");
+        console.warn("[growth] DB not loaded or empty. Please check window.KMT_GROWTH_DB in ./data/data.js");
+        return;
+      }
+
+      const mode = currentMode();
+
+      if(mode === "id"){
+        const id = inputId.value.trim();
+        if(!id){
+          setStatus("아이디를 입력해주세요. 예) KM002", "bad");
+          return;
+        }
+        const stu = findById(id);
+        if(!stu){
+          setStatus("일치하는 정보가 없습니다. 아이디를 다시 확인해주세요.", "bad");
+          return;
+        }
+        showStudent(stu);
+        return;
+      }
+
+      // name + dob
+      const name = inputName.value.trim();
+      const dob = inputDob.value.trim();
+      if(!name || !dob){
+        setStatus("이름과 생년월일(8자리)을 모두 입력해주세요.", "bad");
+        return;
+      }
+      if(normDob(dob).length !== 8){
+        setStatus("생년월일은 8자리(예: 20170123)로 입력해주세요.", "bad");
+        return;
+      }
+      const stu = findByNameDob(name, dob);
+      if(!stu){
+        setStatus("일치하는 정보가 없습니다. 이름과 생년월일을 다시 확인해주세요.", "bad");
+        return;
+      }
+      showStudent(stu);
+    }
+
+    btnSearch.addEventListener("click", doSearch);
+    btnReset.addEventListener("click", ()=>{
+      inputId.value = "";
+      inputName.value = "";
+      inputDob.value = "";
+      inputId.dispatchEvent(new Event("input"));
+      inputName.dispatchEvent(new Event("input"));
+      inputDob.dispatchEvent(new Event("input"));
+      hideResult();
+      setStatus("입력이 초기화되었습니다. 아이디 또는 이름+생년월일로 다시 조회해주세요.", "neutral");
+      inputId.focus();
+    });
+
+    // Enter triggers search
+    [inputId, inputName, inputDob].forEach(el=>{
+      el.addEventListener("keydown", (e)=>{
+        if(e.key === "Enter"){ e.preventDefault(); doSearch(); }
+      });
+    });
+
+    // Mobile-ish: format DOB input to digits only
+    inputDob.addEventListener("input", ()=>{
+      const v = normDob(inputDob.value).slice(0,8);
+      inputDob.value = v;
+    });
+
+    // If form URL not set, gently warn in console only (no on-screen noise)
+    if(MOM_FORM_URL === "#"){
+      console.warn("[growth] MOM_FORM_URL is not set yet. Please paste Google Form URL in the CHANGE ZONE.");
+    }
+  </script>
+</body>
+</html>
