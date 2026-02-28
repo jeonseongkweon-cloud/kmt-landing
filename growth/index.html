@@ -11,6 +11,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="계명태권도 | 성장 포인트 조회" />
   <meta property="og:description" content="누적 포인트·등급·도복 목표 진행률을 한 번에 확인하세요." />
+  <!-- ✅ 필요 시 OG 이미지 넣기: 아래 content에 이미지 URL -->
   <meta property="og:image" content="" />
 
   <style>
@@ -58,7 +59,9 @@
     }
     .topbar .wrap{padding:14px 16px}
     .row{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
-    .brand{display:flex; align-items:center; gap:12px; min-width:260px;}
+    .brand{
+      display:flex; align-items:center; gap:12px; min-width:260px;
+    }
     .badge{
       width:42px; height:42px; border-radius:14px;
       background:
@@ -106,7 +109,10 @@
       border-color: rgba(245,196,90,.45);
       background: linear-gradient(180deg, rgba(245,196,90,.22), rgba(245,196,90,.10));
     }
-    .btn.ghost{background:transparent; box-shadow:none;}
+    .btn.ghost{
+      background:transparent;
+      box-shadow:none;
+    }
     .chip{
       display:inline-flex; align-items:center; gap:8px;
       padding:8px 10px;
@@ -118,9 +124,17 @@
       white-space:nowrap;
     }
     .chip b{color:var(--text)}
-    .hero{padding:18px 0 0;}
-    .grid{display:grid; grid-template-columns: 1.05fr .95fr; gap:14px; margin-top:14px;}
-    @media (max-width: 980px){ .grid{grid-template-columns:1fr} .brand{min-width:unset} }
+    .hero{ padding:18px 0 0; }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      .brand{min-width:unset}
+    }
     .card{
       background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.035));
       border:1px solid rgba(255,255,255,.12);
@@ -135,12 +149,28 @@
       display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
       flex-wrap:wrap;
     }
-    .card .hd .t{margin:0; font-size:16px; letter-spacing:.2px;}
-    .card .hd .d{margin:6px 0 0; font-size:12.5px; color:var(--muted2); line-height:1.5; max-width:720px;}
+    .card .hd .t{
+      margin:0;
+      font-size:16px;
+      letter-spacing:.2px;
+    }
+    .card .hd .d{
+      margin:6px 0 0;
+      font-size:12.5px;
+      color:var(--muted2);
+      line-height:1.5;
+      max-width:720px;
+    }
     .card .bd{padding:14px 16px 16px}
-    .hint{margin:8px 0 0; font-size:12px; color:var(--muted2); line-height:1.55;}
+    .hint{
+      margin:8px 0 0;
+      font-size:12px;
+      color:var(--muted2);
+      line-height:1.55;
+    }
 
-    .tabs{display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 0;}
+    /* Search UI */
+    .tabs{ display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 0; }
     .tab{
       padding:10px 12px;
       border-radius:14px;
@@ -159,10 +189,10 @@
       border-color: rgba(73,166,255,.45);
       background: linear-gradient(180deg, rgba(73,166,255,.18), rgba(73,166,255,.08));
     }
-    .field{margin-top:12px; display:grid; grid-template-columns: 1fr; gap:10px;}
-    .row2{display:grid; grid-template-columns: 1fr 1fr; gap:10px;}
+    .field{ margin-top:12px; display:grid; grid-template-columns: 1fr; gap:10px; }
+    .row2{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
     @media (max-width:720px){ .row2{grid-template-columns:1fr} }
-    .inwrap{position:relative;}
+    .inwrap{ position:relative; }
     input{
       width:100%;
       padding:14px 44px 14px 14px;
@@ -175,7 +205,10 @@
       box-shadow: inset 0 0 0 1px rgba(0,0,0,.25);
       transition:border-color .12s ease, transform .12s ease, background .12s ease;
     }
-    input:focus{border-color: rgba(73,166,255,.48); background: rgba(6,10,20,.75);}
+    input:focus{
+      border-color: rgba(73,166,255,.48);
+      background: rgba(6,10,20,.75);
+    }
     .clear{
       position:absolute;
       right:10px; top:50%; transform:translateY(-50%);
@@ -192,7 +225,8 @@
     }
     .clear:hover{transform:translateY(-50%) scale(1.03)}
     .inwrap.hasValue .clear{opacity:1; pointer-events:auto}
-    .ctaRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+
+    .ctaRow{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
     .msg{
       margin-top:12px;
       padding:12px 12px;
@@ -206,6 +240,7 @@
     .msg.good{border-color: rgba(52,211,153,.35); background: rgba(52,211,153,.08); color: rgba(255,255,255,.88)}
     .msg.bad{border-color: rgba(251,113,133,.35); background: rgba(251,113,133,.08); color: rgba(255,255,255,.88)}
 
+    /* Result */
     .result{
       display:none;
       margin-top:14px;
@@ -220,8 +255,13 @@
       border-bottom:1px solid rgba(255,255,255,.08);
       display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;
     }
-    .name{font-size:18px; font-weight:900; letter-spacing:.2px; margin:0;}
-    .meta{margin:6px 0 0; color: var(--muted2); font-size:12.5px; line-height:1.5;}
+    .name{ font-size:18px; font-weight:900; letter-spacing:.2px; margin:0; }
+    .meta{
+      margin:6px 0 0;
+      color: var(--muted2);
+      font-size:12.5px;
+      line-height:1.5;
+    }
     .pillRow{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end}
     .pill{
       display:inline-flex; align-items:center; gap:8px;
@@ -240,7 +280,12 @@
     .pill.warn{border-color:rgba(251,191,36,.35); background:rgba(251,191,36,.10)}
 
     .resBody{padding:14px}
-    .stats{display:grid; grid-template-columns: 1.1fr .9fr; gap:12px; align-items:stretch;}
+    .stats{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:12px;
+      align-items:stretch;
+    }
     @media (max-width:900px){ .stats{grid-template-columns:1fr} }
     .panel{
       border-radius: var(--r2);
@@ -248,7 +293,7 @@
       background: rgba(255,255,255,.04);
       padding:14px;
     }
-    .kpiRow{display:grid; grid-template-columns: 1fr 1fr; gap:10px;}
+    .kpiRow{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
     @media (max-width:520px){ .kpiRow{grid-template-columns:1fr} }
     .kpi{
       border-radius: 16px;
@@ -258,8 +303,9 @@
     }
     .kpi .l{font-size:12px; color:var(--muted2); margin:0}
     .kpi .v{font-size:20px; font-weight:900; margin:6px 0 0}
+    .kpi .v small{font-size:12px; color:var(--muted2); font-weight:800}
     .barWrap{margin-top:12px}
-    .barTop{display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:12.5px; color: var(--muted2);}
+    .barTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:12.5px; color: var(--muted2); }
     .bar{
       margin-top:8px;
       height:14px;
@@ -277,7 +323,7 @@
       box-shadow: 0 10px 30px rgba(73,166,255,.15);
       transition: width .6s cubic-bezier(.2,.9,.2,1);
     }
-    .milestones{margin-top:12px; display:grid; grid-template-columns:1fr; gap:10px;}
+    .milestones{ margin-top:12px; display:grid; grid-template-columns:1fr; gap:10px; }
     .ms{
       border-radius: 16px;
       border:1px solid rgba(255,255,255,.10);
@@ -302,7 +348,8 @@
     .tag.next{border-color:rgba(73,166,255,.35); background:rgba(73,166,255,.10); color:rgba(255,255,255,.88)}
     .tag.lock{border-color:rgba(255,255,255,.10); background:rgba(255,255,255,.04)}
 
-    .links{display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; margin-top:12px;}
+    /* Quick links */
+    .links{ display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; margin-top:12px; }
     @media (max-width:620px){ .links{grid-template-columns:1fr} }
     .linkCard{
       border-radius: 18px;
@@ -316,6 +363,7 @@
     .linkCard .tt{font-weight:900; margin:0; font-size:14px}
     .linkCard .dd{margin:6px 0 0; font-size:12px; color:var(--muted2); line-height:1.5}
     .arrow{opacity:.8}
+
     .foot{
       margin-top:16px;
       padding:14px 16px;
@@ -328,6 +376,7 @@
     }
     .smallnote{font-size:12px; color:var(--muted2); margin-top:10px}
     .sep{height:1px; background:rgba(255,255,255,.08); margin:14px 0}
+
     @media (prefers-reduced-motion: reduce){
       *{transition:none !important; animation:none !important}
     }
@@ -335,6 +384,7 @@
 </head>
 
 <body>
+  <!-- ✅ 상단 고정 바 -->
   <div class="topbar">
     <div class="wrap">
       <div class="row">
@@ -342,15 +392,19 @@
           <div class="badge" aria-hidden="true"></div>
           <div>
             <h1>성장 포인트 조회</h1>
-            <div class="sub">누적 포인트 · 등급 · 도복 목표 진행률</div>
+            <div class="sub">이름만 입력해도 OK · 등급 · 도복 목표 진행률</div>
           </div>
         </div>
 
         <div class="actions">
+          <!-- ✅ 홈 버튼 링크(사이트 루트) -->
           <a class="btn" href="../index.html" title="홈으로">🏠 홈으로</a>
+
+          <!-- ✅ 엄마 미션(구글폼) -->
           <a class="btn gold" id="momFormBtn" href="#" target="_blank" rel="noopener" title="구글폼으로 미션 인증 보내기">📝 엄마 미션 인증</a>
+
           <span class="chip" title="데이터 갱신 시각">
-            ⏱ 최신 데이터 <b id="lastUpdated">불러오는 중…</b>
+            ⏱ 최신 데이터 <b id="lastUpdated">확인중…</b>
           </span>
         </div>
       </div>
@@ -359,13 +413,14 @@
 
   <main class="wrap hero">
     <div class="grid">
+      <!-- LEFT: 조회 -->
       <section class="card" aria-label="조회">
         <div class="hd">
           <div>
             <h2 class="t">내 아이 포인트 조회</h2>
             <p class="d">
-              조회는 <b>이름만</b> 입력해도 가능합니다. <br/>
-              단, <b>동명이인</b>이 있으면 안전을 위해 <b>생년월일(8자리)</b>을 추가로 입력해야 결과가 표시됩니다.
+              이제는 <b>이름만 입력</b>해도 조회됩니다. (예: 김민구)<br/>
+              <b>공백은 자동 제거</b>되고, 혹시 <b>이름+생년월일</b> 형태로 입력해도 자동으로 인식합니다.
             </p>
             <div class="hint">※ 입력한 정보는 이 페이지 안에서만 처리되며, 별도로 저장되지 않습니다.</div>
           </div>
@@ -376,20 +431,36 @@
         </div>
 
         <div class="bd">
+          <!-- ✅ 3모드 유지 (이름이 기본) -->
           <div class="tabs" role="tablist" aria-label="조회 방식">
-            <div class="tab active" id="tabNameOnly" role="tab" aria-selected="true" tabindex="0">이름으로 조회</div>
-            <div class="tab" id="tabNameDob" role="tab" aria-selected="false" tabindex="0">이름 + 생년월일로 조회</div>
+            <div class="tab active" id="tabName" role="tab" aria-selected="true" tabindex="0">이름으로 조회</div>
+            <div class="tab" id="tabId" role="tab" aria-selected="false" tabindex="0">아이디로 조회</div>
+            <div class="tab" id="tabNameDob" role="tab" aria-selected="false" tabindex="0">이름 + 생년월일</div>
           </div>
 
-          <!-- 이름만 -->
-          <div class="field" id="modeNameOnly">
+          <!-- ✅ 이름만 -->
+          <div class="field" id="modeName">
             <div class="inwrap" id="wrapNameOnly">
-              <input id="inputNameOnly" autocomplete="off" spellcheck="false" placeholder="예) 김민구 (공백 자동 제거)" />
+              <input id="inputNameOnly" autocomplete="off" spellcheck="false"
+                     placeholder="예) 김민구 (공백 자동 제거)" />
               <div class="clear" data-clear="inputNameOnly" title="지우기">✕</div>
+            </div>
+            <div class="hint">
+              • “김 민 구”처럼 띄어써도 자동으로 붙여서 처리됩니다.<br/>
+              • “김민구20170123” 또는 “김민구 20170123”처럼 입력해도 자동으로 인식(언더바 자동 처리)됩니다.
             </div>
           </div>
 
-          <!-- 이름 + 생년월일 -->
+          <!-- ✅ 아이디 -->
+          <div class="field" id="modeId" style="display:none">
+            <div class="inwrap" id="wrapId">
+              <input id="inputId" inputmode="text" autocomplete="off" spellcheck="false"
+                     placeholder="예) KM002 / km002 (대소문자 무관)" />
+              <div class="clear" data-clear="inputId" title="지우기">✕</div>
+            </div>
+          </div>
+
+          <!-- ✅ 이름+생년월일 -->
           <div class="field" id="modeNameDob" style="display:none">
             <div class="row2">
               <div class="inwrap" id="wrapName">
@@ -409,8 +480,11 @@
             <a class="btn ghost" href="./items/" title="포인트 항목/점수 안내">포인트 항목 보기 →</a>
           </div>
 
-          <div class="msg" id="statusMsg">데이터 불러오는 중입니다… 잠시만요! (첫 로딩 때만)</div>
+          <div class="msg" id="statusMsg">
+            이름만 입력해도 됩니다. 동명이인이 있을 경우 “이름 + 생년월일” 탭으로 조회해주세요.
+          </div>
 
+          <!-- RESULT -->
           <div class="result" id="result">
             <div class="resTop">
               <div>
@@ -420,7 +494,7 @@
               <div class="pillRow">
                 <span class="pill blue"><b>현재 등급</b> <span id="resRank">-</span></span>
                 <span class="pill gold"><b>누적</b> <span id="resTotal">-</span>점</span>
-                <span class="pill ok"><b>단계 달성</b> <span id="resStreak">-</span>회</span>
+                <span class="pill ok"><b>연속 달성</b> <span id="resStreak">-</span>회</span>
               </div>
             </div>
 
@@ -532,15 +606,17 @@
                     <b style="color:rgba(255,255,255,.92)">안내</b><br/>
                     • 포인트는 <b>누적형</b>이며 초기화되지 않습니다.<br/>
                     • 도복 단계는 <b>누적 30,000점 단위</b>로 상승합니다.<br/>
-                    • 이름만 조회는 <b>동명이인 없을 때만</b> 바로 표시됩니다.
+                    • 조회 결과는 해당 정보가 정확히 일치할 때만 표시됩니다.
                   </div>
                 </div>
               </div>
             </div>
           </div><!-- /result -->
+
         </div>
       </section>
 
+      <!-- RIGHT -->
       <aside class="card" aria-label="오늘의 안내">
         <div class="hd">
           <div>
@@ -589,138 +665,141 @@
     </div>
   </main>
 
+  <!-- ✅ 데이터 로드: growth/data/data.js -->
+  <script src="./data/data.js"></script>
+
   <script>
     /* ===========================
       ✅ CHANGE ZONE (반영 완료)
     ============================ */
     const MOM_FORM_URL = "https://forms.gle/n7fhgddZHPqZfzr3A";
 
-    // ✅ 포인트 요약 CSV
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT_gTJFG4qa30KuQMGPp3VI5rpnLkAG1LDUdxBpOipkEY0qIVo7kZOOJhwgWajh_69y6sPkkGTyqsOR/pub?gid=1499759828&single=true&output=csv";
-
-    let DB_ROWS = [];
-    let DB_READY = false;
-
-    // Helpers
+    // ---------- Helpers ----------
     const fmt = (n) => (Number(n)||0).toLocaleString("ko-KR");
     const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-    const nowLocal = () => {
-      const d = new Date();
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth()+1).padStart(2,"0");
-      const dd = String(d.getDate()).padStart(2,"0");
-      const hh = String(d.getHours()).padStart(2,"0");
-      const mi = String(d.getMinutes()).padStart(2,"0");
-      return `${yyyy}-${mm}-${dd} ${hh}:${mi}`;
-    };
+    const normId = (s) => (s||"").trim().toUpperCase();
 
-    // 공백 제거(모든 공백)
-    const stripSpaces = (s) => (s||"").replace(/\s+/g,"").trim();
-    // 숫자만(생년월일)
-    const onlyDigits = (s) => (s||"").replace(/\D/g,"");
-    // 키 표준화: 공백 제거 + trim
-    const normKey = (s) => stripSpaces(s);
+    // ✅ 이름: 공백 제거 + 앞뒤 트림
+    const normName = (s) => (s||"").replace(/\s+/g,"").trim();
 
-    // "언더바 자동 삽입"
-    // - "김민구20170123" => "김민구_20170123"
-    // - "김민구_20170123" => 그대로
-    // - "김민구-20170123" => "김민구_20170123"
-    function toKeySmart(raw){
-      const s = stripSpaces(raw);
-      if(!s) return "";
-      if(s.includes("_")) return s; // 이미 있음
+    const normDob = (s) => (s||"").replace(/\D/g,"").trim();
 
-      // 이름+8자리 패턴이면 자동 삽입
-      const digits = s.match(/\d{8}$/);
-      if(digits){
-        const dob = digits[0];
-        const name = s.slice(0, -8).replace(/[-_]/g,"");
-        if(name) return `${name}_${dob}`;
-      }
-
-      // 이름만이면 그대로(이름-only 조회는 이 문자열로 후보 매칭)
-      return s;
+    function safeDB(){
+      const db = window.KMT_GROWTH_DB;
+      if(!db) return {meta:{}, students:[]};
+      if(Array.isArray(db)) return {meta:{}, students: db};
+      return {meta: db.meta || {}, students: db.students || []};
     }
 
-    // CSV 파서 (따옴표 대응)
-    function parseCSV(text){
-      const rows = [];
-      let cur = [];
-      let val = "";
-      let inQuotes = false;
-
-      for(let i=0;i<text.length;i++){
-        const c = text[i];
-        const n = text[i+1];
-
-        if(inQuotes){
-          if(c === '"' && n === '"'){ val += '"'; i++; continue; }
-          if(c === '"'){ inQuotes = false; continue; }
-          val += c;
-          continue;
-        }
-
-        if(c === '"'){ inQuotes = true; continue; }
-        if(c === ','){ cur.push(val); val=""; continue; }
-        if(c === '\r'){ continue; }
-        if(c === '\n'){
-          cur.push(val); rows.push(cur);
-          cur = []; val="";
-          continue;
-        }
-        val += c;
-      }
-      if(val.length || cur.length){
-        cur.push(val); rows.push(cur);
-      }
-      return rows;
+    function calcRank(total){
+      const t = Number(total)||0;
+      if(t >= 100000) return "KM 레전드";
+      if(t >= 75000)  return "KM 그랜드";
+      if(t >= 50000)  return "KM 마스터";
+      if(t >= 30000)  return "KM 챔피언";
+      if(t >= 20001)  return "블루마스터";
+      if(t >= 12001)  return "골드";
+      if(t >= 5001)   return "실버";
+      return "브론즈";
     }
 
-    // DOM
+    function nextMilestone(total){
+      const t = Number(total)||0;
+      const step = 30000;
+      const next = Math.ceil((t+1) / step) * step;
+      return next || step;
+    }
+
+    function milestoneStatus(total){
+      const t = Number(total)||0;
+      return { m1: t >= 30000, m2: t >= 60000, m3: t >= 90000 };
+    }
+
+    function uniformLabel(target){
+      if(target <= 30000) return "일반 도복 (30,000점)";
+      if(target <= 60000) return "유단자 도복 (60,000점)";
+      if(target <= 90000) return "고단자 도복·삼선 (90,000점)";
+      return "다음 단계 (누적 확장)";
+    }
+
+    // ✅ 입력이 "김민구20170123" / "김민구 20170123" 이면
+    //    자동으로 "김민구_20170123" 키를 만들어서 우선 검색(언더바 자동 처리)
+    function parseNameMaybeWithDob(raw){
+      const s = String(raw||"");
+      const cleaned = s.replace(/\s+/g,"").trim();   // 공백 제거
+      const dob = (cleaned.match(/(\d{8})$/) || [])[1] || "";
+      if(dob){
+        const name = cleaned.slice(0, -8);
+        return { name: normName(name), dob };
+      }
+      return { name: normName(cleaned), dob: "" };
+    }
+
+    // ✅ 학생 레코드에서 이름 부분만 뽑기 (name이 "김민구_20170123" 형태여도 OK)
+    function studentNameOnly(stu){
+      const name = stu?.name ?? "";
+      const n = String(name);
+      const head = n.includes("_") ? n.split("_")[0] : n;
+      return normName(head);
+    }
+
+    // ---------- DOM ----------
     document.getElementById("year").textContent = new Date().getFullYear();
 
-    const momBtns = ["momFormBtn","momFormBtn2","momFormCard"].map(id => document.getElementById(id));
-    momBtns.forEach(el => { if(el){ el.href = MOM_FORM_URL; } });
-
-    const lastUpdatedEl = document.getElementById("lastUpdated");
-    const statusMsg = document.getElementById("statusMsg");
-    function setStatus(text, tone){
-      statusMsg.className = "msg";
-      if(tone==="good") statusMsg.classList.add("good");
-      if(tone==="bad") statusMsg.classList.add("bad");
-      statusMsg.innerHTML = text;
-    }
+    // Set form URL everywhere
+    ["momFormBtn","momFormBtn2","momFormCard"].forEach(id=>{
+      const el = document.getElementById(id);
+      if(el) el.href = MOM_FORM_URL;
+    });
 
     // Tabs
-    const tabNameOnly = document.getElementById("tabNameOnly");
+    const tabName = document.getElementById("tabName");
+    const tabId = document.getElementById("tabId");
     const tabNameDob = document.getElementById("tabNameDob");
-    const modeNameOnly = document.getElementById("modeNameOnly");
+
+    const modeName = document.getElementById("modeName");
+    const modeId = document.getElementById("modeId");
     const modeNameDob = document.getElementById("modeNameDob");
 
     function setMode(mode){
-      const isNameOnly = (mode === "nameOnly");
-      tabNameOnly.classList.toggle("active", isNameOnly);
-      tabNameDob.classList.toggle("active", !isNameOnly);
-      tabNameOnly.setAttribute("aria-selected", String(isNameOnly));
-      tabNameDob.setAttribute("aria-selected", String(!isNameOnly));
-      modeNameOnly.style.display = isNameOnly ? "block" : "none";
-      modeNameDob.style.display = isNameOnly ? "none" : "block";
+      const isName = (mode === "name");
+      const isId = (mode === "id");
+      const isND = (mode === "nameDob");
+
+      tabName.classList.toggle("active", isName);
+      tabId.classList.toggle("active", isId);
+      tabNameDob.classList.toggle("active", isND);
+
+      tabName.setAttribute("aria-selected", String(isName));
+      tabId.setAttribute("aria-selected", String(isId));
+      tabNameDob.setAttribute("aria-selected", String(isND));
+
+      modeName.style.display = isName ? "block" : "none";
+      modeId.style.display = isId ? "block" : "none";
+      modeNameDob.style.display = isND ? "block" : "none";
+
+      setStatus('이름만 입력해도 됩니다. 동명이인이 있을 경우 “이름 + 생년월일” 탭으로 조회해주세요.', "neutral");
       hideResult();
+
+      if(isName) document.getElementById("inputNameOnly").focus();
+      if(isId) document.getElementById("inputId").focus();
+      if(isND) document.getElementById("inputName").focus();
     }
-    tabNameOnly.addEventListener("click", () => setMode("nameOnly"));
-    tabNameDob.addEventListener("click", () => setMode("nameDob"));
-    tabNameOnly.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); setMode("nameOnly"); }});
-    tabNameDob.addEventListener("keydown", (e)=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); setMode("nameDob"); }});
 
-    // Inputs
-    const inputNameOnly = document.getElementById("inputNameOnly");
-    const inputName = document.getElementById("inputName");
-    const inputDob = document.getElementById("inputDob");
+    tabName.addEventListener("click", ()=>setMode("name"));
+    tabId.addEventListener("click", ()=>setMode("id"));
+    tabNameDob.addEventListener("click", ()=>setMode("nameDob"));
 
-    // ✅ 이름 공백 자동 제거(타이핑 중에도 적용)
-    inputNameOnly.addEventListener("input", ()=>{ inputNameOnly.value = stripSpaces(inputNameOnly.value); });
-    inputName.addEventListener("input", ()=>{ inputName.value = stripSpaces(inputName.value); });
-    inputDob.addEventListener("input", ()=>{ inputDob.value = onlyDigits(inputDob.value).slice(0,8); });
+    [tabName,tabId,tabNameDob].forEach(t=>{
+      t.addEventListener("keydown", (e)=>{
+        if(e.key==="Enter"||e.key===" "){
+          e.preventDefault();
+          if(t===tabName) setMode("name");
+          if(t===tabId) setMode("id");
+          if(t===tabNameDob) setMode("nameDob");
+        }
+      });
+    });
 
     // Clear buttons
     document.querySelectorAll(".clear").forEach(btn=>{
@@ -731,16 +810,33 @@
         hideResult();
       });
     });
+
+    // Add hasValue state
     function hookWrap(inputId, wrapId){
       const input = document.getElementById(inputId);
       const wrap = document.getElementById(wrapId);
-      const fn = () => wrap.classList.toggle("hasValue", !!(input.value||"").trim());
+      const fn = () => wrap.classList.toggle("hasValue", !!String(input.value||"").trim());
       input.addEventListener("input", fn);
       fn();
     }
     hookWrap("inputNameOnly","wrapNameOnly");
+    hookWrap("inputId","wrapId");
     hookWrap("inputName","wrapName");
     hookWrap("inputDob","wrapDob");
+
+    // Status message
+    const statusMsg = document.getElementById("statusMsg");
+    function setStatus(text, tone){
+      statusMsg.className = "msg";
+      if(tone==="good") statusMsg.classList.add("good");
+      if(tone==="bad") statusMsg.classList.add("bad");
+      statusMsg.innerHTML = text;
+    }
+
+    // Last updated
+    const lastUpdatedEl = document.getElementById("lastUpdated");
+    const db = safeDB();
+    lastUpdatedEl.textContent = (db.meta && db.meta.updatedAt) ? db.meta.updatedAt : "수동 데이터";
 
     // Result elements
     const result = document.getElementById("result");
@@ -764,40 +860,33 @@
       barFill.style.width = "0%";
     }
 
-    function nextMilestone(total){
-      const t = Number(total)||0;
-      const step = 30000;
-      const next = Math.ceil((t+1) / step) * step;
-      return next || step;
-    }
-    function milestoneStatus(total){
-      const t = Number(total)||0;
-      return { m1: t>=30000, m2: t>=60000, m3: t>=90000 };
-    }
-    function uniformLabel(target){
-      if(target <= 30000) return "일반 도복 (30,000점)";
-      if(target <= 60000) return "유단자 도복 (60,000점)";
-      if(target <= 90000) return "고단자 도복·삼선 (90,000점)";
-      return "다음 단계 (누적 확장)";
-    }
-
-    function showRow(row, displayName, meta){
-      const total = Number(row.total)||0;
-      const rank = row.rank || "-";
-
+    function showStudent(stu){
+      const total = Number(stu.totalPoints ?? stu.total ?? 0) || 0;
+      const rank = calcRank(total);
       const next = nextMilestone(total);
       const base = next - 30000;
-      const prog = clamp(((total - base)/30000)*100, 0, 100);
-      const remain = Math.max(0, next-total);
+      const denom = 30000;
+      const prog = clamp(((total - base) / denom) * 100, 0, 100);
+      const remain = Math.max(0, next - total);
+
+      // 이름 표시: name이 "김민구_20170123"여도 화면에는 김민구만 보여주기
+      const displayName = (()=>{
+        const n = String(stu.name || "-");
+        return n.includes("_") ? n.split("_")[0] : n;
+      })();
 
       resName.textContent = displayName || "-";
-      resMeta.textContent = meta || "조회되었습니다.";
+
+      const idText = stu.id ? `아이디: ${stu.id}` : "";
+      const dobText = stu.dob ? `생년월일: ${stu.dob}` : "";
+      const joinText = stu.joined ? `등록: ${stu.joined}` : "";
+      const lastText = stu.lastActivity ? `최근기록: ${stu.lastActivity}` : "";
+      const metaParts = [idText, dobText, joinText, lastText].filter(Boolean);
+      resMeta.textContent = metaParts.length ? metaParts.join(" · ") : "조회되었습니다.";
 
       resRank.textContent = rank;
       resTotal.textContent = fmt(total);
-
-      const achieved = Math.floor(total/30000);
-      resStreak.textContent = fmt(achieved);
+      resStreak.textContent = fmt(Number(stu.streakAchieved ?? stu.achievedCount ?? 0) || 0);
 
       nextGoalEl.textContent = uniformLabel(next);
       remainEl.textContent = `${fmt(remain)}점`;
@@ -805,6 +894,7 @@
       barLabel.textContent = `다음 목표까지 진행률`;
       barPct.textContent = `${Math.round(prog)}%`;
       requestAnimationFrame(()=>{ barFill.style.width = `${prog}%`; });
+
       barNote.textContent = `현재 구간: ${fmt(base)}점 ~ ${fmt(next)}점 · 다음 목표: ${fmt(next)}점`;
 
       const ms = milestoneStatus(total);
@@ -820,196 +910,191 @@
       setStatus("조회가 완료되었습니다. 아래에서 등급과 도복 목표 진행률을 확인하세요.", "good");
     }
 
-    // DB lookup
-    function findByKeyExact(key){
-      const k = normKey(key);
-      return DB_ROWS.find(r => normKey(r.key) === k);
-    }
-    // 이름-only 검색: key가 "이름_YYYYMMDD" 형태일 때 앞의 이름이 일치하는 레코드들
-    function findByName(name){
-      const n = stripSpaces(name);
-      if(!n) return [];
-      return DB_ROWS.filter(r => {
-        const k = normKey(r.key);
-        const idx = k.lastIndexOf("_");
-        if(idx === -1) return false;
-        const nm = k.slice(0, idx);
-        return stripSpaces(nm) === n;
-      });
-    }
-    function parseNameFromKey(key){
-      const k = normKey(key);
-      const idx = k.lastIndexOf("_");
-      if(idx === -1) return k;
-      return k.slice(0, idx);
+    // ✅ 검색: 아이디
+    function findById(id){
+      const students = db.students || [];
+      const key = normId(id);
+      return students.find(s => normId(s.id) === key || normId(s.key) === key || normId(s.aiki) === key);
     }
 
-    // Search
+    // ✅ 검색: 이름+생년월일
+    function findByNameDob(name, dob){
+      const students = db.students || [];
+      const n = normName(name);
+      const d = normDob(dob);
+      return students.find(s => (studentNameOnly(s) === n) && (normDob(s.dob) === d));
+    }
+
+    // ✅ 검색: 이름만
+    // - students[].name이 "김민구"이든 "김민구_20170123"이든 OK
+    // - 사용자가 "김민구20170123"처럼 넣으면 자동으로 name+dob로도 먼저 시도(언더바 자동 처리)
+    function findByNameOnly(raw){
+      const students = db.students || [];
+      const parsed = parseNameMaybeWithDob(raw);
+
+      // 1) 이름+생년월일이 같이 들어온 입력이면, 먼저 강하게 매칭 시도
+      if(parsed.dob && parsed.name){
+        const exact = findByNameDob(parsed.name, parsed.dob);
+        if(exact) return exact;
+
+        // 혹시 DB가 "아이키"를 id처럼 저장한 경우 대비: "김민구_20170123"
+        const key = `${parsed.name}_${parsed.dob}`;
+        const byKey = students.find(s => normId(s.id) === normId(key) || normId(s.key) === normId(key) || normId(s.aiki) === normId(key) || normName(String(s.name||"")) === normName(key));
+        if(byKey) return byKey;
+      }
+
+      // 2) 이름만 매칭
+      const n = parsed.name;
+      if(!n) return null;
+
+      // 이름만으로 1명만 딱 잡히면 반환, 여러명이면 null(동명이인 안전)
+      const hits = students.filter(s => studentNameOnly(s) === n);
+      if(hits.length === 1) return hits[0];
+
+      // 3) 혹시 데이터가 name에 공백/언더바가 섞여있어도 최대한 흡수
+      const hits2 = students.filter(s => {
+        const rawName = String(s.name||"");
+        const head = rawName.split("_")[0];
+        return normName(head) === n;
+      });
+      if(hits2.length === 1) return hits2[0];
+
+      // 동명이인/다수면 안전하게 실패 처리
+      return null;
+    }
+
+    // Buttons
     const btnSearch = document.getElementById("btnSearch");
     const btnReset = document.getElementById("btnReset");
 
+    const inputNameOnly = document.getElementById("inputNameOnly");
+    const inputId = document.getElementById("inputId");
+    const inputName = document.getElementById("inputName");
+    const inputDob = document.getElementById("inputDob");
+
     function currentMode(){
-      return tabNameOnly.classList.contains("active") ? "nameOnly" : "nameDob";
+      if(tabName.classList.contains("active")) return "name";
+      if(tabId.classList.contains("active")) return "id";
+      return "nameDob";
     }
 
     function doSearch(){
       hideResult();
 
-      if(!DB_READY){
-        setStatus("데이터를 아직 불러오는 중입니다. 2~3초 후 다시 조회해주세요.", "bad");
-        return;
-      }
-      if(!DB_ROWS.length){
-        setStatus("데이터가 비어있습니다. (관리자) 포인트 요약 시트에 값이 있는지 확인해주세요.", "bad");
+      if(!db.students || db.students.length === 0){
+        setStatus("데이터가 아직 연결되지 않았습니다. (관리자) growth/data/data.js의 데이터 형식을 확인해주세요.", "bad");
+        console.warn("[growth] DB not loaded or empty. Please check window.KMT_GROWTH_DB in ./data/data.js");
         return;
       }
 
       const mode = currentMode();
 
-      // 1) 이름만
-      if(mode === "nameOnly"){
-        const raw = inputNameOnly.value;
-        const name = stripSpaces(raw);
-        if(!name){
+      // ✅ 이름만
+      if(mode === "name"){
+        const raw = String(inputNameOnly.value||"");
+        const parsed = parseNameMaybeWithDob(raw);
+
+        if(!parsed.name){
           setStatus("이름을 입력해주세요. 예) 김민구", "bad");
           return;
         }
 
-        // 혹시 사용자가 이름+생년월일을 붙여넣은 경우(언더바 자동 삽입)
-        const maybeKey = toKeySmart(name);
-        if(maybeKey.includes("_") && /\d{8}$/.test(maybeKey)){
-          const row = findByKeyExact(maybeKey);
-          if(!row){
-            setStatus("일치하는 정보가 없습니다. 이름/생년월일이 정확한지 확인해주세요.", "bad");
+        const stu = findByNameOnly(raw);
+
+        if(!stu){
+          // 동명이인 가능성 안내
+          const hits = (db.students||[]).filter(s => studentNameOnly(s) === parsed.name);
+          if(hits.length >= 2){
+            setStatus("동명이인이 있습니다. 안전을 위해 ‘이름 + 생년월일’ 탭에서 조회해주세요.", "bad");
             return;
           }
-          showRow(row, parseNameFromKey(maybeKey), "입력값을 자동 정리하여 조회했습니다.");
+          setStatus("일치하는 정보가 없습니다. 이름(공백 포함 여부) 또는 (동명이인일 경우) 이름+생년월일로 확인해주세요.", "bad");
           return;
         }
 
-        const matches = findByName(name);
-
-        if(matches.length === 0){
-          setStatus("일치하는 정보가 없습니다. 이름을 다시 확인해주세요.", "bad");
-          return;
-        }
-        if(matches.length >= 2){
-          setStatus(
-            `동명이인이 ${matches.length}명 있습니다. 안전을 위해 <b>이름 + 생년월일</b>로 조회해주세요.`,
-            "bad"
-          );
-          // 자동으로 탭 이동(편의)
-          setMode("nameDob");
-          inputName.value = name;
-          inputName.dispatchEvent(new Event("input"));
-          inputDob.focus();
-          return;
-        }
-
-        const row = matches[0];
-        showRow(row, name, "이름이 1명만 존재하여 바로 표시됩니다.");
+        showStudent(stu);
         return;
       }
 
-      // 2) 이름 + 생년월일
-      const name = stripSpaces(inputName.value);
-      const dob = onlyDigits(inputDob.value);
+      // ✅ 아이디
+      if(mode === "id"){
+        const id = String(inputId.value||"").trim();
+        if(!id){
+          setStatus("아이디를 입력해주세요. 예) KM002", "bad");
+          return;
+        }
+        const stu = findById(id);
+        if(!stu){
+          setStatus("일치하는 정보가 없습니다. 아이디를 다시 확인해주세요.", "bad");
+          return;
+        }
+        showStudent(stu);
+        return;
+      }
+
+      // ✅ 이름+생년월일
+      const name = String(inputName.value||"").trim();
+      const dob = String(inputDob.value||"").trim();
       if(!name || !dob){
         setStatus("이름과 생년월일(8자리)을 모두 입력해주세요.", "bad");
         return;
       }
-      if(dob.length !== 8){
+      if(normDob(dob).length !== 8){
         setStatus("생년월일은 8자리(예: 20170123)로 입력해주세요.", "bad");
         return;
       }
-
-      const key = `${name}_${dob}`; // ✅ 언더바 자동 삽입
-      const row = findByKeyExact(key);
-      if(!row){
-        setStatus("일치하는 정보가 없습니다. 이름/생년월일이 정확한지 확인해주세요.", "bad");
+      const stu = findByNameDob(name, dob);
+      if(!stu){
+        setStatus("일치하는 정보가 없습니다. 이름과 생년월일을 다시 확인해주세요.", "bad");
         return;
       }
-      showRow(row, name, "이름+생년월일이 정확히 일치할 때만 표시됩니다.");
+      showStudent(stu);
     }
 
     btnSearch.addEventListener("click", doSearch);
+
     btnReset.addEventListener("click", ()=>{
       inputNameOnly.value = "";
+      inputId.value = "";
       inputName.value = "";
       inputDob.value = "";
+
       inputNameOnly.dispatchEvent(new Event("input"));
+      inputId.dispatchEvent(new Event("input"));
       inputName.dispatchEvent(new Event("input"));
       inputDob.dispatchEvent(new Event("input"));
+
       hideResult();
-      setStatus("입력이 초기화되었습니다. 이름만 입력해서 조회해보세요.", "neutral");
-      setMode("nameOnly");
-      inputNameOnly.focus();
+      setStatus("입력이 초기화되었습니다. 이름만 입력해도 조회됩니다 🙂", "neutral");
+      setMode("name");
     });
 
-    [inputNameOnly, inputName, inputDob].forEach(el=>{
+    // Enter triggers search
+    [inputNameOnly, inputId, inputName, inputDob].forEach(el=>{
       el.addEventListener("keydown", (e)=>{
         if(e.key === "Enter"){ e.preventDefault(); doSearch(); }
       });
     });
 
-    // CSV load
-    async function loadCSV(){
-      try{
-        setStatus("데이터 불러오는 중입니다… (첫 로딩만 조금 걸려요)", "neutral");
-        lastUpdatedEl.textContent = "불러오는 중…";
+    // DOB digits only
+    inputDob.addEventListener("input", ()=>{
+      inputDob.value = normDob(inputDob.value).slice(0,8);
+    });
 
-        const res = await fetch(CSV_URL, { cache: "no-store" });
-        const text = await res.text();
-        const table = parseCSV(text);
+    // ✅ 이름 입력 중 공백 자동 제거(바로 눈에 보이게)
+    inputNameOnly.addEventListener("input", ()=>{
+      const v = String(inputNameOnly.value||"");
+      const trimmed = v.replace(/\s+/g,"");
+      if(v !== trimmed) inputNameOnly.value = trimmed;
+    });
+    inputName.addEventListener("input", ()=>{
+      const v = String(inputName.value||"");
+      const trimmed = v.replace(/\s+/g,"");
+      if(v !== trimmed) inputName.value = trimmed;
+    });
 
-        if(!table || table.length < 2){
-          DB_ROWS = [];
-          DB_READY = true;
-          lastUpdatedEl.textContent = nowLocal();
-          setStatus("데이터를 불러왔지만 표가 비어있습니다. (관리자) 시트에 값이 있는지 확인해주세요.", "bad");
-          return;
-        }
-
-        const header = table[0].map(h => (h||"").trim());
-        const colKey = header.findIndex(h => h === "아이키" || h.toLowerCase() === "key");
-        const colTotal = header.findIndex(h => h === "누적점수" || h === "누적" || h.toLowerCase().includes("sum"));
-        const colRank = header.findIndex(h => h === "등급" || h.toLowerCase().includes("rank"));
-
-        if(colKey === -1 || colTotal === -1){
-          DB_ROWS = [];
-          DB_READY = true;
-          lastUpdatedEl.textContent = nowLocal();
-          setStatus("CSV 컬럼을 찾지 못했습니다. 헤더에 '아이키', '누적점수'가 있는지 확인해주세요.", "bad");
-          console.warn("[growth] CSV header:", header);
-          return;
-        }
-
-        DB_ROWS = table.slice(1)
-          .filter(r => r && r.length)
-          .map(r => {
-            const key = (r[colKey]||"").trim();
-            const total = Number((r[colTotal]||"0").toString().replace(/[^\d\-]/g,"")) || 0;
-            const rank = colRank !== -1 ? (r[colRank]||"").trim() : "";
-            return { key, total, rank };
-          })
-          .filter(x => x.key);
-
-        DB_READY = true;
-        lastUpdatedEl.textContent = nowLocal();
-
-        setStatus("준비 완료! 이름만 입력해서 조회해보세요.", "good");
-      }catch(err){
-        DB_READY = true;
-        DB_ROWS = [];
-        lastUpdatedEl.textContent = "오류";
-        setStatus("데이터 로드에 실패했습니다. 공유/웹게시 설정을 확인해주세요. (웹에 게시 + CSV)", "bad");
-        console.error(err);
-      }
-    }
-
-    // Start
-    setMode("nameOnly");
-    loadCSV();
+    // default mode: name
+    setMode("name");
   </script>
 </body>
 </html>
