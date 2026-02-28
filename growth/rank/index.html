@@ -1,1 +1,221 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>등급 체계(웹 표시) | 성장 포인트 | 계명태권도</title>
+  <meta name="description" content="계명태권도 성장 포인트 등급 체계(웹 표시). 누적 확장형 기준과 도복 단계 목표를 안내합니다." />
+  <meta name="theme-color" content="#0b0f19" />
+  <style>
+    :root{
+      --bg:#070a12; --text:rgba(255,255,255,.92); --muted:rgba(255,255,255,.66); --muted2:rgba(255,255,255,.56);
+      --gold:#f5c45a; --blue:#49a6ff; --r:22px; --r2:16px; --max:1060px;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--font); color:var(--text);
+      background:
+        radial-gradient(900px 520px at 18% 10%, rgba(73,166,255,.18), transparent 55%),
+        radial-gradient(900px 520px at 82% 18%, rgba(245,196,90,.14), transparent 55%),
+        linear-gradient(180deg, #060911 0%, #070a12 55%, #050713 100%);
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:18px 16px 60px}
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter:saturate(1.2) blur(10px);
+      background:linear-gradient(180deg, rgba(7,10,18,.88), rgba(7,10,18,.55));
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .topbar .wrap{padding:14px 16px}
+    .row{display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap}
+    .title{display:flex; align-items:center; gap:10px}
+    .dot{
+      width:14px; height:14px; border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, rgba(245,196,90,.95), rgba(73,166,255,.75));
+      box-shadow: 0 10px 30px rgba(73,166,255,.18);
+    }
+    .title h1{margin:0; font-size:15px}
+    .title .sub{margin:2px 0 0; font-size:12px; color:rgba(255,255,255,.56)}
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 12px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      box-shadow: 0 10px 26px rgba(0,0,0,.28);
+      font-weight:800; font-size:13px;
+    }
+    .btn.primary{border-color: rgba(73,166,255,.45); background: linear-gradient(180deg, rgba(73,166,255,.22), rgba(73,166,255,.10));}
+    .btn.gold{border-color: rgba(245,196,90,.45); background: linear-gradient(180deg, rgba(245,196,90,.22), rgba(245,196,90,.10));}
 
+    .card{
+      margin-top:14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.035));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hd{padding:16px 16px 10px; border-bottom:1px solid rgba(255,255,255,.08)}
+    .hd h2{margin:0; font-size:18px}
+    .hd p{margin:8px 0 0; color:rgba(255,255,255,.56); line-height:1.55; font-size:13px}
+    .bd{padding:14px 16px 18px}
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+    }
+    th,td{
+      padding:12px 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      font-size:13px;
+      vertical-align:top;
+    }
+    th{color:rgba(255,255,255,.90); text-align:left; background:rgba(255,255,255,.04)}
+    td{color:rgba(255,255,255,.68)}
+    tr:last-child td{border-bottom:none}
+    .k{color:rgba(255,255,255,.90); font-weight:900}
+    .note{
+      margin-top:12px;
+      border-radius: 18px;
+      border:1px solid rgba(245,196,90,.22);
+      background: rgba(245,196,90,.08);
+      padding:12px 12px;
+      color: rgba(255,255,255,.88);
+      font-size:13px;
+      line-height:1.6;
+    }
+    .grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+    .panel{
+      border-radius: var(--r2);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding:14px;
+    }
+    .panel h3{margin:0 0 8px; font-size:14px}
+    .panel p, .panel li{color:rgba(255,255,255,.66); line-height:1.6; font-size:13px}
+    ul{margin:8px 0 0; padding-left:18px}
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap">
+      <div class="row">
+        <div class="title">
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <h1>등급 체계 (웹 표시)</h1>
+            <div class="sub">누적 확장형 · 초기화 없음</div>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="btn" href="../../index.html">🏠 홈으로</a>
+          <a class="btn primary" href="../index.html">← 포인트 조회로</a>
+          <a class="btn gold" href="../guide/">📌 운영 안내</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="hd">
+        <h2>등급은 “명예 표시(웹)”입니다</h2>
+        <p>
+          등급은 실물 제작 없이 <b>조회 화면에서만 표시</b>됩니다.
+          포인트는 누적되며, 일정 구간을 넘을수록 등급이 확장됩니다.
+        </p>
+      </div>
+      <div class="bd">
+
+        <table aria-label="등급 체계">
+          <thead>
+            <tr>
+              <th style="width:28%">등급</th>
+              <th style="width:32%">누적 점수</th>
+              <th>의미</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="k">브론즈</td>
+              <td>0 ~ 5,000</td>
+              <td>시작 단계 · 습관 형성</td>
+            </tr>
+            <tr>
+              <td class="k">실버</td>
+              <td>5,001 ~ 12,000</td>
+              <td>성실 수련생 · 꾸준함 강화</td>
+            </tr>
+            <tr>
+              <td class="k">골드</td>
+              <td>12,001 ~ 20,000</td>
+              <td>모범 리더 · 태도/예절 우수</td>
+            </tr>
+            <tr>
+              <td class="k">블루마스터</td>
+              <td>20,001 ~ 30,000</td>
+              <td>도복 목표 마무리 구간</td>
+            </tr>
+            <tr>
+              <td class="k">KM 챔피언</td>
+              <td>30,000 ~ 49,999</td>
+              <td>30,000점 달성 구간 (도복 단계 상승 시작)</td>
+            </tr>
+            <tr>
+              <td class="k">KM 마스터</td>
+              <td>50,000 ~ 74,999</td>
+              <td>장기 수련 핵심 단계</td>
+            </tr>
+            <tr>
+              <td class="k">KM 그랜드</td>
+              <td>75,000 ~ 99,999</td>
+              <td>상위 성장 단계 · 꾸준함의 상징</td>
+            </tr>
+            <tr>
+              <td class="k">KM 레전드</td>
+              <td>100,000 이상</td>
+              <td>최상위 장기 수련 명예 단계</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="note">
+          <b>도복 단계(누적 확장형)</b><br/>
+          • 30,000점: 일반 도복 / 60,000점: 유단자 도복 / 90,000점: 고단자 도복(삼선)<br/>
+          • 달성 후에도 포인트는 계속 누적되며, 다음 구간 목표로 이어집니다.
+        </div>
+
+        <div class="grid">
+          <div class="panel">
+            <h3>✅ 왜 “웹 표시”만 하나요?</h3>
+            <ul>
+              <li>실물 제작 없이도 아이에게 충분한 동기 부여가 됩니다.</li>
+              <li>관리 비용을 낮추고, 시스템을 오래 유지할 수 있습니다.</li>
+              <li>조회 페이지에서 진행률/등급을 매일 확인하도록 유도합니다.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>✅ 연속성(누적 확장형) 포인트</h3>
+            <ul>
+              <li>포인트는 <b>초기화하지 않습니다.</b></li>
+              <li>도복은 <b>누적 30,000점 단위</b>로 단계가 상승합니다.</li>
+              <li>장기 수련생은 자연스럽게 상위 등급으로 확장됩니다.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+</body>
+</html>
