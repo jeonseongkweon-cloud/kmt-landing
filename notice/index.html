@@ -12,13 +12,12 @@
   <meta property="og:site_name" content="계명태권도" />
   <meta property="og:title" content="공지사항 | 계명태권도" />
   <meta property="og:description" content="공개 안내/행사/운영 공지를 한 곳에서 확인합니다." />
-  <!-- ※ 해시(#)는 미리보기에 잘 반영되지 않아서 /notice/ 기준으로 지정 -->
   <meta property="og:url" content="https://계명태권도.com/notice/" />
   <meta property="og:image" content="https://static.wixstatic.com/media/abf917_9cddee23300c4238bcaec82c00bbf08a~mv2.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
 
-  <!-- ✅ Twitter Card (다른 플랫폼에서도 동일하게) -->
+  <!-- ✅ Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="공지사항 | 계명태권도" />
   <meta name="twitter:description" content="공개 안내/행사/운영 공지를 한 곳에서 확인합니다." />
@@ -170,7 +169,6 @@
 
     footer{margin-top:18px; text-align:center; color:rgba(255,255,255,.55); font-size:12px;}
 
-    /* ✅ “딱 한 글 모드”일 때 UI 정리 */
     .singleMode .lead,
     .singleMode .filters,
     .singleMode .search{ display:none; }
@@ -181,10 +179,8 @@
 <body>
   <div class="wrap" id="wrap">
     <div class="topbar">
-      <!-- ✅ 상단: 홈페이지 바로가기 -->
       <a class="home" href="../">← 홈페이지 바로가기</a>
 
-      <!-- 검색 (딱 한 글 모드에서는 자동 숨김) -->
       <div class="search" title="검색">
         🔎 <input id="q" type="search" placeholder="공지 검색 (예: 입학, 차량, 심사, 행사…)" />
       </div>
@@ -201,7 +197,6 @@
     <footer>© <span id="y"></span> 계명태권도</footer>
   </div>
 
-  <!-- ✅ 공지 데이터 로드 -->
   <script src="./data.js"></script>
 
   <script>
@@ -212,7 +207,6 @@
     const qEl = $("#q");
     const filtersEl = $("#filters");
 
-    // ✅ data.js가 window.notices로 올라오면 여기서 바로 읽습니다.
     const all = Array.isArray(window.notices) ? window.notices : [];
     const sorted = [...all].sort((a,b)=> String(b.date||"").localeCompare(String(a.date||"")));
 
@@ -234,7 +228,6 @@
       });
     }
 
-    // chips
     filtersEl.innerHTML = "";
     filtersEl.appendChild(chip("전체"));
     tags.forEach(t=>filtersEl.appendChild(chip(t)));
@@ -301,13 +294,11 @@
           </div>
         `;
 
-        // ✅ content는 HTML 허용이므로 innerHTML로 주입
         card.querySelector(`#body-${idx}`).innerHTML = content;
 
         listEl.appendChild(card);
       });
 
-      // toggle
       listEl.querySelectorAll("[data-toggle]").forEach(btn=>{
         btn.addEventListener("click", ()=>{
           const i = btn.getAttribute("data-toggle");
@@ -315,11 +306,12 @@
           const on = body.style.display === "block";
           body.style.display = on ? "none" : "block";
           btn.textContent = on ? "내용 보기" : "접기";
-          btn.classList.toggle("primary", on); // 접기일 때 기본으로
+
+          // ✅ FIX: "접기" 상태일 때 primary 유지 (의도대로)
+          btn.classList.toggle("primary", !on);
         });
       });
 
-      // copy link by date
       listEl.querySelectorAll("[data-copy]").forEach(btn=>{
         btn.addEventListener("click", async ()=>{
           const date = btn.getAttribute("data-copy");
@@ -336,19 +328,15 @@
     }
 
     if(qEl) qEl.addEventListener("input", ()=>render());
-
     document.getElementById("y").textContent = new Date().getFullYear();
 
-    // ✅ “딱 한 글” 링크 모드: /notice/#YYYY-MM-DD
     (function singleNoticeByHash(){
       const hash = decodeURIComponent(location.hash || "").replace("#","").trim();
 
       if(hash){
-        // single mode: UI 숨기고 해당 날짜만 렌더
         wrapEl.classList.add("singleMode");
         render(hash);
 
-        // 렌더된 첫 카드 자동 펼치기 + 스크롤
         setTimeout(()=>{
           const firstToggle = listEl.querySelector("[data-toggle]");
           const firstCard = listEl.querySelector(".card");
@@ -359,7 +347,6 @@
         return;
       }
 
-      // 일반 목록 모드
       render();
       updateChips();
     })();
