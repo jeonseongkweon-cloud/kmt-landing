@@ -11,10 +11,7 @@
   <meta name="naver-site-verification" content="2a572f93dfd846891eef198177054b9bb2a11934" />
 
   <!-- =====================================================
-    ✅ ICON / FAVICON / APP ICON  (전총재님 로고 링크 적용)
-    - 브라우저 탭(파비콘): 48
-    - 안드로이드/크롬 PWA: 192/512
-    - 아이폰 홈화면(터치아이콘): 192(또는 180도 가능하지만 192도 무난)
+    ✅ ICON / FAVICON / APP ICON
   ====================================================== -->
   <link rel="icon" type="image/png" sizes="48x48"
         href="https://static.wixstatic.com/media/abf917_56b8e2a4f59d406c95d03ef8b46be646~mv2.png" />
@@ -28,27 +25,20 @@
   <meta name="msapplication-TileImage"
         content="https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png" />
 
-  <!-- ✅ OG (카톡/문자 공유 시 '계명태권도'로 보이게) -->
+  <!-- ✅ OG -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="계명태권도 | 공식 홈페이지" />
   <meta property="og:description" content="유치부·초등 저학년 맞춤 | 안전하고 따뜻한 지도 | 영상/시간표/문의" />
-  <!-- OG 이미지는 48/192 말고, 공유용(큰 이미지)로 유지하는 게 유리 -->
   <meta property="og:image" content="https://static.wixstatic.com/media/abf917_9a323d3a71994964a4b962b29393fbf9~mv2.jpg" />
   <meta property="og:url" content="https://계명태권도.com" />
 
   <!-- =====================================================
-   ✅ PWA (바탕화면 추가 / 앱처럼 실행) - 최소 삽입
-   - 아래 2개 파일을 루트에 추가하세요:
-     1) manifest.webmanifest
-     2) service-worker.js
-   - 아이콘 파일(권장):
-     assets/icons/icon-192.png
-     assets/icons/icon-512.png
+   ✅ PWA 기본 유지 (아이콘/속도 도움)
+   - 설치 강제/유도는 만들지 않음
   ====================================================== -->
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <!-- ✅ 기존 로컬 아이콘 대신, 전총재님 192 로고 링크로도 동작하게 교체 -->
   <link rel="apple-touch-icon" href="https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png" />
 
   <!-- =====================================================
@@ -64,30 +54,17 @@
       bandUrl: "https://band.us/n/a8a7b9Xahdgb8",
       kakaoUrl: "https://open.kakao.com/o/gF8p81hi",
 
-      // ✅ 유튜브 (채널/첫 영상)
       youtubeChannelUrl: "https://www.youtube.com/@%EA%B3%84%EB%AA%85%ED%83%9C%EA%B6%8C%EB%8F%84%EC%9A%B8%EC%82%B0",
       youtubeVideoId: "aHZSZ1YHIAY",
 
-      // ✅ 수련생 조회(verification)
       verificationPageUrl: "verification/",
-
-      // ✅ 성장 포인트 조회(growth)
       growthPageUrl: "growth/",
-
-      // 결제 폴더
       payPageUrl: "pay/",
-
-      // ✅ 공지 폴더 (홈페이지 내부 공지)
       noticePageUrl: "notice/",
-
-      // ✅ NEW: 갤러리 조회 폴더
       galleryPageUrl: "gallery/",
 
-      // ✅ 로고 (상단 왼쪽 44px 영역)
-      // - 48 전용은 너무 작아서 여기엔 192/512 쪽이 더 선명함
       logoImage: "https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png",
 
-      // ✅ 1080*1350 (4:5) 이미지 8장
       heroImages: [
         "https://static.wixstatic.com/media/abf917_9a323d3a71994964a4b962b29393fbf9~mv2.jpg",
         "https://static.wixstatic.com/media/abf917_8866dffe5a7843a99efc87f9b2b97065~mv2.jpg",
@@ -99,7 +76,6 @@
         "https://static.wixstatic.com/media/abf917_a2eef1c23b7a489a92966662dd6850ee~mv2.jpg"
       ],
 
-      // ✅ 공지 스크롤 속도(초) & 보여주는 높이(px)
       noticeSpeedSec: 18,
       noticeViewportPx: 140,
 
@@ -172,7 +148,6 @@
     @media (min-width:860px){
       .heroSlide{ max-height:520px; }
     }
-
     .heroSlide .layer{
       position:absolute; inset:0;
       background-size: contain;
@@ -185,7 +160,6 @@
       filter: saturate(1.03) contrast(1.01);
     }
     .heroSlide .layer.on{ opacity:1; transform: translateX(0); }
-
     .heroSlide:after{
       content:"";
       position:absolute; inset:0;
@@ -470,14 +444,12 @@
     .noticeHead .actions{
       display:flex; gap:8px; flex-wrap:wrap;
     }
-
     .noticeViewport{
       padding:12px 12px 12px;
       height: var(--noticeH, 140px);
       overflow:hidden;
       position:relative;
     }
-
     .noticeList{
       list-style:none;
       padding:0;
@@ -489,7 +461,6 @@
       animation: noticeUp var(--noticeSpeed, 18s) linear infinite;
     }
     .noticeBox:hover .noticeList{ animation-play-state: paused; }
-
     .noticeItem{
       display:flex;
       gap:10px;
@@ -520,12 +491,10 @@
       color: rgba(233,238,252,.72);
       line-height:1.4;
     }
-
     @keyframes noticeUp{
       0%   { transform: translateY(0); }
       100% { transform: translateY(-50%); }
     }
-
     @media (max-width: 480px){
       .noticeViewport{ height: 290px !important; }
       .noticeTitle{ font-size: 13px; }
@@ -591,9 +560,9 @@
     .nMeta{font-size:12px; color: rgba(233,238,252,.72); line-height:1.45;}
 
     /* =====================================================
-       ✅ NEW: "바탕화면에 추가" 얌전한 배너 (기존 톤 유지)
+       ✅ 홈 화면에 추가 안내 (설치 유도 X / 안내만)
     ====================================================== */
-    .pwaBar{
+    .homeAddBar{
       margin-top:12px;
       border:1px solid rgba(255,138,0,.22);
       background: linear-gradient(180deg, rgba(255,138,0,.10), rgba(15,22,40,.88));
@@ -601,7 +570,7 @@
       overflow:hidden;
       box-shadow: 0 10px 24px rgba(0,0,0,.22);
     }
-    .pwaInner{
+    .homeAddInner{
       padding:10px 12px;
       display:flex;
       align-items:center;
@@ -609,10 +578,10 @@
       gap:10px;
       flex-wrap:wrap;
     }
-    .pwaLeft{
+    .homeAddLeft{
       display:flex; gap:10px; align-items:center; min-width:0;
     }
-    .pwaPill{
+    .homeAddPill{
       flex:0 0 auto;
       font-weight:950;
       font-size:11px;
@@ -623,7 +592,7 @@
       color: rgba(233,238,252,.92);
       white-space:nowrap;
     }
-    .pwaText{
+    .homeAddText{
       min-width:0;
       font-size:12px;
       color: rgba(233,238,252,.86);
@@ -633,10 +602,10 @@
       text-overflow:ellipsis;
       max-width:640px;
     }
-    .pwaActions{
+    .homeAddActions{
       display:flex; gap:8px; flex-wrap:wrap; align-items:center;
     }
-    .pwaBtn{
+    .homeAddBtn{
       display:inline-flex;align-items:center;justify-content:center;gap:8px;
       padding:9px 12px;border-radius:14px;
       border:1px solid rgba(255,255,255,.14);
@@ -645,15 +614,15 @@
       cursor:pointer;
       white-space:nowrap;
     }
-    .pwaBtn.primary{
+    .homeAddBtn.primary{
       background: linear-gradient(180deg, rgba(255,138,0,.95), rgba(255,138,0,.75));
       border-color: rgba(255,138,0,.35);
       color:#101019;
     }
-    .pwaHide{ display:none !important; }
+    .homeAddHide{ display:none !important; }
 
-    /* 모달(안내) - 아주 심플 */
-    .pwaModalBack{
+    /* 모달(안내) */
+    .homeAddModalBack{
       position:fixed; inset:0;
       background: rgba(0,0,0,.62);
       display:none;
@@ -662,7 +631,7 @@
       padding:16px;
       z-index:2000;
     }
-    .pwaModal{
+    .homeAddModal{
       width:min(720px, 100%);
       border-radius:20px;
       border:1px solid rgba(255,255,255,.12);
@@ -670,13 +639,13 @@
       box-shadow: var(--shadow);
       overflow:hidden;
     }
-    .pwaModalHead{
+    .homeAddModalHead{
       padding:12px 14px;
       display:flex; align-items:center; justify-content:space-between; gap:10px;
       border-bottom:1px solid rgba(255,255,255,.10);
     }
-    .pwaModalHead b{font-size:14px}
-    .pwaX{
+    .homeAddModalHead b{font-size:14px}
+    .homeAddX{
       width:38px;height:38px;border-radius:12px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
@@ -684,9 +653,10 @@
       cursor:pointer;
       font-weight:950;
     }
-    .pwaModalBody{padding:12px 14px}
-    .pwaTabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px}
-    .pwaTab{
+    .homeAddModalBody{padding:12px 14px}
+
+    .homeAddTabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px}
+    .homeAddTab{
       padding:9px 12px;border-radius:999px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.04);
@@ -695,12 +665,12 @@
       font-size:12px;
       color: rgba(233,238,252,.92);
     }
-    .pwaTab.on{
+    .homeAddTab.on{
       background: rgba(255,138,0,.14);
       border-color: rgba(255,138,0,.25);
       color: rgba(233,238,252,.95);
     }
-    .pwaSteps{
+    .homeAddSteps{
       border-radius:18px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.03);
@@ -709,8 +679,29 @@
       color: rgba(233,238,252,.88);
       line-height:1.7;
     }
-    .pwaHint{
-      margin-top:8px;
+    .homeAddGrid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:8px;
+      margin-top:10px;
+    }
+    @media (min-width:640px){
+      .homeAddGrid{ grid-template-columns: 1fr 1fr; }
+    }
+    .homeAddCard{
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      padding:10px 10px;
+    }
+    .homeAddCard b{display:block;font-size:12px;margin-bottom:6px}
+    .homeAddMini{
+      font-size:12px;
+      color: rgba(233,238,252,.72);
+      line-height:1.5;
+    }
+    .homeAddHint{
+      margin-top:10px;
       font-size:12px;
       color: rgba(233,238,252,.65);
       line-height:1.5;
@@ -740,38 +731,29 @@
           <a class="btn" id="kakaoTop" href="#" target="_blank" rel="noopener">🟡 카톡</a>
           <a class="btn" id="bandTop" href="#" target="_blank" rel="noopener">🟢 밴드</a>
 
-          <!-- ✅ 수련생 조회 -->
           <a class="btn primary" id="verifyTop" href="verification/">🔎 조회</a>
-
-          <!-- ✅ 성장 포인트 조회 -->
           <a class="btn" id="growthTop" href="growth/">⭐ 성장 포인트</a>
-
-          <!-- ✅ 갤러리 조회 -->
           <a class="btn" id="galleryTop" href="gallery/">🖼️ 갤러리 조회</a>
-
-          <!-- ✅ 공지사항 -->
           <a class="btn" id="noticeTop" href="notice/">📢 공지</a>
-
           <a class="btn" id="payTop" href="pay/">💳 결제</a>
         </div>
       </div>
     </div>
 
     <!-- =====================================================
-      ✅ NEW: 바탕화면 추가 안내 배너 (얌전하게)
+      ✅ NEW: 홈 화면에 추가(바로가기) 안내 (설치 유도 X)
     ====================================================== -->
-    <section class="pwaBar" id="pwaBar" aria-label="바탕화면 추가 안내">
-      <div class="pwaInner">
-        <div class="pwaLeft">
-          <span class="pwaPill">📲 바탕화면</span>
-          <div class="pwaText" title="홈 화면에 추가하면 앱처럼 1초 접속">
-            홈 화면에 추가하면 <b>앱처럼 1초 접속</b>할 수 있어요.
+    <section class="homeAddBar" id="homeAddBar" aria-label="홈 화면에 추가 안내">
+      <div class="homeAddInner">
+        <div class="homeAddLeft">
+          <span class="homeAddPill">📲 바로가기</span>
+          <div class="homeAddText" title="홈 화면에 추가하면 1초 접속">
+            홈 화면에 추가하면 <b>바로가기 아이콘</b>이 생겨요.
           </div>
         </div>
-        <div class="pwaActions">
-          <button class="pwaBtn" id="pwaHowBtn" type="button">방법</button>
-          <button class="pwaBtn primary pwaHide" id="pwaInstallBtn" type="button">✅ 한 번에 추가</button>
-          <button class="pwaBtn" id="pwaHideBtn" type="button">나중에</button>
+        <div class="homeAddActions">
+          <button class="homeAddBtn primary" id="homeAddHowBtn" type="button">홈 화면에 추가</button>
+          <button class="homeAddBtn" id="homeAddHideBtn" type="button">닫기</button>
         </div>
       </div>
     </section>
@@ -962,41 +944,43 @@
     </div>
   </div>
 
-  <!-- ✅ NEW: 바탕화면 추가 안내 모달 -->
-  <div class="pwaModalBack" id="pwaModalBack" aria-hidden="true">
-    <div class="pwaModal" role="dialog" aria-modal="true" aria-label="바탕화면 추가 방법">
-      <div class="pwaModalHead">
-        <b>📲 바탕화면에 추가하는 방법</b>
-        <button class="pwaX" id="pwaModalClose" type="button" aria-label="닫기">✕</button>
+  <!-- ✅ NEW: 홈 화면에 추가 안내 모달 -->
+  <div class="homeAddModalBack" id="homeAddModalBack" aria-hidden="true">
+    <div class="homeAddModal" role="dialog" aria-modal="true" aria-label="홈 화면에 추가 방법">
+      <div class="homeAddModalHead">
+        <b>📲 홈 화면에 추가(바로가기)</b>
+        <button class="homeAddX" id="homeAddModalClose" type="button" aria-label="닫기">✕</button>
       </div>
-      <div class="pwaModalBody">
-        <div class="pwaTabs">
-          <button class="pwaTab" id="pwaTabAuto" type="button">가능하면 “한 번에”</button>
-          <button class="pwaTab" id="pwaTabAndroid" type="button">안드로이드</button>
-          <button class="pwaTab" id="pwaTabIOS" type="button">아이폰</button>
+      <div class="homeAddModalBody">
+        <div class="homeAddTabs">
+          <button class="homeAddTab" id="homeAddTabAndroid" type="button">안드로이드</button>
+          <button class="homeAddTab" id="homeAddTabIOS" type="button">아이폰</button>
         </div>
 
-        <div class="pwaSteps" id="pwaPanelAuto" style="display:none;">
-          1) 아래 <b>“✅ 한 번에 추가”</b> 버튼을 누르세요.<br/>
-          2) 안내가 뜨면 <b>추가</b>를 눌러 완료하세요.
-          <div class="pwaHint">* 지원되는 기기/브라우저(주로 안드로이드 크롬)에서만 가능합니다.</div>
-          <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="pwaBtn primary pwaHide" id="pwaInstallBtn2" type="button">✅ 한 번에 추가</button>
+        <div class="homeAddSteps" id="homeAddPanelAndroid" style="display:none;">
+          <b>안드로이드 (크롬 / 삼성인터넷)</b><br/>
+          1) 오른쪽 위 <b>⋮(점 3개)</b> 또는 <b>≡(메뉴)</b>를 누르세요.<br/>
+          2) <b>“홈 화면에 추가”</b> 또는 <b>“홈 화면”</b>을 누르세요.<br/>
+          3) <b>추가</b> 누르면 끝!
+          <div class="homeAddGrid">
+            <div class="homeAddCard">
+              <b>📌 메뉴가 안 보여요</b>
+              <div class="homeAddMini">카카오톡/인앱 브라우저일 수 있어요.<br/>아래 방법 중 하나를 해주세요.</div>
+            </div>
+            <div class="homeAddCard">
+              <b>✅ 해결 방법</b>
+              <div class="homeAddMini">① ‘크롬에서 열기’<br/>② ‘기본 브라우저로 열기’</div>
+            </div>
           </div>
+          <div class="homeAddHint">* “웹앱 설치”는 안내하지 않습니다. (경고가 뜰 수 있어요)</div>
         </div>
 
-        <div class="pwaSteps" id="pwaPanelAndroid" style="display:none;">
-          1) 오른쪽 위 <b>⋮(점 세 개)</b> 메뉴를 누르세요.<br/>
-          2) <b>“홈 화면에 추가”</b> 또는 <b>“앱 설치”</b>를 선택하세요.<br/>
-          3) 이름 확인 후 <b>추가</b>를 누르면 끝!
-          <div class="pwaHint">* 카카오톡/인앱 브라우저에서는 메뉴가 안 보일 수 있어요 → 크롬에서 열기 추천.</div>
-        </div>
-
-        <div class="pwaSteps" id="pwaPanelIOS" style="display:none;">
+        <div class="homeAddSteps" id="homeAddPanelIOS" style="display:none;">
+          <b>아이폰 (Safari)</b><br/>
           1) <b>Safari</b>에서 이 페이지를 열어주세요.<br/>
-          2) 아래 <b>공유</b> 버튼(□↑)을 누르세요.<br/>
-          3) <b>“홈 화면에 추가”</b> 선택 → <b>추가</b> 누르면 끝!
-          <div class="pwaHint">* 아이폰은 이 방법이 가장 확실합니다. (한 번에 추가 버튼이 보통 뜨지 않아요)</div>
+          2) 아래(또는 위) <b>공유</b> 버튼(□↑)을 누르세요.<br/>
+          3) <b>“홈 화면에 추가”</b> → <b>추가</b> 누르면 끝!
+          <div class="homeAddHint">* 아이폰은 Safari에서 하는 게 제일 확실합니다.</div>
         </div>
       </div>
     </div>
@@ -1046,7 +1030,6 @@
       if(el) el.href = v;
     });
 
-    // ✅ 성장 포인트 링크 자동 반영
     const gr = KMT.growthPageUrl || "growth/";
     ["growthTop","growthBtn","growthBottom","growthBtnMid"].forEach(id=>{
       const el = $(id);
@@ -1185,7 +1168,6 @@
       layers.forEach((el,i)=>el.classList.toggle("on", i===idx));
       [...dots.children].forEach((el,i)=>el.classList.toggle("on", i===idx));
     }
-
     if(imgs.length > 1){
       setInterval(()=>show((idx+1)%imgs.length), 3200);
     }
@@ -1201,32 +1183,32 @@
     });
 
     /* =====================================================
-       ✅ PWA 설치/안내 스크립트 (최소/안전)
+       ✅ 홈 화면에 추가 안내 (설치 유도 없음)
     ====================================================== */
-    (function PWA_SETUP(){
-      const bar = $("pwaBar");
-      const howBtn = $("pwaHowBtn");
-      const installBtn = $("pwaInstallBtn");
-      const hideBtn = $("pwaHideBtn");
+    (function HOME_ADD_HELP(){
+      const bar = $("homeAddBar");
+      const howBtn = $("homeAddHowBtn");
+      const hideBtn = $("homeAddHideBtn");
 
-      const modalBack = $("pwaModalBack");
-      const modalClose = $("pwaModalClose");
-      const tabAuto = $("pwaTabAuto");
-      const tabAndroid = $("pwaTabAndroid");
-      const tabIOS = $("pwaTabIOS");
-      const panelAuto = $("pwaPanelAuto");
-      const panelAndroid = $("pwaPanelAndroid");
-      const panelIOS = $("pwaPanelIOS");
-      const installBtn2 = $("pwaInstallBtn2");
+      const modalBack = $("homeAddModalBack");
+      const modalClose = $("homeAddModalClose");
+      const tabAndroid = $("homeAddTabAndroid");
+      const tabIOS = $("homeAddTabIOS");
+      const panelAndroid = $("homeAddPanelAndroid");
+      const panelIOS = $("homeAddPanelIOS");
 
-      const HIDE_KEY = "kmt_pwa_hide_until";
+      const HIDE_KEY = "kmt_homeadd_hide_until";
       const now = Date.now();
 
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-      if(isStandalone && bar) bar.classList.add("pwaHide");
+      // 이미 '홈 화면 모드'면(standalone) 배너 숨김
+      const isStandalone =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone === true;
+
+      if(isStandalone && bar) bar.classList.add("homeAddHide");
 
       const hideUntil = Number(localStorage.getItem(HIDE_KEY) || "0");
-      if(hideUntil && now < hideUntil && bar) bar.classList.add("pwaHide");
+      if(hideUntil && now < hideUntil && bar) bar.classList.add("homeAddHide");
 
       function isIOS(){
         return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -1234,31 +1216,26 @@
       function isAndroid(){
         return /Android/.test(navigator.userAgent);
       }
-      function guessTab(){
-        if(isIOS()) return "ios";
-        if(isAndroid()) return "android";
-        return "auto";
-      }
-      function setTab(which){
-        [tabAuto, tabAndroid, tabIOS].forEach(t=>t && t.classList.remove("on"));
-        [panelAuto, panelAndroid, panelIOS].forEach(p=>{ if(p) p.style.display="none"; });
 
-        if(which==="auto"){
-          tabAuto && tabAuto.classList.add("on");
-          panelAuto && (panelAuto.style.display="block");
-        }else if(which==="android"){
-          tabAndroid && tabAndroid.classList.add("on");
-          panelAndroid && (panelAndroid.style.display="block");
-        }else{
+      function setTab(which){
+        [tabAndroid, tabIOS].forEach(t=>t && t.classList.remove("on"));
+        if(panelAndroid) panelAndroid.style.display = "none";
+        if(panelIOS) panelIOS.style.display = "none";
+
+        if(which === "ios"){
           tabIOS && tabIOS.classList.add("on");
-          panelIOS && (panelIOS.style.display="block");
+          panelIOS && (panelIOS.style.display = "block");
+        }else{
+          tabAndroid && tabAndroid.classList.add("on");
+          panelAndroid && (panelAndroid.style.display = "block");
         }
       }
-      function openModal(which){
+
+      function openModal(){
         if(!modalBack) return;
         modalBack.style.display = "flex";
         modalBack.setAttribute("aria-hidden","false");
-        setTab(which || guessTab());
+        setTab(isIOS() ? "ios" : "android");
       }
       function closeModal(){
         if(!modalBack) return;
@@ -1266,79 +1243,34 @@
         modalBack.setAttribute("aria-hidden","true");
       }
 
-      howBtn && howBtn.addEventListener("click", ()=> openModal());
+      howBtn && howBtn.addEventListener("click", openModal);
+      hideBtn && hideBtn.addEventListener("click", ()=>{
+        // 14일간 숨김
+        localStorage.setItem(HIDE_KEY, String(Date.now() + 14*24*60*60*1000));
+        bar && bar.classList.add("homeAddHide");
+      });
+
       modalClose && modalClose.addEventListener("click", closeModal);
       modalBack && modalBack.addEventListener("click", (e)=>{ if(e.target===modalBack) closeModal(); });
 
-      tabAuto && tabAuto.addEventListener("click", ()=>setTab("auto"));
       tabAndroid && tabAndroid.addEventListener("click", ()=>setTab("android"));
       tabIOS && tabIOS.addEventListener("click", ()=>setTab("ios"));
+    })();
 
-      hideBtn && hideBtn.addEventListener("click", ()=>{
-        localStorage.setItem(HIDE_KEY, String(Date.now() + 14*24*60*60*1000));
-        bar && bar.classList.add("pwaHide");
+    /* =====================================================
+       ✅ 서비스워커 등록 (1개만 유지)
+       - 도메인 루트 / GitHub 프로젝트 경로 자동 대응
+    ====================================================== */
+    (function(){
+      if (!('serviceWorker' in navigator)) return;
+
+      const base = location.pathname.includes('/kmt-landing/') ? '/kmt-landing/' : '/';
+      const swUrl = base + 'service-worker.js';
+
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register(swUrl).catch(()=>{});
       });
-
-      let deferredPrompt = null;
-
-      function showInstallButtons(){
-        if(isStandalone) return;
-        if(installBtn) installBtn.classList.remove("pwaHide");
-        if(installBtn2) installBtn2.classList.remove("pwaHide");
-      }
-      function hideInstallButtons(){
-        if(installBtn) installBtn.classList.add("pwaHide");
-        if(installBtn2) installBtn2.classList.add("pwaHide");
-      }
-
-      async function doInstall(){
-        if(!deferredPrompt){
-          openModal(guessTab());
-          return;
-        }
-        deferredPrompt.prompt();
-        try{ await deferredPrompt.userChoice; }catch(e){}
-        deferredPrompt = null;
-        hideInstallButtons();
-        closeModal();
-      }
-
-      installBtn && installBtn.addEventListener("click", doInstall);
-      installBtn2 && installBtn2.addEventListener("click", doInstall);
-
-      window.addEventListener("beforeinstallprompt", (e)=>{
-        e.preventDefault();
-        deferredPrompt = e;
-        showInstallButtons();
-      });
-
-      window.addEventListener("appinstalled", ()=>{
-        hideInstallButtons();
-        if(bar) bar.classList.add("pwaHide");
-        localStorage.removeItem(HIDE_KEY);
-      });
-
-      if("serviceWorker" in navigator){
-        window.addEventListener("load", ()=>{
-          navigator.serviceWorker.register("service-worker.js").catch(()=>{});
-        });
-      }
     })();
   </script>
-  <script>
-(function(){
-  if (!('serviceWorker' in navigator)) return;
-
-  // ✅ 도메인 루트 / GitHub 프로젝트 경로 자동 대응
-  const base = location.pathname.includes('/kmt-landing/') ? '/kmt-landing/' : '/';
-  const swUrl = base + 'service-worker.js';
-
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register(swUrl)
-      .then(() => console.log('KMT SW registered:', swUrl))
-      .catch((e) => console.log('KMT SW register failed:', e));
-  });
-})();
-</script>
 </body>
 </html>
