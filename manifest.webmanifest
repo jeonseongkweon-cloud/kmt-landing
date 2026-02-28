@@ -1,1 +1,23 @@
-
+{
+  "name": "계명태권도",
+  "short_name": "계명태권도",
+  "description": "계명태권도 공식 홈페이지",
+  "start_url": "/kmt-landing/",
+  "scope": "/kmt-landing/",
+  "display": "standalone",
+  "background_color": "#0b0f19",
+  "theme_color": "#0b0f19",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
