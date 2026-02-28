@@ -18,6 +18,20 @@
   <meta property="og:url" content="https://계명태권도.com" />
 
   <!-- =====================================================
+   ✅ PWA (바탕화면 추가 / 앱처럼 실행) - 최소 삽입
+   - 아래 2개 파일을 루트에 추가하세요:
+     1) manifest.webmanifest
+     2) service-worker.js
+   - 아이콘 파일(권장):
+     assets/icons/icon-192.png
+     assets/icons/icon-512.png
+  ====================================================== -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+
+  <!-- =====================================================
    ✅ 수정할 부분 (여기만 바꾸면 전체 자동 반영)
   ====================================================== -->
   <script>
@@ -554,6 +568,134 @@
     }
     .nTitle{font-size:13px; font-weight:950; line-height:1.35;}
     .nMeta{font-size:12px; color: rgba(233,238,252,.72); line-height:1.45;}
+
+    /* =====================================================
+       ✅ NEW: "바탕화면에 추가" 얌전한 배너 (기존 톤 유지)
+       - hero 바로 아래에 한 줄짜리로 조용히 안내
+       - 안드로이드 지원 시에만 '한 번에 추가' 버튼 노출
+    ====================================================== */
+    .pwaBar{
+      margin-top:12px;
+      border:1px solid rgba(255,138,0,.22);
+      background: linear-gradient(180deg, rgba(255,138,0,.10), rgba(15,22,40,.88));
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow: 0 10px 24px rgba(0,0,0,.22);
+    }
+    .pwaInner{
+      padding:10px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .pwaLeft{
+      display:flex; gap:10px; align-items:center; min-width:0;
+    }
+    .pwaPill{
+      flex:0 0 auto;
+      font-weight:950;
+      font-size:11px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      color: rgba(233,238,252,.92);
+      white-space:nowrap;
+    }
+    .pwaText{
+      min-width:0;
+      font-size:12px;
+      color: rgba(233,238,252,.86);
+      line-height:1.45;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:640px;
+    }
+    .pwaActions{
+      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+    }
+    .pwaBtn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:9px 12px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      font-weight:950;font-size:12px;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .pwaBtn.primary{
+      background: linear-gradient(180deg, rgba(255,138,0,.95), rgba(255,138,0,.75));
+      border-color: rgba(255,138,0,.35);
+      color:#101019;
+    }
+    .pwaHide{ display:none !important; }
+
+    /* 모달(안내) - 아주 심플 */
+    .pwaModalBack{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.62);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:16px;
+      z-index:2000;
+    }
+    .pwaModal{
+      width:min(720px, 100%);
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(15,22,40,.98), rgba(11,15,25,.98));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .pwaModalHead{
+      padding:12px 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    .pwaModalHead b{font-size:14px}
+    .pwaX{
+      width:38px;height:38px;border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      font-weight:950;
+    }
+    .pwaModalBody{padding:12px 14px}
+    .pwaTabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px}
+    .pwaTab{
+      padding:9px 12px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      font-weight:950;
+      font-size:12px;
+      color: rgba(233,238,252,.92);
+    }
+    .pwaTab.on{
+      background: rgba(255,138,0,.14);
+      border-color: rgba(255,138,0,.25);
+      color: rgba(233,238,252,.95);
+    }
+    .pwaSteps{
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      padding:12px 12px;
+      font-size:12px;
+      color: rgba(233,238,252,.88);
+      line-height:1.7;
+    }
+    .pwaHint{
+      margin-top:8px;
+      font-size:12px;
+      color: rgba(233,238,252,.65);
+      line-height:1.5;
+    }
   </style>
 </head>
 
@@ -595,6 +737,26 @@
         </div>
       </div>
     </div>
+
+    <!-- =====================================================
+      ✅ NEW: 바탕화면 추가 안내 배너 (얌전하게)
+      - 지원 기기(안드로이드/크롬)면 '한 번에 추가' 버튼도 자동 표시
+    ====================================================== -->
+    <section class="pwaBar" id="pwaBar" aria-label="바탕화면 추가 안내">
+      <div class="pwaInner">
+        <div class="pwaLeft">
+          <span class="pwaPill">📲 바탕화면</span>
+          <div class="pwaText" title="홈 화면에 추가하면 앱처럼 1초 접속">
+            홈 화면에 추가하면 <b>앱처럼 1초 접속</b>할 수 있어요.
+          </div>
+        </div>
+        <div class="pwaActions">
+          <button class="pwaBtn" id="pwaHowBtn" type="button">방법</button>
+          <button class="pwaBtn primary pwaHide" id="pwaInstallBtn" type="button">✅ 한 번에 추가</button>
+          <button class="pwaBtn" id="pwaHideBtn" type="button">나중에</button>
+        </div>
+      </div>
+    </section>
 
     <!-- ✅ 공지사항(최근 5) -->
     <section class="noticeBox" id="notice">
@@ -785,6 +947,46 @@
       <a class="bbtn" href="notice/">📢 공지</a>
       <a class="bbtn" id="ytBottom" href="#" target="_blank" rel="noopener">▶️ 유튜브</a>
       <a class="bbtn" href="pay/">💳 결제</a>
+    </div>
+  </div>
+
+  <!-- ✅ NEW: 바탕화면 추가 안내 모달 -->
+  <div class="pwaModalBack" id="pwaModalBack" aria-hidden="true">
+    <div class="pwaModal" role="dialog" aria-modal="true" aria-label="바탕화면 추가 방법">
+      <div class="pwaModalHead">
+        <b>📲 바탕화면에 추가하는 방법</b>
+        <button class="pwaX" id="pwaModalClose" type="button" aria-label="닫기">✕</button>
+      </div>
+      <div class="pwaModalBody">
+        <div class="pwaTabs">
+          <button class="pwaTab" id="pwaTabAuto" type="button">가능하면 “한 번에”</button>
+          <button class="pwaTab" id="pwaTabAndroid" type="button">안드로이드</button>
+          <button class="pwaTab" id="pwaTabIOS" type="button">아이폰</button>
+        </div>
+
+        <div class="pwaSteps" id="pwaPanelAuto" style="display:none;">
+          1) 아래 <b>“✅ 한 번에 추가”</b> 버튼을 누르세요.<br/>
+          2) 안내가 뜨면 <b>추가</b>를 눌러 완료하세요.
+          <div class="pwaHint">* 지원되는 기기/브라우저(주로 안드로이드 크롬)에서만 가능합니다.</div>
+          <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="pwaBtn primary pwaHide" id="pwaInstallBtn2" type="button">✅ 한 번에 추가</button>
+          </div>
+        </div>
+
+        <div class="pwaSteps" id="pwaPanelAndroid" style="display:none;">
+          1) 오른쪽 위 <b>⋮(점 세 개)</b> 메뉴를 누르세요.<br/>
+          2) <b>“홈 화면에 추가”</b> 또는 <b>“앱 설치”</b>를 선택하세요.<br/>
+          3) 이름 확인 후 <b>추가</b>를 누르면 끝!
+          <div class="pwaHint">* 카카오톡/인앱 브라우저에서는 메뉴가 안 보일 수 있어요 → 크롬에서 열기 추천.</div>
+        </div>
+
+        <div class="pwaSteps" id="pwaPanelIOS" style="display:none;">
+          1) <b>Safari</b>에서 이 페이지를 열어주세요.<br/>
+          2) 아래 <b>공유</b> 버튼(□↑)을 누르세요.<br/>
+          3) <b>“홈 화면에 추가”</b> 선택 → <b>추가</b> 누르면 끝!
+          <div class="pwaHint">* 아이폰은 이 방법이 가장 확실합니다. (한 번에 추가 버튼이 보통 뜨지 않아요)</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -985,6 +1187,141 @@
         el.scrollIntoView({behavior:'smooth', block:'start'});
       });
     });
+
+    /* =====================================================
+       ✅ NEW: PWA 설치/안내 스크립트 (최소/안전)
+       - 안드로이드 크롬: beforeinstallprompt 지원 시 "한 번에 추가" 가능
+       - 아이폰: 수동 안내(사파리 공유 → 홈화면 추가)
+       - 배너 '나중에' 누르면 14일 동안 숨김
+       - service worker는 상대경로로 등록 (프로젝트 페이지도 안전)
+    ====================================================== */
+    (function PWA_SETUP(){
+      const bar = $("pwaBar");
+      const howBtn = $("pwaHowBtn");
+      const installBtn = $("pwaInstallBtn");
+      const hideBtn = $("pwaHideBtn");
+
+      const modalBack = $("pwaModalBack");
+      const modalClose = $("pwaModalClose");
+      const tabAuto = $("pwaTabAuto");
+      const tabAndroid = $("pwaTabAndroid");
+      const tabIOS = $("pwaTabIOS");
+      const panelAuto = $("pwaPanelAuto");
+      const panelAndroid = $("pwaPanelAndroid");
+      const panelIOS = $("pwaPanelIOS");
+      const installBtn2 = $("pwaInstallBtn2");
+
+      const HIDE_KEY = "kmt_pwa_hide_until";
+      const now = Date.now();
+
+      // 이미 standalone(설치된 상태)면 배너 숨김
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      if(isStandalone && bar) bar.classList.add("pwaHide");
+
+      // "나중에" 눌렀으면 숨김(14일)
+      const hideUntil = Number(localStorage.getItem(HIDE_KEY) || "0");
+      if(hideUntil && now < hideUntil && bar) bar.classList.add("pwaHide");
+
+      function isIOS(){
+        return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      }
+      function isAndroid(){
+        return /Android/.test(navigator.userAgent);
+      }
+      function guessTab(){
+        if(isIOS()) return "ios";
+        if(isAndroid()) return "android";
+        return "auto";
+      }
+      function setTab(which){
+        [tabAuto, tabAndroid, tabIOS].forEach(t=>t && t.classList.remove("on"));
+        [panelAuto, panelAndroid, panelIOS].forEach(p=>{ if(p) p.style.display="none"; });
+
+        if(which==="auto"){
+          tabAuto && tabAuto.classList.add("on");
+          panelAuto && (panelAuto.style.display="block");
+        }else if(which==="android"){
+          tabAndroid && tabAndroid.classList.add("on");
+          panelAndroid && (panelAndroid.style.display="block");
+        }else{
+          tabIOS && tabIOS.classList.add("on");
+          panelIOS && (panelIOS.style.display="block");
+        }
+      }
+      function openModal(which){
+        if(!modalBack) return;
+        modalBack.style.display = "flex";
+        modalBack.setAttribute("aria-hidden","false");
+        setTab(which || guessTab());
+      }
+      function closeModal(){
+        if(!modalBack) return;
+        modalBack.style.display = "none";
+        modalBack.setAttribute("aria-hidden","true");
+      }
+
+      howBtn && howBtn.addEventListener("click", ()=> openModal());
+      modalClose && modalClose.addEventListener("click", closeModal);
+      modalBack && modalBack.addEventListener("click", (e)=>{ if(e.target===modalBack) closeModal(); });
+
+      tabAuto && tabAuto.addEventListener("click", ()=>setTab("auto"));
+      tabAndroid && tabAndroid.addEventListener("click", ()=>setTab("android"));
+      tabIOS && tabIOS.addEventListener("click", ()=>setTab("ios"));
+
+      hideBtn && hideBtn.addEventListener("click", ()=>{
+        // 14일 숨김
+        localStorage.setItem(HIDE_KEY, String(Date.now() + 14*24*60*60*1000));
+        bar && bar.classList.add("pwaHide");
+      });
+
+      // install prompt (Android/Chromium)
+      let deferredPrompt = null;
+
+      function showInstallButtons(){
+        if(isStandalone) return;
+        if(installBtn) installBtn.classList.remove("pwaHide");
+        if(installBtn2) installBtn2.classList.remove("pwaHide");
+      }
+      function hideInstallButtons(){
+        if(installBtn) installBtn.classList.add("pwaHide");
+        if(installBtn2) installBtn2.classList.add("pwaHide");
+      }
+
+      async function doInstall(){
+        if(!deferredPrompt){
+          // 지원 안 되면 안내만
+          openModal(guessTab());
+          return;
+        }
+        deferredPrompt.prompt();
+        try{ await deferredPrompt.userChoice; }catch(e){}
+        deferredPrompt = null;
+        hideInstallButtons();
+        closeModal();
+      }
+
+      installBtn && installBtn.addEventListener("click", doInstall);
+      installBtn2 && installBtn2.addEventListener("click", doInstall);
+
+      window.addEventListener("beforeinstallprompt", (e)=>{
+        e.preventDefault();
+        deferredPrompt = e;
+        showInstallButtons();
+      });
+
+      window.addEventListener("appinstalled", ()=>{
+        hideInstallButtons();
+        if(bar) bar.classList.add("pwaHide");
+        localStorage.removeItem(HIDE_KEY);
+      });
+
+      // service worker register (safe for GitHub project pages)
+      if("serviceWorker" in navigator){
+        window.addEventListener("load", ()=>{
+          navigator.serviceWorker.register("service-worker.js").catch(()=>{});
+        });
+      }
+    })();
   </script>
 </body>
 </html>
