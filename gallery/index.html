@@ -375,15 +375,16 @@
       position:relative;
       width:100%;
       aspect-ratio: 16 / 9;
-      background:#000;
+      background:#000; /* 세로사진 여백 배경 */
     }
     .slideBox img{
       position:absolute; inset:0;
       width:100%; height:100%;
-      object-fit: cover;
+      object-fit: cover; /* 기본은 cover, JS가 세로면 contain으로 변경 */
       display:block;
       opacity:0;
       transition: opacity .35s ease;
+      background:#000; /* 이미지 자체 배경 (일부 브라우저에서 깔끔) */
     }
     .slideBox img.show{opacity:1}
     .navBtn{
@@ -1047,11 +1048,9 @@
       coverIndex = (idx + THUMB_ITEMS.length) % THUMB_ITEMS.length;
       coverImg.src = THUMB_ITEMS[coverIndex].url;
 
-      // 현재 페이지의 active 처리 + 전체 active 동기
       thumbPagesEl.querySelectorAll(".titem").forEach((el)=>{
         el.classList.remove("active");
       });
-      // 현재 커버와 같은 url인 썸네일 active (페이지 넘어가 있으면 표시 안될 수 있음)
       thumbPagesEl.querySelectorAll(`.titem[data-i="${coverIndex}"]`).forEach(el=> el.classList.add("active"));
     }
 
@@ -1077,13 +1076,11 @@
         `;
       }).join("");
 
-      // dot
       buildDots(thumbDotsEl, thumbPageCount, (i)=>{
         const w = thumbPagesEl.clientWidth || 1;
         thumbPagesEl.scrollTo({ left: i*w, behavior:"smooth" });
       });
 
-      // 클릭 이벤트(전역 인덱스)
       thumbPagesEl.querySelectorAll(".titem").forEach(el=>{
         el.addEventListener("click", ()=>{
           const i = Number(el.getAttribute("data-i"));
@@ -1091,7 +1088,6 @@
         });
       });
 
-      // 페이지 메타 + dot 연동
       function updateThumbPagerUI(){
         const w = thumbPagesEl.clientWidth || 1;
         const pi = Math.round(thumbPagesEl.scrollLeft / w);
@@ -1102,11 +1098,9 @@
       thumbPagesEl.onscroll = updateThumbPagerUI;
       updateThumbPagerUI();
 
-      // 커버가 0이면 0번 썸네일 active 표시
       setCover(coverIndex);
     }
 
-    // THUMB_ITEMS에 전역 인덱스 부여(섞기 후에도 인덱스 통일)
     function reindexThumbItems(){
       THUMB_ITEMS = THUMB_ITEMS.map((it, idx)=> ({...it, _globalIndex: idx}));
     }
@@ -1130,7 +1124,6 @@
     btnCopyCover.addEventListener("click", ()=> copyText(THUMB_ITEMS[coverIndex].url));
 
     btnShuffleThumbs.addEventListener("click", ()=>{
-      // shuffle
       const shuffled = [...THUMB_ITEMS];
       for(let i=shuffled.length-1; i>0; i--){
         const j = Math.floor(Math.random()*(i+1));
@@ -1146,6 +1139,7 @@
 
     /* ===========================
       (3) 슬라이드 쇼(이름 노출 금지)
+      ✅ 2번 방식: 세로=contain, 가로=cover 자동 판별
     =========================== */
     const slideTitle = document.getElementById("slideTitle");
     const slideSub = document.getElementById("slideSub");
@@ -1167,6 +1161,16 @@
     const speeds = [3000, 4000, 6000, 8000];
     let speedIdx = 1;
 
+    // ✅ 이미지 비율에 따라 object-fit 자동 적용
+    function applyFit(imgEl){
+      try{
+        const w = imgEl.naturalWidth || 0;
+        const h = imgEl.naturalHeight || 0;
+        if(!w || !h) return; // 아직 로딩 전
+        imgEl.style.objectFit = (h > w) ? "contain" : "cover";
+      }catch(e){}
+    }
+
     function setSlide(idx){
       slideIndex = (idx + ITEMS.length) % ITEMS.length;
       const it = ITEMS[slideIndex];
@@ -1177,9 +1181,13 @@
       const target = showingA ? imgA : imgB;
       const other  = showingA ? imgB : imgA;
 
-      target.src = it.url;
+      // 먼저 show 교체(깜빡임 최소)
       target.classList.add("show");
       other.classList.remove("show");
+
+      // 새 이미지 로딩 후 비율 판별해서 fit 적용
+      target.onload = ()=> applyFit(target);
+      target.src = it.url;
 
       showingA = !showingA;
     }
@@ -1284,7 +1292,6 @@
 
     /* INIT */
     (function init(){
-      // search query auto-run
       const u = new URL(location.href);
       const qq = u.searchParams.get("q");
       if(qq){
@@ -1292,16 +1299,15 @@
         runSearch(qq);
       }
 
-      // thumb pager
       reindexThumbItems();
       renderThumbPager();
 
-      // cover init
       coverImg.src = THUMB_ITEMS[0]?.url || "";
       setCover(0);
 
-      // slideshow init
+      // ✅ 슬라이드 초기 로딩도 비율 판별 적용
       if(ITEMS.length){
+        imgA.onload = ()=> applyFit(imgA);
         imgA.src = ITEMS[0].url;
         imgA.classList.add("show");
         slideTitle.textContent = "사진 1";
@@ -1309,7 +1315,6 @@
       }
       btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
 
-      // videos
       renderVideosShell();
       fillYouTubeTitles();
     })();
