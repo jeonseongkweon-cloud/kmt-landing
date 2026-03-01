@@ -95,7 +95,7 @@
     .cardBox .head p{margin:0; color:var(--muted); font-size:13px; line-height:1.55}
     .cardBox .body{padding:14px 14px 16px}
 
-    /* Search (NO internal hints shown) */
+    /* Search */
     .searchRow{
       display:flex; gap:10px; flex-wrap:wrap;
       align-items:center;
@@ -130,7 +130,7 @@
       font-weight:800;
     }
 
-    /* Result carousel (NO captions) */
+    /* Result carousel */
     .resultTop{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
       padding:10px 12px;
@@ -237,7 +237,7 @@
       .coverMain{ height: 440px; max-height: 440px; }
     }
 
-    /* ✅ THUMB RAIL: PAGED (5 rows only) */
+    /* THUMB RAIL */
     .thumbRail{
       border:1px solid var(--line);
       border-radius: 18px;
@@ -254,8 +254,6 @@
     }
     .thumbTitle b{font-size:14px}
     .thumbTitle small{color:var(--muted)}
-
-    /* Rail controls */
     .railTopRow{
       display:flex;
       align-items:center;
@@ -278,6 +276,7 @@
       font-weight:900;
       display:grid; place-items:center;
       user-select:none;
+      transition: transform .12s ease, border-color .12s ease;
     }
     .navMini:hover{ border-color: rgba(215,181,109,.35); transform: translateY(-1px); }
     .navMini:active{ transform: translateY(0); }
@@ -286,8 +285,6 @@
       font-size:12px;
       white-space:nowrap;
     }
-
-    /* Rail pager */
     .thumbPager{
       border:1px solid rgba(255,255,255,.10);
       border-radius: 16px;
@@ -306,8 +303,6 @@
       flex:0 0 100%;
       padding:8px;
     }
-
-    /* 3 columns x 5 rows = 15 thumbs per page (fixed) */
     .thumbGrid{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
@@ -339,7 +334,6 @@
       border-radius: 14px;
       pointer-events:none;
     }
-
     .thumbDots{
       display:flex; align-items:center; justify-content:center; gap:7px;
       padding:10px 10px 10px;
@@ -347,7 +341,7 @@
       background: rgba(0,0,0,.10);
     }
 
-    /* SLIDESHOW */
+    /* ✅ SLIDESHOW (초고급: 자동 리사이징 + 블러배경) */
     .slideshow{
       margin-top:12px;
       border:1px solid var(--line);
@@ -371,22 +365,53 @@
     .controls{
       display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;
     }
+
     .slideBox{
       position:relative;
       width:100%;
       aspect-ratio: 16 / 9;
-      background:#000; /* 세로사진 여백 배경 */
+      background:#000;
+      overflow:hidden;
+
+      /* JS가 넣어주는 배경 이미지 */
+      --bgurl: none;
     }
+
+    /* 블러 배경 레이어(cover) */
+    .slideBox::before{
+      content:"";
+      position:absolute; inset:-18%;
+      background-image: var(--bgurl);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: blur(26px) saturate(1.12);
+      opacity: .66;
+      transform: scale(1.08);
+      pointer-events:none;
+    }
+
+    /* 비네팅 + 톤 정리 */
+    .slideBox::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(120% 120% at 50% 40%, rgba(255,255,255,.08), rgba(0,0,0,.55) 55%, rgba(0,0,0,.78) 100%),
+        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.55));
+      pointer-events:none;
+    }
+
     .slideBox img{
       position:absolute; inset:0;
       width:100%; height:100%;
-      object-fit: cover; /* 기본은 cover, JS가 세로면 contain으로 변경 */
       display:block;
       opacity:0;
       transition: opacity .35s ease;
-      background:#000; /* 이미지 자체 배경 (일부 브라우저에서 깔끔) */
+      z-index:1; /* 배경 위 */
+      /* object-fit은 JS가 자동 세팅: cover/contain */
     }
     .slideBox img.show{opacity:1}
+
     .navBtn{
       position:absolute;
       top:50%;
@@ -399,8 +424,10 @@
       display:grid; place-items:center;
       cursor:pointer;
       user-select:none;
+      z-index: 2;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
     }
-    .navBtn:hover{border-color: rgba(215,181,109,.45)}
+    .navBtn:hover{border-color: rgba(215,181,109,.45); transform: translateY(-50%) scale(1.02)}
     .navBtn.prev{left:10px}
     .navBtn.next{right:10px}
 
@@ -536,7 +563,7 @@
 
   <main class="wrap">
 
-    <!-- 검색(화면에 내부용 안내문구 없음) -->
+    <!-- 검색 -->
     <section class="cardBox" id="searchSection">
       <div class="head">
         <div>
@@ -579,7 +606,7 @@
       </div>
     </section>
 
-    <!-- 대표 + 썸네일(페이지) -->
+    <!-- 대표 + 썸네일 -->
     <section class="cardBox">
       <div class="head">
         <div>
@@ -1037,11 +1064,10 @@
     const btnThumbNext = document.getElementById("btnThumbNext");
     const thumbMeta = document.getElementById("thumbMeta");
 
-    // 3열 * 5줄 = 15장
     const THUMBS_PER_PAGE = 15;
 
     let coverIndex = 0;
-    let THUMB_ITEMS = [...ITEMS]; // 섞기 대비
+    let THUMB_ITEMS = [...ITEMS];
     let thumbPageCount = 1;
 
     function setCover(idx){
@@ -1139,12 +1165,14 @@
 
     /* ===========================
       (3) 슬라이드 쇼(이름 노출 금지)
-      ✅ 2번 방식: 세로=contain, 가로=cover 자동 판별
+      ✅ 세로사진 자동 contain + 블러배경으로 고급 연출
     =========================== */
     const slideTitle = document.getElementById("slideTitle");
     const slideSub = document.getElementById("slideSub");
     const imgA = document.getElementById("slideImgA");
     const imgB = document.getElementById("slideImgB");
+    const slideBox = document.getElementById("slideBox");
+
     const btnPrev = document.getElementById("btnPrev");
     const btnNext = document.getElementById("btnNext");
     const btnPlay = document.getElementById("btnPlay");
@@ -1161,13 +1189,18 @@
     const speeds = [3000, 4000, 6000, 8000];
     let speedIdx = 1;
 
-    // ✅ 이미지 비율에 따라 object-fit 자동 적용
-    function applyFit(imgEl){
+    function applyAutoFit(imgEl, urlForBg){
       try{
         const w = imgEl.naturalWidth || 0;
         const h = imgEl.naturalHeight || 0;
-        if(!w || !h) return; // 아직 로딩 전
+        if(!w || !h) return;
+
+        // 세로는 contain(안 잘림), 가로는 cover(꽉 찬 느낌)
         imgEl.style.objectFit = (h > w) ? "contain" : "cover";
+
+        // 블러 배경에 같은 이미지 적용
+        const u = urlForBg || imgEl.src || "";
+        slideBox.style.setProperty("--bgurl", `url("${u}")`);
       }catch(e){}
     }
 
@@ -1181,13 +1214,11 @@
       const target = showingA ? imgA : imgB;
       const other  = showingA ? imgB : imgA;
 
-      // 먼저 show 교체(깜빡임 최소)
+      target.onload = ()=> applyAutoFit(target, it.url);
+      target.src = it.url;
+
       target.classList.add("show");
       other.classList.remove("show");
-
-      // 새 이미지 로딩 후 비율 판별해서 fit 적용
-      target.onload = ()=> applyFit(target);
-      target.src = it.url;
 
       showingA = !showingA;
     }
@@ -1305,11 +1336,14 @@
       coverImg.src = THUMB_ITEMS[0]?.url || "";
       setCover(0);
 
-      // ✅ 슬라이드 초기 로딩도 비율 판별 적용
       if(ITEMS.length){
-        imgA.onload = ()=> applyFit(imgA);
+        imgA.onload = ()=> applyAutoFit(imgA, ITEMS[0].url);
         imgA.src = ITEMS[0].url;
         imgA.classList.add("show");
+
+        // 배경도 즉시 설정
+        slideBox.style.setProperty("--bgurl", `url("${ITEMS[0].url}")`);
+
         slideTitle.textContent = "사진 1";
         slideSub.textContent = `1/${ITEMS.length}`;
       }
