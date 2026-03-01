@@ -76,6 +76,16 @@
       border-color: rgba(215,181,109,.45);
       background: linear-gradient(180deg, rgba(215,181,109,.18), rgba(255,255,255,.03));
     }
+    /* 시네마모드 버튼(톤만 약간 강조) */
+    .btn.cinema{
+      border-color: rgba(215,181,109,.38);
+      background: linear-gradient(180deg, rgba(215,181,109,.14), rgba(102,179,255,.06));
+    }
+    .btn.cinema.on{
+      border-color: rgba(102,179,255,.55);
+      background: linear-gradient(180deg, rgba(102,179,255,.18), rgba(215,181,109,.08));
+      box-shadow: 0 10px 30px rgba(102,179,255,.10);
+    }
 
     /* Section Cards */
     .cardBox{
@@ -341,7 +351,7 @@
       background: rgba(0,0,0,.10);
     }
 
-    /* ✅ SLIDESHOW (초고급: 자동 리사이징 + 블러배경) */
+    /* ✅ SLIDESHOW (세로 안 잘림 + 자동 블러강도 + 켄번즈 + 시네마모드) */
     .slideshow{
       margin-top:12px;
       border:1px solid var(--line);
@@ -375,6 +385,13 @@
 
       /* JS가 넣어주는 배경 이미지 */
       --bgurl: none;
+
+      /* ✅ 조절 변수(기본값) */
+      --blur: 26px;      /* 블러 강도 */
+      --bgOpacity: .62;  /* 배경 진하기 */
+      --zoom: 1;         /* 줌 */
+      --tx: 0px;         /* 이동 X */
+      --ty: 0px;         /* 이동 Y */
     }
 
     /* 블러 배경 레이어(cover) */
@@ -385,13 +402,13 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      filter: blur(26px) saturate(1.12);
-      opacity: .66;
-      transform: scale(1.08);
+      filter: blur(var(--blur)) saturate(1.12);
+      opacity: var(--bgOpacity);
+      transform: scale(1.10);
       pointer-events:none;
     }
 
-    /* 비네팅 + 톤 정리 */
+    /* 비네팅 + 톤 */
     .slideBox::after{
       content:"";
       position:absolute; inset:0;
@@ -406,9 +423,11 @@
       width:100%; height:100%;
       display:block;
       opacity:0;
-      transition: opacity .35s ease;
-      z-index:1; /* 배경 위 */
-      /* object-fit은 JS가 자동 세팅: cover/contain */
+      transition: opacity .35s ease, transform .9s ease;
+      z-index:1;
+      transform: translate(var(--tx), var(--ty)) scale(var(--zoom));
+      will-change: transform;
+      /* object-fit은 JS가 자동 설정: cover/contain */
     }
     .slideBox img.show{opacity:1}
 
@@ -659,7 +678,7 @@
       <div class="head">
         <div>
           <h2>갤러리 슬라이드 쇼</h2>
-          <p>자동 재생(기본 4초) · 일시정지/이전/다음/속도 조절</p>
+          <p>자동 재생(기본 4초) · 일시정지/이전/다음/속도 조절 · 🎥 시네마모드</p>
         </div>
         <div class="controls">
           <button class="btn" id="btnPrev" type="button">⟵</button>
@@ -667,6 +686,7 @@
           <button class="btn" id="btnPause" type="button">⏸ 정지</button>
           <button class="btn" id="btnNext" type="button">⟶</button>
           <button class="btn" id="btnSpeed" type="button">⏱ 4초</button>
+          <button class="btn cinema on" id="btnCinema" type="button" title="블러/줌 효과 ON/OFF">🎥 시네마모드</button>
           <button class="btn" id="btnOpenSlide" type="button">🔍 확대</button>
         </div>
       </div>
@@ -887,7 +907,7 @@
         .filter(([name,url])=> name && url);
 
       const totalByName = {};
-      cleaned.forEach(([name])=> totalByName[name] = (totalByName[name]||0) + 1);
+      cleaned.forEach(([name])=> totalByName[name] = (totalByName[name]||0) + 1;
 
       const seenByName = {};
       return cleaned.map(([name,url], idx)=>{
@@ -1164,8 +1184,7 @@
     });
 
     /* ===========================
-      (3) 슬라이드 쇼(이름 노출 금지)
-      ✅ 세로사진 자동 contain + 블러배경으로 고급 연출
+      (3) 슬라이드 쇼(세로/가로 자동 블러 + 켄번즈 + 시네마모드)
     =========================== */
     const slideTitle = document.getElementById("slideTitle");
     const slideSub = document.getElementById("slideSub");
@@ -1182,6 +1201,23 @@
     const btnCopySlide = document.getElementById("btnCopySlide");
     const navPrev = document.getElementById("navPrev");
     const navNext = document.getElementById("navNext");
+    const btnCinema = document.getElementById("btnCinema");
+
+    // ✅ 효과 설정(과하지 않게: “딱 고급”)
+    const SLIDE_FX = {
+      cinemaDefault: true,     // 처음 로드 시 시네마모드 ON
+      zoomPortrait: 1.04,      // 세로 줌(살짝)
+      zoomLandscape: 1.02,     // 가로 줌(더 은은)
+      blurPortrait: 34,        // 세로 블러 강하게
+      blurLandscape: 22,       // 가로 블러 은은
+      bgOpacityPortrait: 0.72, // 세로 배경 진하게
+      bgOpacityLandscape: 0.58,// 가로 배경 은은
+      moveMaxPortrait: 10,     // 세로 이동 최대(px)
+      moveMaxLandscape: 14,    // 가로 이동 최대(px)
+      tickMs: 120,             // 켄번즈 업데이트 간격
+      zoomStep: 0.0012,        // 줌 변화량(아주 살짝)
+      moveStep: 0.18           // 이동 변화량(아주 살짝)
+    };
 
     let slideIndex = 0;
     let showingA = true;
@@ -1189,19 +1225,126 @@
     const speeds = [3000, 4000, 6000, 8000];
     let speedIdx = 1;
 
+    // 시네마모드 상태
+    let cinemaOn = !!SLIDE_FX.cinemaDefault;
+
+    // 켄번즈 내부 상태
+    let __kbTimer = null;
+    let __kbZ = 1;
+    let __kbTX = 0;
+    let __kbTY = 0;
+    let __kbDirZ = 1;
+    let __kbDirX = 1;
+    let __kbDirY = 1;
+    let __kbIsPortrait = false;
+    let __kbZoomBase = 1.02;
+
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function applyCinemaModeUI(){
+      btnCinema.classList.toggle("on", cinemaOn);
+      btnCinema.textContent = cinemaOn ? "🎥 시네마모드" : "🎥 깔끔모드";
+    }
+
+    function setCinematicVars(isPortrait){
+      // 배경 이미지
+      const currentUrl = ITEMS[slideIndex]?.url || "";
+
+      if(!cinemaOn){
+        // 깔끔 모드: 블러/줌/이동 최소화
+        slideBox.style.setProperty("--bgurl", `url("${currentUrl}")`);
+        slideBox.style.setProperty("--blur", "0px");
+        slideBox.style.setProperty("--bgOpacity", ".20");
+        slideBox.style.setProperty("--zoom", "1");
+        slideBox.style.setProperty("--tx", "0px");
+        slideBox.style.setProperty("--ty", "0px");
+        return;
+      }
+
+      // 시네마 모드: 세로/가로 자동 조절
+      slideBox.style.setProperty("--bgurl", `url("${currentUrl}")`);
+      slideBox.style.setProperty("--blur", (isPortrait ? SLIDE_FX.blurPortrait : SLIDE_FX.blurLandscape) + "px");
+      slideBox.style.setProperty("--bgOpacity", (isPortrait ? SLIDE_FX.bgOpacityPortrait : SLIDE_FX.bgOpacityLandscape));
+      slideBox.style.setProperty("--zoom", (isPortrait ? SLIDE_FX.zoomPortrait : SLIDE_FX.zoomLandscape));
+      slideBox.style.setProperty("--tx", "0px");
+      slideBox.style.setProperty("--ty", "0px");
+    }
+
     function applyAutoFit(imgEl, urlForBg){
       try{
         const w = imgEl.naturalWidth || 0;
         const h = imgEl.naturalHeight || 0;
         if(!w || !h) return;
 
-        // 세로는 contain(안 잘림), 가로는 cover(꽉 찬 느낌)
-        imgEl.style.objectFit = (h > w) ? "contain" : "cover";
+        const isPortrait = h > w;
+        __kbIsPortrait = isPortrait;
+        __kbZoomBase = isPortrait ? SLIDE_FX.zoomPortrait : SLIDE_FX.zoomLandscape;
 
-        // 블러 배경에 같은 이미지 적용
+        // 세로는 contain(절대 안 잘림), 가로는 cover
+        imgEl.style.objectFit = isPortrait ? "contain" : "cover";
+
+        // 배경/블러/진하기/줌 초기값 적용
         const u = urlForBg || imgEl.src || "";
         slideBox.style.setProperty("--bgurl", `url("${u}")`);
+        setCinematicVars(isPortrait);
+
+        // 켄번즈 기본값 리셋(이미지 바뀔 때 튐 방지)
+        resetKenBurns();
+
       }catch(e){}
+    }
+
+    function resetKenBurns(){
+      __kbZ = cinemaOn ? __kbZoomBase : 1;
+      __kbTX = 0;
+      __kbTY = 0;
+      __kbDirZ = 1;
+      __kbDirX = 1;
+      __kbDirY = 1;
+      slideBox.style.setProperty("--zoom", String(__kbZ));
+      slideBox.style.setProperty("--tx", "0px");
+      slideBox.style.setProperty("--ty", "0px");
+    }
+
+    function startKenBurns(){
+      if(__kbTimer) return;
+      __kbTimer = setInterval(()=>{
+        if(!cinemaOn){
+          // 깔끔모드면 고정
+          slideBox.style.setProperty("--zoom", "1");
+          slideBox.style.setProperty("--tx", "0px");
+          slideBox.style.setProperty("--ty", "0px");
+          return;
+        }
+
+        const maxMove = __kbIsPortrait ? SLIDE_FX.moveMaxPortrait : SLIDE_FX.moveMaxLandscape;
+
+        // 줌: base 주변에서 아주 살짝 진동
+        __kbZ += (SLIDE_FX.zoomStep * __kbDirZ);
+        if(__kbZ > __kbZoomBase + 0.02) __kbDirZ = -1;
+        if(__kbZ < __kbZoomBase - 0.01) __kbDirZ = 1;
+
+        // 이동: 화면 가장자리까지 안 가고 “살짝”만
+        __kbTX += (SLIDE_FX.moveStep * __kbDirX);
+        __kbTY += (SLIDE_FX.moveStep * __kbDirY);
+
+        if(__kbTX >  maxMove) __kbDirX = -1;
+        if(__kbTX < -maxMove) __kbDirX =  1;
+        if(__kbTY >  maxMove) __kbDirY = -1;
+        if(__kbTY < -maxMove) __kbDirY =  1;
+
+        // 적용
+        slideBox.style.setProperty("--zoom", String(__kbZ));
+        slideBox.style.setProperty("--tx", `${__kbTX.toFixed(1)}px`);
+        slideBox.style.setProperty("--ty", `${__kbTY.toFixed(1)}px`);
+
+      }, SLIDE_FX.tickMs);
+    }
+
+    function stopKenBurns(){
+      clearInterval(__kbTimer);
+      __kbTimer = null;
+      resetKenBurns();
     }
 
     function setSlide(idx){
@@ -1226,11 +1369,13 @@
     function play(){
       if(timer) return;
       timer = setInterval(()=> setSlide(slideIndex+1), speeds[speedIdx]);
+      startKenBurns();
       toast("자동재생 시작 ▶");
     }
     function pause(){
       clearInterval(timer);
       timer = null;
+      stopKenBurns();
       toast("자동재생 정지 ⏸");
     }
     function toggleSpeed(){
@@ -1249,6 +1394,25 @@
     btnSpeed.addEventListener("click", toggleSpeed);
     btnOpenSlide.addEventListener("click", ()=> openLightboxByUrl(ITEMS[slideIndex].url));
     btnCopySlide.addEventListener("click", ()=> copyText(ITEMS[slideIndex].url));
+
+    // 🎥 시네마모드 ON/OFF
+    btnCinema.addEventListener("click", ()=>{
+      cinemaOn = !cinemaOn;
+      applyCinemaModeUI();
+
+      // 현재 이미지 상태에 맞춰 즉시 반영
+      setCinematicVars(__kbIsPortrait);
+
+      // 켄번즈도 즉시 갱신
+      if(timer){
+        // 자동재생 중이면 계속
+        resetKenBurns();
+        toast(cinemaOn ? "시네마모드 ON 🎥" : "깔끔모드 ON ✨");
+      }else{
+        stopKenBurns();
+        toast(cinemaOn ? "시네마모드 ON 🎥" : "깔끔모드 ON ✨");
+      }
+    });
 
     /* ===========================
       (4) 영상
@@ -1323,6 +1487,7 @@
 
     /* INIT */
     (function init(){
+      // query auto-run
       const u = new URL(location.href);
       const qq = u.searchParams.get("q");
       if(qq){
@@ -1330,25 +1495,28 @@
         runSearch(qq);
       }
 
+      // thumb pager
       reindexThumbItems();
       renderThumbPager();
 
+      // cover init
       coverImg.src = THUMB_ITEMS[0]?.url || "";
       setCover(0);
 
+      // cinema default UI
+      applyCinemaModeUI();
+
+      // slideshow init
       if(ITEMS.length){
         imgA.onload = ()=> applyAutoFit(imgA, ITEMS[0].url);
         imgA.src = ITEMS[0].url;
         imgA.classList.add("show");
-
-        // 배경도 즉시 설정
-        slideBox.style.setProperty("--bgurl", `url("${ITEMS[0].url}")`);
-
         slideTitle.textContent = "사진 1";
         slideSub.textContent = `1/${ITEMS.length}`;
       }
       btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
 
+      // videos
       renderVideosShell();
       fillYouTubeTitles();
     })();
