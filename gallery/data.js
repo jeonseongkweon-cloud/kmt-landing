@@ -3,17 +3,21 @@
 /**
  * ✅ 이미지 목록
  * - name: 학부모 검색용(한글 OK)
- * - src : gallery/index.html 기준 "images/파일명.jpg"
+ * - src : 실제 파일 경로 (gallery/index.html 기준 "images/파일명.jpg")
  * - tags: (선택) 검색 보조 키워드
- *
- * ⚠️ 중요: index.html이 window.GALLERY를 읽으므로 window로 내보내야 함
  */
 window.GALLERY = [
-  { name: "샘플", src: "images/001.jpg", tags: "유치부 수련" },
-  { name: "샘플", src: "images/002.jpg", tags: "유치부 수련" },
-  { name: "샘플", src: "images/003.jpg", tags: "단체" },
-  { name: "샘플", src: "images/004.jpg", tags: "행사" },
-  { name: "샘플", src: "images/005.jpg", tags: "심사" },
+  // 지금 올려둔 파일(001~005) 기준 예시
+  // ✅ name은 학부모가 검색할 “한글 이름”으로 바꾸면 됩니다.
+  { name: "001", src: "images/001.jpg", tags: "유치부 수련" },
+  { name: "002", src: "images/002.jpg", tags: "유치부 수련" },
+  { name: "003", src: "images/003.jpg", tags: "유치부 수련" },
+  { name: "004", src: "images/004.jpg", tags: "유치부 수련" },
+  { name: "005", src: "images/005.jpg", tags: "유치부 수련" },
+
+  // 예)
+  // { name: "김우리", src: "images/kimwoori01.jpg", tags: "심사" },
+  // { name: "단체_유치부", src: "images/group_yu01.jpg", tags: "단체 유치부" },
 ];
 
 /**
