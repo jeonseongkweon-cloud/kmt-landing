@@ -544,6 +544,7 @@
       <div class="status">
         <span class="pill" id="dataPill">데이터: 준비중</span>
         <span class="pill blue" id="timePill" style="display:none;"></span>
+        <span class="pill green" id="adminPill" style="display:none;">👑 관리자 모드</span>
         <span id="statusText">페이지가 열리면 자동으로 1회 불러옵니다.</span>
       </div>
       <div class="actions">
@@ -569,13 +570,13 @@
       <div class="field">
         <div class="label">
           <span>생년월일</span>
-          <span class="req">필수</span>
+          <span class="req" id="birthReqBadge">필수</span>
         </div>
         <div class="inputWrap">
           <input id="qBirth" type="text" placeholder="예: 11.02.13 또는 2011.02.13" autocomplete="off" inputmode="numeric" />
           <button class="clearBtn" id="clearBirth" type="button" aria-label="clear">✕</button>
         </div>
-        <div class="help">※ 점(.) 없이 입력해도 됩니다. (예: 110213)</div>
+        <div class="help" id="birthHelp">※ 점(.) 없이 입력해도 됩니다. (예: 110213)</div>
       </div>
 
       <div class="cta">
@@ -585,7 +586,7 @@
 
     <div id="result"></div>
 
-    <div class="note">
+    <div class="note" id="privacyNote">
       개인정보 보호를 위해 <b>이름(또는 아이디) + 생년월일</b>이 모두 일치해야 조회됩니다.
     </div>
 
@@ -599,6 +600,65 @@ const RAW_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZ
 
 const GALLERY_BASE = "../gallery/";
 const GALLERY_QUERY_KEY = "id";
+
+/* =========================================================
+  ✅ 관리자 모드 (서버 없는 GitHub Pages용 “편의 잠금”)
+  - 주소에 ?admin=1 로 접속하면 관리자 코드 입력(prompt)
+  - 맞으면 이 브라우저 탭에서만 관리자 유지 (sessionStorage)
+========================================================= */
+const ADMIN_QUERY_KEY = "admin";              // ?admin=1
+const ADMIN_SESSION_KEY = "KMT_ADMIN_OK";     // sessionStorage
+const ADMIN_PASSCODE = "KMT-2772";            // ✅ 여기만 바꾸세요 (예: 전총재님만 아는 코드)
+
+function getQueryParam(key){
+  const u = new URL(location.href);
+  return u.searchParams.get(key);
+}
+function isAdmin(){
+  try{ return sessionStorage.getItem(ADMIN_SESSION_KEY) === "1"; }catch{ return false; }
+}
+function enableAdmin(){
+  try{ sessionStorage.setItem(ADMIN_SESSION_KEY, "1"); }catch{}
+}
+function maybeAskAdmin(){
+  const q = getQueryParam(ADMIN_QUERY_KEY);
+  if(!q) return;
+
+  if(isAdmin()) return;
+
+  const entered = prompt("관리자 코드 입력");
+  if(entered && entered.trim() === ADMIN_PASSCODE){
+    enableAdmin();
+    alert("관리자 모드가 활성화되었습니다.");
+  }else{
+    alert("관리자 코드가 올바르지 않습니다.");
+  }
+}
+function updateAdminUI(){
+  const adminOn = isAdmin();
+  const adminPill = document.getElementById("adminPill");
+  const badge = document.getElementById("birthReqBadge");
+  const note = document.getElementById("privacyNote");
+  const birthInput = document.getElementById("qBirth");
+  const birthHelp = document.getElementById("birthHelp");
+
+  if(adminPill) adminPill.style.display = adminOn ? "inline-flex" : "none";
+
+  if(badge) badge.textContent = adminOn ? "선택" : "필수";
+  if(note){
+    note.innerHTML = adminOn
+      ? `관리자 모드: <b>이름(또는 아이디)만</b>으로도 조회됩니다. (생년월일은 선택)`
+      : `개인정보 보호를 위해 <b>이름(또는 아이디) + 생년월일</b>이 모두 일치해야 조회됩니다.`;
+  }
+  if(birthInput){
+    birthInput.placeholder = adminOn ? "관리자: 비워도 됨 (선택)" : "예: 11.02.13 또는 2011.02.13";
+  }
+  if(birthHelp){
+    birthHelp.textContent = adminOn
+      ? "※ 관리자 모드에서는 생년월일을 비워도 됩니다. (입력하면 더 정확해요)"
+      : "※ 점(.) 없이 입력해도 됩니다. (예: 110213)";
+  }
+}
 
 /* =========================================================
   ✅ Cache/Retry/Timeout
@@ -867,12 +927,18 @@ async function loadOnce({force=false}={}){
 
 /* =========================================================
   ✅ Matching logic (이름/아이디/생년월일)
+  - 일반: 이름/아이디 + 생년월일 필수
+  - 관리자: 이름/아이디만 가능, 생년월일은 입력하면 더 정확하게 필터링
 ========================================================= */
 function matchRows(qNameOrId, qBirth){
   const q1 = norm(qNameOrId);
   const qb = normBirth(qBirth);
+  const adminOn = isAdmin();
 
-  if(!q1 || !qb) return [];
+  if(!q1) return [];
+
+  // ✅ 일반 사용자는 생년월일 필수
+  if(!adminOn && !qb) return [];
 
   const out = [];
   for(const r of DATA_ROWS){
@@ -880,8 +946,14 @@ function matchRows(qNameOrId, qBirth){
     const name = norm(r[1]);
     const birth = normBirth(r[2]);
 
-    const okNameOrId = (id && id === q1) || (name && name === q1) || (name && name.includes(q1)) || (id && id.includes(q1));
-    const okBirth = (birth && birth === qb);
+    const okNameOrId =
+      (id && id === q1) ||
+      (name && name === q1) ||
+      (name && name.includes(q1)) ||
+      (id && id.includes(q1));
+
+    // ✅ 관리자 모드면 생년월일은 "선택"
+    const okBirth = qb ? (birth && birth === qb) : true;
 
     if(okNameOrId && okBirth) out.push(r);
   }
@@ -1033,7 +1105,7 @@ function renderPickList(rows){
     `;
   }).join("");
 
-  return `<div class="message">동일 조건으로 <b>${rows.length}명</b>이 조회되었습니다. 아래에서 선택해주세요.</div>
+  return `<div class="message">조건에 맞는 <b>${rows.length}명</b>이 조회되었습니다. 아래에서 선택해주세요.</div>
           <div class="list" id="pickList">${list}</div>`;
 }
 
@@ -1057,11 +1129,14 @@ async function applyHashToCurrentCard(){
 async function runSearch(){
   const q1 = $("qNameOrId").value;
   const qb = $("qBirth").value;
+  const adminOn = isAdmin();
 
   resultEl.innerHTML = "";
 
-  if(!clean(q1) || !clean(qb)){
-    resultEl.innerHTML = `<div class="message">이름(또는 아이디)과 생년월일을 모두 입력해주세요.</div>`;
+  if(!clean(q1) || (!adminOn && !clean(qb))){
+    resultEl.innerHTML = adminOn
+      ? `<div class="message">이름(또는 아이디)을 입력해주세요. (관리자 모드: 생년월일은 선택)</div>`
+      : `<div class="message">이름(또는 아이디)과 생년월일을 모두 입력해주세요.</div>`;
     return;
   }
 
@@ -1164,6 +1239,10 @@ bindClear("qNameOrId", "clearName");
 bindClear("qBirth", "clearBirth");
 
 window.addEventListener("DOMContentLoaded", ()=>{
+  // ✅ 관리자 모드 시도 → UI 반영
+  maybeAskAdmin();
+  updateAdminUI();
+
   loadOnce({force:false}).catch(e=>{
     console.error(e);
     setStatus("bad", "대기", "자동 불러오기에 실패했습니다. 상단 ‘데이터 새로고침’을 눌러주세요.");
