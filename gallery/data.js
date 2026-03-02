@@ -2,19 +2,20 @@
 
 /**
  * ✅ 이미지 목록
- * - name: 학부모 검색용(한글 OK)
+ * - name: 검색용(한글 OK)  ※ 동명이인은 같은 이름 여러 장 OK
  * - src : 실제 파일 경로 (gallery/index.html 기준 "images/파일명.jpg")
  * - tags: (선택) 검색 보조 키워드 (띄어쓰기/쉼표로 아무거나)
+ *
+ * ⚠️ 중요:
+ * - 지금 GitHub에 올라간 파일은 001.jpg ~ 005.jpg 입니다.
+ * - 그래서 src는 반드시 "images/001.jpg" 이런 식으로 맞춰야 합니다.
  */
 const GALLERY = [
-  // 예시(이대로 두고 src만 실제 파일명으로 바꾸세요)
-  { name: "이서안", src: "images/seoan01.jpg", tags: "유치부,수련" },
-  { name: "이서안", src: "images/seoan02.jpg", tags: "유치부,수련" },
-  { name: "유사루", src: "images/yusaru01.jpg", tags: "유치부" },
-  { name: "윤겸",   src: "images/yungyeom01.jpg", tags: "학교체육" },
-
-  // ✅ 단체/행사도 이름으로 검색 가능
-  { name: "단체_유치부", src: "images/group_yu01.jpg", tags: "단체,유치부" },
+  { name: "001", src: "images/001.jpg", tags: "샘플,1" },
+  { name: "002", src: "images/002.jpg", tags: "샘플,2" },
+  { name: "003", src: "images/003.jpg", tags: "샘플,3" },
+  { name: "004", src: "images/004.jpg", tags: "샘플,4" },
+  { name: "005", src: "images/005.jpg", tags: "샘플,5" },
 ];
 
 /**
@@ -24,5 +25,6 @@ const GALLERY = [
  */
 const VIDEOS = [
   { title: "계명태권도 소개", url: "https://www.youtube.com/watch?v=zuwIu8hx6bM" },
+  // 필요하면 여기에 추가하세요:
   // { title: "시범 영상", url: "https://youtu.be/D3kDXF-sNJA" },
 ];
