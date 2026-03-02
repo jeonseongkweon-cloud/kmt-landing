@@ -76,7 +76,6 @@
       border-color: rgba(215,181,109,.45);
       background: linear-gradient(180deg, rgba(215,181,109,.18), rgba(255,255,255,.03));
     }
-    /* 시네마모드 버튼(톤만 약간 강조) */
     .btn.cinema{
       border-color: rgba(215,181,109,.38);
       background: linear-gradient(180deg, rgba(215,181,109,.14), rgba(102,179,255,.06));
@@ -351,7 +350,7 @@
       background: rgba(0,0,0,.10);
     }
 
-    /* ✅ SLIDESHOW (세로 안 잘림 + 자동 블러강도 + 켄번즈 + 시네마모드) */
+    /* SLIDESHOW */
     .slideshow{
       margin-top:12px;
       border:1px solid var(--line);
@@ -382,19 +381,13 @@
       aspect-ratio: 16 / 9;
       background:#000;
       overflow:hidden;
-
-      /* JS가 넣어주는 배경 이미지 */
       --bgurl: none;
-
-      /* ✅ 조절 변수(기본값) */
-      --blur: 26px;      /* 블러 강도 */
-      --bgOpacity: .62;  /* 배경 진하기 */
-      --zoom: 1;         /* 줌 */
-      --tx: 0px;         /* 이동 X */
-      --ty: 0px;         /* 이동 Y */
+      --blur: 26px;
+      --bgOpacity: .62;
+      --zoom: 1;
+      --tx: 0px;
+      --ty: 0px;
     }
-
-    /* 블러 배경 레이어(cover) */
     .slideBox::before{
       content:"";
       position:absolute; inset:-18%;
@@ -407,8 +400,6 @@
       transform: scale(1.10);
       pointer-events:none;
     }
-
-    /* 비네팅 + 톤 */
     .slideBox::after{
       content:"";
       position:absolute; inset:0;
@@ -417,7 +408,6 @@
         linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.55));
       pointer-events:none;
     }
-
     .slideBox img{
       position:absolute; inset:0;
       width:100%; height:100%;
@@ -427,7 +417,6 @@
       z-index:1;
       transform: translate(var(--tx), var(--ty)) scale(var(--zoom));
       will-change: transform;
-      /* object-fit은 JS가 자동 설정: cover/contain */
     }
     .slideBox img.show{opacity:1}
 
@@ -642,7 +631,7 @@
       <div class="body">
         <div class="cover">
           <div class="coverMain" id="coverMain">
-            <img id="coverImg" src="" alt="대표 사진" referrerpolicy="no-referrer" />
+            <img id="coverImg" src="" alt="대표 사진" />
           </div>
 
           <aside class="thumbRail">
@@ -703,8 +692,8 @@
             </div>
           </div>
           <div class="slideBox" id="slideBox">
-            <img id="slideImgA" src="" alt="슬라이드 A" referrerpolicy="no-referrer" />
-            <img id="slideImgB" src="" alt="슬라이드 B" referrerpolicy="no-referrer" />
+            <img id="slideImgA" src="" alt="슬라이드 A" />
+            <img id="slideImgB" src="" alt="슬라이드 B" />
             <div class="navBtn prev" id="navPrev">‹</div>
             <div class="navBtn next" id="navNext">›</div>
           </div>
@@ -748,7 +737,7 @@
         </div>
       </div>
       <div class="lb-body">
-        <img class="lb-img" id="lbImg" src="" alt="확대 이미지" referrerpolicy="no-referrer" />
+        <img class="lb-img" id="lbImg" src="" alt="확대 이미지" />
       </div>
     </div>
   </div>
@@ -902,25 +891,43 @@
     function pad2(n){ return String(n).padStart(2,"0"); }
 
     /* =========================================================
-      ✅ 이미지 프록시 + fallback
-      - 프록시(weServ)로 먼저 시도 → 실패하면 원본으로 교체
-      - GitHub Pages에서 wix 이미지가 안 뜨는 CORS/Referrer 문제 대비
+      ✅ 프록시 수정 + onerror 전부 통일 적용
+      원칙:
+      1) 원본 먼저 시도(Referer 유지)
+      2) 실패하면 프록시로 시도
+      3) 그래도 실패하면 원본 재시도(마지막)
+      ※ referrerpolicy="no-referrer" 절대 사용 안 함
     ========================================================= */
     function toProxyUrl(originalUrl){
       const u = String(originalUrl || "").trim();
       if(!u) return u;
-
-      // images.weserv.nl: url 파라미터는 스킴(https://)을 빼고 도메인부터 넣는 게 안정적
-      const noScheme = u.replace(/^https?:\/\//, "");
-      return `https://images.weserv.nl/?url=${encodeURIComponent(noScheme)}&ssl=1`;
+      // wsrv.nl (wix 포함 안정적인 편)
+      return `https://wsrv.nl/?url=${encodeURIComponent(u)}&default=1`;
     }
-    function imgSrc(u){ return toProxyUrl(u); }
 
-    function applyFallback(imgEl, originalUrl){
-      // 프록시 실패 시 원본으로 fallback, 그래도 안 되면 'no-referrer' 재시도
-      imgEl.onerror = null;
-      imgEl.src = originalUrl;
-      imgEl.referrerPolicy = "no-referrer";
+    function setImgWithFallback(imgEl, originalUrl){
+      const original = String(originalUrl || "").trim();
+      if(!original){ imgEl.src=""; return; }
+
+      const proxy = toProxyUrl(original);
+      imgEl.dataset.try = "0"; // 0=원본, 1=프록시, 2=원본 재시도
+
+      imgEl.onerror = () => {
+        const t = Number(imgEl.dataset.try || "0");
+        if(t === 0){
+          imgEl.dataset.try = "1";
+          imgEl.src = proxy;
+          return;
+        }
+        if(t === 1){
+          imgEl.dataset.try = "2";
+          imgEl.src = original;
+          return;
+        }
+        imgEl.onerror = null;
+      };
+
+      imgEl.src = original; // ✅ 원본 먼저
     }
 
     function buildItemsFromRaw(raw){
@@ -959,9 +966,7 @@
       const lbSub = document.getElementById("lbSub");
       const lbDownload = document.getElementById("lbDownload");
 
-      // ✅ 프록시 먼저
-      lbImg.onerror = ()=> applyFallback(lbImg, url);
-      lbImg.src = imgSrc(url);
+      setImgWithFallback(lbImg, url);
 
       lbTitle.textContent = "사진";
       lbSub.textContent = "";
@@ -1031,15 +1036,11 @@
       const pages = chunk(list, PER_PAGE);
 
       pagesEl.innerHTML = pages.map((page)=> {
-        const thumbs = page.map((it)=> {
-          const prox = imgSrc(it.url);
+        const thumbs = page.map((it, i)=> {
+          // data-original로 원본 유지 → 렌더 후 JS로 fallback 적용
           return `
             <div class="pitem" data-url="${it.url}">
-              <img loading="lazy"
-                   src="${prox}"
-                   alt="갤러리 사진"
-                   referrerpolicy="no-referrer"
-                   onerror="this.onerror=null; this.src='${it.url}'; this.referrerPolicy='no-referrer';">
+              <img class="js-fb" loading="lazy" data-original="${it.url}" src="" alt="갤러리 사진">
             </div>
           `;
         }).join("");
@@ -1049,6 +1050,11 @@
           </div>
         `;
       }).join("");
+
+      // ✅ onerror 통일 적용
+      pagesEl.querySelectorAll("img.js-fb").forEach(img=>{
+        setImgWithFallback(img, img.dataset.original || "");
+      });
 
       pagesEl.querySelectorAll(".pitem").forEach(el=>{
         el.addEventListener("click", ()=>{
@@ -1125,13 +1131,9 @@
     function setCover(idx){
       coverIndex = (idx + THUMB_ITEMS.length) % THUMB_ITEMS.length;
       const original = THUMB_ITEMS[coverIndex].url;
+      setImgWithFallback(coverImg, original);
 
-      coverImg.onerror = ()=> applyFallback(coverImg, original);
-      coverImg.src = imgSrc(original);
-
-      thumbPagesEl.querySelectorAll(".titem").forEach((el)=>{
-        el.classList.remove("active");
-      });
+      thumbPagesEl.querySelectorAll(".titem").forEach((el)=> el.classList.remove("active"));
       thumbPagesEl.querySelectorAll(`.titem[data-i="${coverIndex}"]`).forEach(el=> el.classList.add("active"));
     }
 
@@ -1143,14 +1145,9 @@
 
       thumbPagesEl.innerHTML = pages.map((page, pi)=>{
         const tiles = page.map((it)=>{
-          const prox = imgSrc(it.url);
           return `
             <div class="titem" data-i="${it._globalIndex}" title="썸네일">
-              <img loading="lazy"
-                   src="${prox}"
-                   alt="thumb"
-                   referrerpolicy="no-referrer"
-                   onerror="this.onerror=null; this.src='${it.url}'; this.referrerPolicy='no-referrer';">
+              <img class="js-fb" loading="lazy" data-original="${it.url}" src="" alt="thumb">
             </div>
           `;
         }).join("");
@@ -1161,6 +1158,11 @@
           </div>
         `;
       }).join("");
+
+      // ✅ onerror 통일 적용
+      thumbPagesEl.querySelectorAll("img.js-fb").forEach(img=>{
+        setImgWithFallback(img, img.dataset.original || "");
+      });
 
       buildDots(thumbDotsEl, thumbPageCount, (i)=>{
         const w = thumbPagesEl.clientWidth || 1;
@@ -1219,9 +1221,7 @@
       reindexThumbItems();
       coverIndex = 0;
       renderThumbPager();
-      const original = THUMB_ITEMS[0].url;
-      coverImg.onerror = ()=> applyFallback(coverImg, original);
-      coverImg.src = imgSrc(original);
+      setCover(0);
       toast("썸네일을 섞었습니다 🎲");
     });
 
@@ -1245,20 +1245,19 @@
     const navNext = document.getElementById("navNext");
     const btnCinema = document.getElementById("btnCinema");
 
-    // ✅ 효과 설정(과하지 않게: “딱 고급”)
     const SLIDE_FX = {
-      cinemaDefault: true,     // 처음 로드 시 시네마모드 ON
-      zoomPortrait: 1.04,      // 세로 줌(살짝)
-      zoomLandscape: 1.02,     // 가로 줌(더 은은)
-      blurPortrait: 34,        // 세로 블러 강하게
-      blurLandscape: 22,       // 가로 블러 은은
-      bgOpacityPortrait: 0.72, // 세로 배경 진하게
-      bgOpacityLandscape: 0.58,// 가로 배경 은은
-      moveMaxPortrait: 10,     // 세로 이동 최대(px)
-      moveMaxLandscape: 14,    // 가로 이동 최대(px)
-      tickMs: 120,             // 켄번즈 업데이트 간격
-      zoomStep: 0.0012,        // 줌 변화량(아주 살짝)
-      moveStep: 0.18           // 이동 변화량(아주 살짝)
+      cinemaDefault: true,
+      zoomPortrait: 1.04,
+      zoomLandscape: 1.02,
+      blurPortrait: 34,
+      blurLandscape: 22,
+      bgOpacityPortrait: 0.72,
+      bgOpacityLandscape: 0.58,
+      moveMaxPortrait: 10,
+      moveMaxLandscape: 14,
+      tickMs: 120,
+      zoomStep: 0.0012,
+      moveStep: 0.18
     };
 
     let slideIndex = 0;
@@ -1267,10 +1266,8 @@
     const speeds = [3000, 4000, 6000, 8000];
     let speedIdx = 1;
 
-    // 시네마모드 상태
     let cinemaOn = !!SLIDE_FX.cinemaDefault;
 
-    // 켄번즈 내부 상태
     let __kbTimer = null;
     let __kbZ = 1;
     let __kbTX = 0;
@@ -1288,7 +1285,7 @@
 
     function setCinematicVars(isPortrait, originalUrl){
       const currentOriginal = originalUrl || ITEMS[slideIndex]?.url || "";
-      const bgUrl = cinemaOn ? imgSrc(currentOriginal) : imgSrc(currentOriginal);
+      const bgUrl = toProxyUrl(currentOriginal); // 배경은 프록시가 더 안정적
 
       if(!cinemaOn){
         slideBox.style.setProperty("--bgurl", `url("${bgUrl}")`);
@@ -1385,10 +1382,8 @@
       const target = showingA ? imgA : imgB;
       const other  = showingA ? imgB : imgA;
 
-      // ✅ 프록시 먼저, 실패 시 원본
-      target.onerror = ()=> applyFallback(target, it.url);
       target.onload = ()=> applyAutoFit(target, it.url);
-      target.src = imgSrc(it.url);
+      setImgWithFallback(target, it.url);
 
       target.classList.add("show");
       other.classList.remove("show");
@@ -1425,14 +1420,10 @@
     btnOpenSlide.addEventListener("click", ()=> openLightboxByUrl(ITEMS[slideIndex].url));
     btnCopySlide.addEventListener("click", ()=> copyText(ITEMS[slideIndex].url));
 
-    // 🎥 시네마모드 ON/OFF
     btnCinema.addEventListener("click", ()=>{
       cinemaOn = !cinemaOn;
       applyCinemaModeUI();
-
-      // 현재 이미지 상태에 맞춰 즉시 반영
       setCinematicVars(__kbIsPortrait, ITEMS[slideIndex]?.url);
-
       if(timer){
         resetKenBurns();
         toast(cinemaOn ? "시네마모드 ON 🎥" : "깔끔모드 ON ✨");
@@ -1515,7 +1506,6 @@
 
     /* INIT */
     (function init(){
-      // query auto-run
       const u = new URL(location.href);
       const qq = u.searchParams.get("q");
       if(qq){
@@ -1523,35 +1513,22 @@
         runSearch(qq);
       }
 
-      // thumb pager
       reindexThumbItems();
       renderThumbPager();
 
-      // cover init
-      const first = THUMB_ITEMS[0]?.url || "";
-      coverImg.onerror = ()=> applyFallback(coverImg, first);
-      coverImg.src = imgSrc(first);
-      setCover(0);
-
-      // cinema default UI
       applyCinemaModeUI();
 
-      // slideshow init
       if(ITEMS.length){
-        imgA.onerror = ()=> applyFallback(imgA, ITEMS[0].url);
         imgA.onload = ()=> applyAutoFit(imgA, ITEMS[0].url);
-        imgA.src = imgSrc(ITEMS[0].url);
+        setImgWithFallback(imgA, ITEMS[0].url);
         imgA.classList.add("show");
 
         slideTitle.textContent = "사진 1";
         slideSub.textContent = `1/${ITEMS.length}`;
-
-        // 배경도 프록시로 맞춰두기
-        slideBox.style.setProperty("--bgurl", `url("${imgSrc(ITEMS[0].url)}")`);
+        slideBox.style.setProperty("--bgurl", `url("${toProxyUrl(ITEMS[0].url)}")`);
       }
       btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
 
-      // videos
       renderVideosShell();
       fillYouTubeTitles();
     })();
