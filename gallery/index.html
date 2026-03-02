@@ -10,10 +10,8 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="계명태권도 | 갤러리 & 영상" />
   <meta property="og:description" content="수련·심사·행사·성장 기록. 모바일 최적화 갤러리." />
-  <meta property="og:image" content="https://static.wixstatic.com/media/abf917_38e0bc3b3d804b3caa6aa8363163950d~mv2.jpg" />
-
-  <!-- (선택) favicon 404 없애기: 아이콘이 있으면 경로 맞춰주세요 -->
-  <!-- <link rel="icon" href="../assets/icons/favicon.ico"> -->
+  <!-- ✅ OG 이미지는 Wix 말고, 가능하면 GitHub에 올린 대표 이미지를 쓰세요 -->
+  <!-- <meta property="og:image" content="https://계명태권도.com/gallery/images/og.jpg" /> -->
 
   <style>
     :root{
@@ -162,9 +160,13 @@
       scroll-behavior:smooth;
     }
     .page{scroll-snap-align: start; flex:0 0 100%; padding:12px;}
-    .gridThumb{display:grid; grid-template-columns: repeat(4, 1fr); gap:10px;}
-    @media (min-width: 820px){ .gridThumb{ grid-template-columns: repeat(6, 1fr); } }
-    @media (max-width: 420px){ .gridThumb{ grid-template-columns: repeat(3, 1fr); } }
+
+    /* ✅ 검색 결과 썸네일 그리드 */
+    .gridThumb{display:grid; gap:10px;}
+    /* 기본(모바일) 3열 → 5줄이면 15장/페이지 */
+    .gridThumb{ grid-template-columns: repeat(3, 1fr); }
+    @media (min-width: 560px){ .gridThumb{ grid-template-columns: repeat(4, 1fr); } }
+    @media (min-width: 920px){ .gridThumb{ grid-template-columns: repeat(6, 1fr); } }
 
     .pitem{
       border-radius: 14px; overflow:hidden;
@@ -243,7 +245,10 @@
       scroll-behavior:smooth;
     }
     .thumbPage{scroll-snap-align: start; flex:0 0 100%; padding:8px;}
+
+    /* ✅ 대표사진 옆 썸네일: 3열 고정 → 5줄 = 15장/페이지 */
     .thumbGrid{display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;}
+
     .titem{
       border-radius: 14px; overflow:hidden;
       border:1px solid rgba(255,255,255,.10);
@@ -367,8 +372,38 @@
       transition: opacity .2s ease;
       pointer-events:none;
     }
+
+    /* ✅ 동영상 영역 */
+    .videoGrid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 860px){
+      .videoGrid{ grid-template-columns: 1fr 1fr; }
+    }
+    .vCard{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      overflow:hidden;
+      background: rgba(0,0,0,.18);
+    }
+    .vHead{
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .vHead b{font-size:13px}
+    .vHead small{color: rgba(255,255,255,.70)}
+    .vFrame{
+      width:100%;
+      aspect-ratio: 16 / 9;
+      background:#000;
+    }
+    .vFrame iframe{width:100%; height:100%; border:0; display:block;}
   </style>
 </head>
+
 <body>
 
   <div class="topbar">
@@ -377,8 +412,22 @@
         <b>계명태권도</b>
         <small>Gallery & Video</small>
       </div>
+
       <div class="spacer"></div>
+
+      <!-- ✅ 상단 홈 -->
       <a class="btn gold" href="../index.html">🏠 홈으로</a>
+
+      <!-- ✅ 상단 검색창 -->
+      <div class="searchRow" style="margin:0; flex-wrap:nowrap;">
+        <div class="field" style="min-width:240px;">
+          🔎
+          <input id="qTop" type="text" inputmode="search" autocomplete="off" placeholder="이름/키워드 검색" />
+          <button class="xbtn" id="btnClearTop" type="button" title="지우기">✕</button>
+        </div>
+        <button class="btn primary" id="btnSearchTop" type="button">조회</button>
+      </div>
+
       <button class="btn primary" id="btnScrollTop" type="button">⬆️</button>
     </div>
   </div>
@@ -392,11 +441,12 @@
       <span id="statusMsg">초기화 중…</span>
     </div>
 
+    <!-- ✅ 검색 결과 -->
     <section class="cardBox" id="searchSection">
       <div class="head">
         <div>
           <h2>사진 조회</h2>
-          <p>이름/키워드로 검색 후 사진을 확인합니다.</p>
+          <p>이름/키워드로 검색 후 사진을 확인합니다. (검색 결과는 썸네일 5줄 단위로 페이지가 나뉩니다)</p>
         </div>
       </div>
 
@@ -404,7 +454,7 @@
         <div class="searchRow">
           <div class="field">
             🔎
-            <input id="q" type="text" inputmode="search" autocomplete="off" placeholder="검색어 입력" />
+            <input id="q" type="text" inputmode="search" autocomplete="off" placeholder="이름/키워드 입력" />
             <button class="xbtn" id="btnClear" type="button" title="지우기">✕</button>
           </div>
           <button class="btn primary" id="btnSearch" type="button">조회</button>
@@ -434,11 +484,12 @@
       </div>
     </section>
 
+    <!-- ✅ 대표사진 + 썸네일(5줄 페이징) -->
     <section class="cardBox">
       <div class="head">
         <div>
           <h2>대표 사진</h2>
-          <p>썸네일은 5줄만 표시되며, 좌우로 넘겨 페이지 이동합니다.</p>
+          <p>오른쪽 썸네일은 5줄(15장) 단위로 페이지가 나뉘고, 아래 점으로 이동합니다.</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap">
           <button class="btn" id="btnCoverPrev" type="button">‹ 이전</button>
@@ -450,7 +501,7 @@
       <div class="body">
         <div class="cover">
           <div class="coverMain">
-            <img id="coverImg" src="" alt="대표 사진" referrerpolicy="no-referrer" />
+            <img id="coverImg" src="" alt="대표 사진" />
           </div>
 
           <aside class="thumbRail">
@@ -472,7 +523,6 @@
             </div>
 
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:2px">
-              <button class="btn" id="btnCopyCover" type="button">🔗 링크복사</button>
               <button class="btn" id="btnShuffleThumbs" type="button">🎲 섞기</button>
             </div>
           </aside>
@@ -480,6 +530,7 @@
       </div>
     </section>
 
+    <!-- ✅ 슬라이드쇼 -->
     <section class="cardBox">
       <div class="head">
         <div>
@@ -502,13 +553,10 @@
               <b id="slideTitle">사진</b><br/>
               <small id="slideSub">—</small>
             </div>
-            <div>
-              <button class="btn" id="btnCopySlide" type="button">🔗 링크복사</button>
-            </div>
           </div>
           <div class="slideBox" id="slideBox">
-            <img id="slideImgA" src="" alt="슬라이드 A" referrerpolicy="no-referrer" />
-            <img id="slideImgB" src="" alt="슬라이드 B" referrerpolicy="no-referrer" />
+            <img id="slideImgA" src="" alt="슬라이드 A" />
+            <img id="slideImgB" src="" alt="슬라이드 B" />
             <div class="navBtn prev" id="navPrev">‹</div>
             <div class="navBtn next" id="navNext">›</div>
           </div>
@@ -516,8 +564,22 @@
       </div>
     </section>
 
+    <!-- ✅ 사진 아래 동영상 -->
+    <section class="cardBox" id="videoSection">
+      <div class="head">
+        <div>
+          <h2>동영상</h2>
+          <p>사진 아래에 공식 영상/시범 영상을 배치합니다.</p>
+        </div>
+      </div>
+      <div class="body">
+        <div class="videoGrid" id="videoGrid"></div>
+      </div>
+    </section>
+
   </main>
 
+  <!-- ✅ 라이트박스 -->
   <div class="lb" id="lb" aria-hidden="true">
     <div class="panel" role="dialog" aria-modal="true">
       <div class="lb-top">
@@ -526,34 +588,25 @@
           <small id="lbSub" style="color:rgba(255,255,255,.70)"></small>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
-          <button class="iconbtn" id="lbCopy" type="button">🔗 링크복사</button>
-          <a class="iconbtn" id="lbDownload" href="#" download target="_blank" rel="noopener">⬇️ 다운로드</a>
           <button class="iconbtn" id="lbClose" type="button">✕ 닫기</button>
         </div>
       </div>
       <div style="background: rgba(0,0,0,.35)">
-        <img class="lb-img" id="lbImg" src="" alt="확대 이미지" referrerpolicy="no-referrer" />
+        <img class="lb-img" id="lbImg" src="" alt="확대 이미지" />
       </div>
     </div>
   </div>
 
   <div id="toast">복사 완료</div>
 
-  <!-- ✅ JSON 블록: 반드시 “진짜 JSON”만 넣기 (쉼표/따옴표 규칙 엄격) -->
-  <script id="RAW_JSON" type="application/json">
-[
-  ["김우리","https://static.wixstatic.com/media/abf917_38e0bc3b3d804b3caa6aa8363163950d~mv2.jpg"],
-  ["윤유진","https://static.wixstatic.com/media/abf917_b73f1f66c05e43c1b26b5c0dd0629cfe~mv2.jpg"],
-  ["단체_유치부","https://static.wixstatic.com/media/abf917_951d85fca9694590a8f2fd38ff592b39~mv2.jpg"]
-]
-  </script>
+  <!-- ✅ 데이터 -->
+  <script src="data.js"></script>
 
   <script>
     // =========================
-    // ✅ 완전 안정형 JS (문법 깨짐 방지)
+    // ✅ 로컬 이미지 전용 안정형 JS
     // =========================
 
-    // --- 유틸 ---
     function isMobile(){
       try{
         if(window.matchMedia && window.matchMedia("(max-width: 900px)").matches) return true;
@@ -570,18 +623,8 @@
     function setPill(el, text, ok){
       if(!el) return;
       el.textContent = text;
-      if(ok){
-        el.classList.add("ok");
-        el.classList.remove("bad");
-      }else{
-        el.classList.add("bad");
-        el.classList.remove("ok");
-      }
-    }
-
-    function pad2(n){
-      var s = String(n);
-      return (s.length>=2) ? s : ("0"+s);
+      if(ok){ el.classList.add("ok"); el.classList.remove("bad"); }
+      else  { el.classList.add("bad"); el.classList.remove("ok"); }
     }
 
     function toast(msg){
@@ -593,85 +636,10 @@
       window.__toastTimer = setTimeout(function(){ el.style.opacity="0"; }, 1500);
     }
 
-    function copyText(t){
-      try{
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(t).then(function(){
-            toast("복사 완료 ✅");
-          }).catch(function(){
-            toast("복사 실패 😅 주소창에서 복사해주세요.");
-          });
-        }else{
-          // fallback
-          var ta = document.createElement("textarea");
-          ta.value = t;
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand("copy");
-          document.body.removeChild(ta);
-          toast("복사 완료 ✅");
-        }
-      }catch(e){
-        toast("복사 실패 😅 주소창에서 복사해주세요.");
-      }
-    }
-
     function norm(s){
-      return String(s||"").toLowerCase().replace(/\s+/g,"").replace(/[._\-]/g,"");
-    }
-    function cleanUrl(u){
-      return String(u||"").replace(/\s+/g,"").trim();
-    }
-
-    // --- 프록시 ---
-    function toProxyUrl(originalUrl){
-      var u = String(originalUrl || "").trim();
-      if(!u) return u;
-      var noScheme = u.replace(/^https?:\/\//, "");
-      return "https://images.weserv.nl/?url=" + encodeURIComponent(noScheme) + "&ssl=1";
-    }
-    function primarySrc(url){
-      var u = cleanUrl(url);
-      return IS_MOBILE ? u : toProxyUrl(u);
-    }
-    function secondarySrc(url){
-      var u = cleanUrl(url);
-      return IS_MOBILE ? toProxyUrl(u) : u;
-    }
-    function setImgWithFallback(imgEl, originalUrl){
-      if(!imgEl) return;
-      var u = cleanUrl(originalUrl);
-      var a = primarySrc(u);
-      var b = secondarySrc(u);
-
-      imgEl.referrerPolicy = "no-referrer";
-      imgEl.setAttribute("data-try","0");
-
-      imgEl.onerror = function(){
-        var tried = Number(imgEl.getAttribute("data-try") || "0");
-        if(tried >= 1){
-          imgEl.onerror = null;
-          return;
-        }
-        imgEl.setAttribute("data-try", String(tried+1));
-        imgEl.src = b;
-      };
-
-      imgEl.src = a;
-    }
-
-    // --- JSON 로더 ---
-    function loadRawList(){
-      try{
-        var node = document.getElementById("RAW_JSON");
-        if(!node) return [];
-        var txt = (node.textContent || "").trim();
-        var arr = JSON.parse(txt);
-        return Array.isArray(arr) ? arr : [];
-      }catch(e){
-        console.error("RAW_JSON parse error:", e);
-        return [];
-      }
+      return String(s||"").toLowerCase()
+        .replace(/\s+/g,"")
+        .replace(/[._\-]/g,"");
     }
 
     function uniq(arr){
@@ -679,65 +647,11 @@
       var seen = {};
       for(var i=0;i<arr.length;i++){
         var k = String(arr[i]);
-        if(!seen[k]){
-          seen[k]=1;
-          out.push(arr[i]);
-        }
+        if(!seen[k]){ seen[k]=1; out.push(arr[i]); }
       }
       return out;
     }
 
-    function buildItemsFromRaw(raw){
-      var cleaned = [];
-      for(var i=0;i<raw.length;i++){
-        var row = raw[i];
-        var name = "";
-        var url  = "";
-        if(row && row.length >= 2){
-          name = String(row[0] || "").trim();
-          url  = cleanUrl(row[1] || "");
-        }
-        if(name && url){
-          cleaned.push([name,url]);
-        }
-      }
-
-      var totalByName = {};
-      for(var t=0;t<cleaned.length;t++){
-        var nm = cleaned[t][0];
-        totalByName[nm] = (totalByName[nm]||0) + 1;
-      }
-
-      var seenByName = {};
-      var items = [];
-      for(var j=0;j<cleaned.length;j++){
-        var base = cleaned[j][0];
-        var u = cleaned[j][1];
-
-        seenByName[base] = (seenByName[base]||0) + 1;
-        var needSuffix = (totalByName[base]||0) > 1;
-        var internalName = needSuffix ? (base + pad2(seenByName[base])) : base;
-
-        var parts = String(base).split("_");
-        var tagList = [base, internalName];
-        for(var p=0;p<parts.length;p++){
-          var s = String(parts[p]).trim();
-          if(s) tagList.push(s);
-        }
-        tagList = uniq(tagList);
-
-        items.push({
-          id: j+1,
-          name: internalName,
-          base: base,
-          url: u,
-          tags: tagList
-        });
-      }
-      return items;
-    }
-
-    // --- 페이징/도트 ---
     function chunk(arr, size){
       var out = [];
       for(var i=0;i<arr.length;i+=size){
@@ -745,6 +659,7 @@
       }
       return out;
     }
+
     function buildDots(el, n, onClick){
       if(!el) return;
       el.innerHTML = "";
@@ -766,17 +681,17 @@
       }
     }
 
-    // --- 라이트박스 ---
-    function openLightboxByUrl(url){
+    // ✅ 라이트박스
+    function openLightbox(src, title, sub){
       var lb = document.getElementById("lb");
       var lbImg = document.getElementById("lbImg");
-      var lbDownload = document.getElementById("lbDownload");
-      if(!lb || !lbImg || !lbDownload) return;
+      var lbTitle = document.getElementById("lbTitle");
+      var lbSub = document.getElementById("lbSub");
+      if(!lb || !lbImg) return;
 
-      setImgWithFallback(lbImg, url);
-      lbDownload.href = url;
-      window.__lbUrl = url;
-
+      lbImg.src = src;
+      lbTitle.textContent = title || "사진";
+      lbSub.textContent = sub || "";
       lb.classList.add("show");
       lb.setAttribute("aria-hidden","false");
       document.body.style.overflow="hidden";
@@ -789,62 +704,11 @@
       document.body.style.overflow="";
       var img = document.getElementById("lbImg");
       if(img) img.src = "";
-      window.__lbUrl = "";
     }
 
-    // --- 엘리먼트 ---
-    var q = document.getElementById("q");
-    var btnClear = document.getElementById("btnClear");
-    var btnSearch = document.getElementById("btnSearch");
-    var btnShowAll = document.getElementById("btnShowAll");
-    var resultArea = document.getElementById("resultArea");
-    var emptyArea = document.getElementById("emptyArea");
-    var resultTitle = document.getElementById("resultTitle");
-    var resultMeta = document.getElementById("resultMeta");
-    var pagesEl = document.getElementById("pages");
-    var dotsRow = document.getElementById("dotsRow");
-    var btnCopyQueryLink = document.getElementById("btnCopyQueryLink");
-
-    var coverImg = document.getElementById("coverImg");
-    var thumbCount = document.getElementById("thumbCount");
-    var btnCoverPrev = document.getElementById("btnCoverPrev");
-    var btnCoverNext = document.getElementById("btnCoverNext");
-    var btnOpenCover = document.getElementById("btnOpenCover");
-    var btnCopyCover = document.getElementById("btnCopyCover");
-    var btnShuffleThumbs = document.getElementById("btnShuffleThumbs");
-
-    var thumbPagesEl = document.getElementById("thumbPages");
-    var thumbDotsEl = document.getElementById("thumbDots");
-    var btnThumbPrev = document.getElementById("btnThumbPrev");
-    var btnThumbNext = document.getElementById("btnThumbNext");
-    var thumbMeta = document.getElementById("thumbMeta");
-
-    var slideTitle = document.getElementById("slideTitle");
-    var slideSub = document.getElementById("slideSub");
-    var imgA = document.getElementById("slideImgA");
-    var imgB = document.getElementById("slideImgB");
-    var btnPrev = document.getElementById("btnPrev");
-    var btnNext = document.getElementById("btnNext");
-    var btnPlay = document.getElementById("btnPlay");
-    var btnPause = document.getElementById("btnPause");
-    var btnOpenSlide = document.getElementById("btnOpenSlide");
-    var btnCopySlide = document.getElementById("btnCopySlide");
-    var navPrev = document.getElementById("navPrev");
-    var navNext = document.getElementById("navNext");
-
-    var btnScrollTop = document.getElementById("btnScrollTop");
-    if(btnScrollTop){
-      btnScrollTop.addEventListener("click", function(){
-        window.scrollTo({top:0, behavior:"smooth"});
-      });
-    }
-
-    // 라이트박스 바인딩
     var lbClose = document.getElementById("lbClose");
-    var lbCopy  = document.getElementById("lbCopy");
     var lbBg    = document.getElementById("lb");
     if(lbClose) lbClose.addEventListener("click", closeLightbox);
-    if(lbCopy)  lbCopy.addEventListener("click", function(){ copyText(window.__lbUrl || ""); });
     if(lbBg){
       lbBg.addEventListener("click", function(e){
         if(e && e.target && e.target.id === "lb") closeLightbox();
@@ -857,22 +721,99 @@
       }
     });
 
-    // --- 데이터 ---
-    var RAW_LIST = loadRawList();
-    var ITEMS = buildItemsFromRaw(RAW_LIST);
+    // ✅ 상단 스크롤
+    var btnScrollTop = document.getElementById("btnScrollTop");
+    if(btnScrollTop){
+      btnScrollTop.addEventListener("click", function(){
+        window.scrollTo({top:0, behavior:"smooth"});
+      });
+    }
+
+    // =========================
+    // ✅ data.js -> ITEMS 구성
+    // =========================
+    function buildItems(){
+      var srcList = (window.GALLERY && Array.isArray(window.GALLERY)) ? window.GALLERY : [];
+      var totalByName = {};
+      for(var i=0;i<srcList.length;i++){
+        var nm = String(srcList[i].name || "").trim();
+        if(!nm) continue;
+        totalByName[nm] = (totalByName[nm]||0) + 1;
+      }
+
+      var seenByName = {};
+      var items = [];
+      for(var j=0;j<srcList.length;j++){
+        var row = srcList[j] || {};
+        var base = String(row.name || "").trim();
+        var url  = String(row.src  || "").trim();
+        var tags = String(row.tags || "").trim();
+
+        if(!base || !url) continue;
+
+        seenByName[base] = (seenByName[base]||0) + 1;
+        var needSuffix = (totalByName[base]||0) > 1;
+        var internalName = needSuffix ? (base + String(seenByName[base]).padStart(2,"0")) : base;
+
+        var tagList = [base, internalName];
+        if(tags){
+          tags.split(/[,\s]+/).forEach(function(t){
+            t = String(t||"").trim();
+            if(t) tagList.push(t);
+          });
+        }
+        // "_" 분해도 태그로 넣기
+        String(base).split("_").forEach(function(t){
+          t = String(t||"").trim();
+          if(t) tagList.push(t);
+        });
+
+        tagList = uniq(tagList);
+
+        items.push({
+          id: items.length + 1,
+          name: internalName,
+          base: base,
+          url: url,
+          tags: tagList
+        });
+      }
+      return items;
+    }
+
+    var ITEMS = buildItems();
 
     setPill(pillDevice, IS_MOBILE ? "모바일" : "PC", true);
     setPill(pillData, "데이터: " + ITEMS.length + "장", ITEMS.length > 0);
 
     if(ITEMS.length === 0){
       setPill(pillRender, "렌더: 중단", false);
-      statusMsg.textContent = "RAW_JSON이 깨졌거나(파싱 실패) 스크립트가 중단되었습니다. JSON을 먼저 확인해주세요.";
+      statusMsg.textContent = "data.js의 GALLERY가 비어있거나 형식이 잘못되었습니다. (name, src 확인)";
     }else{
       setPill(pillRender, "렌더: 준비", true);
-      statusMsg.textContent = "정상 로드. (PC는 프록시 우선 로딩)";
+      statusMsg.textContent = "로컬 이미지로 정상 로드 ✅";
     }
 
-    // --- 검색 ---
+    // =========================
+    // ✅ 검색 + 5줄 페이징
+    // =========================
+    var q = document.getElementById("q");
+    var btnClear = document.getElementById("btnClear");
+    var btnSearch = document.getElementById("btnSearch");
+    var btnShowAll = document.getElementById("btnShowAll");
+    var resultArea = document.getElementById("resultArea");
+    var emptyArea = document.getElementById("emptyArea");
+    var resultTitle = document.getElementById("resultTitle");
+    var resultMeta = document.getElementById("resultMeta");
+    var pagesEl = document.getElementById("pages");
+    var dotsRow = document.getElementById("dotsRow");
+    var btnCopyQueryLink = document.getElementById("btnCopyQueryLink");
+
+    // 상단 검색 연동
+    var qTop = document.getElementById("qTop");
+    var btnClearTop = document.getElementById("btnClearTop");
+    var btnSearchTop = document.getElementById("btnSearchTop");
+
     function matchItem(item, query){
       var nq = norm(query);
       if(!nq) return true;
@@ -882,8 +823,19 @@
       return (nname.indexOf(nq) !== -1) || (nbase.indexOf(nq) !== -1) || (ntags.indexOf(nq) !== -1);
     }
 
+    // ✅ 현재 화면의 열(column) 수를 계산해서 "5줄" 단위로 페이지 크기 결정
+    function getColumnsForGrid(){
+      // gridThumb는 gap 포함 폭 기반으로 대충 추정
+      // 모바일: 3, 중간: 4, 데스크탑: 6 (CSS와 동일하게 맞춤)
+      var w = window.innerWidth || 360;
+      if(w >= 920) return 6;
+      if(w >= 560) return 4;
+      return 3;
+    }
+
     function renderResultCarousel(list){
-      var PER_PAGE = 12;
+      var cols = getColumnsForGrid();
+      var PER_PAGE = cols * 5; // ✅ 5줄
       var pages = chunk(list, PER_PAGE);
 
       pagesEl.innerHTML = "";
@@ -901,12 +853,14 @@
           (function(it){
             var wrap = document.createElement("div");
             wrap.className = "pitem";
-            wrap.addEventListener("click", function(){ openLightboxByUrl(it.url); });
+            wrap.addEventListener("click", function(){
+              openLightbox(it.url, it.base, "");
+            });
 
             var img = document.createElement("img");
             img.loading = "lazy";
-            img.alt = "갤러리 사진";
-            setImgWithFallback(img, it.url);
+            img.alt = it.base;
+            img.src = it.url;
 
             wrap.appendChild(img);
             grid.appendChild(wrap);
@@ -931,7 +885,7 @@
       };
 
       resultTitle.textContent = "검색 결과";
-      resultMeta.textContent = "총 " + list.length + "장 · " + pages.length + "페이지";
+      resultMeta.textContent = "총 " + list.length + "장 · " + pages.length + "페이지 (5줄 단위)";
       resultArea.style.display = "block";
       emptyArea.style.display = "none";
     }
@@ -953,6 +907,7 @@
 
       renderResultCarousel(filtered);
 
+      // URL에 q 반영 (공유용)
       try{
         var u = new URL(location.href);
         if(queryText) u.searchParams.set("q", queryText);
@@ -961,21 +916,61 @@
       }catch(e){}
     }
 
-    if(btnClear) btnClear.addEventListener("click", function(){ q.value=""; q.focus(); runSearch(""); });
-    if(btnSearch) btnSearch.addEventListener("click", function(){ runSearch(q.value); });
-    if(btnShowAll) btnShowAll.addEventListener("click", function(){ q.value=""; runSearch(""); });
-    if(q) q.addEventListener("keydown", function(e){ if(e.key==="Enter") runSearch(q.value); });
-    if(btnCopyQueryLink) btnCopyQueryLink.addEventListener("click", function(){ copyText(location.href); });
-
-    // --- 대표/썸네일 ---
-    var THUMBS_PER_PAGE = 15;
-    var THUMB_ITEMS = [];
-    for(var i=0;i<ITEMS.length;i++){
-      var obj = {};
-      for(var key in ITEMS[i]) obj[key] = ITEMS[i][key];
-      obj._globalIndex = i;
-      THUMB_ITEMS.push(obj);
+    function bindSearchBox(inputEl){
+      if(!inputEl) return;
+      inputEl.addEventListener("keydown", function(e){
+        if(e.key==="Enter") runSearch(inputEl.value);
+      });
     }
+    bindSearchBox(q);
+    bindSearchBox(qTop);
+
+    if(btnClear) btnClear.addEventListener("click", function(){ q.value=""; if(qTop) qTop.value=""; q.focus(); runSearch(""); });
+    if(btnSearch) btnSearch.addEventListener("click", function(){ if(qTop) qTop.value = q.value; runSearch(q.value); });
+    if(btnShowAll) btnShowAll.addEventListener("click", function(){ q.value=""; if(qTop) qTop.value=""; runSearch(""); });
+
+    if(btnClearTop) btnClearTop.addEventListener("click", function(){ if(qTop) qTop.value=""; if(q) q.value=""; qTop.focus(); runSearch(""); });
+    if(btnSearchTop) btnSearchTop.addEventListener("click", function(){ if(q) q.value = qTop.value; runSearch(qTop.value); });
+
+    if(btnCopyQueryLink) btnCopyQueryLink.addEventListener("click", function(){
+      try{
+        navigator.clipboard.writeText(location.href).then(function(){ toast("복사 완료 ✅"); })
+        .catch(function(){ toast("복사 실패 😅"); });
+      }catch(e){ toast("복사 실패 😅"); }
+    });
+
+    // 창 크기 바뀌면 페이지당 개수(열수)가 달라지므로 결과 재렌더
+    var __lastCols = getColumnsForGrid();
+    window.addEventListener("resize", function(){
+      var now = getColumnsForGrid();
+      if(now !== __lastCols){
+        __lastCols = now;
+        // 결과가 열려 있으면 재렌더
+        if(resultArea && resultArea.style.display !== "none"){
+          runSearch((q && q.value) ? q.value : "");
+        }
+      }
+    });
+
+    // =========================
+    // ✅ 대표/썸네일(5줄=15장) + 슬라이드쇼
+    // =========================
+    var coverImg = document.getElementById("coverImg");
+    var thumbCount = document.getElementById("thumbCount");
+    var btnCoverPrev = document.getElementById("btnCoverPrev");
+    var btnCoverNext = document.getElementById("btnCoverNext");
+    var btnOpenCover = document.getElementById("btnOpenCover");
+    var btnShuffleThumbs = document.getElementById("btnShuffleThumbs");
+
+    var thumbPagesEl = document.getElementById("thumbPages");
+    var thumbDotsEl = document.getElementById("thumbDots");
+    var btnThumbPrev = document.getElementById("btnThumbPrev");
+    var btnThumbNext = document.getElementById("btnThumbNext");
+    var thumbMeta = document.getElementById("thumbMeta");
+
+    // ✅ 3열 고정이므로 5줄=15개
+    var THUMBS_PER_PAGE = 15;
+    var THUMB_ITEMS = ITEMS.slice(); // 복사
 
     var coverIndex = 0;
     var thumbPageCount = 1;
@@ -983,13 +978,12 @@
     function setCover(idx){
       if(THUMB_ITEMS.length === 0) return;
       coverIndex = (idx + THUMB_ITEMS.length) % THUMB_ITEMS.length;
-      setImgWithFallback(coverImg, THUMB_ITEMS[coverIndex].url);
+      coverImg.src = THUMB_ITEMS[coverIndex].url;
 
       // active 표시
       var tiles = thumbPagesEl ? thumbPagesEl.querySelectorAll(".titem") : [];
       for(var t=0;t<tiles.length;t++) tiles[t].classList.remove("active");
 
-      // data-i로 찾기
       var activeTiles = thumbPagesEl ? thumbPagesEl.querySelectorAll('.titem[data-i="'+ coverIndex +'"]') : [];
       for(var a=0;a<activeTiles.length;a++) activeTiles[a].classList.add("active");
     }
@@ -1011,20 +1005,22 @@
         grid.className = "thumbGrid";
 
         for(var k=0;k<page.length;k++){
-          (function(it){
+          (function(localIdx, it){
+            var globalIndex = (i*THUMBS_PER_PAGE) + localIdx;
+
             var tile = document.createElement("div");
             tile.className = "titem";
-            tile.setAttribute("data-i", String(it._globalIndex));
-            tile.addEventListener("click", function(){ setCover(it._globalIndex); });
+            tile.setAttribute("data-i", String(globalIndex));
+            tile.addEventListener("click", function(){ setCover(globalIndex); });
 
             var img = document.createElement("img");
             img.loading = "lazy";
-            img.alt = "thumb";
-            setImgWithFallback(img, it.url);
+            img.alt = it.base;
+            img.src = it.url;
 
             tile.appendChild(img);
             grid.appendChild(tile);
-          })(page[k]);
+          })(k, page[k]);
         }
 
         pageEl.appendChild(grid);
@@ -1067,30 +1063,34 @@
     if(btnCoverPrev) btnCoverPrev.addEventListener("click", function(){ setCover(coverIndex-1); });
     if(btnCoverNext) btnCoverNext.addEventListener("click", function(){ setCover(coverIndex+1); });
     if(btnOpenCover) btnOpenCover.addEventListener("click", function(){
-      openLightboxByUrl(THUMB_ITEMS[coverIndex] ? THUMB_ITEMS[coverIndex].url : "");
-    });
-    if(btnCopyCover) btnCopyCover.addEventListener("click", function(){
-      copyText(THUMB_ITEMS[coverIndex] ? THUMB_ITEMS[coverIndex].url : "");
+      if(THUMB_ITEMS[coverIndex]) openLightbox(THUMB_ITEMS[coverIndex].url, THUMB_ITEMS[coverIndex].base, "");
     });
 
     if(btnShuffleThumbs) btnShuffleThumbs.addEventListener("click", function(){
-      // Fisher–Yates
       for(var i=THUMB_ITEMS.length-1; i>0; i--){
         var j = Math.floor(Math.random()*(i+1));
         var tmp = THUMB_ITEMS[i];
         THUMB_ITEMS[i] = THUMB_ITEMS[j];
         THUMB_ITEMS[j] = tmp;
       }
-      // index 재부여
-      for(var k=0;k<THUMB_ITEMS.length;k++){
-        THUMB_ITEMS[k]._globalIndex = k;
-      }
       coverIndex = 0;
       renderThumbPager();
       toast("썸네일을 섞었습니다 🎲");
     });
 
-    // --- 슬라이드쇼 ---
+    // ✅ 슬라이드쇼
+    var slideTitle = document.getElementById("slideTitle");
+    var slideSub = document.getElementById("slideSub");
+    var imgA = document.getElementById("slideImgA");
+    var imgB = document.getElementById("slideImgB");
+    var btnPrev = document.getElementById("btnPrev");
+    var btnNext = document.getElementById("btnNext");
+    var btnPlay = document.getElementById("btnPlay");
+    var btnPause = document.getElementById("btnPause");
+    var btnOpenSlide = document.getElementById("btnOpenSlide");
+    var navPrev = document.getElementById("navPrev");
+    var navNext = document.getElementById("navNext");
+
     var slideIndex = 0;
     var showingA = true;
     var timer = null;
@@ -1101,13 +1101,13 @@
       slideIndex = (idx + ITEMS.length) % ITEMS.length;
       var it = ITEMS[slideIndex];
 
-      if(slideTitle) slideTitle.textContent = "사진 " + (slideIndex+1);
+      if(slideTitle) slideTitle.textContent = it.base;
       if(slideSub) slideSub.textContent = (slideIndex+1) + "/" + ITEMS.length;
 
       var target = showingA ? imgA : imgB;
       var other  = showingA ? imgB : imgA;
 
-      setImgWithFallback(target, it.url);
+      target.src = it.url;
       target.classList.add("show");
       other.classList.remove("show");
 
@@ -1132,28 +1132,94 @@
     if(btnPlay) btnPlay.addEventListener("click", play);
     if(btnPause) btnPause.addEventListener("click", pause);
     if(btnOpenSlide) btnOpenSlide.addEventListener("click", function(){
-      openLightboxByUrl(ITEMS[slideIndex] ? ITEMS[slideIndex].url : "");
-    });
-    if(btnCopySlide) btnCopySlide.addEventListener("click", function(){
-      copyText(ITEMS[slideIndex] ? ITEMS[slideIndex].url : "");
+      if(ITEMS[slideIndex]) openLightbox(ITEMS[slideIndex].url, ITEMS[slideIndex].base, "");
     });
 
-    // --- INIT ---
+    // =========================
+    // ✅ 동영상 섹션
+    // =========================
+    function toYoutubeEmbed(url){
+      var u = String(url||"").trim();
+      if(!u) return "";
+      // youtu.be/ID
+      var m1 = u.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/);
+      if(m1) return "https://www.youtube.com/embed/" + m1[1];
+      // watch?v=ID
+      var m2 = u.match(/[?&]v=([a-zA-Z0-9_-]{6,})/);
+      if(m2) return "https://www.youtube.com/embed/" + m2[1];
+      // shorts/ID
+      var m3 = u.match(/shorts\/([a-zA-Z0-9_-]{6,})/);
+      if(m3) return "https://www.youtube.com/embed/" + m3[1];
+      // embed/ID
+      var m4 = u.match(/embed\/([a-zA-Z0-9_-]{6,})/);
+      if(m4) return "https://www.youtube.com/embed/" + m4[1];
+      return "";
+    }
+
+    function renderVideos(){
+      var grid = document.getElementById("videoGrid");
+      var section = document.getElementById("videoSection");
+      var list = (window.VIDEOS && Array.isArray(window.VIDEOS)) ? window.VIDEOS : [];
+      if(!grid || !section) return;
+
+      if(!list.length){
+        // 영상이 없으면 섹션 숨김
+        section.style.display = "none";
+        return;
+      }
+
+      grid.innerHTML = "";
+      list.forEach(function(v, idx){
+        var title = String(v.title || ("동영상 " + (idx+1))).trim();
+        var embed = toYoutubeEmbed(v.url);
+        if(!embed) return;
+
+        var card = document.createElement("div");
+        card.className = "vCard";
+
+        var head = document.createElement("div");
+        head.className = "vHead";
+        head.innerHTML = '<b>' + title + '</b><small>YouTube</small>';
+
+        var frame = document.createElement("div");
+        frame.className = "vFrame";
+        frame.innerHTML =
+          '<iframe src="' + embed + '" ' +
+          'title="' + title.replace(/"/g,"") + '" ' +
+          'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ' +
+          'allowfullscreen></iframe>';
+
+        card.appendChild(head);
+        card.appendChild(frame);
+        grid.appendChild(card);
+      });
+    }
+
+    // =========================
+    // ✅ INIT
+    // =========================
     (function init(){
       try{
         if(ITEMS.length){
           renderThumbPager();
           setSlide(0);
+          renderVideos();
+
           setPill(pillRender, "렌더: 완료", true);
-          statusMsg.textContent = "정상 동작 중 ✅ (PC는 프록시→원본 자동 대체)";
+          statusMsg.textContent = "정상 동작 중 ✅ (로컬 이미지)";
         }
 
+        // URL ?q= 로 들어오면 자동 검색
         try{
           var u = new URL(location.href);
           var qq = u.searchParams.get("q");
           if(qq){
-            q.value = qq;
+            if(q) q.value = qq;
+            if(qTop) qTop.value = qq;
             runSearch(qq);
+          }else{
+            // 기본은 전체 표시(원하면 주석 해제)
+            // runSearch("");
           }
         }catch(e){}
       }catch(e){
