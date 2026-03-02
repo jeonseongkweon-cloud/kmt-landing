@@ -37,6 +37,7 @@
     a{color:inherit; text-decoration:none}
     .wrap{max-width:1100px; margin:0 auto; padding:20px 16px 90px}
 
+    /* Top Bar */
     .topbar{
       position:sticky; top:0; z-index:50;
       backdrop-filter: blur(10px);
@@ -85,6 +86,7 @@
       box-shadow: 0 10px 30px rgba(102,179,255,.10);
     }
 
+    /* Section Cards */
     .cardBox{
       margin-top:18px;
       border:1px solid var(--line);
@@ -102,6 +104,7 @@
     .cardBox .head p{margin:0; color:var(--muted); font-size:13px; line-height:1.55}
     .cardBox .body{padding:14px 14px 16px}
 
+    /* Search */
     .searchRow{
       display:flex; gap:10px; flex-wrap:wrap;
       align-items:center;
@@ -136,6 +139,7 @@
       font-weight:800;
     }
 
+    /* Result carousel */
     .resultTop{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
       padding:10px 12px;
@@ -170,9 +174,12 @@
       grid-template-columns: repeat(4, 1fr);
       gap:10px;
     }
-    @media (min-width: 820px){ .gridThumb{ grid-template-columns: repeat(6, 1fr); } }
-    @media (max-width: 420px){ .gridThumb{ grid-template-columns: repeat(3, 1fr); } }
-
+    @media (min-width: 820px){
+      .gridThumb{ grid-template-columns: repeat(6, 1fr); }
+    }
+    @media (max-width: 420px){
+      .gridThumb{ grid-template-columns: repeat(3, 1fr); }
+    }
     .pitem{
       border-radius: 14px;
       overflow:hidden;
@@ -205,6 +212,7 @@
     }
     .dot.on{ background: rgba(102,179,255,.92); border-color: rgba(102,179,255,.35); }
 
+    /* COVER + THUMBS */
     .cover{
       display:grid;
       grid-template-columns: 1.2fr .8fr;
@@ -229,8 +237,16 @@
       filter: contrast(1.02) saturate(1.03);
       transform: scale(1.01);
     }
-    @media (min-width: 980px){ .coverMain{ height: 420px; max-height: 420px; } }
+    .coverMain .cap{display:none !important;}
 
+    @media (min-width: 980px){
+      .coverMain{ height: 420px; max-height: 420px; }
+    }
+    @media (min-width: 1280px){
+      .coverMain{ height: 440px; max-height: 440px; }
+    }
+
+    /* THUMB RAIL */
     .thumbRail{
       border:1px solid var(--line);
       border-radius: 18px;
@@ -241,11 +257,24 @@
       gap:10px;
       min-width: 280px;
     }
-    .thumbTitle{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 4px;}
+    .thumbTitle{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:0 4px;
+    }
     .thumbTitle b{font-size:14px}
     .thumbTitle small{color:var(--muted)}
-    .railTopRow{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 4px;}
-    .railNav{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end;}
+    .railTopRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:0 4px;
+    }
+    .railNav{
+      display:flex; gap:8px; flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
     .navMini{
       width:40px; height:36px;
       border-radius: 12px;
@@ -260,7 +289,11 @@
     }
     .navMini:hover{ border-color: rgba(215,181,109,.35); transform: translateY(-1px); }
     .navMini:active{ transform: translateY(0); }
-    .railMeta{color: rgba(255,255,255,.70); font-size:12px; white-space:nowrap;}
+    .railMeta{
+      color: rgba(255,255,255,.70);
+      font-size:12px;
+      white-space:nowrap;
+    }
     .thumbPager{
       border:1px solid rgba(255,255,255,.10);
       border-radius: 16px;
@@ -274,7 +307,11 @@
       -webkit-overflow-scrolling: touch;
       scroll-behavior:smooth;
     }
-    .thumbPage{scroll-snap-align: start; flex:0 0 100%; padding:8px;}
+    .thumbPage{
+      scroll-snap-align: start;
+      flex:0 0 100%;
+      padding:8px;
+    }
     .thumbGrid{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
@@ -313,6 +350,7 @@
       background: rgba(0,0,0,.10);
     }
 
+    /* ✅ SLIDESHOW */
     .slideshow{
       margin-top:12px;
       border:1px solid var(--line);
@@ -325,10 +363,17 @@
       padding:10px 12px;
       border-bottom:1px solid rgba(255,255,255,.10);
     }
-    .slideTop .info{display:flex; flex-direction:column; gap:2px; min-width:0;}
-    .slideTop .info b{font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+    .slideTop .info{
+      display:flex; flex-direction:column; gap:2px;
+      min-width:0;
+    }
+    .slideTop .info b{
+      font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
     .slideTop .info small{color:var(--muted); font-size:12px}
-    .controls{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
+    .controls{
+      display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;
+    }
 
     .slideBox{
       position:relative;
@@ -336,7 +381,6 @@
       aspect-ratio: 16 / 9;
       background:#000;
       overflow:hidden;
-
       --bgurl: none;
       --blur: 26px;
       --bgOpacity: .62;
@@ -375,6 +419,7 @@
       will-change: transform;
     }
     .slideBox img.show{opacity:1}
+
     .navBtn{
       position:absolute;
       top:50%;
@@ -394,8 +439,15 @@
     .navBtn.prev{left:10px}
     .navBtn.next{right:10px}
 
-    .video-grid{display:grid; grid-template-columns: 1fr; gap:12px;}
-    @media (min-width: 900px){ .video-grid{grid-template-columns: 1fr 1fr} }
+    /* Videos */
+    .video-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width: 900px){
+      .video-grid{grid-template-columns: 1fr 1fr}
+    }
     .video-card{
       border:1px solid var(--line);
       border-radius: var(--r);
@@ -403,13 +455,29 @@
       background: rgba(255,255,255,.03);
       box-shadow: var(--shadow);
     }
-    .video-embed{position:relative; width:100%; aspect-ratio: 16 / 9; background:#000;}
-    .video-embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
-    .video-body{padding:12px 12px 14px; display:flex; flex-direction:column; gap:6px;}
+    .video-embed{
+      position:relative;
+      width:100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+    }
+    .video-embed iframe{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      border:0;
+    }
+    .video-body{
+      padding:12px 12px 14px;
+      display:flex; flex-direction:column; gap:6px;
+    }
     .video-body b{font-size:14px; line-height:1.35}
     .video-body p{margin:0; color:var(--muted); font-size:13px; line-height:1.5}
-    .moreRow{margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;}
+    .moreRow{
+      margin-top:12px;
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
 
+    /* Lightbox */
     .lb{
       position:fixed; inset:0;
       background: rgba(0,0,0,.78);
@@ -433,7 +501,10 @@
       padding:10px 12px;
       border-bottom:1px solid rgba(255,255,255,.12);
     }
-    .lb-top .title{display:flex; flex-direction:column; gap:2px; min-width:0;}
+    .lb-top .title{
+      display:flex; flex-direction:column; gap:2px;
+      min-width:0;
+    }
     .lb-top .title b{font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
     .lb-top .title small{color:rgba(255,255,255,.70); font-size:12px}
     .lb-actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
@@ -458,6 +529,7 @@
       background: rgba(0,0,0,.30);
     }
 
+    /* Toast */
     #toast{
       position:fixed;
       left:50%;
@@ -483,7 +555,6 @@
     }
   </style>
 </head>
-
 <body>
 
   <div class="topbar">
@@ -635,7 +706,7 @@
       <div class="head">
         <div>
           <h2>영상</h2>
-          <p>유튜브 제목을 자동으로 불러와서 표시합니다.</p>
+          <p>모바일에서는 유튜브 제목을 자동으로 불러옵니다(PC는 속도 최적화로 생략).</p>
         </div>
       </div>
 
@@ -673,7 +744,7 @@
 
   <div id="toast">복사 완료</div>
 
-  <!-- ✅✅✅ RAW_LIST를 “절대 안 깨지는 JSON 블록”으로 저장 (여기만 교체하면 됨) ✅✅✅ -->
+  <!-- ✅ RAW_LIST를 “깨지지 않는 JSON 블록”으로 보관 -->
   <script id="RAW_JSON" type="application/json">
 [
   ["단체_유치부","https://static.wixstatic.com/media/abf917_951d85fca9694590a8f2fd38ff592b39~mv2.jpg"],
@@ -793,9 +864,17 @@
   </script>
 
   <script>
-    /* ===============================
-      안정형 공통 유틸
-    =============================== */
+    /* =========================================================
+      ✅ PC 최적화 핵심
+      - 모바일: Wix 원본 우선(빠름) + 실패 시 프록시
+      - PC: 프록시 우선(403 회피) + 실패 시 원본(최후)
+      - YouTube oEmbed 제목 불러오기: 모바일에서만 실행(PC는 403/지연 방지)
+    ========================================================= */
+
+    const IS_MOBILE =
+      (window.matchMedia && window.matchMedia("(max-width: 900px)").matches) ||
+      /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
     function toast(msg){
       const el = document.getElementById("toast");
       el.textContent = msg;
@@ -808,72 +887,70 @@
       catch(e){ toast("복사 실패 😅 주소창에서 복사해주세요."); }
     }
     function norm(s){
-      return String(s||"").toLowerCase().replace(/\s+/g,"").replace(/[._\-]/g,"");
+      return String(s||"")
+        .toLowerCase()
+        .replace(/\s+/g,"")
+        .replace(/[._\-]/g,"");
     }
-    function cleanUrl(u){ return String(u||"").replace(/\s+/g,"").trim(); }
+    function cleanUrl(u){
+      return String(u||"").replace(/\s+/g,"").trim();
+    }
     function pad2(n){ return String(n).padStart(2,"0"); }
-    function chunk(arr, size){
-      const out = [];
-      for(let i=0;i<arr.length;i+=size) out.push(arr.slice(i,i+size));
-      return out;
-    }
-    function buildDots(el, n, onClick){
-      el.innerHTML = "";
-      for(let i=0;i<n;i++){
-        const d = document.createElement("div");
-        d.className = "dot" + (i===0 ? " on" : "");
-        d.addEventListener("click", ()=> onClick(i));
-        el.appendChild(d);
-      }
-    }
-    function setDotActive(el, idx){
-      [...el.children].forEach((d,i)=> d.classList.toggle("on", i===idx));
-    }
 
-    /* ===============================
-      ✅ 프록시 + 안전 fallback
-      (inline onerror 제거: 따옴표 꼬임으로 SyntaxError 방지)
-    =============================== */
+    // ✅ 프록시(weServ) URL
     function toProxyUrl(originalUrl){
       const u = String(originalUrl || "").trim();
       if(!u) return u;
       const noScheme = u.replace(/^https?:\/\//, "");
       return `https://images.weserv.nl/?url=${encodeURIComponent(noScheme)}&ssl=1`;
     }
+
+    // ✅ 어떤 src를 쓸지 결정 (모바일/PC 분기)
+    function primarySrc(url){
+      const u = cleanUrl(url);
+      if(!u) return u;
+      // 모바일: 원본 우선
+      // PC: 프록시 우선(403 회피)
+      return IS_MOBILE ? u : toProxyUrl(u);
+    }
+    function secondarySrc(url){
+      const u = cleanUrl(url);
+      if(!u) return u;
+      // 모바일: 원본 실패 시 프록시
+      // PC: 프록시 실패 시 원본(최후)
+      return IS_MOBILE ? toProxyUrl(u) : u;
+    }
+
+    // ✅ 이미지 엘리먼트에 “1회만” 대체하는 안전한 onerror
     function setImgWithFallback(imgEl, originalUrl){
-      const orig = String(originalUrl||"").trim();
-      const prox = toProxyUrl(orig);
+      const u = cleanUrl(originalUrl);
+      const a = primarySrc(u);
+      const b = secondarySrc(u);
 
       imgEl.referrerPolicy = "no-referrer";
-      imgEl.loading = "lazy";
-
+      imgEl.dataset.try = "0";
       imgEl.onerror = () => {
-        // 프록시 실패 → 원본
-        imgEl.onerror = () => {
-          // 원본도 실패 → 마지막 방어 (그래도 no-referrer 유지)
-          imgEl.onerror = null;
-        };
-        imgEl.src = orig;
+        const tried = Number(imgEl.dataset.try || "0");
+        if(tried >= 1) { imgEl.onerror = null; return; }
+        imgEl.dataset.try = String(tried + 1);
+        imgEl.src = b;
       };
-
-      imgEl.src = prox;
+      imgEl.src = a;
     }
 
-    /* ===============================
-      RAW JSON 로드 (안 깨짐)
-    =============================== */
+    // ✅ JSON 블록에서 RAW_LIST 가져오기(절대 안 깨짐)
     function loadRawList(){
-      const el = document.getElementById("RAW_JSON");
-      if(!el) return [];
       try{
-        const raw = JSON.parse(el.textContent.trim());
-        if(!Array.isArray(raw)) return [];
-        return raw;
+        const txt = document.getElementById("RAW_JSON").textContent.trim();
+        const arr = JSON.parse(txt);
+        if(Array.isArray(arr)) return arr;
       }catch(e){
-        console.error("RAW_JSON parse failed:", e);
-        return [];
+        console.error("RAW_JSON parse error:", e);
       }
+      return [];
     }
+
+    const RAW_LIST = loadRawList();
 
     function buildItemsFromRaw(raw){
       const cleaned = raw
@@ -881,7 +958,7 @@
         .filter(([name,url])=> name && url);
 
       const totalByName = {};
-      cleaned.forEach(([name])=> totalByName[name] = (totalByName[name]||0) + 1);
+      cleaned.forEach(([name])=> totalByName[name] = (totalByName[name]||0) + 1;
 
       const seenByName = {};
       return cleaned.map(([name,url], idx)=>{
@@ -891,11 +968,11 @@
 
         const parts = String(name).split("_").map(s=>s.trim()).filter(Boolean);
         const tags = Array.from(new Set([name, internalName, ...parts]));
+
         return { id: idx+1, name: internalName, base: name, url, tags };
       });
     }
 
-    const RAW_LIST = loadRawList();
     const ITEMS = buildItemsFromRaw(RAW_LIST);
 
     /* Top */
@@ -953,35 +1030,55 @@
       const ntags = norm((item.tags||[]).join(" "));
       return nname.includes(nq) || nbase.includes(nq) || ntags.includes(nq);
     }
+    function chunk(arr, size){
+      const out = [];
+      for(let i=0; i<arr.length; i+=size) out.push(arr.slice(i, i+size));
+      return out;
+    }
+    function buildDots(el, n, onClick){
+      el.innerHTML = "";
+      for(let i=0;i<n;i++){
+        const d = document.createElement("div");
+        d.className = "dot" + (i===0 ? " on" : "");
+        d.addEventListener("click", ()=> onClick(i));
+        el.appendChild(d);
+      }
+    }
+    function setDotActive(el, idx){
+      [...el.children].forEach((d,i)=> d.classList.toggle("on", i===idx));
+    }
 
     function renderResultCarousel(list){
       const PER_PAGE = 12;
       const pages = chunk(list, PER_PAGE);
 
-      pagesEl.innerHTML = "";
-      pages.forEach((pageItems)=>{
-        const page = document.createElement("div");
-        page.className = "page";
+      pagesEl.innerHTML = pages.map((page)=> {
+        const thumbs = page.map((it)=> {
+          const src = primarySrc(it.url);
+          const alt = secondarySrc(it.url);
+          return `
+            <div class="pitem" data-url="${it.url}">
+              <img loading="lazy"
+                   src="${src}"
+                   alt="갤러리 사진"
+                   referrerpolicy="no-referrer"
+                   data-try="0"
+                   onerror="(function(img,alt){var t=Number(img.dataset.try||'0'); if(t>=1){img.onerror=null;return;} img.dataset.try=String(t+1); img.src=alt;})(this,'${alt}')">
+            </div>
+          `;
+        }).join("");
+        return `
+          <div class="page">
+            <div class="gridThumb">${thumbs}</div>
+          </div>
+        `;
+      }).join("");
 
-        const grid = document.createElement("div");
-        grid.className = "gridThumb";
-
-        pageItems.forEach((it)=>{
-          const box = document.createElement("div");
-          box.className = "pitem";
-          box.addEventListener("click", ()=> openLightboxByUrl(it.url));
-
-          const img = document.createElement("img");
-          img.alt = "갤러리 사진";
-          img.style.display = "block";
-          setImgWithFallback(img, it.url);
-
-          box.appendChild(img);
-          grid.appendChild(box);
+      pagesEl.querySelectorAll(".pitem").forEach(el=>{
+        el.addEventListener("click", ()=>{
+          const url = el.getAttribute("data-url") || "";
+          openLightboxByUrl(url);
         });
-
-        page.appendChild(grid);
-        pagesEl.appendChild(page);
       });
 
       buildDots(dotsRow, pages.length, (i)=>{
@@ -1023,6 +1120,7 @@
     btnSearch.addEventListener("click", ()=> runSearch(q.value));
     btnShowAll.addEventListener("click", ()=>{ q.value=""; runSearch(""); });
     q.addEventListener("keydown", (e)=>{ if(e.key==="Enter") runSearch(q.value); });
+
     btnCopyQueryLink.addEventListener("click", ()=> copyText(location.href));
 
     /* ===========================
@@ -1045,55 +1143,59 @@
     const THUMBS_PER_PAGE = 15;
 
     let coverIndex = 0;
-    let THUMB_ITEMS = ITEMS.map((it, idx)=> ({...it, _globalIndex: idx}));
+    let THUMB_ITEMS = [...ITEMS];
     let thumbPageCount = 1;
 
     function setCover(idx){
-      if(!THUMB_ITEMS.length) return;
       coverIndex = (idx + THUMB_ITEMS.length) % THUMB_ITEMS.length;
+      const original = THUMB_ITEMS[coverIndex].url;
+      setImgWithFallback(coverImg, original);
 
-      setImgWithFallback(coverImg, THUMB_ITEMS[coverIndex].url);
-
-      thumbPagesEl.querySelectorAll(".titem").forEach(el=> el.classList.remove("active"));
+      thumbPagesEl.querySelectorAll(".titem").forEach((el)=>{
+        el.classList.remove("active");
+      });
       thumbPagesEl.querySelectorAll(`.titem[data-i="${coverIndex}"]`).forEach(el=> el.classList.add("active"));
     }
 
     function renderThumbPager(){
       thumbCount.textContent = String(THUMB_ITEMS.length);
+
       const pages = chunk(THUMB_ITEMS, THUMBS_PER_PAGE);
       thumbPageCount = pages.length;
 
-      thumbPagesEl.innerHTML = "";
-      pages.forEach((pageItems, pi)=>{
-        const page = document.createElement("div");
-        page.className = "thumbPage";
-        page.dataset.page = String(pi);
+      thumbPagesEl.innerHTML = pages.map((page, pi)=>{
+        const tiles = page.map((it)=>{
+          const src = primarySrc(it.url);
+          const alt = secondarySrc(it.url);
+          return `
+            <div class="titem" data-i="${it._globalIndex}" title="썸네일">
+              <img loading="lazy"
+                   src="${src}"
+                   alt="thumb"
+                   referrerpolicy="no-referrer"
+                   data-try="0"
+                   onerror="(function(img,alt){var t=Number(img.dataset.try||'0'); if(t>=1){img.onerror=null;return;} img.dataset.try=String(t+1); img.src=alt;})(this,'${alt}')">
+            </div>
+          `;
+        }).join("");
 
-        const grid = document.createElement("div");
-        grid.className = "thumbGrid";
-
-        pageItems.forEach((it)=>{
-          const box = document.createElement("div");
-          box.className = "titem";
-          box.dataset.i = String(it._globalIndex);
-          box.title = "썸네일";
-          box.addEventListener("click", ()=> setCover(it._globalIndex));
-
-          const img = document.createElement("img");
-          img.alt = "thumb";
-          setImgWithFallback(img, it.url);
-
-          box.appendChild(img);
-          grid.appendChild(box);
-        });
-
-        page.appendChild(grid);
-        thumbPagesEl.appendChild(page);
-      });
+        return `
+          <div class="thumbPage" data-page="${pi}">
+            <div class="thumbGrid">${tiles}</div>
+          </div>
+        `;
+      }).join("");
 
       buildDots(thumbDotsEl, thumbPageCount, (i)=>{
         const w = thumbPagesEl.clientWidth || 1;
         thumbPagesEl.scrollTo({ left: i*w, behavior:"smooth" });
+      });
+
+      thumbPagesEl.querySelectorAll(".titem").forEach(el=>{
+        el.addEventListener("click", ()=>{
+          const i = Number(el.getAttribute("data-i"));
+          setCover(i);
+        });
       });
 
       function updateThumbPagerUI(){
@@ -1107,6 +1209,10 @@
       updateThumbPagerUI();
 
       setCover(coverIndex);
+    }
+
+    function reindexThumbItems(){
+      THUMB_ITEMS = THUMB_ITEMS.map((it, idx)=> ({...it, _globalIndex: idx}));
     }
 
     btnThumbPrev.addEventListener("click", ()=>{
@@ -1124,8 +1230,8 @@
 
     btnCoverPrev.addEventListener("click", ()=> setCover(coverIndex-1));
     btnCoverNext.addEventListener("click", ()=> setCover(coverIndex+1));
-    btnOpenCover.addEventListener("click", ()=> THUMB_ITEMS.length && openLightboxByUrl(THUMB_ITEMS[coverIndex].url));
-    btnCopyCover.addEventListener("click", ()=> THUMB_ITEMS.length && copyText(THUMB_ITEMS[coverIndex].url));
+    btnOpenCover.addEventListener("click", ()=> openLightboxByUrl(THUMB_ITEMS[coverIndex].url));
+    btnCopyCover.addEventListener("click", ()=> copyText(THUMB_ITEMS[coverIndex].url));
 
     btnShuffleThumbs.addEventListener("click", ()=>{
       const shuffled = [...THUMB_ITEMS];
@@ -1133,14 +1239,16 @@
         const j = Math.floor(Math.random()*(i+1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
       }
-      THUMB_ITEMS = shuffled.map((it, idx)=> ({...it, _globalIndex: idx}));
+      THUMB_ITEMS = shuffled;
+      reindexThumbItems();
       coverIndex = 0;
       renderThumbPager();
+      setCover(0);
       toast("썸네일을 섞었습니다 🎲");
     });
 
     /* ===========================
-      (3) 슬라이드 쇼(시네마모드)
+      (3) 슬라이드 쇼
     =========================== */
     const slideTitle = document.getElementById("slideTitle");
     const slideSub = document.getElementById("slideSub");
@@ -1198,10 +1306,12 @@
     }
 
     function setCinematicVars(isPortrait, originalUrl){
-      const u = originalUrl || ITEMS[slideIndex]?.url || "";
-      slideBox.style.setProperty("--bgurl", `url("${toProxyUrl(u)}")`);
+      const u = cleanUrl(originalUrl || "");
+      // 배경도 동일한 src 정책을 사용
+      const bg = primarySrc(u);
 
       if(!cinemaOn){
+        slideBox.style.setProperty("--bgurl", `url("${bg}")`);
         slideBox.style.setProperty("--blur", "0px");
         slideBox.style.setProperty("--bgOpacity", ".20");
         slideBox.style.setProperty("--zoom", "1");
@@ -1210,6 +1320,7 @@
         return;
       }
 
+      slideBox.style.setProperty("--bgurl", `url("${bg}")`);
       slideBox.style.setProperty("--blur", (isPortrait ? SLIDE_FX.blurPortrait : SLIDE_FX.blurLandscape) + "px");
       slideBox.style.setProperty("--bgOpacity", (isPortrait ? SLIDE_FX.bgOpacityPortrait : SLIDE_FX.bgOpacityLandscape));
       slideBox.style.setProperty("--zoom", (isPortrait ? SLIDE_FX.zoomPortrait : SLIDE_FX.zoomLandscape));
@@ -1221,11 +1332,9 @@
       const w = imgEl.naturalWidth || 0;
       const h = imgEl.naturalHeight || 0;
       if(!w || !h) return;
-
       const isPortrait = h > w;
       __kbIsPortrait = isPortrait;
       __kbZoomBase = isPortrait ? SLIDE_FX.zoomPortrait : SLIDE_FX.zoomLandscape;
-
       imgEl.style.objectFit = isPortrait ? "contain" : "cover";
       setCinematicVars(isPortrait, originalUrl);
       resetKenBurns();
@@ -1233,11 +1342,8 @@
 
     function resetKenBurns(){
       __kbZ = cinemaOn ? __kbZoomBase : 1;
-      __kbTX = 0;
-      __kbTY = 0;
-      __kbDirZ = 1;
-      __kbDirX = 1;
-      __kbDirY = 1;
+      __kbTX = 0; __kbTY = 0;
+      __kbDirZ = 1; __kbDirX = 1; __kbDirY = 1;
       slideBox.style.setProperty("--zoom", String(__kbZ));
       slideBox.style.setProperty("--tx", "0px");
       slideBox.style.setProperty("--ty", "0px");
@@ -1299,7 +1405,7 @@
     }
 
     function play(){
-      if(timer) return;
+      if(timer || !ITEMS.length) return;
       timer = setInterval(()=> setSlide(slideIndex+1), speeds[speedIdx]);
       startKenBurns();
       toast("자동재생 시작 ▶");
@@ -1324,24 +1430,20 @@
     btnPlay.addEventListener("click", play);
     btnPause.addEventListener("click", pause);
     btnSpeed.addEventListener("click", toggleSpeed);
-    btnOpenSlide.addEventListener("click", ()=> ITEMS.length && openLightboxByUrl(ITEMS[slideIndex].url));
-    btnCopySlide.addEventListener("click", ()=> ITEMS.length && copyText(ITEMS[slideIndex].url));
+    btnOpenSlide.addEventListener("click", ()=> openLightboxByUrl(ITEMS[slideIndex]?.url || ""));
+    btnCopySlide.addEventListener("click", ()=> copyText(ITEMS[slideIndex]?.url || ""));
 
     btnCinema.addEventListener("click", ()=>{
       cinemaOn = !cinemaOn;
       applyCinemaModeUI();
       setCinematicVars(__kbIsPortrait, ITEMS[slideIndex]?.url);
-      if(timer){
-        resetKenBurns();
-        toast(cinemaOn ? "시네마모드 ON 🎥" : "깔끔모드 ON ✨");
-      }else{
-        stopKenBurns();
-        toast(cinemaOn ? "시네마모드 ON 🎥" : "깔끔모드 ON ✨");
-      }
+      if(timer){ resetKenBurns(); toast(cinemaOn ? "시네마모드 ON 🎥" : "깔끔모드 ON ✨"); }
+      else { stopKenBurns(); toast(cinemaOn ? "시네마모드 ON 🎥" : "깔끔모드 ON ✨"); }
     });
 
     /* ===========================
       (4) 영상
+      - PC에서는 oEmbed 제목 요청(403) 때문에 느려져서 “모바일에서만” 실행
     =========================== */
     const VIDEO_URLS = [
       "https://www.youtube.com/watch?v=D3kDXF-sNJA",
@@ -1374,8 +1476,8 @@
                 allowfullscreen></iframe>
             </div>
             <div class="video-body">
-              <b class="yt-title">제목 불러오는 중…</b>
-              <p class="yt-meta">잠시만요 ✅</p>
+              <b class="yt-title">${IS_MOBILE ? "제목 불러오는 중…" : "계명태권도 영상"}</b>
+              <p class="yt-meta">${IS_MOBILE ? "잠시만요 ✅" : "YouTube"}</p>
             </div>
           </article>
         `;
@@ -1390,7 +1492,7 @@
         const metaEl = card.querySelector(".yt-meta");
         const oembed = `https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(url)}`;
         try{
-          const res = await fetch(oembed);
+          const res = await fetch(oembed, { mode: "cors" });
           if(!res.ok) throw new Error("oEmbed not ok");
           const data = await res.json();
           titleEl.textContent = data.title || "계명태권도 영상";
@@ -1411,7 +1513,6 @@
 
     /* INIT */
     (function init(){
-      // 검색 쿼리 자동 실행
       const u = new URL(location.href);
       const qq = u.searchParams.get("q");
       if(qq){
@@ -1419,31 +1520,33 @@
         runSearch(qq);
       }
 
-      // 썸네일/대표
+      reindexThumbItems();
+      renderThumbPager();
+
       if(THUMB_ITEMS.length){
-        renderThumbPager();
         setCover(0);
-      }else{
-        console.warn("ITEMS empty. RAW_JSON 확인 필요");
       }
 
-      // 슬라이드쇼
       applyCinemaModeUI();
+
       if(ITEMS.length){
         imgA.onload = ()=> applyAutoFit(imgA, ITEMS[0].url);
         setImgWithFallback(imgA, ITEMS[0].url);
         imgA.classList.add("show");
+
         slideTitle.textContent = "사진 1";
         slideSub.textContent = `1/${ITEMS.length}`;
-        slideBox.style.setProperty("--bgurl", `url("${toProxyUrl(ITEMS[0].url)}")`);
+
+        slideBox.style.setProperty("--bgurl", `url("${primarySrc(ITEMS[0].url)}")`);
       }
       btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
 
-      // 영상
       renderVideosShell();
-      fillYouTubeTitles();
+      // ✅ 모바일에서만 oEmbed 호출
+      if(IS_MOBILE){
+        fillYouTubeTitles();
+      }
     })();
   </script>
-
 </body>
 </html>
