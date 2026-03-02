@@ -37,7 +37,6 @@
     a{color:inherit; text-decoration:none}
     .wrap{max-width:1100px; margin:0 auto; padding:20px 16px 90px}
 
-    /* Top Bar */
     .topbar{
       position:sticky; top:0; z-index:50;
       backdrop-filter: blur(10px);
@@ -86,7 +85,6 @@
       box-shadow: 0 10px 30px rgba(102,179,255,.10);
     }
 
-    /* Section Cards */
     .cardBox{
       margin-top:18px;
       border:1px solid var(--line);
@@ -104,7 +102,6 @@
     .cardBox .head p{margin:0; color:var(--muted); font-size:13px; line-height:1.55}
     .cardBox .body{padding:14px 14px 16px}
 
-    /* Search */
     .searchRow{
       display:flex; gap:10px; flex-wrap:wrap;
       align-items:center;
@@ -139,7 +136,6 @@
       font-weight:800;
     }
 
-    /* Result carousel */
     .resultTop{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
       padding:10px 12px;
@@ -174,12 +170,9 @@
       grid-template-columns: repeat(4, 1fr);
       gap:10px;
     }
-    @media (min-width: 820px){
-      .gridThumb{ grid-template-columns: repeat(6, 1fr); }
-    }
-    @media (max-width: 420px){
-      .gridThumb{ grid-template-columns: repeat(3, 1fr); }
-    }
+    @media (min-width: 820px){ .gridThumb{ grid-template-columns: repeat(6, 1fr); } }
+    @media (max-width: 420px){ .gridThumb{ grid-template-columns: repeat(3, 1fr); } }
+
     .pitem{
       border-radius: 14px;
       overflow:hidden;
@@ -212,7 +205,6 @@
     }
     .dot.on{ background: rgba(102,179,255,.92); border-color: rgba(102,179,255,.35); }
 
-    /* COVER + THUMBS */
     .cover{
       display:grid;
       grid-template-columns: 1.2fr .8fr;
@@ -237,16 +229,8 @@
       filter: contrast(1.02) saturate(1.03);
       transform: scale(1.01);
     }
-    .coverMain .cap{display:none !important;}
+    @media (min-width: 980px){ .coverMain{ height: 420px; max-height: 420px; } }
 
-    @media (min-width: 980px){
-      .coverMain{ height: 420px; max-height: 420px; }
-    }
-    @media (min-width: 1280px){
-      .coverMain{ height: 440px; max-height: 440px; }
-    }
-
-    /* THUMB RAIL */
     .thumbRail{
       border:1px solid var(--line);
       border-radius: 18px;
@@ -257,24 +241,11 @@
       gap:10px;
       min-width: 280px;
     }
-    .thumbTitle{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:0 4px;
-    }
+    .thumbTitle{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 4px;}
     .thumbTitle b{font-size:14px}
     .thumbTitle small{color:var(--muted)}
-    .railTopRow{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:0 4px;
-    }
-    .railNav{
-      display:flex; gap:8px; flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-end;
-    }
+    .railTopRow{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 4px;}
+    .railNav{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end;}
     .navMini{
       width:40px; height:36px;
       border-radius: 12px;
@@ -289,11 +260,7 @@
     }
     .navMini:hover{ border-color: rgba(215,181,109,.35); transform: translateY(-1px); }
     .navMini:active{ transform: translateY(0); }
-    .railMeta{
-      color: rgba(255,255,255,.70);
-      font-size:12px;
-      white-space:nowrap;
-    }
+    .railMeta{color: rgba(255,255,255,.70); font-size:12px; white-space:nowrap;}
     .thumbPager{
       border:1px solid rgba(255,255,255,.10);
       border-radius: 16px;
@@ -307,11 +274,7 @@
       -webkit-overflow-scrolling: touch;
       scroll-behavior:smooth;
     }
-    .thumbPage{
-      scroll-snap-align: start;
-      flex:0 0 100%;
-      padding:8px;
-    }
+    .thumbPage{scroll-snap-align: start; flex:0 0 100%; padding:8px;}
     .thumbGrid{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
@@ -350,7 +313,6 @@
       background: rgba(0,0,0,.10);
     }
 
-    /* ✅ SLIDESHOW */
     .slideshow{
       margin-top:12px;
       border:1px solid var(--line);
@@ -363,17 +325,10 @@
       padding:10px 12px;
       border-bottom:1px solid rgba(255,255,255,.10);
     }
-    .slideTop .info{
-      display:flex; flex-direction:column; gap:2px;
-      min-width:0;
-    }
-    .slideTop .info b{
-      font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
+    .slideTop .info{display:flex; flex-direction:column; gap:2px; min-width:0;}
+    .slideTop .info b{font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
     .slideTop .info small{color:var(--muted); font-size:12px}
-    .controls{
-      display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;
-    }
+    .controls{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
 
     .slideBox{
       position:relative;
@@ -381,6 +336,7 @@
       aspect-ratio: 16 / 9;
       background:#000;
       overflow:hidden;
+
       --bgurl: none;
       --blur: 26px;
       --bgOpacity: .62;
@@ -408,7 +364,6 @@
         linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.55));
       pointer-events:none;
     }
-
     .slideBox img{
       position:absolute; inset:0;
       width:100%; height:100%;
@@ -420,7 +375,6 @@
       will-change: transform;
     }
     .slideBox img.show{opacity:1}
-
     .navBtn{
       position:absolute;
       top:50%;
@@ -440,15 +394,8 @@
     .navBtn.prev{left:10px}
     .navBtn.next{right:10px}
 
-    /* Videos */
-    .video-grid{
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:12px;
-    }
-    @media (min-width: 900px){
-      .video-grid{grid-template-columns: 1fr 1fr}
-    }
+    .video-grid{display:grid; grid-template-columns: 1fr; gap:12px;}
+    @media (min-width: 900px){ .video-grid{grid-template-columns: 1fr 1fr} }
     .video-card{
       border:1px solid var(--line);
       border-radius: var(--r);
@@ -456,29 +403,13 @@
       background: rgba(255,255,255,.03);
       box-shadow: var(--shadow);
     }
-    .video-embed{
-      position:relative;
-      width:100%;
-      aspect-ratio: 16 / 9;
-      background: #000;
-    }
-    .video-embed iframe{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      border:0;
-    }
-    .video-body{
-      padding:12px 12px 14px;
-      display:flex; flex-direction:column; gap:6px;
-    }
+    .video-embed{position:relative; width:100%; aspect-ratio: 16 / 9; background:#000;}
+    .video-embed iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+    .video-body{padding:12px 12px 14px; display:flex; flex-direction:column; gap:6px;}
     .video-body b{font-size:14px; line-height:1.35}
     .video-body p{margin:0; color:var(--muted); font-size:13px; line-height:1.5}
-    .moreRow{
-      margin-top:12px;
-      display:flex; gap:10px; flex-wrap:wrap;
-    }
+    .moreRow{margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;}
 
-    /* Lightbox */
     .lb{
       position:fixed; inset:0;
       background: rgba(0,0,0,.78);
@@ -502,10 +433,7 @@
       padding:10px 12px;
       border-bottom:1px solid rgba(255,255,255,.12);
     }
-    .lb-top .title{
-      display:flex; flex-direction:column; gap:2px;
-      min-width:0;
-    }
+    .lb-top .title{display:flex; flex-direction:column; gap:2px; min-width:0;}
     .lb-top .title b{font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
     .lb-top .title small{color:rgba(255,255,255,.70); font-size:12px}
     .lb-actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
@@ -530,7 +458,6 @@
       background: rgba(0,0,0,.30);
     }
 
-    /* Toast */
     #toast{
       position:fixed;
       left:50%;
@@ -556,6 +483,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <div class="topbar">
@@ -707,7 +635,7 @@
       <div class="head">
         <div>
           <h2>영상</h2>
-          <p>유튜브 제목을 자동으로 불러와서 표시합니다. (제목 실패해도 영상은 무조건 표시)</p>
+          <p>유튜브 제목을 자동으로 불러와서 표시합니다.</p>
         </div>
       </div>
 
@@ -745,8 +673,8 @@
 
   <div id="toast">복사 완료</div>
 
-  <!-- ✅✅✅ RAW_LIST를 “절대 안 깨지는 JSON 블록”으로 분리 -->
-  <script id="gallery-data" type="application/json">
+  <!-- ✅✅✅ RAW_LIST를 “절대 안 깨지는 JSON 블록”으로 저장 (여기만 교체하면 됨) ✅✅✅ -->
+  <script id="RAW_JSON" type="application/json">
 [
   ["단체_유치부","https://static.wixstatic.com/media/abf917_951d85fca9694590a8f2fd38ff592b39~mv2.jpg"],
   ["김재윤","https://static.wixstatic.com/media/abf917_2edf0bc5b46147949f9bbfe826dfb7a3~mv2.jpg"],
@@ -865,13 +793,11 @@
   </script>
 
   <script>
-    /* =========================================================
-      ✅ 안정형: JSON 블록 로딩 + 프록시 + 에러 방탄
-    ========================================================= */
-
+    /* ===============================
+      안정형 공통 유틸
+    =============================== */
     function toast(msg){
       const el = document.getElementById("toast");
-      if(!el) return;
       el.textContent = msg;
       el.style.opacity = "1";
       clearTimeout(window.__toastTimer);
@@ -882,71 +808,16 @@
       catch(e){ toast("복사 실패 😅 주소창에서 복사해주세요."); }
     }
     function norm(s){
-      return String(s||"")
-        .toLowerCase()
-        .replace(/\s+/g,"")
-        .replace(/[._\-]/g,"");
+      return String(s||"").toLowerCase().replace(/\s+/g,"").replace(/[._\-]/g,"");
     }
     function cleanUrl(u){ return String(u||"").replace(/\s+/g,"").trim(); }
     function pad2(n){ return String(n).padStart(2,"0"); }
-
-    function toProxyUrl(originalUrl){
-      const u = String(originalUrl || "").trim();
-      if(!u) return u;
-      const noScheme = u.replace(/^https?:\/\//, "");
-      return `https://images.weserv.nl/?url=${encodeURIComponent(noScheme)}&ssl=1`;
-    }
-    function imgSrc(u){ return toProxyUrl(u); }
-
-    function applyFallback(imgEl, originalUrl){
-      try{
-        imgEl.onerror = null;
-        imgEl.src = originalUrl;
-        imgEl.referrerPolicy = "no-referrer";
-      }catch(e){}
-    }
-
-    function loadRawListFromJson(){
-      try{
-        const el = document.getElementById("gallery-data");
-        if(!el) return [];
-        const parsed = JSON.parse(el.textContent.trim());
-        return Array.isArray(parsed) ? parsed : [];
-      }catch(e){
-        console.error("gallery JSON parse error:", e);
-        toast("데이터(JSON) 오류가 있어요. 콘솔 확인!");
-        return [];
-      }
-    }
-
-    function buildItemsFromRaw(raw){
-      const cleaned = (raw||[])
-        .map((row)=> [String((row||[])[0]||"").trim(), cleanUrl((row||[])[1]||"")])
-        .filter(([name,url])=> name && url);
-
-      const totalByName = {};
-      cleaned.forEach(([name])=> totalByName[name] = (totalByName[name]||0) + 1;
-
-      const seenByName = {};
-      return cleaned.map(([name,url], idx)=>{
-        seenByName[name] = (seenByName[name]||0) + 1;
-        const needSuffix = (totalByName[name]||0) > 1;
-        const internalName = needSuffix ? `${name}${pad2(seenByName[name])}` : name;
-
-        const parts = String(name).split("_").map(s=>s.trim()).filter(Boolean);
-        const tags = Array.from(new Set([name, internalName, ...parts]));
-
-        return { id: idx+1, name: internalName, base: name, url, tags };
-      });
-    }
-
     function chunk(arr, size){
       const out = [];
-      for(let i=0; i<arr.length; i+=size) out.push(arr.slice(i, i+size));
+      for(let i=0;i<arr.length;i+=size) out.push(arr.slice(i,i+size));
       return out;
     }
     function buildDots(el, n, onClick){
-      if(!el) return;
       el.innerHTML = "";
       for(let i=0;i<n;i++){
         const d = document.createElement("div");
@@ -956,33 +827,91 @@
       }
     }
     function setDotActive(el, idx){
-      if(!el) return;
       [...el.children].forEach((d,i)=> d.classList.toggle("on", i===idx));
     }
 
-    /* ===========================
-      데이터 로드
-    =========================== */
-    const RAW_LIST = loadRawListFromJson();
+    /* ===============================
+      ✅ 프록시 + 안전 fallback
+      (inline onerror 제거: 따옴표 꼬임으로 SyntaxError 방지)
+    =============================== */
+    function toProxyUrl(originalUrl){
+      const u = String(originalUrl || "").trim();
+      if(!u) return u;
+      const noScheme = u.replace(/^https?:\/\//, "");
+      return `https://images.weserv.nl/?url=${encodeURIComponent(noScheme)}&ssl=1`;
+    }
+    function setImgWithFallback(imgEl, originalUrl){
+      const orig = String(originalUrl||"").trim();
+      const prox = toProxyUrl(orig);
+
+      imgEl.referrerPolicy = "no-referrer";
+      imgEl.loading = "lazy";
+
+      imgEl.onerror = () => {
+        // 프록시 실패 → 원본
+        imgEl.onerror = () => {
+          // 원본도 실패 → 마지막 방어 (그래도 no-referrer 유지)
+          imgEl.onerror = null;
+        };
+        imgEl.src = orig;
+      };
+
+      imgEl.src = prox;
+    }
+
+    /* ===============================
+      RAW JSON 로드 (안 깨짐)
+    =============================== */
+    function loadRawList(){
+      const el = document.getElementById("RAW_JSON");
+      if(!el) return [];
+      try{
+        const raw = JSON.parse(el.textContent.trim());
+        if(!Array.isArray(raw)) return [];
+        return raw;
+      }catch(e){
+        console.error("RAW_JSON parse failed:", e);
+        return [];
+      }
+    }
+
+    function buildItemsFromRaw(raw){
+      const cleaned = raw
+        .map((row)=> [String(row?.[0]||"").trim(), cleanUrl(row?.[1]||"")])
+        .filter(([name,url])=> name && url);
+
+      const totalByName = {};
+      cleaned.forEach(([name])=> totalByName[name] = (totalByName[name]||0) + 1);
+
+      const seenByName = {};
+      return cleaned.map(([name,url], idx)=>{
+        seenByName[name] = (seenByName[name]||0) + 1;
+        const needSuffix = (totalByName[name]||0) > 1;
+        const internalName = needSuffix ? `${name}${pad2(seenByName[name])}` : name;
+
+        const parts = String(name).split("_").map(s=>s.trim()).filter(Boolean);
+        const tags = Array.from(new Set([name, internalName, ...parts]));
+        return { id: idx+1, name: internalName, base: name, url, tags };
+      });
+    }
+
+    const RAW_LIST = loadRawList();
     const ITEMS = buildItemsFromRaw(RAW_LIST);
 
     /* Top */
-    (function(){
-      const btnTop = document.getElementById("btnScrollTop");
-      if(btnTop) btnTop.addEventListener("click", ()=> window.scrollTo({top:0, behavior:"smooth"}));
-    })();
+    document.getElementById("btnScrollTop").addEventListener("click", ()=>{
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
 
     /* Lightbox */
     function openLightboxByUrl(url){
       const lb = document.getElementById("lb");
       const lbImg = document.getElementById("lbImg");
       const lbDownload = document.getElementById("lbDownload");
-      if(!lb || !lbImg || !lbDownload) return;
 
-      lbImg.onerror = ()=> applyFallback(lbImg, url);
-      lbImg.src = imgSrc(url);
-
+      setImgWithFallback(lbImg, url);
       lbDownload.href = url;
+
       lb.classList.add("show");
       lb.setAttribute("aria-hidden","false");
       document.body.style.overflow="hidden";
@@ -990,26 +919,16 @@
     }
     function closeLightbox(){
       const lb = document.getElementById("lb");
-      if(!lb) return;
       lb.classList.remove("show");
       lb.setAttribute("aria-hidden","true");
       document.body.style.overflow="";
-      const img = document.getElementById("lbImg");
-      if(img) img.src = "";
+      document.getElementById("lbImg").src = "";
       window.__lbUrl = "";
     }
-    (function(){
-      const lbClose = document.getElementById("lbClose");
-      const lbCopy = document.getElementById("lbCopy");
-      const lb = document.getElementById("lb");
-      if(lbClose) lbClose.addEventListener("click", closeLightbox);
-      if(lbCopy) lbCopy.addEventListener("click", ()=> copyText(window.__lbUrl||""));
-      if(lb) lb.addEventListener("click", (e)=>{ if(e.target && e.target.id==="lb") closeLightbox(); });
-      window.addEventListener("keydown", (e)=>{
-        const lb2 = document.getElementById("lb");
-        if(lb2 && lb2.classList.contains("show") && e.key==="Escape") closeLightbox();
-      });
-    })();
+    document.getElementById("lbClose").addEventListener("click", closeLightbox);
+    document.getElementById("lbCopy").addEventListener("click", ()=> copyText(window.__lbUrl||""));
+    document.getElementById("lb").addEventListener("click", (e)=>{ if(e.target.id==="lb") closeLightbox(); });
+    window.addEventListener("keydown", (e)=>{ if(document.getElementById("lb").classList.contains("show") && e.key==="Escape") closeLightbox(); });
 
     /* ===========================
       (1) 검색 결과 캐러셀
@@ -1036,37 +955,33 @@
     }
 
     function renderResultCarousel(list){
-      if(!pagesEl || !dotsRow || !resultArea || !emptyArea) return;
-
       const PER_PAGE = 12;
       const pages = chunk(list, PER_PAGE);
 
-      pagesEl.innerHTML = pages.map((page)=> {
-        const thumbs = page.map((it)=> {
-          const prox = imgSrc(it.url);
-          const safeUrl = it.url.replace(/"/g, "&quot;");
-          return `
-            <div class="pitem" data-url="${safeUrl}">
-              <img loading="lazy"
-                   src="${prox}"
-                   alt="갤러리 사진"
-                   referrerpolicy="no-referrer"
-                   onerror="this.onerror=null; this.src='${safeUrl}'; this.referrerPolicy='no-referrer';">
-            </div>
-          `;
-        }).join("");
-        return `
-          <div class="page">
-            <div class="gridThumb">${thumbs}</div>
-          </div>
-        `;
-      }).join("");
+      pagesEl.innerHTML = "";
+      pages.forEach((pageItems)=>{
+        const page = document.createElement("div");
+        page.className = "page";
 
-      pagesEl.querySelectorAll(".pitem").forEach(el=>{
-        el.addEventListener("click", ()=>{
-          const url = el.getAttribute("data-url") || "";
-          openLightboxByUrl(url);
+        const grid = document.createElement("div");
+        grid.className = "gridThumb";
+
+        pageItems.forEach((it)=>{
+          const box = document.createElement("div");
+          box.className = "pitem";
+          box.addEventListener("click", ()=> openLightboxByUrl(it.url));
+
+          const img = document.createElement("img");
+          img.alt = "갤러리 사진";
+          img.style.display = "block";
+          setImgWithFallback(img, it.url);
+
+          box.appendChild(img);
+          grid.appendChild(box);
         });
+
+        page.appendChild(grid);
+        pagesEl.appendChild(page);
       });
 
       buildDots(dotsRow, pages.length, (i)=>{
@@ -1080,15 +995,14 @@
         setDotActive(dotsRow, Math.max(0, Math.min(pages.length-1, idx)));
       };
 
-      if(resultTitle) resultTitle.textContent = "검색 결과";
-      if(resultMeta)  resultMeta.textContent  = `총 ${list.length}장 · ${pages.length}페이지`;
+      resultTitle.textContent = "검색 결과";
+      resultMeta.textContent = `총 ${list.length}장 · ${pages.length}페이지`;
 
       resultArea.style.display = "block";
       emptyArea.style.display = "none";
     }
 
     function runSearch(query){
-      if(!resultArea || !emptyArea) return;
       const queryText = String(query||"").trim();
       const filtered = ITEMS.filter(it=> matchItem(it, queryText));
 
@@ -1099,19 +1013,17 @@
       }
       renderResultCarousel(filtered);
 
-      try{
-        const u = new URL(location.href);
-        if(queryText) u.searchParams.set("q", queryText);
-        else u.searchParams.delete("q");
-        history.replaceState({}, "", u.toString());
-      }catch(e){}
+      const u = new URL(location.href);
+      if(queryText) u.searchParams.set("q", queryText);
+      else u.searchParams.delete("q");
+      history.replaceState({}, "", u.toString());
     }
 
-    if(btnClear && q) btnClear.addEventListener("click", ()=>{ q.value=""; q.focus(); runSearch(""); });
-    if(btnSearch && q) btnSearch.addEventListener("click", ()=> runSearch(q.value));
-    if(btnShowAll && q) btnShowAll.addEventListener("click", ()=>{ q.value=""; runSearch(""); });
-    if(q) q.addEventListener("keydown", (e)=>{ if(e.key==="Enter") runSearch(q.value); });
-    if(btnCopyQueryLink) btnCopyQueryLink.addEventListener("click", ()=> copyText(location.href));
+    btnClear.addEventListener("click", ()=>{ q.value=""; q.focus(); runSearch(""); });
+    btnSearch.addEventListener("click", ()=> runSearch(q.value));
+    btnShowAll.addEventListener("click", ()=>{ q.value=""; runSearch(""); });
+    q.addEventListener("keydown", (e)=>{ if(e.key==="Enter") runSearch(q.value); });
+    btnCopyQueryLink.addEventListener("click", ()=> copyText(location.href));
 
     /* ===========================
       (2) 대표 + 썸네일 레일(5줄 페이징)
@@ -1133,66 +1045,55 @@
     const THUMBS_PER_PAGE = 15;
 
     let coverIndex = 0;
-    let THUMB_ITEMS = [...ITEMS];
+    let THUMB_ITEMS = ITEMS.map((it, idx)=> ({...it, _globalIndex: idx}));
     let thumbPageCount = 1;
 
-    function reindexThumbItems(){
-      THUMB_ITEMS = THUMB_ITEMS.map((it, idx)=> ({...it, _globalIndex: idx}));
-    }
-
     function setCover(idx){
-      if(!THUMB_ITEMS.length || !coverImg) return;
+      if(!THUMB_ITEMS.length) return;
       coverIndex = (idx + THUMB_ITEMS.length) % THUMB_ITEMS.length;
-      const original = THUMB_ITEMS[coverIndex].url;
 
-      coverImg.onerror = ()=> applyFallback(coverImg, original);
-      coverImg.src = imgSrc(original);
+      setImgWithFallback(coverImg, THUMB_ITEMS[coverIndex].url);
 
-      if(thumbPagesEl){
-        thumbPagesEl.querySelectorAll(".titem").forEach((el)=> el.classList.remove("active"));
-        thumbPagesEl.querySelectorAll(`.titem[data-i="${coverIndex}"]`).forEach(el=> el.classList.add("active"));
-      }
+      thumbPagesEl.querySelectorAll(".titem").forEach(el=> el.classList.remove("active"));
+      thumbPagesEl.querySelectorAll(`.titem[data-i="${coverIndex}"]`).forEach(el=> el.classList.add("active"));
     }
 
     function renderThumbPager(){
-      if(!thumbPagesEl || !thumbDotsEl || !thumbMeta) return;
-      if(thumbCount) thumbCount.textContent = String(THUMB_ITEMS.length);
-
+      thumbCount.textContent = String(THUMB_ITEMS.length);
       const pages = chunk(THUMB_ITEMS, THUMBS_PER_PAGE);
-      thumbPageCount = pages.length || 1;
+      thumbPageCount = pages.length;
 
-      thumbPagesEl.innerHTML = pages.map((page, pi)=>{
-        const tiles = page.map((it)=>{
-          const prox = imgSrc(it.url);
-          const safeUrl = it.url.replace(/"/g, "&quot;");
-          return `
-            <div class="titem" data-i="${it._globalIndex}" title="썸네일">
-              <img loading="lazy"
-                   src="${prox}"
-                   alt="thumb"
-                   referrerpolicy="no-referrer"
-                   onerror="this.onerror=null; this.src='${safeUrl}'; this.referrerPolicy='no-referrer';">
-            </div>
-          `;
-        }).join("");
+      thumbPagesEl.innerHTML = "";
+      pages.forEach((pageItems, pi)=>{
+        const page = document.createElement("div");
+        page.className = "thumbPage";
+        page.dataset.page = String(pi);
 
-        return `
-          <div class="thumbPage" data-page="${pi}">
-            <div class="thumbGrid">${tiles}</div>
-          </div>
-        `;
-      }).join("");
+        const grid = document.createElement("div");
+        grid.className = "thumbGrid";
+
+        pageItems.forEach((it)=>{
+          const box = document.createElement("div");
+          box.className = "titem";
+          box.dataset.i = String(it._globalIndex);
+          box.title = "썸네일";
+          box.addEventListener("click", ()=> setCover(it._globalIndex));
+
+          const img = document.createElement("img");
+          img.alt = "thumb";
+          setImgWithFallback(img, it.url);
+
+          box.appendChild(img);
+          grid.appendChild(box);
+        });
+
+        page.appendChild(grid);
+        thumbPagesEl.appendChild(page);
+      });
 
       buildDots(thumbDotsEl, thumbPageCount, (i)=>{
         const w = thumbPagesEl.clientWidth || 1;
         thumbPagesEl.scrollTo({ left: i*w, behavior:"smooth" });
-      });
-
-      thumbPagesEl.querySelectorAll(".titem").forEach(el=>{
-        el.addEventListener("click", ()=>{
-          const i = Number(el.getAttribute("data-i"));
-          setCover(i);
-        });
       });
 
       function updateThumbPagerUI(){
@@ -1208,45 +1109,38 @@
       setCover(coverIndex);
     }
 
-    if(btnThumbPrev && thumbPagesEl){
-      btnThumbPrev.addEventListener("click", ()=>{
-        const w = thumbPagesEl.clientWidth || 1;
-        const pi = Math.round(thumbPagesEl.scrollLeft / w);
-        const target = Math.max(0, pi-1);
-        thumbPagesEl.scrollTo({ left: target*w, behavior:"smooth" });
-      });
-    }
-    if(btnThumbNext && thumbPagesEl){
-      btnThumbNext.addEventListener("click", ()=>{
-        const w = thumbPagesEl.clientWidth || 1;
-        const pi = Math.round(thumbPagesEl.scrollLeft / w);
-        const target = Math.min(thumbPageCount-1, pi+1);
-        thumbPagesEl.scrollTo({ left: target*w, behavior:"smooth" });
-      });
-    }
-    if(btnCoverPrev) btnCoverPrev.addEventListener("click", ()=> setCover(coverIndex-1));
-    if(btnCoverNext) btnCoverNext.addEventListener("click", ()=> setCover(coverIndex+1));
-    if(btnOpenCover) btnOpenCover.addEventListener("click", ()=> THUMB_ITEMS[coverIndex] && openLightboxByUrl(THUMB_ITEMS[coverIndex].url));
-    if(btnCopyCover) btnCopyCover.addEventListener("click", ()=> THUMB_ITEMS[coverIndex] && copyText(THUMB_ITEMS[coverIndex].url));
+    btnThumbPrev.addEventListener("click", ()=>{
+      const w = thumbPagesEl.clientWidth || 1;
+      const pi = Math.round(thumbPagesEl.scrollLeft / w);
+      const target = Math.max(0, pi-1);
+      thumbPagesEl.scrollTo({ left: target*w, behavior:"smooth" });
+    });
+    btnThumbNext.addEventListener("click", ()=>{
+      const w = thumbPagesEl.clientWidth || 1;
+      const pi = Math.round(thumbPagesEl.scrollLeft / w);
+      const target = Math.min(thumbPageCount-1, pi+1);
+      thumbPagesEl.scrollTo({ left: target*w, behavior:"smooth" });
+    });
 
-    if(btnShuffleThumbs){
-      btnShuffleThumbs.addEventListener("click", ()=>{
-        const shuffled = [...THUMB_ITEMS];
-        for(let i=shuffled.length-1; i>0; i--){
-          const j = Math.floor(Math.random()*(i+1));
-          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-        }
-        THUMB_ITEMS = shuffled;
-        reindexThumbItems();
-        coverIndex = 0;
-        renderThumbPager();
-        setCover(0);
-        toast("썸네일을 섞었습니다 🎲");
-      });
-    }
+    btnCoverPrev.addEventListener("click", ()=> setCover(coverIndex-1));
+    btnCoverNext.addEventListener("click", ()=> setCover(coverIndex+1));
+    btnOpenCover.addEventListener("click", ()=> THUMB_ITEMS.length && openLightboxByUrl(THUMB_ITEMS[coverIndex].url));
+    btnCopyCover.addEventListener("click", ()=> THUMB_ITEMS.length && copyText(THUMB_ITEMS[coverIndex].url));
+
+    btnShuffleThumbs.addEventListener("click", ()=>{
+      const shuffled = [...THUMB_ITEMS];
+      for(let i=shuffled.length-1; i>0; i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      THUMB_ITEMS = shuffled.map((it, idx)=> ({...it, _globalIndex: idx}));
+      coverIndex = 0;
+      renderThumbPager();
+      toast("썸네일을 섞었습니다 🎲");
+    });
 
     /* ===========================
-      (3) 슬라이드 쇼
+      (3) 슬라이드 쇼(시네마모드)
     =========================== */
     const slideTitle = document.getElementById("slideTitle");
     const slideSub = document.getElementById("slideSub");
@@ -1299,17 +1193,13 @@
     let __kbZoomBase = 1.02;
 
     function applyCinemaModeUI(){
-      if(!btnCinema) return;
       btnCinema.classList.toggle("on", cinemaOn);
       btnCinema.textContent = cinemaOn ? "🎥 시네마모드" : "🎥 깔끔모드";
     }
 
     function setCinematicVars(isPortrait, originalUrl){
-      if(!slideBox) return;
-      const currentOriginal = originalUrl || (ITEMS[slideIndex] && ITEMS[slideIndex].url) || "";
-      const bgUrl = imgSrc(currentOriginal);
-
-      slideBox.style.setProperty("--bgurl", `url("${bgUrl}")`);
+      const u = originalUrl || ITEMS[slideIndex]?.url || "";
+      slideBox.style.setProperty("--bgurl", `url("${toProxyUrl(u)}")`);
 
       if(!cinemaOn){
         slideBox.style.setProperty("--blur", "0px");
@@ -1327,8 +1217,21 @@
       slideBox.style.setProperty("--ty", "0px");
     }
 
+    function applyAutoFit(imgEl, originalUrl){
+      const w = imgEl.naturalWidth || 0;
+      const h = imgEl.naturalHeight || 0;
+      if(!w || !h) return;
+
+      const isPortrait = h > w;
+      __kbIsPortrait = isPortrait;
+      __kbZoomBase = isPortrait ? SLIDE_FX.zoomPortrait : SLIDE_FX.zoomLandscape;
+
+      imgEl.style.objectFit = isPortrait ? "contain" : "cover";
+      setCinematicVars(isPortrait, originalUrl);
+      resetKenBurns();
+    }
+
     function resetKenBurns(){
-      if(!slideBox) return;
       __kbZ = cinemaOn ? __kbZoomBase : 1;
       __kbTX = 0;
       __kbTY = 0;
@@ -1341,7 +1244,7 @@
     }
 
     function startKenBurns(){
-      if(__kbTimer || !slideBox) return;
+      if(__kbTimer) return;
       __kbTimer = setInterval(()=>{
         if(!cinemaOn){
           slideBox.style.setProperty("--zoom", "1");
@@ -1349,7 +1252,6 @@
           slideBox.style.setProperty("--ty", "0px");
           return;
         }
-
         const maxMove = __kbIsPortrait ? SLIDE_FX.moveMaxPortrait : SLIDE_FX.moveMaxLandscape;
 
         __kbZ += (SLIDE_FX.zoomStep * __kbDirZ);
@@ -1376,38 +1278,19 @@
       resetKenBurns();
     }
 
-    function applyAutoFit(imgEl, originalUrl){
-      try{
-        const w = imgEl.naturalWidth || 0;
-        const h = imgEl.naturalHeight || 0;
-        if(!w || !h) return;
-
-        const isPortrait = h > w;
-        __kbIsPortrait = isPortrait;
-        __kbZoomBase = isPortrait ? SLIDE_FX.zoomPortrait : SLIDE_FX.zoomLandscape;
-
-        imgEl.style.objectFit = isPortrait ? "contain" : "cover";
-
-        setCinematicVars(isPortrait, originalUrl);
-        resetKenBurns();
-      }catch(e){}
-    }
-
     function setSlide(idx){
       if(!ITEMS.length) return;
       slideIndex = (idx + ITEMS.length) % ITEMS.length;
       const it = ITEMS[slideIndex];
 
-      if(slideTitle) slideTitle.textContent = `사진 ${slideIndex+1}`;
-      if(slideSub)   slideSub.textContent   = `${slideIndex+1}/${ITEMS.length}`;
+      slideTitle.textContent = `사진 ${slideIndex+1}`;
+      slideSub.textContent = `${slideIndex+1}/${ITEMS.length}`;
 
       const target = showingA ? imgA : imgB;
       const other  = showingA ? imgB : imgA;
-      if(!target || !other) return;
 
-      target.onerror = ()=> applyFallback(target, it.url);
       target.onload = ()=> applyAutoFit(target, it.url);
-      target.src = imgSrc(it.url);
+      setImgWithFallback(target, it.url);
 
       target.classList.add("show");
       other.classList.remove("show");
@@ -1416,7 +1299,7 @@
     }
 
     function play(){
-      if(timer || !ITEMS.length) return;
+      if(timer) return;
       timer = setInterval(()=> setSlide(slideIndex+1), speeds[speedIdx]);
       startKenBurns();
       toast("자동재생 시작 ▶");
@@ -1429,38 +1312,36 @@
     }
     function toggleSpeed(){
       speedIdx = (speedIdx + 1) % speeds.length;
-      if(btnSpeed) btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
+      btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
       if(timer){ pause(); play(); }
       toast("재생 속도 변경");
     }
 
-    if(btnPrev) btnPrev.addEventListener("click", ()=> setSlide(slideIndex-1));
-    if(btnNext) btnNext.addEventListener("click", ()=> setSlide(slideIndex+1));
-    if(navPrev) navPrev.addEventListener("click", ()=> setSlide(slideIndex-1));
-    if(navNext) navNext.addEventListener("click", ()=> setSlide(slideIndex+1));
-    if(btnPlay) btnPlay.addEventListener("click", play);
-    if(btnPause) btnPause.addEventListener("click", pause);
-    if(btnSpeed) btnSpeed.addEventListener("click", toggleSpeed);
-    if(btnOpenSlide) btnOpenSlide.addEventListener("click", ()=> ITEMS[slideIndex] && openLightboxByUrl(ITEMS[slideIndex].url));
-    if(btnCopySlide) btnCopySlide.addEventListener("click", ()=> ITEMS[slideIndex] && copyText(ITEMS[slideIndex].url));
+    btnPrev.addEventListener("click", ()=> setSlide(slideIndex-1));
+    btnNext.addEventListener("click", ()=> setSlide(slideIndex+1));
+    navPrev.addEventListener("click", ()=> setSlide(slideIndex-1));
+    navNext.addEventListener("click", ()=> setSlide(slideIndex+1));
+    btnPlay.addEventListener("click", play);
+    btnPause.addEventListener("click", pause);
+    btnSpeed.addEventListener("click", toggleSpeed);
+    btnOpenSlide.addEventListener("click", ()=> ITEMS.length && openLightboxByUrl(ITEMS[slideIndex].url));
+    btnCopySlide.addEventListener("click", ()=> ITEMS.length && copyText(ITEMS[slideIndex].url));
 
-    if(btnCinema){
-      btnCinema.addEventListener("click", ()=>{
-        cinemaOn = !cinemaOn;
-        applyCinemaModeUI();
-        setCinematicVars(__kbIsPortrait, (ITEMS[slideIndex] && ITEMS[slideIndex].url) || "");
-        if(timer){
-          resetKenBurns();
-          toast(cinemaOn ? "시네마모드 ON 🎥" : "깔끔모드 ON ✨");
-        }else{
-          stopKenBurns();
-          toast(cinemaOn ? "시네마모드 ON 🎥" : "깔끔모드 ON ✨");
-        }
-      });
-    }
+    btnCinema.addEventListener("click", ()=>{
+      cinemaOn = !cinemaOn;
+      applyCinemaModeUI();
+      setCinematicVars(__kbIsPortrait, ITEMS[slideIndex]?.url);
+      if(timer){
+        resetKenBurns();
+        toast(cinemaOn ? "시네마모드 ON 🎥" : "깔끔모드 ON ✨");
+      }else{
+        stopKenBurns();
+        toast(cinemaOn ? "시네마모드 ON 🎥" : "깔끔모드 ON ✨");
+      }
+    });
 
     /* ===========================
-      (4) 영상 (제목 실패해도 iframe은 항상 표시)
+      (4) 영상
     =========================== */
     const VIDEO_URLS = [
       "https://www.youtube.com/watch?v=D3kDXF-sNJA",
@@ -1469,20 +1350,18 @@
       "https://youtu.be/YSWIds8fmzE"
     ];
     const CHANNEL_URL = "https://www.youtube.com/@%EA%B3%84%EB%AA%85%ED%83%9C%EA%B6%8C%EB%8F%84%EC%9A%B8%EC%82%B0/videos";
-    const videoGrid = document.getElementById("videoGrid");
 
     function getYouTubeId(url){
       try{
         const u = new URL(url);
         if(u.hostname.includes("youtu.be")) return u.pathname.replace("/","");
         return u.searchParams.get("v");
-      }catch(e){
-        return "";
-      }
+      }catch(e){ return ""; }
     }
 
+    const videoGrid = document.getElementById("videoGrid");
+
     function renderVideosShell(){
-      if(!videoGrid) return;
       videoGrid.innerHTML = VIDEO_URLS.map((url)=>{
         const id = getYouTubeId(url);
         return `
@@ -1491,13 +1370,12 @@
               <iframe
                 src="https://www.youtube.com/embed/${id}"
                 title="계명태권도 영상"
-                loading="lazy"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowfullscreen></iframe>
             </div>
             <div class="video-body">
-              <b class="yt-title">계명태권도 영상</b>
-              <p class="yt-meta">YouTube</p>
+              <b class="yt-title">제목 불러오는 중…</b>
+              <p class="yt-meta">잠시만요 ✅</p>
             </div>
           </article>
         `;
@@ -1505,7 +1383,6 @@
     }
 
     async function fillYouTubeTitles(){
-      if(!videoGrid) return;
       const cards = [...videoGrid.querySelectorAll(".video-card")];
       await Promise.all(cards.map(async (card)=>{
         const url = card.getAttribute("data-video-url");
@@ -1516,76 +1393,57 @@
           const res = await fetch(oembed);
           if(!res.ok) throw new Error("oEmbed not ok");
           const data = await res.json();
-          if(titleEl) titleEl.textContent = data.title || "계명태권도 영상";
-          if(metaEl) metaEl.textContent = data.author_name ? `YouTube · ${data.author_name}` : "YouTube";
+          titleEl.textContent = data.title || "계명태권도 영상";
+          metaEl.textContent = data.author_name ? `YouTube · ${data.author_name}` : "YouTube";
         }catch(e){
-          // 제목 못 가져와도 영상은 이미 표시됨
+          titleEl.textContent = "계명태권도 영상";
+          metaEl.textContent = "YouTube";
         }
       }));
     }
 
-    (function(){
-      const moreBtn = document.getElementById("btnMoreVideos");
-      const copyBtn = document.getElementById("btnCopyChannel");
-      if(moreBtn) moreBtn.addEventListener("click", ()=> window.open(CHANNEL_URL, "_blank", "noopener"));
-      if(copyBtn) copyBtn.addEventListener("click", ()=> copyText(CHANNEL_URL));
-    })();
+    document.getElementById("btnMoreVideos").addEventListener("click", ()=>{
+      window.open(CHANNEL_URL, "_blank", "noopener");
+    });
+    document.getElementById("btnCopyChannel").addEventListener("click", ()=>{
+      copyText(CHANNEL_URL);
+    });
 
-    /* ===========================
-      INIT (방탄)
-    =========================== */
+    /* INIT */
     (function init(){
-      try{
-        // query auto-run
-        try{
-          const u = new URL(location.href);
-          const qq = u.searchParams.get("q");
-          if(qq && q){
-            q.value = qq;
-            runSearch(qq);
-          }
-        }catch(e){}
-
-        // thumbs
-        reindexThumbItems();
-        renderThumbPager();
-
-        // cover init
-        if(coverImg && THUMB_ITEMS.length){
-          const first = THUMB_ITEMS[0].url;
-          coverImg.onerror = ()=> applyFallback(coverImg, first);
-          coverImg.src = imgSrc(first);
-          setCover(0);
-        }
-
-        // cinema default UI
-        applyCinemaModeUI();
-
-        // slideshow init
-        if(ITEMS.length && imgA){
-          imgA.onerror = ()=> applyFallback(imgA, ITEMS[0].url);
-          imgA.onload = ()=> applyAutoFit(imgA, ITEMS[0].url);
-          imgA.src = imgSrc(ITEMS[0].url);
-          imgA.classList.add("show");
-
-          if(slideTitle) slideTitle.textContent = "사진 1";
-          if(slideSub)   slideSub.textContent   = `1/${ITEMS.length}`;
-          if(slideBox)   slideBox.style.setProperty("--bgurl", `url("${imgSrc(ITEMS[0].url)}")`);
-        }
-        if(btnSpeed) btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
-
-        // videos (무조건 렌더)
-        renderVideosShell();
-        fillYouTubeTitles();
-
-        if(!ITEMS.length){
-          toast("사진 데이터가 비어있어요 (JSON 확인)!");
-        }
-      }catch(e){
-        console.error("init fatal:", e);
-        toast("초기화 중 오류가 있어요. (콘솔 확인)");
+      // 검색 쿼리 자동 실행
+      const u = new URL(location.href);
+      const qq = u.searchParams.get("q");
+      if(qq){
+        q.value = qq;
+        runSearch(qq);
       }
+
+      // 썸네일/대표
+      if(THUMB_ITEMS.length){
+        renderThumbPager();
+        setCover(0);
+      }else{
+        console.warn("ITEMS empty. RAW_JSON 확인 필요");
+      }
+
+      // 슬라이드쇼
+      applyCinemaModeUI();
+      if(ITEMS.length){
+        imgA.onload = ()=> applyAutoFit(imgA, ITEMS[0].url);
+        setImgWithFallback(imgA, ITEMS[0].url);
+        imgA.classList.add("show");
+        slideTitle.textContent = "사진 1";
+        slideSub.textContent = `1/${ITEMS.length}`;
+        slideBox.style.setProperty("--bgurl", `url("${toProxyUrl(ITEMS[0].url)}")`);
+      }
+      btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
+
+      // 영상
+      renderVideosShell();
+      fillYouTubeTitles();
     })();
   </script>
+
 </body>
 </html>
