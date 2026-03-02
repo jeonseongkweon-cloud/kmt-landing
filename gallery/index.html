@@ -76,6 +76,7 @@
       border-color: rgba(215,181,109,.45);
       background: linear-gradient(180deg, rgba(215,181,109,.18), rgba(255,255,255,.03));
     }
+    /* 시네마모드 버튼(톤만 약간 강조) */
     .btn.cinema{
       border-color: rgba(215,181,109,.38);
       background: linear-gradient(180deg, rgba(215,181,109,.14), rgba(102,179,255,.06));
@@ -195,7 +196,6 @@
       display:block;
       transition: transform .18s ease, filter .18s ease;
       filter: saturate(1.02);
-      background: rgba(0,0,0,.35);
     }
     .pitem:hover img{transform: scale(1.05); filter:saturate(1.08)}
 
@@ -237,7 +237,6 @@
       display:block;
       filter: contrast(1.02) saturate(1.03);
       transform: scale(1.01);
-      background: rgba(0,0,0,.35);
     }
     .coverMain .cap{display:none !important;}
 
@@ -335,7 +334,6 @@
       display:block;
       transition: transform .2s ease, filter .2s ease;
       filter: saturate(1.02);
-      background: rgba(0,0,0,.35);
     }
     .titem:hover img{transform: scale(1.05); filter: saturate(1.08)}
     .titem.active{border-color: rgba(102,179,255,.45)}
@@ -353,7 +351,7 @@
       background: rgba(0,0,0,.10);
     }
 
-    /* ✅ SLIDESHOW */
+    /* ✅ SLIDESHOW (세로 안 잘림 + 자동 블러강도 + 켄번즈 + 시네마모드) */
     .slideshow{
       margin-top:12px;
       border:1px solid var(--line);
@@ -385,14 +383,18 @@
       background:#000;
       overflow:hidden;
 
+      /* JS가 넣어주는 배경 이미지 */
       --bgurl: none;
-      --blur: 26px;
-      --bgOpacity: .62;
-      --zoom: 1;
-      --tx: 0px;
-      --ty: 0px;
+
+      /* ✅ 조절 변수(기본값) */
+      --blur: 26px;      /* 블러 강도 */
+      --bgOpacity: .62;  /* 배경 진하기 */
+      --zoom: 1;         /* 줌 */
+      --tx: 0px;         /* 이동 X */
+      --ty: 0px;         /* 이동 Y */
     }
 
+    /* 블러 배경 레이어(cover) */
     .slideBox::before{
       content:"";
       position:absolute; inset:-18%;
@@ -406,6 +408,7 @@
       pointer-events:none;
     }
 
+    /* 비네팅 + 톤 */
     .slideBox::after{
       content:"";
       position:absolute; inset:0;
@@ -424,7 +427,7 @@
       z-index:1;
       transform: translate(var(--tx), var(--ty)) scale(var(--zoom));
       will-change: transform;
-      background: rgba(0,0,0,.35);
+      /* object-fit은 JS가 자동 설정: cover/contain */
     }
     .slideBox img.show{opacity:1}
 
@@ -797,7 +800,7 @@
       ["김규민","https://static.wixstatic.com/media/abf917_d35765d3f0894f999515b014f6294d82~mv2.jpg"],
       ["김동언","https://static.wixstatic.com/media/abf917_d052486b3ffc49ddb1af9ee2c195a0a2~mv2.jpg"],
       ["정은재","https://static.wixstatic.com/media/abf917_dd10b43205644cc281e8f988d2c2167e~mv2.jpg"],
-      ["윤유진","https://static.wixstatic.com/media/abf917_b73f1b66c05e43c1b26b5c0dd0629cfe~mv2.jpg"],
+      ["윤유진","https://static.wixstatic.com/media/abf917_b73f1f66c05e43c1b26b5c0dd0629cfe~mv2.jpg"],
       ["권유준","https://static.wixstatic.com/media/abf917_3e623ec836b74e0f87c94a1569feea89~mv2.jpg"],
       ["김예담","https://static.wixstatic.com/media/abf917_2111ef384bb54528982bb98959d069be~mv2.jpg"],
       ["김우리","https://static.wixstatic.com/media/abf917_e8e2e4341d144f10b64dffd279ab9366~mv2.jpg"],
@@ -876,23 +879,6 @@
     ];
 
     /* ====== utils ====== */
-
-    // ✅ 업로드 없이 Wix 이미지 안정화(프록시 스위치)
-    // true: Wix 외부차단 우회 강함(권장)
-    // false: 원본 URL 직접 사용
-    const USE_IMG_PROXY = true;
-
-    function toProxyUrl(originalUrl){
-      const u = String(originalUrl || "").trim();
-      if(!u) return u;
-      // https://wsrv.nl 프록시(캐시/중계)
-      const noScheme = u.replace(/^https?:\/\//, "");
-      return `https://wsrv.nl/?url=${encodeURIComponent("ssl:" + noScheme)}`;
-    }
-    function imgSrc(u){
-      return USE_IMG_PROXY ? toProxyUrl(u) : u;
-    }
-
     function toast(msg){
       const el = document.getElementById("toast");
       el.textContent = msg;
@@ -914,6 +900,28 @@
       return String(u||"").replace(/\s+/g,"").trim();
     }
     function pad2(n){ return String(n).padStart(2,"0"); }
+
+    /* =========================================================
+      ✅ 이미지 프록시 + fallback
+      - 프록시(weServ)로 먼저 시도 → 실패하면 원본으로 교체
+      - GitHub Pages에서 wix 이미지가 안 뜨는 CORS/Referrer 문제 대비
+    ========================================================= */
+    function toProxyUrl(originalUrl){
+      const u = String(originalUrl || "").trim();
+      if(!u) return u;
+
+      // images.weserv.nl: url 파라미터는 스킴(https://)을 빼고 도메인부터 넣는 게 안정적
+      const noScheme = u.replace(/^https?:\/\//, "");
+      return `https://images.weserv.nl/?url=${encodeURIComponent(noScheme)}&ssl=1`;
+    }
+    function imgSrc(u){ return toProxyUrl(u); }
+
+    function applyFallback(imgEl, originalUrl){
+      // 프록시 실패 시 원본으로 fallback, 그래도 안 되면 'no-referrer' 재시도
+      imgEl.onerror = null;
+      imgEl.src = originalUrl;
+      imgEl.referrerPolicy = "no-referrer";
+    }
 
     function buildItemsFromRaw(raw){
       const cleaned = raw
@@ -944,22 +952,25 @@
     });
 
     /* Lightbox */
-    function openLightboxByUrl(originalUrl){
+    function openLightboxByUrl(url){
       const lb = document.getElementById("lb");
       const lbImg = document.getElementById("lbImg");
       const lbTitle = document.getElementById("lbTitle");
       const lbSub = document.getElementById("lbSub");
       const lbDownload = document.getElementById("lbDownload");
 
-      lbImg.src = imgSrc(originalUrl);
+      // ✅ 프록시 먼저
+      lbImg.onerror = ()=> applyFallback(lbImg, url);
+      lbImg.src = imgSrc(url);
+
       lbTitle.textContent = "사진";
       lbSub.textContent = "";
-      lbDownload.href = originalUrl;
+      lbDownload.href = url;
 
       lb.classList.add("show");
       lb.setAttribute("aria-hidden","false");
       document.body.style.overflow="hidden";
-      window.__lbUrl = originalUrl; // 복사용은 원본
+      window.__lbUrl = url;
     }
     function closeLightbox(){
       const lb = document.getElementById("lb");
@@ -1020,11 +1031,18 @@
       const pages = chunk(list, PER_PAGE);
 
       pagesEl.innerHTML = pages.map((page)=> {
-        const thumbs = page.map((it)=> `
-          <div class="pitem" data-url="${it.url}">
-            <img loading="lazy" src="${imgSrc(it.url)}" alt="갤러리 사진" referrerpolicy="no-referrer">
-          </div>
-        `).join("");
+        const thumbs = page.map((it)=> {
+          const prox = imgSrc(it.url);
+          return `
+            <div class="pitem" data-url="${it.url}">
+              <img loading="lazy"
+                   src="${prox}"
+                   alt="갤러리 사진"
+                   referrerpolicy="no-referrer"
+                   onerror="this.onerror=null; this.src='${it.url}'; this.referrerPolicy='no-referrer';">
+            </div>
+          `;
+        }).join("");
         return `
           <div class="page">
             <div class="gridThumb">${thumbs}</div>
@@ -1106,7 +1124,10 @@
 
     function setCover(idx){
       coverIndex = (idx + THUMB_ITEMS.length) % THUMB_ITEMS.length;
-      coverImg.src = imgSrc(THUMB_ITEMS[coverIndex].url);
+      const original = THUMB_ITEMS[coverIndex].url;
+
+      coverImg.onerror = ()=> applyFallback(coverImg, original);
+      coverImg.src = imgSrc(original);
 
       thumbPagesEl.querySelectorAll(".titem").forEach((el)=>{
         el.classList.remove("active");
@@ -1122,9 +1143,14 @@
 
       thumbPagesEl.innerHTML = pages.map((page, pi)=>{
         const tiles = page.map((it)=>{
+          const prox = imgSrc(it.url);
           return `
             <div class="titem" data-i="${it._globalIndex}" title="썸네일">
-              <img loading="lazy" src="${imgSrc(it.url)}" alt="thumb" referrerpolicy="no-referrer">
+              <img loading="lazy"
+                   src="${prox}"
+                   alt="thumb"
+                   referrerpolicy="no-referrer"
+                   onerror="this.onerror=null; this.src='${it.url}'; this.referrerPolicy='no-referrer';">
             </div>
           `;
         }).join("");
@@ -1193,12 +1219,14 @@
       reindexThumbItems();
       coverIndex = 0;
       renderThumbPager();
-      coverImg.src = imgSrc(THUMB_ITEMS[0].url);
+      const original = THUMB_ITEMS[0].url;
+      coverImg.onerror = ()=> applyFallback(coverImg, original);
+      coverImg.src = imgSrc(original);
       toast("썸네일을 섞었습니다 🎲");
     });
 
     /* ===========================
-      (3) 슬라이드 쇼(자동 블러 + 켄번즈 + 시네마모드)
+      (3) 슬라이드 쇼(세로/가로 자동 블러 + 켄번즈 + 시네마모드)
     =========================== */
     const slideTitle = document.getElementById("slideTitle");
     const slideSub = document.getElementById("slideSub");
@@ -1217,19 +1245,20 @@
     const navNext = document.getElementById("navNext");
     const btnCinema = document.getElementById("btnCinema");
 
+    // ✅ 효과 설정(과하지 않게: “딱 고급”)
     const SLIDE_FX = {
-      cinemaDefault: true,
-      zoomPortrait: 1.04,
-      zoomLandscape: 1.02,
-      blurPortrait: 34,
-      blurLandscape: 22,
-      bgOpacityPortrait: 0.72,
-      bgOpacityLandscape: 0.58,
-      moveMaxPortrait: 10,
-      moveMaxLandscape: 14,
-      tickMs: 120,
-      zoomStep: 0.0012,
-      moveStep: 0.18
+      cinemaDefault: true,     // 처음 로드 시 시네마모드 ON
+      zoomPortrait: 1.04,      // 세로 줌(살짝)
+      zoomLandscape: 1.02,     // 가로 줌(더 은은)
+      blurPortrait: 34,        // 세로 블러 강하게
+      blurLandscape: 22,       // 가로 블러 은은
+      bgOpacityPortrait: 0.72, // 세로 배경 진하게
+      bgOpacityLandscape: 0.58,// 가로 배경 은은
+      moveMaxPortrait: 10,     // 세로 이동 최대(px)
+      moveMaxLandscape: 14,    // 가로 이동 최대(px)
+      tickMs: 120,             // 켄번즈 업데이트 간격
+      zoomStep: 0.0012,        // 줌 변화량(아주 살짝)
+      moveStep: 0.18           // 이동 변화량(아주 살짝)
     };
 
     let slideIndex = 0;
@@ -1238,8 +1267,10 @@
     const speeds = [3000, 4000, 6000, 8000];
     let speedIdx = 1;
 
+    // 시네마모드 상태
     let cinemaOn = !!SLIDE_FX.cinemaDefault;
 
+    // 켄번즈 내부 상태
     let __kbTimer = null;
     let __kbZ = 1;
     let __kbTX = 0;
@@ -1250,19 +1281,17 @@
     let __kbIsPortrait = false;
     let __kbZoomBase = 1.02;
 
-    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
-
     function applyCinemaModeUI(){
       btnCinema.classList.toggle("on", cinemaOn);
       btnCinema.textContent = cinemaOn ? "🎥 시네마모드" : "🎥 깔끔모드";
     }
 
-    function setCinematicVars(isPortrait){
-      const originalUrl = ITEMS[slideIndex]?.url || "";
-      const currentUrl = imgSrc(originalUrl);
+    function setCinematicVars(isPortrait, originalUrl){
+      const currentOriginal = originalUrl || ITEMS[slideIndex]?.url || "";
+      const bgUrl = cinemaOn ? imgSrc(currentOriginal) : imgSrc(currentOriginal);
 
       if(!cinemaOn){
-        slideBox.style.setProperty("--bgurl", `url("${currentUrl}")`);
+        slideBox.style.setProperty("--bgurl", `url("${bgUrl}")`);
         slideBox.style.setProperty("--blur", "0px");
         slideBox.style.setProperty("--bgOpacity", ".20");
         slideBox.style.setProperty("--zoom", "1");
@@ -1271,7 +1300,7 @@
         return;
       }
 
-      slideBox.style.setProperty("--bgurl", `url("${currentUrl}")`);
+      slideBox.style.setProperty("--bgurl", `url("${bgUrl}")`);
       slideBox.style.setProperty("--blur", (isPortrait ? SLIDE_FX.blurPortrait : SLIDE_FX.blurLandscape) + "px");
       slideBox.style.setProperty("--bgOpacity", (isPortrait ? SLIDE_FX.bgOpacityPortrait : SLIDE_FX.bgOpacityLandscape));
       slideBox.style.setProperty("--zoom", (isPortrait ? SLIDE_FX.zoomPortrait : SLIDE_FX.zoomLandscape));
@@ -1291,9 +1320,9 @@
 
         imgEl.style.objectFit = isPortrait ? "contain" : "cover";
 
-        slideBox.style.setProperty("--bgurl", `url("${imgSrc(originalUrl)}")`);
-        setCinematicVars(isPortrait);
+        setCinematicVars(isPortrait, originalUrl);
         resetKenBurns();
+
       }catch(e){}
     }
 
@@ -1336,6 +1365,7 @@
         slideBox.style.setProperty("--zoom", String(__kbZ));
         slideBox.style.setProperty("--tx", `${__kbTX.toFixed(1)}px`);
         slideBox.style.setProperty("--ty", `${__kbTY.toFixed(1)}px`);
+
       }, SLIDE_FX.tickMs);
     }
 
@@ -1355,6 +1385,8 @@
       const target = showingA ? imgA : imgB;
       const other  = showingA ? imgB : imgA;
 
+      // ✅ 프록시 먼저, 실패 시 원본
+      target.onerror = ()=> applyFallback(target, it.url);
       target.onload = ()=> applyAutoFit(target, it.url);
       target.src = imgSrc(it.url);
 
@@ -1393,10 +1425,13 @@
     btnOpenSlide.addEventListener("click", ()=> openLightboxByUrl(ITEMS[slideIndex].url));
     btnCopySlide.addEventListener("click", ()=> copyText(ITEMS[slideIndex].url));
 
+    // 🎥 시네마모드 ON/OFF
     btnCinema.addEventListener("click", ()=>{
       cinemaOn = !cinemaOn;
       applyCinemaModeUI();
-      setCinematicVars(__kbIsPortrait);
+
+      // 현재 이미지 상태에 맞춰 즉시 반영
+      setCinematicVars(__kbIsPortrait, ITEMS[slideIndex]?.url);
 
       if(timer){
         resetKenBurns();
@@ -1480,6 +1515,7 @@
 
     /* INIT */
     (function init(){
+      // query auto-run
       const u = new URL(location.href);
       const qq = u.searchParams.get("q");
       if(qq){
@@ -1487,24 +1523,35 @@
         runSearch(qq);
       }
 
+      // thumb pager
       reindexThumbItems();
       renderThumbPager();
 
-      coverImg.src = imgSrc(THUMB_ITEMS[0]?.url || "");
+      // cover init
+      const first = THUMB_ITEMS[0]?.url || "";
+      coverImg.onerror = ()=> applyFallback(coverImg, first);
+      coverImg.src = imgSrc(first);
       setCover(0);
 
+      // cinema default UI
       applyCinemaModeUI();
 
+      // slideshow init
       if(ITEMS.length){
+        imgA.onerror = ()=> applyFallback(imgA, ITEMS[0].url);
         imgA.onload = ()=> applyAutoFit(imgA, ITEMS[0].url);
         imgA.src = imgSrc(ITEMS[0].url);
         imgA.classList.add("show");
+
         slideTitle.textContent = "사진 1";
         slideSub.textContent = `1/${ITEMS.length}`;
+
+        // 배경도 프록시로 맞춰두기
         slideBox.style.setProperty("--bgurl", `url("${imgSrc(ITEMS[0].url)}")`);
       }
       btnSpeed.textContent = `⏱ ${Math.round(speeds[speedIdx]/1000)}초`;
 
+      // videos
       renderVideosShell();
       fillYouTubeTitles();
     })();
