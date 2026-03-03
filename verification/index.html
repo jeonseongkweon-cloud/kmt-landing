@@ -301,7 +301,7 @@
   /* ✅ 포인트 결과 박스 */
   .pointBox{
     flex:0 0 auto;
-    min-width:220px;
+    min-width:240px;
     border-radius:18px;
     border:1px solid rgba(246,201,69,.35);
     background: linear-gradient(180deg, rgba(246,201,69,.20), rgba(246,201,69,.08));
@@ -578,16 +578,6 @@
     gap:8px;
     flex:0 0 auto;
   }
-  .pGo{
-    font-weight:950;
-    font-size:12px;
-    color: rgba(255,255,255,.92);
-    border:1px solid rgba(246,201,69,.28);
-    background: rgba(246,201,69,.10);
-    padding:7px 10px;
-    border-radius:999px;
-    white-space:nowrap;
-  }
 
   /* ✅ "데이터: 준비(60명)" 뱃지 숨김 (기능은 유지) */
   #dataPill{ display:none !important; }
@@ -667,13 +657,26 @@ const RAW_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZ
 const GALLERY_BASE = "../gallery/";
 const GALLERY_QUERY_KEY = "id";
 
-/* ✅ 포인트 시스템 설정(원하면 여기 숫자만 바꾸면 됨) */
-const GOAL_POINTS = 1200; // 도복 목표(예시)
+/* ✅ 포인트 목표(3단계) */
+const GOALS = [
+  { key:"uniform",  name:"도복 목표",           points: 30000 },
+  { key:"black",    name:"유단자 도복",         points: 60000 },
+  { key:"master",   name:"고단자 도복+가검",    points: 90000 },
+];
+
+// ✅ 기본으로 보여줄 목표(처음에는 도복 목표)
+const DEFAULT_GOAL_KEY = "uniform";
+
+function getGoalByKey(key){
+  return GOALS.find(g => g.key === key) || GOALS[0];
+}
+
+/* ✅ 등급(전총재님이 따로 조정 예정: 여기 그대로 둠) */
 const TIERS = [
   { key:"bronze", name:"브론즈", icon:"🥉", min:0,   max:399 },
-  { key:"silver", name:"실버",   icon:"🥈", min:30000, max:799 },
-  { key:"gold",   name:"골드",   icon:"🥇", min:60000, max:1199 },
-  { key:"dia",    name:"다이아", icon:"💎", min:90000, max:999999999 }
+  { key:"silver", name:"실버",   icon:"🥈", min:400, max:799 },
+  { key:"gold",   name:"골드",   icon:"🥇", min:800, max:1199 },
+  { key:"dia",    name:"다이아", icon:"💎", min:1200, max:999999999 }
 ];
 
 /* =========================================================
@@ -811,10 +814,10 @@ function tierOf(points){
   return TIERS[0];
 }
 
-/* ✅ 목표 진행률 */
-function progressOf(points){
+/* ✅ 목표 진행률 (3단계 목표용) */
+function progressOf(points, goalPoints){
   const p = Math.max(0, Number(points||0));
-  const goal = Math.max(1, Number(GOAL_POINTS||1));
+  const goal = Math.max(1, Number(goalPoints||1));
   const pct = Math.max(0, Math.min(100, Math.round((p/goal)*100)));
   const remain = Math.max(0, goal - p);
   const done = p >= goal;
@@ -1070,11 +1073,6 @@ function renderExam(name, dateStr){
   `;
 }
 
-function tierBadgeHtml(points){
-  const t = tierOf(points);
-  return `<span class="tierBadge ${escapeHtml(t.key)}">${escapeHtml(t.icon)} ${escapeHtml(t.name)}</span>`;
-}
-
 function renderCard(row){
   const id = clean(row[0]);
   const name = clean(row[1]);
@@ -1095,14 +1093,17 @@ function renderCard(row){
   const nextIpma = clean(row[11]);
   const nextTkkd = clean(row[12]);
 
-  const prog = progressOf(pointNum);
-  const t = tierOf(pointNum);
+  const tier = tierOf(pointNum);
+
+  // ✅ 3단계 목표 적용
+  const goal = getGoalByKey(DEFAULT_GOAL_KEY);
+  const prog = progressOf(pointNum, goal.points);
 
   const hashSource = `KMT|${id}|${name}|${normBirth(birth)}|${tkd}|${ipma}|${tkkd}|${pointStr}|${awards}|${cert}|${nextTkd}|${nextIpma}|${nextTkkd}`;
 
   const progressText = prog.done
-    ? `🎉 목표 달성! (목표 ${prog.goal}P)`
-    : `목표 ${prog.goal}P까지 <b>${prog.remain}P</b> 남았어요`;
+    ? `🎉 ${escapeHtml(goal.name)} 달성! (목표 ${prog.goal}P)`
+    : `${escapeHtml(goal.name)}까지 <b>${prog.remain}P</b> 남았어요 (목표 ${prog.goal}P)`;
 
   return `
     <div class="card" data-hash-source="${escapeHtml(hashSource)}">
@@ -1138,14 +1139,14 @@ function renderCard(row){
         <div class="pointBox" aria-label="point-result" data-pct="${prog.pct}">
           <div class="pointTop">
             <div class="pointLabel">🏅 현재 포인트 · RESULT</div>
-            <span class="tierBadge ${escapeHtml(t.key)}">${escapeHtml(t.icon)} ${escapeHtml(t.name)}</span>
+            <span class="tierBadge ${escapeHtml(tier.key)}">${escapeHtml(tier.icon)} ${escapeHtml(tier.name)}</span>
           </div>
 
           <div class="pointValue">${escapeHtml(pointStr)}<span class="pointUnit">P</span></div>
 
           <div class="progressWrap">
             <div class="progressTop">
-              <span>🎯 도복 목표 진행률</span>
+              <span>🎯 ${escapeHtml(goal.name)} 진행률</span>
               <span>${prog.pct}%</span>
             </div>
             <div class="bar"><i style="width:${prog.pct}%"></i></div>
@@ -1162,7 +1163,7 @@ function renderCard(row){
       <div class="grid2">
         <div class="panel">
           <div class="row"><span class="rlabel">현재 포인트</span><span class="rval">${escapeHtml(pointStr)}P</span></div>
-          <div class="row"><span class="rlabel">등급</span><span class="rval">${escapeHtml(t.icon)} ${escapeHtml(t.name)}</span></div>
+          <div class="row"><span class="rlabel">등급</span><span class="rval">${escapeHtml(tier.icon)} ${escapeHtml(tier.name)}</span></div>
         </div>
         <div class="panel">
           <div class="row"><span class="rlabel">보유 인증서</span><span class="rval">${escapeHtml(cert || "-")}</span></div>
@@ -1200,9 +1201,10 @@ function renderPickList(rows){
     const name = clean(r[1]);
     const birth = clean(r[2]);
     const photo = clean(r[6]);
+
     const pNum = toPointNumber(r[7]);
     const pStr = pointDisplay(pNum);
-    const t = tierOf(pNum);
+    const tier = tierOf(pNum);
 
     return `
       <div class="pick" data-idx="${idx}">
@@ -1222,8 +1224,8 @@ function renderPickList(rows){
         </div>
 
         <div class="pRight">
-          <span class="tierBadge ${escapeHtml(t.key)}">${escapeHtml(t.icon)} ${escapeHtml(t.name)}</span>
-          <div class="pGo">선택</div>
+          <span class="tierBadge ${escapeHtml(tier.key)}">${escapeHtml(tier.icon)} ${escapeHtml(tier.name)}</span>
+          <span class="tierBadge" style="border-color:rgba(255,255,255,.18);background:rgba(0,0,0,.14);">선택</span>
         </div>
       </div>
     `;
