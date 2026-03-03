@@ -10,7 +10,6 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="계명태권도 | 갤러리 & 영상" />
   <meta property="og:description" content="수련·심사·행사·성장 기록. 모바일 최적화 갤러리." />
-  <!-- <meta property="og:image" content="https://계명태권도.com/gallery/images/og.jpg" /> -->
 
   <style>
     :root{
@@ -160,7 +159,6 @@
     }
     .page{scroll-snap-align: start; flex:0 0 100%; padding:12px;}
 
-    /* ✅ 검색 결과 썸네일: 기존대로 cover 유지(예쁘게) */
     .gridThumb{display:grid; gap:10px;}
     .gridThumb{ grid-template-columns: repeat(3, 1fr); }
     @media (min-width: 560px){ .gridThumb{ grid-template-columns: repeat(4, 1fr); } }
@@ -202,15 +200,17 @@
       overflow:hidden;
       background: rgba(0,0,0,.22);
       height: 380px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
-    /* ✅ 대표사진: 안 짤리게 contain */
+    /* ✅ 대표사진: 짤림 방지 (비율 유지) */
     .coverMain img{
       width:100%;
       height:100%;
-      object-fit: contain;
-      object-position:center;
+      object-fit: contain; /* 핵심 */
       display:block;
-      background: rgba(0,0,0,.25);
+      background:#000;
     }
     @media (max-width: 980px){
       .cover{grid-template-columns: 1fr}
@@ -251,8 +251,6 @@
       scroll-behavior:smooth;
     }
     .thumbPage{scroll-snap-align: start; flex:0 0 100%; padding:8px;}
-
-    /* ✅ 대표 옆 썸네일: 기존대로 cover 유지 */
     .thumbGrid{display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;}
 
     .titem{
@@ -297,16 +295,13 @@
       background:#000;
       overflow:hidden;
     }
-    /* ✅ 슬라이드: 안 짤리게 contain */
     .slideBox img{
       position:absolute; inset:0;
       width:100%; height:100%;
-      object-fit: contain;
-      object-position:center;
+      object-fit: cover;
       display:block;
       opacity:0;
       transition: opacity .35s ease;
-      background: rgba(0,0,0,.35);
     }
     .slideBox img.show{opacity:1}
     .navBtn{
@@ -382,6 +377,7 @@
       pointer-events:none;
     }
 
+    /* ✅ 동영상 영역 */
     .videoGrid{
       display:grid;
       grid-template-columns: 1fr;
@@ -409,6 +405,24 @@
       background:#000;
     }
     .vFrame iframe{width:100%; height:100%; border:0; display:block;}
+
+    .channelCard{
+      padding:14px 12px;
+      text-align:center;
+    }
+    .channelCard a{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(102,179,255,.35);
+      background: linear-gradient(180deg, rgba(102,179,255,.16), rgba(255,255,255,.03));
+      color: rgba(255,255,255,.92);
+      font-weight:800;
+      text-decoration:none;
+    }
   </style>
 </head>
 
@@ -428,7 +442,7 @@
       <div class="searchRow" style="margin:0; flex-wrap:nowrap;">
         <div class="field" style="min-width:240px;">
           🔎
-          <input id="qTop" type="text" inputmode="search" autocomplete="off" placeholder="이름/키워드 검색" />
+          <input id="qTop" type="text" inputmode="search" autocomplete="off" placeholder="이름/아이디 검색 (예: 김예담 / KM001)" />
           <button class="xbtn" id="btnClearTop" type="button" title="지우기">✕</button>
         </div>
         <button class="btn primary" id="btnSearchTop" type="button">조회</button>
@@ -447,12 +461,11 @@
       <span id="statusMsg">초기화 중…</span>
     </div>
 
-    <!-- ✅ 검색 결과 -->
     <section class="cardBox" id="searchSection">
       <div class="head">
         <div>
           <h2>사진 조회</h2>
-          <p>이름/키워드로 검색 후 사진을 확인합니다. (검색 결과는 썸네일 5줄 단위로 페이지가 나뉩니다)</p>
+          <p>이름/아이디로 검색 후 사진을 확인합니다. (검색 결과는 썸네일 5줄 단위로 페이지가 나뉩니다)</p>
         </div>
       </div>
 
@@ -490,7 +503,6 @@
       </div>
     </section>
 
-    <!-- ✅ 대표사진 + 썸네일(5줄 페이징) -->
     <section class="cardBox">
       <div class="head">
         <div>
@@ -536,7 +548,6 @@
       </div>
     </section>
 
-    <!-- ✅ 슬라이드쇼 -->
     <section class="cardBox">
       <div class="head">
         <div>
@@ -570,7 +581,6 @@
       </div>
     </section>
 
-    <!-- ✅ 사진 아래 동영상 -->
     <section class="cardBox" id="videoSection">
       <div class="head">
         <div>
@@ -585,7 +595,6 @@
 
   </main>
 
-  <!-- ✅ 라이트박스 -->
   <div class="lb" id="lb" aria-hidden="true">
     <div class="panel" role="dialog" aria-modal="true">
       <div class="lb-top">
@@ -607,144 +616,85 @@
 
   <script>
     // =========================
-    // ✅ 1) GitHub students 폴더에서 사진 목록 자동 로드
+    // ✅ 1) 이름-아이디 매핑 (전총재님이 수정할 부분)
     // =========================
-    // 스샷 기준: https://github.com/jeonseongkweon-cloud/kmt-landing/tree/main/gallery/images/students
-    // 저장소가 다르면 아래 3개만 수정하세요.
-    var GITHUB_OWNER  = "jeonseongkweon-cloud";
-    var GITHUB_REPO   = "kmt-landing";
-    var GITHUB_BRANCH = "main";
-
-    // gallery/index.html 기준 상대경로
-    var LOCAL_BASE_PATH = "images/students/";
-
-    function fetchStudentsFromGitHub(){
-      var api = "https://api.github.com/repos/" + encodeURIComponent(GITHUB_OWNER) + "/" + encodeURIComponent(GITHUB_REPO) +
-                "/contents/gallery/images/students?ref=" + encodeURIComponent(GITHUB_BRANCH);
-
-      return fetch(api, { cache: "no-store" })
-        .then(function(res){
-          if(!res.ok) throw new Error("GitHub API 실패: " + res.status);
-          return res.json();
-        })
-        .then(function(list){
-          if(!Array.isArray(list)) return [];
-          var files = list
-            .filter(function(x){
-              var n = String(x && x.name || "").toLowerCase();
-              return n.endsWith(".jpg") || n.endsWith(".jpeg") || n.endsWith(".png") || n.endsWith(".webp");
-            })
-            .map(function(x){ return String(x.name); });
-
-          files.sort(function(a,b){
-            return a.localeCompare(b, "en", { numeric:true, sensitivity:"base" });
-          });
-
-          // 기존 로직이 기대하는 구조로 변환
-          var GALLERY = files.map(function(fn){
-            var base = fn.replace(/\.[^.]+$/,""); // KM001_01
-            return { name: base, src: LOCAL_BASE_PATH + fn, tags: "" };
-          });
-
-          return GALLERY;
-        })
-        .catch(function(err){
-          console.error(err);
-          return [];
-        });
-    }
-
-    // =========================
-    // ✅ 2) 이름-아이디 매핑 (전총재님이 수정할 부분)
-    // =========================
-    // 시트 A열=아이디(KM001), B열=이름(김예담)
-    // 동명이인은 여러 줄로 추가하면 됩니다.
+    // KM001~KM060 (요청하신 1~60)
     var STUDENTS = [
-       { id:"KM001", name:"김예담" },
-  { id:"KM002", name:"김예성" },
-  { id:"KM003", name:"김민규" },
-  { id:"KM004", name:"강찬희" },
-  { id:"KM005", name:"권유준" },
-  { id:"KM006", name:"김강민" },
-  { id:"KM007", name:"김건하" },
-  { id:"KM008", name:"김규민" },
-  { id:"KM009", name:"김나라" },
-  { id:"KM010", name:"김도영" },
-  { id:"KM011", name:"김동언" },
-  { id:"KM013", name:"김민준" },
-  { id:"KM014", name:"김사랑" },
-  { id:"KM015", name:"김성찬" },
-  { id:"KM016", name:"김시율" },
-  { id:"KM017", name:"김우리" },
-  { id:"KM018", name:"김재윤" },
-  { id:"KM019", name:"김주원" },
-  { id:"KM020", name:"김준서" },
-  { id:"KM021", name:"김태은" },
-  { id:"KM022", name:"김하준" },
-  { id:"KM023", name:"박기범" },
-  { id:"KM024", name:"박재희" },
-  { id:"KM025", name:"박정민" },
-  { id:"KM026", name:"박헌수" },
-  { id:"KM027", name:"방서희" },
-  { id:"KM028", name:"백다현" },
-  { id:"KM029", name:"백동훈" },
-  { id:"KM030", name:"백지" },
-  { id:"KM031", name:"송정현" },
-  { id:"KM032", name:"오리온" },
-  { id:"KM033", name:"오승윤" },
-  { id:"KM034", name:"오승하" },
-  { id:"KM035", name:"오연서" },
-  { id:"KM036", name:"유가령" },
-  { id:"KM037", name:"유강령" },
-  { id:"KM038", name:"유하준" },
-  { id:"KM039", name:"윤겸" },
-  { id:"KM040", name:"윤우준" },
-  { id:"KM041", name:"윤우진" },
-  { id:"KM042", name:"윤유은" },
-  { id:"KM043", name:"이도경" },
-  { id:"KM044", name:"이서안" },
-  { id:"KM045", name:"이영진" },
-  { id:"KM046", name:"이윤재" },
-  { id:"KM047", name:"이정빈" },
-  { id:"KM048", name:"이주형" },
-  { id:"KM049", name:"이지훈" },
-  { id:"KM050", name:"이혜찬" },
-  { id:"KM051", name:"장은우" },
-  { id:"KM052", name:"전하루" },
-  { id:"KM053", name:"정은재" },
-  { id:"KM054", name:"천시유" },
-  { id:"KM055", name:"최기영" },
-  { id:"KM056", name:"최지우" },
-  { id:"KM057", name:"하석진" },
-  { id:"KM058", name:"홍나경" },
-  { id:"KM059", name:"황찬규" },
-  { id:"KM060", name:"오윤후" },
-  { id:"KM061", name:"이승우" }
+      { id:"KM001", name:"김예담" },
+      { id:"KM002", name:"김예성" },
+      { id:"KM003", name:"김민규" },
+      { id:"KM004", name:"강찬희" },
+      { id:"KM005", name:"권윤준" },
+      { id:"KM006", name:"김강민" },
+      { id:"KM007", name:"김건하" },
+      { id:"KM008", name:"김규민" },
+      { id:"KM009", name:"김나래" },
+      { id:"KM010", name:"김도영" },
+      { id:"KM011", name:"김동연" },
+      // KM012 없음
+      { id:"KM013", name:"김민준" },
+      { id:"KM014", name:"김사랑" },
+      { id:"KM015", name:"김성찬" },
+      { id:"KM016", name:"김시윤" },
+      { id:"KM017", name:"김유리" },
+      { id:"KM018", name:"김재윤" },
+      { id:"KM019", name:"김주원" },
+      { id:"KM020", name:"김준서" },
+      { id:"KM021", name:"김태은" },
+      { id:"KM022", name:"김하준" },
+      { id:"KM023", name:"박기범" },
+      { id:"KM024", name:"박재희" },
+      { id:"KM025", name:"박정민" },
+      { id:"KM026", name:"박현수" },
+      { id:"KM027", name:"박서희" },
+      { id:"KM028", name:"백다현" },
+      { id:"KM029", name:"백동훈" },
+      { id:"KM030", name:"백재윤" },
+      { id:"KM031", name:"송정현" },
+      { id:"KM032", name:"오리온" },
+      { id:"KM033", name:"오승윤" },
+      { id:"KM034", name:"오승하" },
+      { id:"KM035", name:"오연서" },
+      { id:"KM036", name:"유가령" },
+      { id:"KM037", name:"유현준" },
+      { id:"KM038", name:"유희준" },
+      { id:"KM039", name:"윤결" },
+      { id:"KM040", name:"윤유준" },
+      { id:"KM041", name:"윤유진" },
+      { id:"KM042", name:"윤유은" },
+      { id:"KM043", name:"이동건" },
+      { id:"KM044", name:"이서안" },
+      { id:"KM045", name:"이영진" },
+      { id:"KM046", name:"이윤재" },
+      { id:"KM047", name:"이정빈" },
+      { id:"KM048", name:"이주형" },
+      { id:"KM049", name:"이지훈" },
+      { id:"KM050", name:"이혜찬" },
+      { id:"KM051", name:"장은우" },
+      { id:"KM052", name:"전하루" },
+      { id:"KM053", name:"정윤재" },
+      { id:"KM054", name:"천시유" },
+      { id:"KM055", name:"최기영" },
+      { id:"KM056", name:"최지우" },
+      { id:"KM057", name:"허석진" },
+      { id:"KM058", name:"홍나경" },
+      { id:"KM059", name:"황찬규" },
+      { id:"KM060", name:"오윤후" }
     ];
 
-    function normName(s){
-      return String(s||"").toLowerCase().replace(/\s+/g,"");
-    }
-    function findIdsByName(name){
-      var n = normName(name);
-      var ids = [];
-      for(var i=0;i<STUDENTS.length;i++){
-        if(normName(STUDENTS[i].name) === n) ids.push(String(STUDENTS[i].id).toUpperCase());
-      }
-      return ids;
-    }
-    function looksLikeId(q){
-      var s = String(q||"").trim().toUpperCase();
-      return /^KM\d{3}/.test(s);
-    }
-    function extractId(q){
-      var s = String(q||"").trim().toUpperCase();
-      var m = s.match(/^(KM\d{3})/);
-      return m ? m[1] : "";
-    }
+    // =========================
+    // ✅ 2) 유튜브 목록 (요청하신 링크)
+    // =========================
+    window.VIDEOS = [
+      { title:"계명태권도 영상", url:"https://www.youtube.com/watch?v=aHZSZ1YHIAY" },
+      { title:"계명태권도 영상", url:"https://www.youtube.com/watch?v=lUpmY5jfEIc" },
+      { title:"계명태권도 영상", url:"https://www.youtube.com/watch?v=D3kDXF-sNJA" },
+      { title:"계명태권도 영상", url:"https://www.youtube.com/watch?v=wWIAPVvrnSw" }
+    ];
+    var CHANNEL_URL = "https://www.youtube.com/@%EA%B3%84%EB%AA%85%ED%83%9C%EA%B6%8C%EB%8F%84%EC%9A%B8%EC%82%B0";
 
     // =========================
-    // ✅ 3) 기존 안정형 JS(레이아웃/동작 유지)
+    // ✅ 유틸
     // =========================
     function isMobile(){
       try{
@@ -753,11 +703,6 @@
       return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     }
     var IS_MOBILE = isMobile();
-
-    var pillDevice = document.getElementById("pillDevice");
-    var pillData   = document.getElementById("pillData");
-    var pillRender = document.getElementById("pillRender");
-    var statusMsg  = document.getElementById("statusMsg");
 
     function setPill(el, text, ok){
       if(!el) return;
@@ -820,6 +765,7 @@
       }
     }
 
+    // ✅ 라이트박스
     function openLightbox(src, title, sub){
       var lb = document.getElementById("lb");
       var lbImg = document.getElementById("lbImg");
@@ -844,86 +790,132 @@
       if(img) img.src = "";
     }
 
-    var lbClose = document.getElementById("lbClose");
-    var lbBg    = document.getElementById("lb");
-    if(lbClose) lbClose.addEventListener("click", closeLightbox);
-    if(lbBg){
-      lbBg.addEventListener("click", function(e){
-        if(e && e.target && e.target.id === "lb") closeLightbox();
-      });
-    }
-    window.addEventListener("keydown", function(e){
-      var lb = document.getElementById("lb");
-      if(lb && lb.classList.contains("show") && e.key === "Escape"){
-        closeLightbox();
-      }
-    });
+    // =========================
+    // ✅ 3) GitHub students 폴더 자동 로드
+    // =========================
+    // repo/branch/path만 정확하면 자동으로 jpg 목록을 가져옵니다.
+    var GH = {
+      owner: "jeonseongkweon-cloud",
+      repo: "kmt-landing",
+      branch: "main",
+      path: "gallery/images/students"
+    };
 
-    var btnScrollTop = document.getElementById("btnScrollTop");
-    if(btnScrollTop){
-      btnScrollTop.addEventListener("click", function(){
-        window.scrollTo({top:0, behavior:"smooth"});
-      });
+    function looksLikeId(s){
+      return /^km\d{3}$/i.test(String(s||"").trim());
     }
 
-    // ✅ GALLERY → ITEMS 변환
-    function buildItemsFromGallery(GALLERY){
-      var srcList = Array.isArray(GALLERY) ? GALLERY : [];
+    function extractIdFromFilename(filename){
+      // KM043_01.jpg -> KM043
+      var m = String(filename||"").toUpperCase().match(/(KM\d{3})/);
+      return m ? m[1] : "";
+    }
 
-      var totalByName = {};
-      for(var i=0;i<srcList.length;i++){
-        var nm = String(srcList[i].name || "").trim();
-        if(!nm) continue;
-        totalByName[nm] = (totalByName[nm]||0) + 1;
+    function buildStudentMaps(){
+      var idToName = {};
+      var nameToIds = {};
+      for(var i=0;i<STUDENTS.length;i++){
+        var id = String(STUDENTS[i].id||"").toUpperCase().trim();
+        var nm = String(STUDENTS[i].name||"").trim();
+        if(!id || !nm) continue;
+        idToName[id] = nm;
+
+        var key = norm(nm);
+        if(!nameToIds[key]) nameToIds[key] = [];
+        nameToIds[key].push(id);
       }
+      return { idToName:idToName, nameToIds:nameToIds };
+    }
 
-      var seenByName = {};
-      var items = [];
-      for(var j=0;j<srcList.length;j++){
-        var row = srcList[j] || {};
-        var base = String(row.name || "").trim();
-        var url  = String(row.src  || "").trim();
-        var tags = String(row.tags || "").trim();
+    var MAPS = buildStudentMaps();
 
-        if(!base || !url) continue;
+    function findIdsByNamePartial(nameQuery){
+      var nq = norm(nameQuery);
+      var ids = [];
+      if(!nq) return ids;
 
-        seenByName[base] = (seenByName[base]||0) + 1;
-        var needSuffix = (totalByName[base]||0) > 1;
-        var internalName = needSuffix ? (base + String(seenByName[base]).padStart(2,"0")) : base;
-
-        var tagList = [base, internalName];
-
-        // ✅ base에서 "아이디" 부분(KM001)을 태그로 추가해서, 아이디 검색이 더 잘 먹게
-        var idPart = base.split("_")[0];
-        if(idPart) tagList.push(idPart);
-
-        if(tags){
-          tags.split(/[,\s]+/).forEach(function(t){
-            t = String(t||"").trim();
-            if(t) tagList.push(t);
-          });
+      // 부분일치: STUDENTS 전체를 훑어서 이름에 nq가 포함되면 해당 id 수집
+      for(var i=0;i<STUDENTS.length;i++){
+        var nm = norm(STUDENTS[i].name);
+        if(nm.indexOf(nq) !== -1){
+          ids.push(String(STUDENTS[i].id).toUpperCase());
         }
-        String(base).split("_").forEach(function(t){
-          t = String(t||"").trim();
-          if(t) tagList.push(t);
-        });
+      }
+      return uniq(ids);
+    }
 
-        tagList = uniq(tagList);
+    async function fetchGitHubAllFiles(){
+      // GitHub contents API: 폴더 내 파일 목록 가져오기 (공개 repo 기준)
+      // 참고: 페이지가 커지면 per_page 제한이 있을 수 있어, "tree API"를 사용합니다.
+      var treeUrl =
+        "https://api.github.com/repos/" + GH.owner + "/" + GH.repo +
+        "/git/trees/" + encodeURIComponent(GH.branch) + "?recursive=1";
+
+      var res = await fetch(treeUrl, { cache:"no-store" });
+      if(!res.ok) throw new Error("GitHub API 오류: " + res.status);
+      var data = await res.json();
+      var tree = Array.isArray(data.tree) ? data.tree : [];
+
+      var files = [];
+      var basePath = GH.path.replace(/^\/+/,"").replace(/\/+$/,"") + "/";
+      for(var i=0;i<tree.length;i++){
+        var node = tree[i];
+        if(!node || node.type !== "blob") continue;
+        var p = String(node.path||"");
+        if(p.indexOf(basePath) !== 0) continue;
+
+        var lower = p.toLowerCase();
+        if(!(lower.endsWith(".jpg") || lower.endsWith(".jpeg") || lower.endsWith(".png") || lower.endsWith(".webp"))) continue;
+
+        var name = p.split("/").pop();
+        files.push({ path:p, name:name });
+      }
+      return files;
+    }
+
+    function makeRawUrl(path){
+      return "https://raw.githubusercontent.com/" + GH.owner + "/" + GH.repo + "/" + GH.branch + "/" + path;
+    }
+
+    function buildItemsFromFiles(files){
+      var items = [];
+      for(var i=0;i<files.length;i++){
+        var f = files[i];
+        var id = extractIdFromFilename(f.name);
+        var url = makeRawUrl(f.path);
+
+        var displayName = id || f.name;
+        var studentName = id && MAPS.idToName[id] ? MAPS.idToName[id] : "";
+        var tags = [f.name, displayName, id, studentName].filter(Boolean);
+        tags = uniq(tags);
 
         items.push({
-          id: items.length + 1,
-          name: internalName,
-          base: base,
+          id: i+1,
+          file: f.name,
+          studentId: id,
+          studentName: studentName,
+          base: studentName ? (studentName + " (" + id + ")") : (id || f.name),
           url: url,
-          tags: tagList
+          tags: tags
         });
       }
       return items;
     }
 
     // =========================
-    // ✅ 검색 + 5줄 페이징
+    // ✅ 4) 페이지 렌더/검색 로직
     // =========================
+    var pillDevice = document.getElementById("pillDevice");
+    var pillData   = document.getElementById("pillData");
+    var pillRender = document.getElementById("pillRender");
+    var statusMsg  = document.getElementById("statusMsg");
+
+    setPill(pillDevice, IS_MOBILE ? "모바일" : "PC", true);
+
+    var ITEMS = [];
+    var THUMB_ITEMS = [];
+
+    // 검색 UI
     var q = document.getElementById("q");
     var btnClear = document.getElementById("btnClear");
     var btnSearch = document.getElementById("btnSearch");
@@ -940,13 +932,55 @@
     var btnClearTop = document.getElementById("btnClearTop");
     var btnSearchTop = document.getElementById("btnSearchTop");
 
-    function matchItem(item, query){
-      var nq = norm(query);
-      if(!nq) return true;
-      var nname = norm(item.name);
-      var nbase = norm(item.base);
-      var ntags = norm((item.tags || []).join(" "));
-      return (nname.indexOf(nq) !== -1) || (nbase.indexOf(nq) !== -1) || (ntags.indexOf(nq) !== -1);
+    // 대표/썸네일
+    var coverImg = document.getElementById("coverImg");
+    var thumbCount = document.getElementById("thumbCount");
+    var btnCoverPrev = document.getElementById("btnCoverPrev");
+    var btnCoverNext = document.getElementById("btnCoverNext");
+    var btnOpenCover = document.getElementById("btnOpenCover");
+    var btnShuffleThumbs = document.getElementById("btnShuffleThumbs");
+
+    var thumbPagesEl = document.getElementById("thumbPages");
+    var thumbDotsEl = document.getElementById("thumbDots");
+    var btnThumbPrev = document.getElementById("btnThumbPrev");
+    var btnThumbNext = document.getElementById("btnThumbNext");
+    var thumbMeta = document.getElementById("thumbMeta");
+
+    // 슬라이드쇼
+    var slideTitle = document.getElementById("slideTitle");
+    var slideSub = document.getElementById("slideSub");
+    var imgA = document.getElementById("slideImgA");
+    var imgB = document.getElementById("slideImgB");
+    var btnPrev = document.getElementById("btnPrev");
+    var btnNext = document.getElementById("btnNext");
+    var btnPlay = document.getElementById("btnPlay");
+    var btnPause = document.getElementById("btnPause");
+    var btnOpenSlide = document.getElementById("btnOpenSlide");
+    var navPrev = document.getElementById("navPrev");
+    var navNext = document.getElementById("navNext");
+
+    // 라이트박스 바인딩
+    var lbClose = document.getElementById("lbClose");
+    var lbBg    = document.getElementById("lb");
+    if(lbClose) lbClose.addEventListener("click", closeLightbox);
+    if(lbBg){
+      lbBg.addEventListener("click", function(e){
+        if(e && e.target && e.target.id === "lb") closeLightbox();
+      });
+    }
+    window.addEventListener("keydown", function(e){
+      var lb = document.getElementById("lb");
+      if(lb && lb.classList.contains("show") && e.key === "Escape"){
+        closeLightbox();
+      }
+    });
+
+    // 상단 스크롤
+    var btnScrollTop = document.getElementById("btnScrollTop");
+    if(btnScrollTop){
+      btnScrollTop.addEventListener("click", function(){
+        window.scrollTo({top:0, behavior:"smooth"});
+      });
     }
 
     function getColumnsForGrid(){
@@ -955,8 +989,6 @@
       if(w >= 560) return 4;
       return 3;
     }
-
-    var ITEMS = [];
 
     function renderResultCarousel(list){
       var cols = getColumnsForGrid();
@@ -1009,86 +1041,54 @@
         setDotActive(dotsRow, idx);
       };
 
+      resultTitle.textContent = "검색 결과";
       resultMeta.textContent = "총 " + list.length + "장 · " + pages.length + "페이지 (5줄 단위)";
       resultArea.style.display = "block";
       emptyArea.style.display = "none";
     }
 
-    // ✅ 이름/아이디 검색 핵심
+    function matchByKeyword(item, query){
+      var nq = norm(query);
+      if(!nq) return true;
+      var ntags = norm((item.tags || []).join(" "));
+      var nbase = norm(item.base || "");
+      var nid = norm(item.studentId || "");
+      return ntags.indexOf(nq) !== -1 || nbase.indexOf(nq) !== -1 || nid.indexOf(nq) !== -1;
+    }
+
     function runSearch(query){
-      if(ITEMS.length === 0) return;
+      if(!ITEMS.length) return;
+
       var queryText = String(query || "").trim();
-      var nq = norm(queryText);
+      var n = norm(queryText);
 
-      // (1) 빈 검색 = 전체
-      if(!nq){
-        resultTitle.textContent = "전체";
-        renderResultCarousel(ITEMS);
-        try{
-          var u0 = new URL(location.href);
-          u0.searchParams.delete("q");
-          history.replaceState({}, "", u0.toString());
-        }catch(e){}
-        return;
-      }
-
-      // (2) 아이디로 검색: KM001 → KM001_ 로 시작하는 사진
-      if(looksLikeId(queryText)){
-        var id = extractId(queryText);
-        var filteredId = ITEMS.filter(function(it){
-          var b = String(it.base).toUpperCase();
-          return b === id || b.startsWith(id + "_");
-        });
-
-        if(filteredId.length === 0){
-          resultArea.style.display = "none";
-          emptyArea.style.display = "block";
-          return;
-        }
-
-        resultTitle.textContent = id;
-        renderResultCarousel(filteredId);
-
-        try{
-          var u1 = new URL(location.href);
-          u1.searchParams.set("q", queryText);
-          history.replaceState({}, "", u1.toString());
-        }catch(e){}
-        return;
-      }
-
-      // (3) 이름으로 검색: STUDENTS에서 아이디(복수 가능) 찾고 그 아이디 사진 표시
-      var ids = findIdsByName(queryText);
-      if(ids.length){
-        var filteredName = ITEMS.filter(function(it){
-          var b = String(it.base).toUpperCase();
-          for(var i=0;i<ids.length;i++){
-            if(b === ids[i] || b.startsWith(ids[i] + "_")) return true;
-          }
-          return false;
-        });
-
-        if(filteredName.length === 0){
-          resultArea.style.display = "none";
-          emptyArea.style.display = "block";
-          return;
-        }
-
-        resultTitle.textContent = queryText + " (" + ids.join(", ") + ")";
-        renderResultCarousel(filteredName);
-
-        try{
-          var u2 = new URL(location.href);
-          u2.searchParams.set("q", queryText);
-          history.replaceState({}, "", u2.toString());
-        }catch(e){}
-        return;
-      }
-
-      // (4) 그 외: 일반 키워드 검색(기존 방식)
       var filtered = [];
-      for(var k=0;k<ITEMS.length;k++){
-        if(matchItem(ITEMS[k], queryText)) filtered.push(ITEMS[k]);
+
+      // 1) 아이디로 검색 (KM001)
+      if(looksLikeId(queryText)){
+        var id = queryText.toUpperCase();
+        for(var i=0;i<ITEMS.length;i++){
+          if(String(ITEMS[i].studentId||"").toUpperCase() === id) filtered.push(ITEMS[i]);
+        }
+      }
+      // 2) 이름으로 검색 (부분일치 허용)
+      else if(n){
+        var ids = findIdsByNamePartial(queryText); // ✅ 핵심
+        if(ids.length){
+          var set = {};
+          for(var a=0;a<ids.length;a++) set[ids[a]] = 1;
+          for(var j=0;j<ITEMS.length;j++){
+            var it = ITEMS[j];
+            if(set[String(it.studentId||"").toUpperCase()]) filtered.push(it);
+          }
+        }else{
+          // 3) 마지막 fallback: 키워드 검색(파일명/태그)
+          for(var k=0;k<ITEMS.length;k++){
+            if(matchByKeyword(ITEMS[k], queryText)) filtered.push(ITEMS[k]);
+          }
+        }
+      }else{
+        filtered = ITEMS.slice();
       }
 
       if(filtered.length === 0){
@@ -1097,13 +1097,14 @@
         return;
       }
 
-      resultTitle.textContent = queryText;
       renderResultCarousel(filtered);
 
+      // URL q 반영
       try{
-        var u3 = new URL(location.href);
-        u3.searchParams.set("q", queryText);
-        history.replaceState({}, "", u3.toString());
+        var u = new URL(location.href);
+        if(queryText) u.searchParams.set("q", queryText);
+        else u.searchParams.delete("q");
+        history.replaceState({}, "", u.toString());
       }catch(e){}
     }
 
@@ -1130,6 +1131,7 @@
       }catch(e){ toast("복사 실패 😅"); }
     });
 
+    // ✅ resize 재렌더(열 수 바뀌면 페이지당 수 변경)
     var __lastCols = getColumnsForGrid();
     window.addEventListener("resize", function(){
       var now = getColumnsForGrid();
@@ -1142,28 +1144,14 @@
     });
 
     // =========================
-    // ✅ 대표/썸네일 + 슬라이드쇼
+    // ✅ 대표/썸네일(15개) + 슬라이드쇼
     // =========================
-    var coverImg = document.getElementById("coverImg");
-    var thumbCount = document.getElementById("thumbCount");
-    var btnCoverPrev = document.getElementById("btnCoverPrev");
-    var btnCoverNext = document.getElementById("btnCoverNext");
-    var btnOpenCover = document.getElementById("btnOpenCover");
-    var btnShuffleThumbs = document.getElementById("btnShuffleThumbs");
-
-    var thumbPagesEl = document.getElementById("thumbPages");
-    var thumbDotsEl = document.getElementById("thumbDots");
-    var btnThumbPrev = document.getElementById("btnThumbPrev");
-    var btnThumbNext = document.getElementById("btnThumbNext");
-    var thumbMeta = document.getElementById("thumbMeta");
-
     var THUMBS_PER_PAGE = 15;
-    var THUMB_ITEMS = [];
     var coverIndex = 0;
     var thumbPageCount = 1;
 
     function setCover(idx){
-      if(THUMB_ITEMS.length === 0) return;
+      if(!THUMB_ITEMS.length) return;
       coverIndex = (idx + THUMB_ITEMS.length) % THUMB_ITEMS.length;
       coverImg.src = THUMB_ITEMS[coverIndex].url;
 
@@ -1175,7 +1163,7 @@
     }
 
     function renderThumbPager(){
-      if(THUMB_ITEMS.length === 0) return;
+      if(!THUMB_ITEMS.length) return;
       if(thumbCount) thumbCount.textContent = String(THUMB_ITEMS.length);
 
       var pages = chunk(THUMB_ITEMS, THUMBS_PER_PAGE);
@@ -1264,25 +1252,14 @@
       toast("썸네일을 섞었습니다 🎲");
     });
 
-    var slideTitle = document.getElementById("slideTitle");
-    var slideSub = document.getElementById("slideSub");
-    var imgA = document.getElementById("slideImgA");
-    var imgB = document.getElementById("slideImgB");
-    var btnPrev = document.getElementById("btnPrev");
-    var btnNext = document.getElementById("btnNext");
-    var btnPlay = document.getElementById("btnPlay");
-    var btnPause = document.getElementById("btnPause");
-    var btnOpenSlide = document.getElementById("btnOpenSlide");
-    var navPrev = document.getElementById("navPrev");
-    var navNext = document.getElementById("navNext");
-
+    // 슬라이드쇼
     var slideIndex = 0;
     var showingA = true;
     var timer = null;
     var speedMs = 4000;
 
     function setSlide(idx){
-      if(ITEMS.length === 0) return;
+      if(!ITEMS.length) return;
       slideIndex = (idx + ITEMS.length) % ITEMS.length;
       var it = ITEMS[slideIndex];
 
@@ -1300,7 +1277,7 @@
     }
 
     function play(){
-      if(timer || ITEMS.length === 0) return;
+      if(timer || !ITEMS.length) return;
       timer = setInterval(function(){ setSlide(slideIndex+1); }, speedMs);
       toast("자동재생 시작 ▶");
     }
@@ -1321,7 +1298,7 @@
     });
 
     // =========================
-    // ✅ 동영상(옵션): window.VIDEOS가 있으면 표시
+    // ✅ 동영상 섹션
     // =========================
     function toYoutubeEmbed(url){
       var u = String(url||"").trim();
@@ -1349,6 +1326,7 @@
       }
 
       grid.innerHTML = "";
+
       list.forEach(function(v, idx){
         var title = String(v.title || ("동영상 " + (idx+1))).trim();
         var embed = toYoutubeEmbed(v.url);
@@ -1359,7 +1337,7 @@
 
         var head = document.createElement("div");
         head.className = "vHead";
-        head.innerHTML = '<b>' + title + '</b><small>YouTube</small>';
+        head.innerHTML = '<b>' + title + ' ' + (idx+1) + '</b><small>YouTube</small>';
 
         var frame = document.createElement("div");
         frame.className = "vFrame";
@@ -1373,54 +1351,61 @@
         card.appendChild(frame);
         grid.appendChild(card);
       });
+
+      // 채널 바로가기 카드
+      var ch = document.createElement("div");
+      ch.className = "vCard channelCard";
+      ch.innerHTML =
+        '<a href="' + CHANNEL_URL + '" target="_blank" rel="noopener">▶ 공식 유튜브 채널 바로가기</a>';
+      grid.appendChild(ch);
     }
 
     // =========================
     // ✅ INIT
     // =========================
-    (function init(){
-      setPill(pillDevice, IS_MOBILE ? "모바일" : "PC", true);
-      setPill(pillData, "데이터: 불러오는 중…", true);
-      setPill(pillRender, "렌더: 대기", true);
-      statusMsg.textContent = "GitHub에서 사진 목록을 가져오는 중…";
+    (async function init(){
+      try{
+        setPill(pillRender, "렌더: 로딩", true);
+        statusMsg.textContent = "GitHub students 폴더에서 사진 목록을 가져오는 중…";
 
-      fetchStudentsFromGitHub().then(function(GALLERY){
-        if(!GALLERY.length){
-          setPill(pillData, "데이터: 0장", false);
-          setPill(pillRender, "렌더: 중단", false);
-          statusMsg.textContent = "학생사진을 찾지 못했습니다. (저장소/브랜치/경로 확인 필요)";
-          return;
-        }
+        var files = await fetchGitHubAllFiles();
+        ITEMS = buildItemsFromFiles(files);
 
-        ITEMS = buildItemsFromGallery(GALLERY);
+        // 안정적으로 섞이지 않게 정렬(파일명 기준)
+        ITEMS.sort(function(a,b){
+          return String(a.file).localeCompare(String(b.file), "en");
+        });
+
         THUMB_ITEMS = ITEMS.slice();
 
-        setPill(pillData, "데이터: " + ITEMS.length + "장", true);
+        setPill(pillData, "데이터: " + ITEMS.length + "장", ITEMS.length > 0);
+        setPill(pillRender, ITEMS.length ? "렌더: 완료" : "렌더: 없음", ITEMS.length > 0);
 
-        try{
+        statusMsg.textContent = ITEMS.length
+          ? "정상 동작 중 ✅ (GitHub students 폴더 자동 로드)"
+          : "이미지 파일을 찾지 못했습니다. GH.path 경로를 확인해 주세요.";
+
+        if(ITEMS.length){
           renderThumbPager();
           setSlide(0);
           renderVideos();
-
-          setPill(pillRender, "렌더: 완료", true);
-          statusMsg.textContent = "정상 동작 중 ✅ (GitHub students 폴더 자동 로드)";
-
-          // URL ?q= 로 들어오면 자동 검색
-          try{
-            var u = new URL(location.href);
-            var qq = u.searchParams.get("q");
-            if(qq){
-              if(q) q.value = qq;
-              if(qTop) qTop.value = qq;
-              runSearch(qq);
-            }
-          }catch(e){}
-        }catch(e){
-          console.error(e);
-          setPill(pillRender, "렌더: 에러", false);
-          statusMsg.textContent = "JS 에러로 중단됨. 콘솔의 빨간 에러 1줄만 캡처해 주세요.";
         }
-      });
+
+        // URL ?q=
+        try{
+          var u = new URL(location.href);
+          var qq = u.searchParams.get("q");
+          if(qq){
+            if(q) q.value = qq;
+            if(qTop) qTop.value = qq;
+            runSearch(qq);
+          }
+        }catch(e){}
+      }catch(e){
+        console.error(e);
+        setPill(pillRender, "렌더: 에러", false);
+        statusMsg.textContent = "로딩 실패: " + (e && e.message ? e.message : "오류") + " (GH.owner/repo/path 확인)";
+      }
     })();
   </script>
 </body>
