@@ -204,11 +204,11 @@
       align-items:center;
       justify-content:center;
     }
-    /* ✅ 대표사진: 짤림 방지 (비율 유지) */
+    /* ✅ 대표사진: 짤림 방지 */
     .coverMain img{
       width:100%;
       height:100%;
-      object-fit: contain; /* 핵심 */
+      object-fit: contain;
       display:block;
       background:#000;
     }
@@ -295,15 +295,19 @@
       background:#000;
       overflow:hidden;
     }
+
+    /* ✅✅✅ 핵심 수정: 슬라이드쇼도 짤림 방지 */
     .slideBox img{
       position:absolute; inset:0;
       width:100%; height:100%;
-      object-fit: cover;
+      object-fit: contain;   /* ← cover → contain 으로 변경 */
       display:block;
       opacity:0;
       transition: opacity .35s ease;
+      background:#000;       /* 검은 여백 자연스럽게 */
     }
     .slideBox img.show{opacity:1}
+
     .navBtn{
       position:absolute; top:50%;
       transform: translateY(-50%);
@@ -377,7 +381,6 @@
       pointer-events:none;
     }
 
-    /* ✅ 동영상 영역 */
     .videoGrid{
       display:grid;
       grid-template-columns: 1fr;
@@ -618,7 +621,6 @@
     // =========================
     // ✅ 1) 이름-아이디 매핑 (전총재님이 수정할 부분)
     // =========================
-    // KM001~KM060 (요청하신 1~60)
     var STUDENTS = [
       { id:"KM001", name:"김예담" },
       { id:"KM002", name:"김예성" },
@@ -631,7 +633,6 @@
       { id:"KM009", name:"김나래" },
       { id:"KM010", name:"김도영" },
       { id:"KM011", name:"김동연" },
-      // KM012 없음
       { id:"KM013", name:"김민준" },
       { id:"KM014", name:"김사랑" },
       { id:"KM015", name:"김성찬" },
@@ -683,7 +684,7 @@
     ];
 
     // =========================
-    // ✅ 2) 유튜브 목록 (요청하신 링크)
+    // ✅ 2) 유튜브 목록
     // =========================
     window.VIDEOS = [
       { title:"계명태권도 영상", url:"https://www.youtube.com/watch?v=aHZSZ1YHIAY" },
@@ -765,7 +766,6 @@
       }
     }
 
-    // ✅ 라이트박스
     function openLightbox(src, title, sub){
       var lb = document.getElementById("lb");
       var lbImg = document.getElementById("lbImg");
@@ -793,7 +793,6 @@
     // =========================
     // ✅ 3) GitHub students 폴더 자동 로드
     // =========================
-    // repo/branch/path만 정확하면 자동으로 jpg 목록을 가져옵니다.
     var GH = {
       owner: "jeonseongkweon-cloud",
       repo: "kmt-landing",
@@ -806,35 +805,26 @@
     }
 
     function extractIdFromFilename(filename){
-      // KM043_01.jpg -> KM043
       var m = String(filename||"").toUpperCase().match(/(KM\d{3})/);
       return m ? m[1] : "";
     }
 
     function buildStudentMaps(){
       var idToName = {};
-      var nameToIds = {};
       for(var i=0;i<STUDENTS.length;i++){
         var id = String(STUDENTS[i].id||"").toUpperCase().trim();
         var nm = String(STUDENTS[i].name||"").trim();
         if(!id || !nm) continue;
         idToName[id] = nm;
-
-        var key = norm(nm);
-        if(!nameToIds[key]) nameToIds[key] = [];
-        nameToIds[key].push(id);
       }
-      return { idToName:idToName, nameToIds:nameToIds };
+      return { idToName:idToName };
     }
-
     var MAPS = buildStudentMaps();
 
     function findIdsByNamePartial(nameQuery){
       var nq = norm(nameQuery);
       var ids = [];
       if(!nq) return ids;
-
-      // 부분일치: STUDENTS 전체를 훑어서 이름에 nq가 포함되면 해당 id 수집
       for(var i=0;i<STUDENTS.length;i++){
         var nm = norm(STUDENTS[i].name);
         if(nm.indexOf(nq) !== -1){
@@ -845,8 +835,6 @@
     }
 
     async function fetchGitHubAllFiles(){
-      // GitHub contents API: 폴더 내 파일 목록 가져오기 (공개 repo 기준)
-      // 참고: 페이지가 커지면 per_page 제한이 있을 수 있어, "tree API"를 사용합니다.
       var treeUrl =
         "https://api.github.com/repos/" + GH.owner + "/" + GH.repo +
         "/git/trees/" + encodeURIComponent(GH.branch) + "?recursive=1";
@@ -884,9 +872,10 @@
         var id = extractIdFromFilename(f.name);
         var url = makeRawUrl(f.path);
 
-        var displayName = id || f.name;
-        var studentName = id && MAPS.idToName[id] ? MAPS.idToName[id] : "";
-        var tags = [f.name, displayName, id, studentName].filter(Boolean);
+        var studentName = (id && MAPS.idToName[id]) ? MAPS.idToName[id] : "";
+        var base = studentName ? (studentName + " (" + id + ")") : (id || f.name);
+
+        var tags = [f.name, id, studentName, base].filter(Boolean);
         tags = uniq(tags);
 
         items.push({
@@ -894,7 +883,7 @@
           file: f.name,
           studentId: id,
           studentName: studentName,
-          base: studentName ? (studentName + " (" + id + ")") : (id || f.name),
+          base: base,
           url: url,
           tags: tags
         });
@@ -915,7 +904,6 @@
     var ITEMS = [];
     var THUMB_ITEMS = [];
 
-    // 검색 UI
     var q = document.getElementById("q");
     var btnClear = document.getElementById("btnClear");
     var btnSearch = document.getElementById("btnSearch");
@@ -932,7 +920,6 @@
     var btnClearTop = document.getElementById("btnClearTop");
     var btnSearchTop = document.getElementById("btnSearchTop");
 
-    // 대표/썸네일
     var coverImg = document.getElementById("coverImg");
     var thumbCount = document.getElementById("thumbCount");
     var btnCoverPrev = document.getElementById("btnCoverPrev");
@@ -946,7 +933,6 @@
     var btnThumbNext = document.getElementById("btnThumbNext");
     var thumbMeta = document.getElementById("thumbMeta");
 
-    // 슬라이드쇼
     var slideTitle = document.getElementById("slideTitle");
     var slideSub = document.getElementById("slideSub");
     var imgA = document.getElementById("slideImgA");
@@ -959,7 +945,6 @@
     var navPrev = document.getElementById("navPrev");
     var navNext = document.getElementById("navNext");
 
-    // 라이트박스 바인딩
     var lbClose = document.getElementById("lbClose");
     var lbBg    = document.getElementById("lb");
     if(lbClose) lbClose.addEventListener("click", closeLightbox);
@@ -975,7 +960,6 @@
       }
     });
 
-    // 상단 스크롤
     var btnScrollTop = document.getElementById("btnScrollTop");
     if(btnScrollTop){
       btnScrollTop.addEventListener("click", function(){
@@ -992,7 +976,7 @@
 
     function renderResultCarousel(list){
       var cols = getColumnsForGrid();
-      var PER_PAGE = cols * 5; // 5줄
+      var PER_PAGE = cols * 5;
       var pages = chunk(list, PER_PAGE);
 
       pagesEl.innerHTML = "";
@@ -1060,20 +1044,16 @@
       if(!ITEMS.length) return;
 
       var queryText = String(query || "").trim();
-      var n = norm(queryText);
 
       var filtered = [];
 
-      // 1) 아이디로 검색 (KM001)
       if(looksLikeId(queryText)){
         var id = queryText.toUpperCase();
         for(var i=0;i<ITEMS.length;i++){
           if(String(ITEMS[i].studentId||"").toUpperCase() === id) filtered.push(ITEMS[i]);
         }
-      }
-      // 2) 이름으로 검색 (부분일치 허용)
-      else if(n){
-        var ids = findIdsByNamePartial(queryText); // ✅ 핵심
+      } else if(norm(queryText)){
+        var ids = findIdsByNamePartial(queryText);
         if(ids.length){
           var set = {};
           for(var a=0;a<ids.length;a++) set[ids[a]] = 1;
@@ -1081,13 +1061,12 @@
             var it = ITEMS[j];
             if(set[String(it.studentId||"").toUpperCase()]) filtered.push(it);
           }
-        }else{
-          // 3) 마지막 fallback: 키워드 검색(파일명/태그)
+        } else {
           for(var k=0;k<ITEMS.length;k++){
             if(matchByKeyword(ITEMS[k], queryText)) filtered.push(ITEMS[k]);
           }
         }
-      }else{
+      } else {
         filtered = ITEMS.slice();
       }
 
@@ -1099,7 +1078,6 @@
 
       renderResultCarousel(filtered);
 
-      // URL q 반영
       try{
         var u = new URL(location.href);
         if(queryText) u.searchParams.set("q", queryText);
@@ -1131,7 +1109,6 @@
       }catch(e){ toast("복사 실패 😅"); }
     });
 
-    // ✅ resize 재렌더(열 수 바뀌면 페이지당 수 변경)
     var __lastCols = getColumnsForGrid();
     window.addEventListener("resize", function(){
       var now = getColumnsForGrid();
@@ -1143,9 +1120,6 @@
       }
     });
 
-    // =========================
-    // ✅ 대표/썸네일(15개) + 슬라이드쇼
-    // =========================
     var THUMBS_PER_PAGE = 15;
     var coverIndex = 0;
     var thumbPageCount = 1;
@@ -1297,9 +1271,7 @@
       if(ITEMS[slideIndex]) openLightbox(ITEMS[slideIndex].url, ITEMS[slideIndex].base, "");
     });
 
-    // =========================
-    // ✅ 동영상 섹션
-    // =========================
+    // 동영상 섹션
     function toYoutubeEmbed(url){
       var u = String(url||"").trim();
       if(!u) return "";
@@ -1352,7 +1324,6 @@
         grid.appendChild(card);
       });
 
-      // 채널 바로가기 카드
       var ch = document.createElement("div");
       ch.className = "vCard channelCard";
       ch.innerHTML =
@@ -1360,9 +1331,7 @@
       grid.appendChild(ch);
     }
 
-    // =========================
-    // ✅ INIT
-    // =========================
+    // INIT
     (async function init(){
       try{
         setPill(pillRender, "렌더: 로딩", true);
@@ -1371,7 +1340,6 @@
         var files = await fetchGitHubAllFiles();
         ITEMS = buildItemsFromFiles(files);
 
-        // 안정적으로 섞이지 않게 정렬(파일명 기준)
         ITEMS.sort(function(a,b){
           return String(a.file).localeCompare(String(b.file), "en");
         });
@@ -1391,7 +1359,6 @@
           renderVideos();
         }
 
-        // URL ?q=
         try{
           var u = new URL(location.href);
           var qq = u.searchParams.get("q");
