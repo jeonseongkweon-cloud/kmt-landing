@@ -213,12 +213,7 @@
     line-height:1.45;
   }
 
-  .cta{
-    display:flex;
-    gap:10px;
-    align-items:center;
-    justify-content:stretch;
-  }
+  .cta{ display:flex; gap:10px; align-items:center; justify-content:stretch; }
   button.big{
     width:100%;
     padding:14px 16px;
@@ -271,7 +266,7 @@
   }
   .card > *{ position:relative; }
 
-  /* ✅ 상단(사진+이름+포인트) */
+  /* ✅ 상단 */
   .hero{
     display:flex;
     gap:14px;
@@ -288,16 +283,8 @@
     color:rgba(255,255,255,.55);
     font-weight:950;
   }
-  .photo img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-  }
-  .headline{
-    min-width:220px;
-    flex:1;
-  }
+  .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .headline{ min-width:220px; flex:1; }
   .headline h2{
     margin:0 0 6px;
     font-size:24px;
@@ -311,27 +298,47 @@
     line-height:1.35;
   }
 
-  /* ✅ 포인트 “결과” 박스 (눈에 확 띄게!) */
+  /* ✅ 포인트 결과 박스 */
   .pointBox{
     flex:0 0 auto;
-    min-width:180px;
+    min-width:220px;
     border-radius:18px;
     border:1px solid rgba(246,201,69,.35);
     background: linear-gradient(180deg, rgba(246,201,69,.20), rgba(246,201,69,.08));
     padding:12px 14px;
     box-shadow: 0 10px 22px rgba(0,0,0,.25);
   }
-  .pointLabel{
-    font-size:12px;
-    font-weight:950;
-    color: rgba(255,255,255,.88);
+  .pointTop{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:8px;
+    gap:10px;
   }
+  .pointLabel{
+    font-size:12px;
+    font-weight:950;
+    color: rgba(255,255,255,.90);
+  }
+  .tierBadge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.20);
+    background: rgba(0,0,0,.18);
+    font-size:12px;
+    font-weight:1000;
+    color: rgba(255,255,255,.92);
+    white-space:nowrap;
+  }
+  .tierBadge.bronze{ border-color: rgba(205,127,50,.35); background: rgba(205,127,50,.14); }
+  .tierBadge.silver{ border-color: rgba(192,192,192,.35); background: rgba(192,192,192,.14); }
+  .tierBadge.gold{ border-color: rgba(246,201,69,.55); background: rgba(246,201,69,.18); }
+  .tierBadge.dia{ border-color: rgba(96,165,250,.55); background: rgba(96,165,250,.18); }
+
   .pointValue{
-    margin-top:6px;
+    margin-top:8px;
     font-size:34px;
     font-weight:1000;
     letter-spacing:-.6px;
@@ -347,8 +354,41 @@
     color: rgba(17,17,17,.86);
     margin-left:6px;
   }
-  .pointHint{
-    margin-top:6px;
+
+  /* ✅ 진행률 바 */
+  .progressWrap{
+    margin-top:10px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.18);
+    background: rgba(0,0,0,.16);
+    padding:10px;
+  }
+  .progressTop{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    font-size:12px;
+    font-weight:950;
+    color: rgba(255,255,255,.88);
+  }
+  .bar{
+    margin-top:8px;
+    height:12px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.16);
+    background: rgba(255,255,255,.10);
+    overflow:hidden;
+  }
+  .bar > i{
+    display:block;
+    height:100%;
+    width:0%;
+    background: rgba(246,201,69,.92);
+    border-radius:999px;
+  }
+  .progressHint{
+    margin-top:8px;
     font-size:12px;
     color: rgba(255,255,255,.78);
     line-height:1.35;
@@ -372,14 +412,8 @@
     font-size:12px;
     font-weight:950;
   }
-  .badge.green{
-    border-color: rgba(52,211,153,.35);
-    background: rgba(52,211,153,.12);
-  }
-  .badge.blue{
-    border-color: rgba(96,165,250,.35);
-    background: rgba(96,165,250,.12);
-  }
+  .badge.green{ border-color: rgba(52,211,153,.35); background: rgba(52,211,153,.12); }
+  .badge.blue{ border-color: rgba(96,165,250,.35); background: rgba(96,165,250,.12); }
 
   .hashLine{
     margin-top:10px;
@@ -451,16 +485,8 @@
     margin-top:8px;
   }
   .examLeft{ min-width:0; }
-  .examName{
-    font-weight:950;
-    font-size:13px;
-    letter-spacing:-.2px;
-  }
-  .examDate{
-    margin-top:3px;
-    font-size:12px;
-    color: rgba(255,255,255,.72);
-  }
+  .examName{ font-weight:950; font-size:13px; letter-spacing:-.2px; }
+  .examDate{ margin-top:3px; font-size:12px; color: rgba(255,255,255,.72); }
   .dday{
     flex:0 0 auto;
     display:inline-flex;
@@ -474,14 +500,8 @@
     font-size:12px;
     white-space:nowrap;
   }
-  .dday.good{
-    border-color: rgba(52,211,153,.35);
-    background: rgba(52,211,153,.12);
-  }
-  .dday.bad{
-    border-color: rgba(255,99,99,.35);
-    background: rgba(255,99,99,.12);
-  }
+  .dday.good{ border-color: rgba(52,211,153,.35); background: rgba(52,211,153,.12); }
+  .dday.bad{ border-color: rgba(255,99,99,.35); background: rgba(255,99,99,.12); }
 
   /* ✅ 하단 버튼 */
   .bottomActions{
@@ -532,9 +552,7 @@
   }
   .pick:hover{ transform: translateY(-1px); border-color: rgba(246,201,69,.35); }
   .pick:active{ transform: translateY(0); }
-  .pLeft{
-    display:flex; align-items:center; gap:12px; min-width:0;
-  }
+  .pLeft{ display:flex; align-items:center; gap:12px; min-width:0; }
   .thumb{
     width:54px; height:54px;
     border-radius:14px;
@@ -551,13 +569,15 @@
   .pInfo{ min-width:0; }
   .pName{ font-weight:950; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .pMeta{ font-size:12px; color: rgba(255,255,255,.72); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pMeta b{ color: rgba(246,201,69,.95); font-weight:1000; }
 
-  /* ✅ 리스트에도 포인트 표시 */
-  .pMeta b{
-    color: rgba(246,201,69,.95);
-    font-weight:1000;
+  .pRight{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    gap:8px;
+    flex:0 0 auto;
   }
-
   .pGo{
     font-weight:950;
     font-size:12px;
@@ -576,7 +596,6 @@
 
 <body>
 
-  <!-- ✅ 상단 홈바 -->
   <div class="nav">
     <div class="left">
       <a class="homeBtn" id="homeBtn" href="../index.html">🏠 홈 바로가기</a>
@@ -601,7 +620,6 @@
       </div>
     </div>
 
-    <!-- ✅ 입력 폼 -->
     <div class="form">
       <div class="field">
         <div class="label">
@@ -648,6 +666,15 @@ const RAW_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZ
 
 const GALLERY_BASE = "../gallery/";
 const GALLERY_QUERY_KEY = "id";
+
+/* ✅ 포인트 시스템 설정(원하면 여기 숫자만 바꾸면 됨) */
+const GOAL_POINTS = 1200; // 도복 목표(예시)
+const TIERS = [
+  { key:"bronze", name:"브론즈", icon:"🥉", min:0,   max:399 },
+  { key:"silver", name:"실버",   icon:"🥈", min:400, max:799 },
+  { key:"gold",   name:"골드",   icon:"🥇", min:800, max:1199 },
+  { key:"dia",    name:"다이아", icon:"💎", min:1200, max:999999999 }
+];
 
 /* =========================================================
   ✅ 관리자 모드
@@ -759,16 +786,39 @@ function fmtTime(dt){
     const hh = String(dt.getHours()).padStart(2,"0");
     const mm = String(dt.getMinutes()).padStart(2,"0");
     return `${y}-${m}-${d} ${hh}:${mm}`;
-  }catch{
-    return "";
-  }
+  }catch{ return ""; }
 }
-function pointSafe(v){
+
+/* ✅ 포인트 숫자 안전 변환 */
+function toPointNumber(v){
   const s = clean(v);
-  if(!s) return "0";
-  // 숫자/문자 섞여도 화면은 깔끔히 (예: "100점" -> "100")
+  if(!s) return 0;
   const digits = s.replace(/[^\d]/g,"");
-  return digits || s; // 혹시 "A+" 같은 포맷이면 그대로 표시
+  if(!digits) return 0;
+  return Number(digits) || 0;
+}
+function pointDisplay(n){
+  const num = Number(n || 0);
+  return String(num);
+}
+
+/* ✅ 등급 계산 */
+function tierOf(points){
+  const p = Math.max(0, Number(points||0));
+  for(const t of TIERS){
+    if(p >= t.min && p <= t.max) return t;
+  }
+  return TIERS[0];
+}
+
+/* ✅ 목표 진행률 */
+function progressOf(points){
+  const p = Math.max(0, Number(points||0));
+  const goal = Math.max(1, Number(GOAL_POINTS||1));
+  const pct = Math.max(0, Math.min(100, Math.round((p/goal)*100)));
+  const remain = Math.max(0, goal - p);
+  const done = p >= goal;
+  return { goal, pct, remain, done, p };
 }
 
 function parseDateAny(v){
@@ -816,9 +866,7 @@ async function sha256Hex(text){
     const buf = await crypto.subtle.digest("SHA-256", enc);
     const arr = Array.from(new Uint8Array(buf));
     return arr.map(b=>b.toString(16).padStart(2,"0")).join("");
-  }catch{
-    return "";
-  }
+  }catch{ return ""; }
 }
 
 /* ---------- CSV parse ---------- */
@@ -863,16 +911,11 @@ function readCache(){
     if(!obj || !obj.savedAt || !Array.isArray(obj.rows)) return null;
     if(Date.now() - obj.savedAt > CACHE_TTL_MS) return null;
     return obj;
-  }catch{
-    return null;
-  }
+  }catch{ return null; }
 }
 function writeCache(rows, savedAt){
   try{
-    localStorage.setItem(CACHE_KEY, JSON.stringify({
-      savedAt: savedAt || Date.now(),
-      rows
-    }));
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: savedAt || Date.now(), rows }));
   }catch{}
 }
 function clearCache(){
@@ -902,13 +945,9 @@ async function fetchCSVText(){
 
 /* ---------- status UI ---------- */
 function setStatus(type, pillText, msg){
-  if(type === "good"){
-    dataPill.className = "pill good";
-  }else if(type === "bad"){
-    dataPill.className = "pill bad";
-  }else{
-    dataPill.className = "pill";
-  }
+  if(type === "good") dataPill.className = "pill good";
+  else if(type === "bad") dataPill.className = "pill bad";
+  else dataPill.className = "pill";
   dataPill.textContent = "데이터: " + pillText;
   statusText.textContent = msg || "";
 }
@@ -969,11 +1008,8 @@ async function loadOnce({force=false}={}){
     throw lastErr;
   })();
 
-  try{
-    return await LOADING_PROMISE;
-  }finally{
-    LOADING_PROMISE = null;
-  }
+  try{ return await LOADING_PROMISE; }
+  finally{ LOADING_PROMISE = null; }
 }
 
 /* =========================================================
@@ -1034,6 +1070,11 @@ function renderExam(name, dateStr){
   `;
 }
 
+function tierBadgeHtml(points){
+  const t = tierOf(points);
+  return `<span class="tierBadge ${escapeHtml(t.key)}">${escapeHtml(t.icon)} ${escapeHtml(t.name)}</span>`;
+}
+
 function renderCard(row){
   const id = clean(row[0]);
   const name = clean(row[1]);
@@ -1044,7 +1085,9 @@ function renderCard(row){
   const tkkd = clean(row[5]);
   const photo = clean(row[6]);
 
-  const point = pointSafe(row[7]);  // ✅ 포인트 확실히
+  const pointNum = toPointNumber(row[7]);
+  const pointStr = pointDisplay(pointNum);
+
   const awards = clean(row[8]);
   const cert = clean(row[9]);
 
@@ -1052,7 +1095,14 @@ function renderCard(row){
   const nextIpma = clean(row[11]);
   const nextTkkd = clean(row[12]);
 
-  const hashSource = `KMT|${id}|${name}|${normBirth(birth)}|${tkd}|${ipma}|${tkkd}|${point}|${awards}|${cert}|${nextTkd}|${nextIpma}|${nextTkkd}`;
+  const prog = progressOf(pointNum);
+  const t = tierOf(pointNum);
+
+  const hashSource = `KMT|${id}|${name}|${normBirth(birth)}|${tkd}|${ipma}|${tkkd}|${pointStr}|${awards}|${cert}|${nextTkd}|${nextIpma}|${nextTkkd}`;
+
+  const progressText = prog.done
+    ? `🎉 목표 달성! (목표 ${prog.goal}P)`
+    : `목표 ${prog.goal}P까지 <b>${prog.remain}P</b> 남았어요`;
 
   return `
     <div class="card" data-hash-source="${escapeHtml(hashSource)}">
@@ -1085,14 +1135,22 @@ function renderCard(row){
           </div>
         </div>
 
-        <!-- ✅ 포인트 결과 박스 -->
-        <div class="pointBox" aria-label="point-result">
-          <div class="pointLabel">
-            <span>🏅 현재 포인트</span>
-            <span style="opacity:.9;font-weight:950;">RESULT</span>
+        <div class="pointBox" aria-label="point-result" data-pct="${prog.pct}">
+          <div class="pointTop">
+            <div class="pointLabel">🏅 현재 포인트 · RESULT</div>
+            <span class="tierBadge ${escapeHtml(t.key)}">${escapeHtml(t.icon)} ${escapeHtml(t.name)}</span>
           </div>
-          <div class="pointValue">${escapeHtml(point)}<span class="pointUnit">P</span></div>
-          <div class="pointHint">누적 점수는 도장 운영 기준에 따라 수시 반영됩니다.</div>
+
+          <div class="pointValue">${escapeHtml(pointStr)}<span class="pointUnit">P</span></div>
+
+          <div class="progressWrap">
+            <div class="progressTop">
+              <span>🎯 도복 목표 진행률</span>
+              <span>${prog.pct}%</span>
+            </div>
+            <div class="bar"><i style="width:${prog.pct}%"></i></div>
+            <div class="progressHint">${progressText}</div>
+          </div>
         </div>
       </div>
 
@@ -1103,12 +1161,12 @@ function renderCard(row){
 
       <div class="grid2">
         <div class="panel">
-          <div class="row"><span class="rlabel">현재 포인트</span><span class="rval">${escapeHtml(point)}</span></div>
-          <div class="row"><span class="rlabel">보유 인증서</span><span class="rval">${escapeHtml(cert || "-")}</span></div>
+          <div class="row"><span class="rlabel">현재 포인트</span><span class="rval">${escapeHtml(pointStr)}P</span></div>
+          <div class="row"><span class="rlabel">등급</span><span class="rval">${escapeHtml(t.icon)} ${escapeHtml(t.name)}</span></div>
         </div>
         <div class="panel">
+          <div class="row"><span class="rlabel">보유 인증서</span><span class="rval">${escapeHtml(cert || "-")}</span></div>
           <div class="row"><span class="rlabel">수상 기록</span><span class="rval">${escapeHtml(awards || "-")}</span></div>
-          <div class="row"><span class="rlabel">상태</span><span class="rval">조회 완료</span></div>
         </div>
       </div>
 
@@ -1142,7 +1200,9 @@ function renderPickList(rows){
     const name = clean(r[1]);
     const birth = clean(r[2]);
     const photo = clean(r[6]);
-    const point = pointSafe(r[7]);
+    const pNum = toPointNumber(r[7]);
+    const pStr = pointDisplay(pNum);
+    const t = tierOf(pNum);
 
     return `
       <div class="pick" data-idx="${idx}">
@@ -1157,10 +1217,14 @@ function renderPickList(rows){
           </div>
           <div class="pInfo">
             <div class="pName">${escapeHtml(name || "-")}</div>
-            <div class="pMeta">아이디: ${escapeHtml(id || "-")} · 생년월일: ${escapeHtml(birth || "-")} · 포인트: <b>${escapeHtml(point)}P</b></div>
+            <div class="pMeta">아이디: ${escapeHtml(id || "-")} · 생년월일: ${escapeHtml(birth || "-")} · 포인트: <b>${escapeHtml(pStr)}P</b></div>
           </div>
         </div>
-        <div class="pGo">선택</div>
+
+        <div class="pRight">
+          <span class="tierBadge ${escapeHtml(t.key)}">${escapeHtml(t.icon)} ${escapeHtml(t.name)}</span>
+          <div class="pGo">선택</div>
+        </div>
       </div>
     `;
   }).join("");
@@ -1256,9 +1320,7 @@ function bindClear(inputId, btnId){
   const input = $(inputId);
   const btn = $(btnId);
 
-  function sync(){
-    btn.style.display = input.value ? "inline-flex" : "none";
-  }
+  function sync(){ btn.style.display = input.value ? "inline-flex" : "none"; }
   input.addEventListener("input", sync);
   btn.addEventListener("click", ()=>{
     input.value = "";
