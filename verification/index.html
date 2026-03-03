@@ -77,10 +77,7 @@
     font-weight:950;
   }
 
-  .wrap{
-    max-width:860px;
-    margin:0 auto;
-  }
+  .wrap{ max-width:860px; margin:0 auto; }
 
   /* 상태/버튼 바 */
   .topbar{
@@ -116,11 +113,7 @@
   .pill.blue{ border-color: rgba(96,165,250,.35); background: rgba(96,165,250,.12); }
   .pill.green{ border-color: rgba(52,211,153,.35); background: rgba(52,211,153,.12); }
 
-  .actions{
-    display:flex;
-    gap:8px;
-    flex-wrap:wrap;
-  }
+  .actions{ display:flex; gap:8px; flex-wrap:wrap; }
   .miniBtn{
     padding:9px 10px;
     border-radius:12px;
@@ -256,7 +249,7 @@
     line-height:1.5;
   }
 
-  /* ✅ 공식 카드(업그레이드) */
+  /* ✅ 카드 */
   .card{
     background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
     border:1px solid var(--line);
@@ -278,10 +271,12 @@
   }
   .card > *{ position:relative; }
 
+  /* ✅ 상단(사진+이름+포인트) */
   .hero{
     display:flex;
     gap:14px;
     align-items:center;
+    flex-wrap:wrap;
   }
   .photo{
     width:120px;height:120px;border-radius:18px;
@@ -300,7 +295,7 @@
     display:block;
   }
   .headline{
-    min-width:0;
+    min-width:220px;
     flex:1;
   }
   .headline h2{
@@ -315,6 +310,50 @@
     font-size:13px;
     line-height:1.35;
   }
+
+  /* ✅ 포인트 “결과” 박스 (눈에 확 띄게!) */
+  .pointBox{
+    flex:0 0 auto;
+    min-width:180px;
+    border-radius:18px;
+    border:1px solid rgba(246,201,69,.35);
+    background: linear-gradient(180deg, rgba(246,201,69,.20), rgba(246,201,69,.08));
+    padding:12px 14px;
+    box-shadow: 0 10px 22px rgba(0,0,0,.25);
+  }
+  .pointLabel{
+    font-size:12px;
+    font-weight:950;
+    color: rgba(255,255,255,.88);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .pointValue{
+    margin-top:6px;
+    font-size:34px;
+    font-weight:1000;
+    letter-spacing:-.6px;
+    color:#111;
+    background: rgba(255,255,255,.82);
+    display:inline-block;
+    padding:4px 10px;
+    border-radius:14px;
+  }
+  .pointUnit{
+    font-size:12px;
+    font-weight:950;
+    color: rgba(17,17,17,.86);
+    margin-left:6px;
+  }
+  .pointHint{
+    margin-top:6px;
+    font-size:12px;
+    color: rgba(255,255,255,.78);
+    line-height:1.35;
+  }
+
   .badges{
     display:flex;
     gap:8px;
@@ -341,6 +380,7 @@
     border-color: rgba(96,165,250,.35);
     background: rgba(96,165,250,.12);
   }
+
   .hashLine{
     margin-top:10px;
     padding:10px 12px;
@@ -410,9 +450,7 @@
     border:1px solid rgba(255,255,255,.06);
     margin-top:8px;
   }
-  .examLeft{
-    min-width:0;
-  }
+  .examLeft{ min-width:0; }
   .examName{
     font-weight:950;
     font-size:13px;
@@ -513,6 +551,13 @@
   .pInfo{ min-width:0; }
   .pName{ font-weight:950; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .pMeta{ font-size:12px; color: rgba(255,255,255,.72); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* ✅ 리스트에도 포인트 표시 */
+  .pMeta b{
+    color: rgba(246,201,69,.95);
+    font-weight:1000;
+  }
+
   .pGo{
     font-weight:950;
     font-size:12px;
@@ -524,13 +569,8 @@
     white-space:nowrap;
   }
 
-  /* =========================================================
-     ✅ 추가: "데이터: 준비(60명)" 뱃지 숨김 (id="dataPill")
-     - 기능은 유지하고 화면에만 표시 안 함
-  ========================================================= */
-  #dataPill{
-    display:none !important;
-  }
+  /* ✅ "데이터: 준비(60명)" 뱃지 숨김 (기능은 유지) */
+  #dataPill{ display:none !important; }
 </style>
 </head>
 
@@ -610,13 +650,11 @@ const GALLERY_BASE = "../gallery/";
 const GALLERY_QUERY_KEY = "id";
 
 /* =========================================================
-  ✅ 관리자 모드 (서버 없는 GitHub Pages용 “편의 잠금”)
-  - 주소에 ?admin=1 로 접속하면 관리자 코드 입력(prompt)
-  - 맞으면 이 브라우저 탭에서만 관리자 유지 (sessionStorage)
+  ✅ 관리자 모드
 ========================================================= */
 const ADMIN_QUERY_KEY = "admin";              // ?admin=1
 const ADMIN_SESSION_KEY = "KMT_ADMIN_OK";     // sessionStorage
-const ADMIN_PASSCODE = "2772";            // ✅ 여기만 바꾸세요 (예: 전총재님만 아는 코드)
+const ADMIN_PASSCODE = "2772";                // ✅ 여기만 변경
 
 function getQueryParam(key){
   const u = new URL(location.href);
@@ -631,7 +669,6 @@ function enableAdmin(){
 function maybeAskAdmin(){
   const q = getQueryParam(ADMIN_QUERY_KEY);
   if(!q) return;
-
   if(isAdmin()) return;
 
   const entered = prompt("관리자 코드 입력");
@@ -651,8 +688,8 @@ function updateAdminUI(){
   const birthHelp = document.getElementById("birthHelp");
 
   if(adminPill) adminPill.style.display = adminOn ? "inline-flex" : "none";
-
   if(badge) badge.textContent = adminOn ? "선택" : "필수";
+
   if(note){
     note.innerHTML = adminOn
       ? `관리자 모드: <b>이름(또는 아이디)만</b>으로도 조회됩니다. (생년월일은 선택)`
@@ -725,6 +762,13 @@ function fmtTime(dt){
   }catch{
     return "";
   }
+}
+function pointSafe(v){
+  const s = clean(v);
+  if(!s) return "0";
+  // 숫자/문자 섞여도 화면은 깔끔히 (예: "100점" -> "100")
+  const digits = s.replace(/[^\d]/g,"");
+  return digits || s; // 혹시 "A+" 같은 포맷이면 그대로 표시
 }
 
 function parseDateAny(v){
@@ -922,7 +966,6 @@ async function loadOnce({force=false}={}){
         await new Promise(r => setTimeout(r, 500 * (i+1)));
       }
     }
-
     throw lastErr;
   })();
 
@@ -934,9 +977,7 @@ async function loadOnce({force=false}={}){
 }
 
 /* =========================================================
-  ✅ Matching logic (이름/아이디/생년월일)
-  - 일반: 이름/아이디 + 생년월일 필수
-  - 관리자: 이름/아이디만 가능, 생년월일은 입력하면 더 정확하게 필터링
+  ✅ Matching logic
 ========================================================= */
 function matchRows(qNameOrId, qBirth){
   const q1 = norm(qNameOrId);
@@ -944,8 +985,6 @@ function matchRows(qNameOrId, qBirth){
   const adminOn = isAdmin();
 
   if(!q1) return [];
-
-  // ✅ 일반 사용자는 생년월일 필수
   if(!adminOn && !qb) return [];
 
   const out = [];
@@ -960,7 +999,6 @@ function matchRows(qNameOrId, qBirth){
       (name && name.includes(q1)) ||
       (id && id.includes(q1));
 
-    // ✅ 관리자 모드면 생년월일은 "선택"
     const okBirth = qb ? (birth && birth === qb) : true;
 
     if(okNameOrId && okBirth) out.push(r);
@@ -1006,7 +1044,7 @@ function renderCard(row){
   const tkkd = clean(row[5]);
   const photo = clean(row[6]);
 
-  const point = clean(row[7]);
+  const point = pointSafe(row[7]);  // ✅ 포인트 확실히
   const awards = clean(row[8]);
   const cert = clean(row[9]);
 
@@ -1031,17 +1069,30 @@ function renderCard(row){
               : `NO PHOTO`
           }
         </div>
+
         <div class="headline">
           <h2>${escapeHtml(name || "-")}</h2>
           <p class="sub">아이디: <b>${escapeHtml(id || "-")}</b> · 생년월일: <b>${escapeHtml(birth || "-")}</b></p>
+
           <div class="badges">
             <div class="badge green">✅ Verified Record</div>
             <div class="badge blue">🔒 조회 인증 코드 생성</div>
           </div>
+
           <div class="hashLine">
             Data Integrity Verified · SHA-256 :
             <b id="hashOut">생성중…</b>
           </div>
+        </div>
+
+        <!-- ✅ 포인트 결과 박스 -->
+        <div class="pointBox" aria-label="point-result">
+          <div class="pointLabel">
+            <span>🏅 현재 포인트</span>
+            <span style="opacity:.9;font-weight:950;">RESULT</span>
+          </div>
+          <div class="pointValue">${escapeHtml(point)}<span class="pointUnit">P</span></div>
+          <div class="pointHint">누적 점수는 도장 운영 기준에 따라 수시 반영됩니다.</div>
         </div>
       </div>
 
@@ -1052,7 +1103,7 @@ function renderCard(row){
 
       <div class="grid2">
         <div class="panel">
-          <div class="row"><span class="rlabel">현재 포인트</span><span class="rval">${escapeHtml(point || "0")}</span></div>
+          <div class="row"><span class="rlabel">현재 포인트</span><span class="rval">${escapeHtml(point)}</span></div>
           <div class="row"><span class="rlabel">보유 인증서</span><span class="rval">${escapeHtml(cert || "-")}</span></div>
         </div>
         <div class="panel">
@@ -1091,6 +1142,7 @@ function renderPickList(rows){
     const name = clean(r[1]);
     const birth = clean(r[2]);
     const photo = clean(r[6]);
+    const point = pointSafe(r[7]);
 
     return `
       <div class="pick" data-idx="${idx}">
@@ -1105,7 +1157,7 @@ function renderPickList(rows){
           </div>
           <div class="pInfo">
             <div class="pName">${escapeHtml(name || "-")}</div>
-            <div class="pMeta">아이디: ${escapeHtml(id || "-")} · 생년월일: ${escapeHtml(birth || "-")}</div>
+            <div class="pMeta">아이디: ${escapeHtml(id || "-")} · 생년월일: ${escapeHtml(birth || "-")} · 포인트: <b>${escapeHtml(point)}P</b></div>
           </div>
         </div>
         <div class="pGo">선택</div>
@@ -1247,7 +1299,6 @@ bindClear("qNameOrId", "clearName");
 bindClear("qBirth", "clearBirth");
 
 window.addEventListener("DOMContentLoaded", ()=>{
-  // ✅ 관리자 모드 시도 → UI 반영
   maybeAskAdmin();
   updateAdminUI();
 
