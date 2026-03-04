@@ -1,1 +1,499 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>관장 소개 | 계명태권도</title>
+  <meta name="description" content="계명태권도 지도관장 전성권. 교육 철학, 주요 경력, 무도 단증 소개." />
+  <meta name="theme-color" content="#0b0f19" />
 
+  <!-- OG (카톡 공유용) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="계명태권도" />
+  <meta property="og:title" content="관장 소개 | 계명태권도" />
+  <meta property="og:description" content="교육 철학 · 주요 경력 · 무도 단증 · 지도자 소개" />
+  <meta property="og:image" content="https://i.imgur.com/xz7WNIi.jpeg" />
+
+  <style>
+    :root{
+      --bg:#0b0f19;
+      --panel:#111827;
+      --panel2:#0f172a;
+      --line:rgba(255,255,255,.10);
+      --text:#ffffff;
+      --muted:rgba(255,255,255,.72);
+      --muted2:rgba(255,255,255,.55);
+      --gold:#f5c84b;
+      --blue:#60a5fa;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius2: 22px;
+      --max: 1080px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, sans-serif;
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(96,165,250,.20), transparent 60%),
+        radial-gradient(900px 600px at 90% 10%, rgba(245,200,75,.14), transparent 55%),
+        radial-gradient(1000px 800px at 30% 110%, rgba(99,102,241,.12), transparent 60%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:inherit; text-decoration:none}
+    .wrap{max-width:var(--max); margin:0 auto; padding:16px 16px 40px}
+
+    /* Top bar */
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:10px 0 14px;
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(to bottom, rgba(11,15,25,.86), rgba(11,15,25,.55));
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:900; letter-spacing:.2px;
+    }
+    .brand .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: conic-gradient(from 180deg, var(--gold), var(--blue), var(--gold));
+      box-shadow: 0 0 0 3px rgba(255,255,255,.06);
+    }
+    .homebtn{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px; border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      transition:.15s ease;
+      font-weight:800;
+    }
+    .homebtn:hover{transform: translateY(-1px); background:rgba(255,255,255,.08)}
+    .homebtn .ico{
+      width:18px; height:18px; display:inline-block;
+      border-radius:6px;
+      background: linear-gradient(135deg, rgba(245,200,75,.75), rgba(96,165,250,.65));
+    }
+
+    /* Hero */
+    .hero{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:16px;
+      align-items:stretch;
+    }
+    @media (max-width: 860px){
+      .hero{grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(17,24,39,.92), rgba(15,23,42,.88));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .profileCard{padding:18px}
+    .profileRow{display:flex; gap:16px; align-items:center}
+    .avatar{
+      width:88px; height:88px; border-radius:999px;
+      overflow:hidden; flex:0 0 auto;
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      background: rgba(0,0,0,.35);
+    }
+    .avatar img{width:100%; height:100%; object-fit:cover}
+    .pTitle{font-size:12px; color:var(--muted); font-weight:800; letter-spacing:.5px}
+    .pName{font-size:30px; font-weight:950; margin-top:6px; letter-spacing:-.4px}
+    .pRole{margin-top:6px; color:var(--muted); font-weight:750}
+    .pillRow{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+    .pill{
+      padding:8px 10px; border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color:rgba(255,255,255,.86);
+      font-weight:750; font-size:12px;
+    }
+    .pill strong{color:var(--gold)}
+    .miniNote{
+      margin-top:14px;
+      padding:12px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.08);
+      color: rgba(255,255,255,.80);
+      line-height:1.55;
+      font-weight:650;
+    }
+    .miniNote b{color:var(--gold)}
+    .miniNote em{font-style:normal; color:rgba(255,255,255,.88)}
+
+    /* Slider */
+    .sliderCard{padding:14px}
+    .sliderHeader{
+      display:flex; align-items:end; justify-content:space-between; gap:10px;
+      padding:4px 4px 12px;
+    }
+    .sliderHeader .h{
+      font-weight:950; letter-spacing:-.2px;
+      font-size:16px;
+    }
+    .sliderHeader .sub{
+      color:var(--muted2);
+      font-size:12px; font-weight:650;
+    }
+
+    .slider{
+      position:relative;
+      border-radius: 18px;
+      overflow:hidden;
+      background: rgba(0,0,0,.28);
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow: 0 12px 36px rgba(0,0,0,.35);
+      touch-action: pan-y; /* allow horizontal swipe */
+    }
+    .slides{
+      display:flex;
+      transition: transform .35s ease;
+      will-change: transform;
+    }
+    .slide{
+      min-width:100%;
+      position:relative;
+      background:#000;
+      /* ✅ 가로는 꽉 / 세로는 과하지 않게 */
+      aspect-ratio: 16 / 9;
+    }
+    @media (max-width: 520px){
+      .slide{aspect-ratio: 4 / 3;}
+    }
+    .slide img{
+      width:100%; height:100%;
+      object-fit: cover; /* 꽉 차게 */
+      display:block;
+      filter: saturate(1.02) contrast(1.02);
+    }
+    .navBtn{
+      position:absolute;
+      top:50%;
+      transform: translateY(-50%);
+      width:44px; height:44px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.35);
+      color:#fff;
+      display:grid; place-items:center;
+      cursor:pointer;
+      user-select:none;
+      transition:.15s ease;
+      backdrop-filter: blur(8px);
+    }
+    .navBtn:hover{background: rgba(0,0,0,.45); transform: translateY(-50%) scale(1.03)}
+    .navBtn:active{transform: translateY(-50%) scale(.98)}
+    .navPrev{left:10px}
+    .navNext{right:10px}
+    .navBtn svg{width:18px; height:18px; opacity:.92}
+
+    .dots{
+      display:flex; justify-content:center; gap:8px;
+      padding:12px 0 0;
+    }
+    .dotBtn{
+      width:10px; height:10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.14);
+      cursor:pointer;
+      transition:.15s ease;
+    }
+    .dotBtn.active{
+      background: linear-gradient(135deg, rgba(245,200,75,.95), rgba(96,165,250,.9));
+      border-color: rgba(255,255,255,.30);
+      transform: scale(1.1);
+    }
+
+    /* Sections */
+    .grid2{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:16px;
+    }
+    @media (max-width: 860px){
+      .grid2{grid-template-columns: 1fr;}
+    }
+    .section{
+      padding:18px;
+    }
+    .secTitle{
+      font-size:14px;
+      font-weight:950;
+      letter-spacing:-.2px;
+      display:flex; align-items:center; gap:10px;
+      margin:0 0 12px;
+    }
+    .secTitle .bar{
+      width:10px; height:10px; border-radius:999px;
+      background: conic-gradient(from 180deg, var(--gold), var(--blue), var(--gold));
+      box-shadow: 0 0 0 3px rgba(255,255,255,.06);
+    }
+    .text{
+      color: rgba(255,255,255,.82);
+      line-height:1.7;
+      font-weight:650;
+      margin:0;
+    }
+    .list{
+      margin:0; padding:0; list-style:none;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .li{
+      padding:12px 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      color: rgba(255,255,255,.86);
+      font-weight:700;
+      line-height:1.45;
+    }
+    .li small{display:block; color:var(--muted2); font-weight:650; margin-top:4px}
+    .li b{color:var(--gold)}
+    .foot{
+      margin-top:18px;
+      padding:14px 16px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.70);
+      font-size:12px;
+      line-height:1.65;
+    }
+    .foot strong{color:rgba(255,255,255,.88)}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <!-- Top -->
+    <div class="topbar">
+      <div class="brand">
+        <span class="dot" aria-hidden="true"></span>
+        <span>계명태권도 · 관장 소개</span>
+      </div>
+      <a class="homebtn" href="../" title="홈으로">
+        <span class="ico" aria-hidden="true"></span>
+        <span>홈으로</span>
+      </a>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="card profileCard">
+        <div class="profileRow">
+          <div class="avatar">
+            <img src="https://i.imgur.com/xz7WNIi.jpeg" alt="전성권 관장 프로필 사진" loading="eager" />
+          </div>
+          <div>
+            <div class="pTitle">계명태권도 지도관장</div>
+            <div class="pName">전 성 권</div>
+            <div class="pRole">아이의 자신감 · 예의 · 도전정신을 키우는 정통 지도</div>
+          </div>
+        </div>
+
+        <div class="pillRow" aria-label="핵심 경력 요약">
+          <span class="pill"><strong>국제</strong> 무도 지도자</span>
+          <span class="pill">세계태권검도연맹 총재</span>
+          <span class="pill">국제경찰무도연합회 이사장</span>
+          <span class="pill">경호·안전 분야 교육/연구</span>
+        </div>
+
+        <div class="miniNote">
+          계명태권도는 단순히 기술을 배우는 곳이 아니라, 아이들이 <b>스스로를 믿는 힘</b>을 키우는 성장 공간입니다.<br/>
+          <em>구조 &gt;&gt; 교차원리, 교차원리 기반 무도</em>의 관점으로 <b>안전</b>과 <b>기본기</b>, 그리고 <b>인성</b>을 함께 지도합니다.
+        </div>
+      </div>
+
+      <div class="card sliderCard">
+        <div class="sliderHeader">
+          <div>
+            <div class="h">지도 활동 스냅</div>
+            <div class="sub">손가락으로 넘기면 다음 사진이 보입니다 (자동재생 없음)</div>
+          </div>
+        </div>
+
+        <div class="slider" id="slider" aria-label="지도자 활동 사진 슬라이더">
+          <div class="slides" id="slides">
+            <div class="slide">
+              <img src="https://i.imgur.com/3eQA8Yx.jpeg" alt="지도 활동 사진 1" loading="lazy">
+            </div>
+            <div class="slide">
+              <img src="https://i.imgur.com/C3Tvd49.jpeg" alt="지도 활동 사진 2" loading="lazy">
+            </div>
+            <div class="slide">
+              <img src="https://i.imgur.com/g7icxLF.jpeg" alt="지도 활동 사진 3" loading="lazy">
+            </div>
+            <div class="slide">
+              <img src="https://i.imgur.com/mlg6urD.jpeg" alt="지도 활동 사진 4" loading="lazy">
+            </div>
+            <div class="slide">
+              <img src="https://i.imgur.com/Hi8udx9.jpeg" alt="지도 활동 사진 5" loading="lazy">
+            </div>
+          </div>
+
+          <div class="navBtn navPrev" id="prevBtn" aria-label="이전 사진">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="navBtn navNext" id="nextBtn" aria-label="다음 사진">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="dots" id="dots" aria-label="슬라이드 위치 표시"></div>
+      </div>
+    </div>
+
+    <!-- Sections -->
+    <div class="grid2">
+      <div class="card section">
+        <h2 class="secTitle"><span class="bar"></span>교육 철학</h2>
+        <p class="text">
+          아이는 “잘한다”보다 “계속한다”가 먼저입니다.<br/>
+          계명태권도는 <b>기본기</b>를 바탕으로, <b>예절</b>과 <b>자기관리</b>, <b>도전하는 태도</b>를 함께 키우는 교육을 지향합니다.<br/>
+          안전한 수련 환경 속에서 아이 한 명 한 명의 성장을 책임감 있게 지도합니다.
+        </p>
+      </div>
+
+      <div class="card section">
+        <h2 class="secTitle"><span class="bar"></span>무도 단증</h2>
+        <ul class="list">
+          <li class="li">태권도 <b>9단</b></li>
+          <li class="li">경찰무도 <b>9단</b> <small>(IPMA)</small></li>
+          <li class="li">경호무술 <b>9단</b></li>
+          <li class="li">태권검도 <b>9단</b></li>
+          <li class="li">다수 무도 단증 보유</li>
+        </ul>
+      </div>
+
+      <div class="card section">
+        <h2 class="secTitle"><span class="bar"></span>주요 경력</h2>
+        <ul class="list">
+          <li class="li">세계태권검도연맹 총재</li>
+          <li class="li">국제경찰무도연합회 이사장</li>
+          <li class="li">국민대학교 경호보안학과 지도교수</li>
+          <li class="li">미국체육대학교(ASU) 무도연구소 연구교수</li>
+          <li class="li">호주 국제보안학교(ISC) 무도연구소 소장</li>
+          <li class="li">국제청소년경호단 단장</li>
+        </ul>
+      </div>
+
+      <div class="card section">
+        <h2 class="secTitle"><span class="bar"></span>지도자의 약속</h2>
+        <ul class="list">
+          <li class="li">아이 한 명 한 명을 존중합니다.</li>
+          <li class="li">안전과 기본기를 최우선으로 지도합니다.</li>
+          <li class="li">예절과 인성을 생활 속 습관으로 만들겠습니다.</li>
+          <li class="li">성장 기록을 통해 부모님과 함께 아이의 변화를 나누겠습니다.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot">
+      <strong>Tip</strong> · 이 페이지는 외부 이미지 링크(Imgur)를 사용합니다. 이미지가 바뀌면 링크만 교체하면 되고, 저장소 용량도 아낄 수 있습니다.
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const slider = document.getElementById('slider');
+      const slidesEl = document.getElementById('slides');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const dotsEl  = document.getElementById('dots');
+
+      const total = slidesEl.children.length;
+      let index = 0;
+
+      // dots
+      const dots = [];
+      for(let i=0;i<total;i++){
+        const b = document.createElement('button');
+        b.className = 'dotBtn' + (i===0 ? ' active' : '');
+        b.type = 'button';
+        b.setAttribute('aria-label', (i+1) + '번째 사진 보기');
+        b.addEventListener('click', ()=>go(i));
+        dotsEl.appendChild(b);
+        dots.push(b);
+      }
+
+      function update(){
+        slidesEl.style.transform = `translateX(${-index*100}%)`;
+        dots.forEach((d,i)=>d.classList.toggle('active', i===index));
+      }
+      function go(i){
+        index = (i + total) % total;
+        update();
+      }
+
+      prevBtn.addEventListener('click', ()=>go(index-1));
+      nextBtn.addEventListener('click', ()=>go(index+1));
+
+      // Swipe (touch + mouse drag)
+      let startX = 0;
+      let currentX = 0;
+      let dragging = false;
+
+      const threshold = 40; // px
+
+      function onStart(x){
+        dragging = true;
+        startX = x;
+        currentX = x;
+      }
+      function onMove(x){
+        if(!dragging) return;
+        currentX = x;
+      }
+      function onEnd(){
+        if(!dragging) return;
+        dragging = false;
+        const dx = currentX - startX;
+        if(Math.abs(dx) > threshold){
+          if(dx < 0) go(index+1);
+          else go(index-1);
+        }
+      }
+
+      slider.addEventListener('touchstart', (e)=>onStart(e.touches[0].clientX), {passive:true});
+      slider.addEventListener('touchmove',  (e)=>onMove(e.touches[0].clientX), {passive:true});
+      slider.addEventListener('touchend',   ()=>onEnd());
+
+      slider.addEventListener('mousedown', (e)=>{
+        onStart(e.clientX);
+      });
+      window.addEventListener('mousemove', (e)=>{
+        onMove(e.clientX);
+      });
+      window.addEventListener('mouseup', ()=>{
+        onEnd();
+      });
+
+      // Keyboard accessibility
+      slider.setAttribute('tabindex', '0');
+      slider.addEventListener('keydown', (e)=>{
+        if(e.key === 'ArrowLeft') go(index-1);
+        if(e.key === 'ArrowRight') go(index+1);
+      });
+
+      update();
+    })();
+  </script>
+</body>
+</html>
