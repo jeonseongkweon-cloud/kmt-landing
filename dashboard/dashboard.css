@@ -1,7 +1,5 @@
 :root{
   --bg:#0b0f19;
-  --panel:#111827;
-  --panel2:#0f172a;
   --line:rgba(255,255,255,.10);
   --text:rgba(255,255,255,.92);
   --muted:rgba(255,255,255,.70);
@@ -51,7 +49,7 @@ body{
 
 /* topbar */
 .topbar{
-  height:74px; /* 살짝 줄여서 본문에 공간 더 줌 */
+  height:74px; /* 살짝 줄여서 본문을 더 크게 */
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -92,9 +90,7 @@ body{
   text-overflow:ellipsis;
 }
 
-.topinfo{
-  display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;
-}
+.topinfo{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
 .pill{
   display:flex; gap:8px; align-items:center;
   padding:8px 10px;
@@ -129,12 +125,12 @@ body{
 .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07);}
 .btn:active{transform: translateY(0px);}
 
-/* content layout: 랭킹 영역을 더 크게 */
+/* layout: 랭킹 영역을 더 크게 (5줄쯤 보이게) */
 .content{
   height: calc(100% - 74px);
   padding:14px;
   display:grid;
-  grid-template-rows: 1.35fr 110px 0.95fr; /* ✅ 상단 랭킹 더 크게 */
+  grid-template-rows: 1.35fr 110px 0.95fr; /* ✅ 상단 랭킹 확장 */
   gap:12px;
 }
 
@@ -192,10 +188,11 @@ body{
   grid-template-columns: 40px 1fr auto;
   gap:10px;
   align-items:center;
-  padding:12px 12px;         /* ✅ 한 줄 높이 살짝 키움 */
+  padding:12px 12px;
   border-radius:14px;
   border:1px solid rgba(255,255,255,.08);
   background: rgba(0,0,0,.18);
+  position:relative;
 }
 .rank{
   width:36px;height:36px;border-radius:12px;
@@ -220,28 +217,25 @@ body{
   white-space:nowrap;
 }
 
-/* ✅ TOP3 효과 */
-.row.top1{ border-color: rgba(246,211,107,.35); background: rgba(246,211,107,.09); }
-.row.top2{ border-color: rgba(203,213,225,.25); background: rgba(203,213,225,.07); }
-.row.top3{ border-color: rgba(214,167,122,.25); background: rgba(214,167,122,.07); }
+/* ✅ TOP3 금/은/동 + 1등 반짝 */
+.row.top1{ border-color: rgba(246,211,107,.40); background: rgba(246,211,107,.10); }
+.row.top2{ border-color: rgba(203,213,225,.28); background: rgba(203,213,225,.08); }
+.row.top3{ border-color: rgba(214,167,122,.28); background: rgba(214,167,122,.08); }
 
-.rank.top1{ background: linear-gradient(145deg, rgba(246,211,107,.55), rgba(96,165,250,.15)); color:#111827; }
-.rank.top2{ background: linear-gradient(145deg, rgba(203,213,225,.55), rgba(96,165,250,.12)); color:#0b0f19; }
-.rank.top3{ background: linear-gradient(145deg, rgba(214,167,122,.55), rgba(96,165,250,.10)); color:#0b0f19; }
+.rank.top1{ background: linear-gradient(145deg, rgba(246,211,107,.70), rgba(96,165,250,.12)); color:#111827; }
+.rank.top2{ background: linear-gradient(145deg, rgba(203,213,225,.70), rgba(96,165,250,.10)); color:#0b0f19; }
+.rank.top3{ background: linear-gradient(145deg, rgba(214,167,122,.70), rgba(96,165,250,.08)); color:#0b0f19; }
 
-/* ✅ 1등 반짝 효과 */
 .row.top1::after{
   content:"";
   position:absolute;
   inset:-2px;
-  background: linear-gradient(120deg, transparent 0%, rgba(246,211,107,.25) 40%, transparent 70%);
+  background: linear-gradient(120deg, transparent 0%, rgba(246,211,107,.28) 40%, transparent 70%);
   transform: translateX(-120%);
   animation: shimmer 2.4s linear infinite;
   pointer-events:none;
 }
-@keyframes shimmer{
-  to{ transform: translateX(120%); }
-}
+@keyframes shimmer{ to{ transform: translateX(120%); } }
 
 /* mid area */
 .mid{
@@ -285,7 +279,7 @@ body{
   width:100%;
   height:100%;
   object-fit:cover;
-  object-position: 50% 22%; /* ✅ 얼굴이 위쪽에 오게 약간 당김 */
+  object-position: 50% 22%;
   display:block;
   filter: saturate(1.05) contrast(1.05);
 }
@@ -359,7 +353,7 @@ body{
 
 .gold{ color: var(--gold); }
 
-/* ✅ 오늘의 명예의 전당 */
+/* ✅ 명예의 전당 */
 .awards{
   display:grid;
   grid-template-columns: 1fr 1fr;
