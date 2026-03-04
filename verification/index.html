@@ -4,14 +4,14 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <title>수련생 조회 | 계명태권도</title>
-<meta name="description" content="계명태권도 수련생 조회. 이름/아이디 + 생년월일로 안전하게 조회합니다." />
+<meta name="description" content="계명태권도 수련생 조회. 이름 + 생년월일로 안전하게 조회합니다." />
 <meta name="theme-color" content="#0b0f19" />
 
 <!-- OG -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="계명태권도" />
 <meta property="og:title" content="수련생 조회 | 계명태권도" />
-<meta property="og:description" content="이름/아이디 + 생년월일로 안전하게 조회합니다." />
+<meta property="og:description" content="이름 + 생년월일로 안전하게 조회합니다." />
 <meta property="og:image" content="" />
 
 <style>
@@ -206,12 +206,6 @@
     justify-content:center;
   }
   .clearBtn:active{transform:translateY(1px)}
-  .help{
-    margin-top:8px;
-    font-size:12px;
-    color:rgba(255,255,255,.70);
-    line-height:1.45;
-  }
 
   .cta{ display:flex; gap:10px; align-items:center; justify-content:stretch; }
   button.big{
@@ -583,7 +577,7 @@
   #dataPill{ display:none !important; }
 
   /* ==============================
-     ✅ 랭킹 UI (TOP10) - 추가됨
+     ✅ 랭킹 UI (TOP10)
   ============================== */
   .rankWrap{
     margin: 10px auto 12px;
@@ -596,7 +590,8 @@
   }
   .rankHead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-bottom:10px}
   .rankTitle{font-weight:1000;letter-spacing:-.3px;font-size:16px}
-  .rankSub{opacity:.75;font-size:12px}
+  /* 내부용 문구 숨김: rankSub는 화면에 안 나오게 */
+  .rankSub{display:none !important;}
 
   .rankCard{
     border: 1px solid rgba(255,255,255,.10);
@@ -604,13 +599,11 @@
     background: rgba(0,0,0,.18);
     overflow:hidden;
   }
-
   .rankViewport{
     position:relative;
     overflow:hidden;
-    height: 260px; /* TOP10 롤링 높이 */
+    height: 260px;
   }
-
   .rankList{
     list-style:none;
     margin:0;
@@ -620,7 +613,6 @@
     gap:8px;
     will-change: transform;
   }
-
   .rankItem{
     display:flex; align-items:center; justify-content:space-between; gap:12px;
     padding:11px 12px;
@@ -651,7 +643,6 @@
     white-space:nowrap;
   }
 
-  /* TOP 1~3 특별효과 */
   .rankItem.top1{
     border-color: rgba(246,201,69,.45);
     background: linear-gradient(90deg, rgba(246,201,69,.20), rgba(255,255,255,.05));
@@ -682,7 +673,6 @@
     background: linear-gradient(90deg, rgba(205,127,50,.16), rgba(255,255,255,.04));
   }
 
-  /* 롤링: 마우스 올리면 멈춤 */
   .rankViewport:hover > ul{ animation-play-state: paused !important; }
 </style>
 </head>
@@ -705,7 +695,7 @@
         <span class="pill" id="dataPill">데이터: 준비중</span>
         <span class="pill blue" id="timePill" style="display:none;"></span>
         <span class="pill green" id="adminPill" style="display:none;">👑 관리자 모드</span>
-        <span id="statusText">페이지가 열리면 자동으로 1회 불러옵니다.</span>
+        <span id="statusText"></span>
       </div>
       <div class="actions">
         <button class="miniBtn gold" id="refreshBtn" type="button">데이터 새로고침</button>
@@ -713,11 +703,11 @@
       </div>
     </div>
 
-    <!-- ✅ 조회 전: 포인트 TOP10 랭킹 (게임 스타일) - 추가됨 -->
+    <!-- ✅ 랭킹 TOP10 -->
     <section id="rankSection" class="rankWrap" aria-label="포인트 랭킹 TOP10" style="display:none;">
       <div class="rankHead">
         <div class="rankTitle">🏆 포인트 랭킹 TOP10</div>
-        <div class="rankSub">조회 전 자동 표시 · 조회 성공 시 자동 숨김</div>
+        <div class="rankSub">내부용(숨김)</div>
       </div>
 
       <div class="rankCard">
@@ -730,14 +720,13 @@
     <div class="form">
       <div class="field">
         <div class="label">
-          <span>이름 또는 아이디</span>
+          <span>이름</span>
           <span class="req">필수</span>
         </div>
         <div class="inputWrap">
-          <input id="qNameOrId" type="text" placeholder="예: 김예담 / KM002 / km002" autocomplete="off" />
+          <input id="qNameOrId" type="text" placeholder="" autocomplete="off" />
           <button class="clearBtn" id="clearName" type="button" aria-label="clear">✕</button>
         </div>
-        <div class="help">※ 아이디는 대소문자 상관없이 검색됩니다.</div>
       </div>
 
       <div class="field">
@@ -746,10 +735,9 @@
           <span class="req" id="birthReqBadge">필수</span>
         </div>
         <div class="inputWrap">
-          <input id="qBirth" type="text" placeholder="예: 11.02.13 또는 2011.02.13" autocomplete="off" inputmode="numeric" />
+          <input id="qBirth" type="text" placeholder="" autocomplete="off" inputmode="numeric" />
           <button class="clearBtn" id="clearBirth" type="button" aria-label="clear">✕</button>
         </div>
-        <div class="help" id="birthHelp">※ 점(.) 없이 입력해도 됩니다. (예: 110213)</div>
       </div>
 
       <div class="cta">
@@ -760,7 +748,7 @@
     <div id="result"></div>
 
     <div class="note" id="privacyNote">
-      개인정보 보호를 위해 <b>이름(또는 아이디) + 생년월일</b>이 모두 일치해야 조회됩니다.
+      개인정보 보호를 위해 <b>이름 + 생년월일</b>이 모두 일치해야 조회됩니다.
     </div>
 
   </div>
@@ -832,23 +820,17 @@ function updateAdminUI(){
   const badge = document.getElementById("birthReqBadge");
   const note = document.getElementById("privacyNote");
   const birthInput = document.getElementById("qBirth");
-  const birthHelp = document.getElementById("birthHelp");
 
   if(adminPill) adminPill.style.display = adminOn ? "inline-flex" : "none";
   if(badge) badge.textContent = adminOn ? "선택" : "필수";
 
   if(note){
     note.innerHTML = adminOn
-      ? `관리자 모드: <b>이름(또는 아이디)만</b>으로도 조회됩니다. (생년월일은 선택)`
-      : `개인정보 보호를 위해 <b>이름(또는 아이디) + 생년월일</b>이 모두 일치해야 조회됩니다.`;
+      ? `관리자 모드: <b>이름만</b>으로도 조회됩니다. (생년월일은 선택)`
+      : `개인정보 보호를 위해 <b>이름 + 생년월일</b>이 모두 일치해야 조회됩니다.`;
   }
   if(birthInput){
-    birthInput.placeholder = adminOn ? "관리자: 비워도 됨 (선택)" : "예: 11.02.13 또는 2011.02.13";
-  }
-  if(birthHelp){
-    birthHelp.textContent = adminOn
-      ? "※ 관리자 모드에서는 생년월일을 비워도 됩니다. (입력하면 더 정확해요)"
-      : "※ 점(.) 없이 입력해도 됩니다. (예: 110213)";
+    birthInput.placeholder = "";
   }
 }
 
@@ -990,7 +972,7 @@ async function sha256Hex(text){
 }
 
 /* =========================================================
-  ✅ 랭킹 TOP10 (포인트 내림차순) + 롤링 - 추가됨
+  ✅ 랭킹 TOP10 (포인트 내림차순) + 롤링
 ========================================================= */
 const RANK_LIMIT = 10;
 
@@ -1006,7 +988,6 @@ function showRanking(){
 function buildTopRanking(){
   if(!Array.isArray(DATA_ROWS)) return [];
   const list = [];
-
   for(const r of DATA_ROWS){
     const id = clean(r[0]);
     const name = clean(r[1]);
@@ -1015,7 +996,6 @@ function buildTopRanking(){
     if(pts <= 0) continue; // 0점도 포함하고 싶으면 이 줄 삭제
     list.push({ id, name, pts });
   }
-
   list.sort((a,b)=> (b.pts - a.pts) || a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
   return list.slice(0, RANK_LIMIT);
 }
@@ -1048,7 +1028,6 @@ function renderRanking(){
           <div class="rankNo">${rank}</div>
           <div style="min-width:0">
             <div class="rankName">${rankMedal(rank)} ${escapeHtml(x.name)} <span class="rankMeta">(${escapeHtml(x.id.toUpperCase())})</span></div>
-            <div class="rankMeta">누적 포인트</div>
           </div>
         </div>
         <div class="rankPts">${Number(x.pts).toLocaleString()}P</div>
@@ -1061,14 +1040,12 @@ function renderRanking(){
 }
 
 function applyRankingTicker(viewportEl, ulEl, speedPxPerSec=24){
-  // 중복 방지
   if(viewportEl.getAttribute("data-ticker") === "1") return;
 
   requestAnimationFrame(()=>{
     const dist = ulEl.scrollHeight + 10;
     if(dist < 80) return;
 
-    // clone
     const clone = ulEl.cloneNode(true);
     clone.setAttribute("aria-hidden","true");
     viewportEl.appendChild(clone);
@@ -1193,7 +1170,7 @@ async function loadOnce({force=false}={}){
       DATA_ROWS = cached.rows;
       LAST_LOADED_AT = new Date(cached.savedAt);
       LAST_SOURCE = "cache";
-      setStatus("good", `준비(${DATA_ROWS.length}명)`, `조회는 기기 안에서 즉시 처리됩니다`);
+      setStatus("good", `준비(${DATA_ROWS.length}명)`, "");
       setTimePill();
       return DATA_ROWS;
     }
@@ -1201,7 +1178,7 @@ async function loadOnce({force=false}={}){
 
   if(LOADING_PROMISE) return LOADING_PROMISE;
 
-  setStatus("loading", "불러오는 중", "데이터를 불러오는 중입니다…");
+  setStatus("loading", "불러오는 중", "");
   timePill.style.display = "none";
 
   LOADING_PROMISE = (async ()=>{
@@ -1218,12 +1195,12 @@ async function loadOnce({force=false}={}){
         LAST_SOURCE = "network";
         writeCache(data, Date.now());
 
-        setStatus("good", `준비(${DATA_ROWS.length}명)`, "조회는 기기 안에서 즉시 처리됩니다");
+        setStatus("good", `준비(${DATA_ROWS.length}명)`, "");
         setTimePill();
         return DATA_ROWS;
       }catch(err){
         lastErr = err;
-        setStatus("loading", "재시도", `불러오기 실패… 재시도 중 (${i+1}/${RETRY_COUNT+1})`);
+        setStatus("loading", "재시도", "");
         await new Promise(r => setTimeout(r, 500 * (i+1)));
       }
     }
@@ -1247,22 +1224,16 @@ function matchRows(qNameOrId, qBirth){
 
   const out = [];
   for(const r of DATA_ROWS){
-    const id = norm(r[0]);
     const name = norm(r[1]);
     const birth = normBirth(r[2]);
 
-    const okNameOrId =
-      (id && id === q1) ||
-      (name && name === q1) ||
-      (name && name.includes(q1)) ||
-      (id && id.includes(q1));
-
+    const okName = (name && name === q1) || (name && name.includes(q1));
     const okBirth = qb ? (birth && birth === qb) : true;
 
-    if(okNameOrId && okBirth) out.push(r);
+    if(okName && okBirth) out.push(r);
   }
 
-  out.sort((a,b)=> String(a[1]||"").localeCompare(String(b[1]||"")) || String(a[0]||"").localeCompare(String(b[0]||"")));
+  out.sort((a,b)=> String(a[1]||"").localeCompare(String(b[1]||"")));
   return out;
 }
 
@@ -1314,7 +1285,6 @@ function renderCard(row){
 
   const tier = tierOf(pointNum);
 
-  // ✅ 3단계 목표 적용
   const goal = getGoalByKey(DEFAULT_GOAL_KEY);
   const prog = progressOf(pointNum, goal.points);
 
@@ -1438,7 +1408,7 @@ function renderPickList(rows){
           </div>
           <div class="pInfo">
             <div class="pName">${escapeHtml(name || "-")}</div>
-            <div class="pMeta">아이디: ${escapeHtml(id || "-")} · 생년월일: ${escapeHtml(birth || "-")} · 포인트: <b>${escapeHtml(pStr)}P</b></div>
+            <div class="pMeta">생년월일: ${escapeHtml(birth || "-")} · 포인트: <b>${escapeHtml(pStr)}P</b></div>
           </div>
         </div>
 
@@ -1480,8 +1450,8 @@ async function runSearch(){
 
   if(!clean(q1) || (!adminOn && !clean(qb))){
     resultEl.innerHTML = adminOn
-      ? `<div class="message">이름(또는 아이디)을 입력해주세요. (관리자 모드: 생년월일은 선택)</div>`
-      : `<div class="message">이름(또는 아이디)과 생년월일을 모두 입력해주세요.</div>`;
+      ? `<div class="message">이름을 입력해주세요.</div>`
+      : `<div class="message">이름과 생년월일을 모두 입력해주세요.</div>`;
     return;
   }
 
@@ -1489,7 +1459,7 @@ async function runSearch(){
     await loadOnce({force:false});
   }catch(e){
     console.error(e);
-    setStatus("bad", "오류", "데이터를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.");
+    setStatus("bad", "오류", "");
     resultEl.innerHTML = `<div class="message">데이터를 불러오지 못했습니다.<br/>상단의 <b>데이터 새로고침</b>을 눌러 다시 시도해주세요.</div>`;
     return;
   }
@@ -1501,7 +1471,6 @@ async function runSearch(){
     return;
   }
 
-  // ✅ 조회 성공(1명 이상) → 랭킹 자동 숨김
   hideRanking();
 
   if(rows.length === 1){
@@ -1534,7 +1503,7 @@ function bindReSearchButton(){
   if(!btn) return;
   btn.addEventListener("click", ()=>{
     resultEl.innerHTML = "";
-    renderRanking(); // ✅ 랭킹 최신 재렌더 + 표시
+    renderRanking();
     $("qNameOrId").focus();
     window.scrollTo({top:0, behavior:"smooth"});
   }, { once:true });
@@ -1567,20 +1536,18 @@ $("refreshBtn").addEventListener("click", async ()=>{
     LAST_LOADED_AT = null;
     LAST_SOURCE = null;
 
-    // 랭킹 ticker 재생성을 위해 초기화
     const vp = $("rankViewport");
     if(vp){
       vp.removeAttribute("data-ticker");
-      // clone이 붙어있을 수 있어서 정리(ul 1개만 남기기)
       const uls = vp.querySelectorAll("ul");
       for(let i=1;i<uls.length;i++) uls[i].remove();
     }
 
     await loadOnce({force:true});
-    renderRanking(); // ✅ 새 데이터 기반 랭킹 갱신
+    renderRanking();
   }catch(e){
     console.error(e);
-    setStatus("bad", "오류", "새로고침 실패… 네트워크 상태를 확인해주세요.");
+    setStatus("bad", "오류", "");
   }
 });
 
@@ -1590,7 +1557,7 @@ $("clearCacheBtn").addEventListener("click", ()=>{
   LAST_LOADED_AT = null;
   LAST_SOURCE = null;
   timePill.style.display = "none";
-  setStatus("loading", "캐시 삭제됨", "다음 조회 시 새로 불러옵니다.");
+  setStatus("loading", "캐시 삭제됨", "");
   hideRanking();
 });
 
@@ -1602,12 +1569,10 @@ window.addEventListener("DOMContentLoaded", ()=>{
   updateAdminUI();
 
   loadOnce({force:false})
-    .then(()=>{
-      renderRanking(); // ✅ 조회 전 랭킹 표시
-    })
+    .then(()=>{ renderRanking(); })
     .catch(e=>{
       console.error(e);
-      setStatus("bad", "대기", "자동 불러오기에 실패했습니다. 상단 ‘데이터 새로고침’을 눌러주세요.");
+      setStatus("bad", "대기", "");
       hideRanking();
     });
 });
