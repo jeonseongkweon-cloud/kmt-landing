@@ -35,21 +35,23 @@
     a{color:inherit; text-decoration:none}
     .wrap{max-width:1100px; margin:0 auto; padding:20px 16px 90px}
 
+    /* ✅ 상단: 심플 */
     .topbar{
       position:sticky; top:0; z-index:50;
       backdrop-filter: blur(10px);
-      background: rgba(11,15,25,.68);
+      background: rgba(11,15,25,.78);
       border-bottom:1px solid var(--line);
     }
     .topbar .inner{
       max-width:1100px; margin:0 auto;
-      display:flex; align-items:center; gap:10px;
-      padding:10px 16px;
+      display:flex; align-items:center; gap:12px;
+      padding:12px 16px;
     }
     .brand{display:flex; flex-direction:column; gap:2px}
-    .brand b{letter-spacing:.2px}
-    .brand small{color:var(--muted)}
+    .brand b{letter-spacing:.2px; font-size:16px}
+    .brand small{color:var(--muted); font-size:12px}
     .spacer{flex:1}
+
     .btn{
       display:inline-flex; align-items:center; justify-content:center; gap:8px;
       padding:10px 12px;
@@ -65,35 +67,14 @@
     }
     .btn:hover{transform: translateY(-1px); border-color: rgba(215,181,109,.35)}
     .btn:active{transform: translateY(0px)}
-    .btn.primary{
-      border-color: rgba(102,179,255,.35);
-      background: linear-gradient(180deg, rgba(102,179,255,.16), rgba(255,255,255,.03));
-    }
     .btn.gold{
       border-color: rgba(215,181,109,.45);
       background: linear-gradient(180deg, rgba(215,181,109,.18), rgba(255,255,255,.03));
     }
-
-    .status{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-      padding:10px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.16);
-      margin-top:14px;
-      color: rgba(255,255,255,.78);
-      font-size:12px;
+    .btn.primary{
+      border-color: rgba(102,179,255,.35);
+      background: linear-gradient(180deg, rgba(102,179,255,.16), rgba(255,255,255,.03));
     }
-    .pill{
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      font-weight:800;
-      color: rgba(255,255,255,.90);
-    }
-    .pill.ok{border-color: rgba(102,179,255,.35)}
-    .pill.bad{border-color: rgba(255,120,120,.35)}
 
     .cardBox{
       margin-top:18px;
@@ -109,7 +90,6 @@
       border-bottom:1px solid var(--line);
     }
     .cardBox .head h2{margin:0; font-size:18px}
-    .cardBox .head p{margin:0; color:var(--muted); font-size:13px; line-height:1.55}
     .cardBox .body{padding:14px 14px 16px}
 
     .searchRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
@@ -134,18 +114,9 @@
       font-weight:800;
     }
 
-    .resultTop{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:10px 12px; border-radius: 16px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.16);
-      margin-top:12px;
-    }
-    .resultTop b{font-size:13px}
-    .resultTop small{color: rgba(255,255,255,.70)}
-
+    /* ✅ 썸네일 그리드(검색 결과) */
     .carousel{
-      margin-top:10px;
+      margin-top:12px;
       border:1px solid rgba(255,255,255,.12);
       border-radius: 18px;
       background: rgba(0,0,0,.18);
@@ -193,89 +164,16 @@
     }
     .dot.on{ background: rgba(102,179,255,.92); border-color: rgba(102,179,255,.35); }
 
-    .cover{display:grid; grid-template-columns: 1.2fr .8fr; gap:12px; align-items:stretch;}
-    .coverMain{
-      border:1px solid var(--line);
-      border-radius: 18px;
-      overflow:hidden;
-      background: rgba(0,0,0,.22);
-      height: 380px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-    /* ✅ 대표사진: 짤림 방지 */
-    .coverMain img{
-      width:100%;
-      height:100%;
-      object-fit: contain;
-      display:block;
-      background:#000;
-    }
-    @media (max-width: 980px){
-      .cover{grid-template-columns: 1fr}
-      .coverMain{height: 280px;}
-    }
-
-    .thumbRail{
-      border:1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(0,0,0,.18);
-      padding:10px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      min-width: 280px;
-    }
-    .railTopRow{display:flex; align-items:center; justify-content:space-between; gap:10px;}
-    .railNav{display:flex; gap:8px; align-items:center;}
-    .navMini{
-      width:40px; height:36px; border-radius: 12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      color: rgba(255,255,255,.92);
-      cursor:pointer; font-weight:900;
-      display:grid; place-items:center;
-    }
-    .railMeta{color: rgba(255,255,255,.70); font-size:12px;}
-    .thumbPager{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius: 16px;
-      overflow:hidden;
-      background: rgba(0,0,0,.12);
-    }
-    .thumbPages{
-      display:flex; overflow-x:auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scroll-behavior:smooth;
-    }
-    .thumbPage{scroll-snap-align: start; flex:0 0 100%; padding:8px;}
-    .thumbGrid{display:grid; grid-template-columns: repeat(3, 1fr); gap:8px;}
-
-    .titem{
-      border-radius: 14px; overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      cursor:pointer;
-      position:relative;
-    }
-    .titem img{width:100%; aspect-ratio:1/1; object-fit:cover; display:block;}
-    .titem.active{border-color: rgba(102,179,255,.45);}
-    .titem.active::after{
-      content:""; position:absolute; inset:0;
-      box-shadow: inset 0 0 0 2px rgba(102,179,255,.55);
-      border-radius: 14px; pointer-events:none;
-    }
-    .thumbDots{
-      display:flex; align-items:center; justify-content:center; gap:7px;
-      padding:10px;
-      border-top:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.10);
-    }
-
-    .slideshow{
+    #emptyArea{
+      display:none;
       margin-top:12px;
+      color:rgba(255,255,255,.72);
+      font-size:12px;
+    }
+
+    /* ✅ 슬라이드쇼 */
+    .slideshow{
+      margin-top:0;
       border:1px solid var(--line);
       border-radius: 18px;
       overflow:hidden;
@@ -295,16 +193,15 @@
       background:#000;
       overflow:hidden;
     }
-
-    /* ✅✅✅ 핵심 수정: 슬라이드쇼도 짤림 방지 */
+    /* ✅ 짤림 방지 */
     .slideBox img{
       position:absolute; inset:0;
       width:100%; height:100%;
-      object-fit: contain;   /* ← cover → contain 으로 변경 */
+      object-fit: contain;
       display:block;
       opacity:0;
       transition: opacity .35s ease;
-      background:#000;       /* 검은 여백 자연스럽게 */
+      background:#000;
     }
     .slideBox img.show{opacity:1}
 
@@ -324,6 +221,7 @@
     .navBtn.prev{left:10px}
     .navBtn.next{right:10px}
 
+    /* ✅ 라이트박스 */
     .lb{
       position:fixed; inset:0;
       background: rgba(0,0,0,.78);
@@ -381,6 +279,7 @@
       pointer-events:none;
     }
 
+    /* ✅ 동영상 */
     .videoGrid{
       display:grid;
       grid-template-columns: 1fr;
@@ -408,7 +307,6 @@
       background:#000;
     }
     .vFrame iframe{width:100%; height:100%; border:0; display:block;}
-
     .channelCard{
       padding:14px 12px;
       text-align:center;
@@ -431,52 +329,32 @@
 
 <body>
 
+  <!-- ✅ 상단: 글자 안 잘리게 심플 -->
   <div class="topbar">
     <div class="inner">
       <div class="brand">
         <b>계명태권도</b>
         <small>Gallery & Video</small>
       </div>
-
       <div class="spacer"></div>
-
       <a class="btn gold" href="../index.html">🏠 홈으로</a>
-
-      <div class="searchRow" style="margin:0; flex-wrap:nowrap;">
-        <div class="field" style="min-width:240px;">
-          🔎
-          <input id="qTop" type="text" inputmode="search" autocomplete="off" placeholder="이름/아이디 검색 (예: 김예담 / KM001)" />
-          <button class="xbtn" id="btnClearTop" type="button" title="지우기">✕</button>
-        </div>
-        <button class="btn primary" id="btnSearchTop" type="button">조회</button>
-      </div>
-
       <button class="btn primary" id="btnScrollTop" type="button">⬆️</button>
     </div>
   </div>
 
   <main class="wrap">
 
-    <div class="status" id="statusBar">
-      <span class="pill" id="pillDevice">기기</span>
-      <span class="pill" id="pillData">데이터</span>
-      <span class="pill" id="pillRender">렌더</span>
-      <span id="statusMsg">초기화 중…</span>
-    </div>
-
+    <!-- ✅ 사진 조회(이름만) -->
     <section class="cardBox" id="searchSection">
       <div class="head">
-        <div>
-          <h2>사진 조회</h2>
-          <p>이름/아이디로 검색 후 사진을 확인합니다. (검색 결과는 썸네일 5줄 단위로 페이지가 나뉩니다)</p>
-        </div>
+        <h2 style="margin:0;">사진 조회</h2>
       </div>
 
       <div class="body">
         <div class="searchRow">
           <div class="field">
             🔎
-            <input id="q" type="text" inputmode="search" autocomplete="off" placeholder="이름/아이디 입력 (예: 김예담 / KM001)" />
+            <input id="q" type="text" inputmode="search" autocomplete="off" placeholder="이름을 입력하세요" />
             <button class="xbtn" id="btnClear" type="button" title="지우기">✕</button>
           </div>
           <button class="btn primary" id="btnSearch" type="button">조회</button>
@@ -484,78 +362,23 @@
         </div>
 
         <div id="resultArea" style="display:none;">
-          <div class="resultTop">
-            <div>
-              <b id="resultTitle">결과</b><br/>
-              <small id="resultMeta">—</small>
-            </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
-              <button class="btn" id="btnCopyQueryLink" type="button">🔗 결과 링크복사</button>
-            </div>
-          </div>
-
           <div class="carousel">
             <div class="pages" id="pages"></div>
             <div class="dotsRow" id="dotsRow"></div>
           </div>
         </div>
 
-        <div id="emptyArea" style="display:none; margin-top:12px; color:rgba(255,255,255,.72); font-size:12px;">
-          검색 결과가 없습니다.
-        </div>
+        <div id="emptyArea">검색 결과가 없습니다.</div>
       </div>
     </section>
 
+    <!-- ✅ 대표사진 섹션 삭제됨 -->
+
+    <!-- ✅ 슬라이드쇼 -->
     <section class="cardBox">
       <div class="head">
         <div>
-          <h2>대표 사진</h2>
-          <p>오른쪽 썸네일은 5줄(15장) 단위로 페이지가 나뉘고, 아래 점으로 이동합니다.</p>
-        </div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap">
-          <button class="btn" id="btnCoverPrev" type="button">‹ 이전</button>
-          <button class="btn" id="btnCoverNext" type="button">다음 ›</button>
-          <button class="btn" id="btnOpenCover" type="button">🔍 확대</button>
-        </div>
-      </div>
-
-      <div class="body">
-        <div class="cover">
-          <div class="coverMain">
-            <img id="coverImg" src="" alt="대표 사진" />
-          </div>
-
-          <aside class="thumbRail">
-            <div class="railTopRow">
-              <div>
-                <b>썸네일</b> <small style="color:var(--muted)">(<span id="thumbCount">0</span>장)</small>
-              </div>
-              <div class="railNav">
-                <button class="navMini" id="btnThumbPrev" type="button">‹</button>
-                <button class="navMini" id="btnThumbNext" type="button">›</button>
-              </div>
-            </div>
-
-            <div class="railMeta" id="thumbMeta">1/1</div>
-
-            <div class="thumbPager">
-              <div class="thumbPages" id="thumbPages"></div>
-              <div class="thumbDots" id="thumbDots"></div>
-            </div>
-
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:2px">
-              <button class="btn" id="btnShuffleThumbs" type="button">🎲 섞기</button>
-            </div>
-          </aside>
-        </div>
-      </div>
-    </section>
-
-    <section class="cardBox">
-      <div class="head">
-        <div>
-          <h2>갤러리 슬라이드 쇼</h2>
-          <p>이전/다음 · 자동재생(4초)</p>
+          <h2 style="margin:0;">갤러리 슬라이드 쇼</h2>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap">
           <button class="btn" id="btnPrev" type="button">⟵</button>
@@ -584,11 +407,11 @@
       </div>
     </section>
 
+    <!-- 동영상 -->
     <section class="cardBox" id="videoSection">
       <div class="head">
         <div>
-          <h2>동영상</h2>
-          <p>사진 아래에 공식 영상/시범 영상을 배치합니다.</p>
+          <h2 style="margin:0;">동영상</h2>
         </div>
       </div>
       <div class="body">
@@ -598,6 +421,7 @@
 
   </main>
 
+  <!-- 라이트박스 -->
   <div class="lb" id="lb" aria-hidden="true">
     <div class="panel" role="dialog" aria-modal="true">
       <div class="lb-top">
@@ -619,7 +443,7 @@
 
   <script>
     // =========================
-    // ✅ 1) 이름-아이디 매핑 (전총재님이 수정할 부분)
+    // ✅ 1) 이름-아이디 매핑 (내부용, 화면에는 안 보임)
     // =========================
     var STUDENTS = [
       { id:"KM001", name:"김예담" },
@@ -697,28 +521,13 @@
     // =========================
     // ✅ 유틸
     // =========================
-    function isMobile(){
-      try{
-        if(window.matchMedia && window.matchMedia("(max-width: 900px)").matches) return true;
-      }catch(e){}
-      return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    }
-    var IS_MOBILE = isMobile();
-
-    function setPill(el, text, ok){
-      if(!el) return;
-      el.textContent = text;
-      if(ok){ el.classList.add("ok"); el.classList.remove("bad"); }
-      else  { el.classList.add("bad"); el.classList.remove("ok"); }
-    }
-
     function toast(msg){
       var el = document.getElementById("toast");
       if(!el) return;
       el.textContent = msg;
       el.style.opacity = "1";
       if(window.__toastTimer) clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(function(){ el.style.opacity="0"; }, 1500);
+      window.__toastTimer = setTimeout(function(){ el.style.opacity="0"; }, 1400);
     }
 
     function norm(s){
@@ -800,10 +609,6 @@
       path: "gallery/images/students"
     };
 
-    function looksLikeId(s){
-      return /^km\d{3}$/i.test(String(s||"").trim());
-    }
-
     function extractIdFromFilename(filename){
       var m = String(filename||"").toUpperCase().match(/(KM\d{3})/);
       return m ? m[1] : "";
@@ -873,9 +678,9 @@
         var url = makeRawUrl(f.path);
 
         var studentName = (id && MAPS.idToName[id]) ? MAPS.idToName[id] : "";
-        var base = studentName ? (studentName + " (" + id + ")") : (id || f.name);
+        var base = studentName ? studentName : (id || f.name);
 
-        var tags = [f.name, id, studentName, base].filter(Boolean);
+        var tags = [f.name, studentName].filter(Boolean);
         tags = uniq(tags);
 
         items.push({
@@ -894,15 +699,7 @@
     // =========================
     // ✅ 4) 페이지 렌더/검색 로직
     // =========================
-    var pillDevice = document.getElementById("pillDevice");
-    var pillData   = document.getElementById("pillData");
-    var pillRender = document.getElementById("pillRender");
-    var statusMsg  = document.getElementById("statusMsg");
-
-    setPill(pillDevice, IS_MOBILE ? "모바일" : "PC", true);
-
     var ITEMS = [];
-    var THUMB_ITEMS = [];
 
     var q = document.getElementById("q");
     var btnClear = document.getElementById("btnClear");
@@ -910,28 +707,8 @@
     var btnShowAll = document.getElementById("btnShowAll");
     var resultArea = document.getElementById("resultArea");
     var emptyArea = document.getElementById("emptyArea");
-    var resultTitle = document.getElementById("resultTitle");
-    var resultMeta = document.getElementById("resultMeta");
     var pagesEl = document.getElementById("pages");
     var dotsRow = document.getElementById("dotsRow");
-    var btnCopyQueryLink = document.getElementById("btnCopyQueryLink");
-
-    var qTop = document.getElementById("qTop");
-    var btnClearTop = document.getElementById("btnClearTop");
-    var btnSearchTop = document.getElementById("btnSearchTop");
-
-    var coverImg = document.getElementById("coverImg");
-    var thumbCount = document.getElementById("thumbCount");
-    var btnCoverPrev = document.getElementById("btnCoverPrev");
-    var btnCoverNext = document.getElementById("btnCoverNext");
-    var btnOpenCover = document.getElementById("btnOpenCover");
-    var btnShuffleThumbs = document.getElementById("btnShuffleThumbs");
-
-    var thumbPagesEl = document.getElementById("thumbPages");
-    var thumbDotsEl = document.getElementById("thumbDots");
-    var btnThumbPrev = document.getElementById("btnThumbPrev");
-    var btnThumbNext = document.getElementById("btnThumbNext");
-    var thumbMeta = document.getElementById("thumbMeta");
 
     var slideTitle = document.getElementById("slideTitle");
     var slideSub = document.getElementById("slideSub");
@@ -974,9 +751,9 @@
       return 3;
     }
 
-    function renderResultCarousel(list){
+    function renderThumbPages(list){
       var cols = getColumnsForGrid();
-      var PER_PAGE = cols * 5;
+      var PER_PAGE = cols * 5; // 5줄 단위 유지(표시는 안함)
       var pages = chunk(list, PER_PAGE);
 
       pagesEl.innerHTML = "";
@@ -1025,19 +802,8 @@
         setDotActive(dotsRow, idx);
       };
 
-      resultTitle.textContent = "검색 결과";
-      resultMeta.textContent = "총 " + list.length + "장 · " + pages.length + "페이지 (5줄 단위)";
       resultArea.style.display = "block";
       emptyArea.style.display = "none";
-    }
-
-    function matchByKeyword(item, query){
-      var nq = norm(query);
-      if(!nq) return true;
-      var ntags = norm((item.tags || []).join(" "));
-      var nbase = norm(item.base || "");
-      var nid = norm(item.studentId || "");
-      return ntags.indexOf(nq) !== -1 || nbase.indexOf(nq) !== -1 || nid.indexOf(nq) !== -1;
     }
 
     function runSearch(query){
@@ -1046,13 +812,8 @@
       var queryText = String(query || "").trim();
 
       var filtered = [];
-
-      if(looksLikeId(queryText)){
-        var id = queryText.toUpperCase();
-        for(var i=0;i<ITEMS.length;i++){
-          if(String(ITEMS[i].studentId||"").toUpperCase() === id) filtered.push(ITEMS[i]);
-        }
-      } else if(norm(queryText)){
+      if(norm(queryText)){
+        // 이름만: 부분 일치 이름 -> 해당 id들 -> 사진 필터
         var ids = findIdsByNamePartial(queryText);
         if(ids.length){
           var set = {};
@@ -1062,8 +823,11 @@
             if(set[String(it.studentId||"").toUpperCase()]) filtered.push(it);
           }
         } else {
+          // 이름 매핑이 없는 파일들도 있을 수 있어 fallback
+          var nq = norm(queryText);
           for(var k=0;k<ITEMS.length;k++){
-            if(matchByKeyword(ITEMS[k], queryText)) filtered.push(ITEMS[k]);
+            var nm = norm(ITEMS[k].studentName || "");
+            if(nm.indexOf(nq) !== -1) filtered.push(ITEMS[k]);
           }
         }
       } else {
@@ -1076,7 +840,7 @@
         return;
       }
 
-      renderResultCarousel(filtered);
+      renderThumbPages(filtered);
 
       try{
         var u = new URL(location.href);
@@ -1093,21 +857,10 @@
       });
     }
     bindSearchBox(q);
-    bindSearchBox(qTop);
 
-    if(btnClear) btnClear.addEventListener("click", function(){ q.value=""; if(qTop) qTop.value=""; q.focus(); runSearch(""); });
-    if(btnSearch) btnSearch.addEventListener("click", function(){ if(qTop) qTop.value = q.value; runSearch(q.value); });
-    if(btnShowAll) btnShowAll.addEventListener("click", function(){ q.value=""; if(qTop) qTop.value=""; runSearch(""); });
-
-    if(btnClearTop) btnClearTop.addEventListener("click", function(){ if(qTop) qTop.value=""; if(q) q.value=""; qTop.focus(); runSearch(""); });
-    if(btnSearchTop) btnSearchTop.addEventListener("click", function(){ if(q) q.value = qTop.value; runSearch(qTop.value); });
-
-    if(btnCopyQueryLink) btnCopyQueryLink.addEventListener("click", function(){
-      try{
-        navigator.clipboard.writeText(location.href).then(function(){ toast("복사 완료 ✅"); })
-        .catch(function(){ toast("복사 실패 😅"); });
-      }catch(e){ toast("복사 실패 😅"); }
-    });
+    if(btnClear) btnClear.addEventListener("click", function(){ q.value=""; q.focus(); runSearch(""); });
+    if(btnSearch) btnSearch.addEventListener("click", function(){ runSearch(q.value); });
+    if(btnShowAll) btnShowAll.addEventListener("click", function(){ q.value=""; runSearch(""); });
 
     var __lastCols = getColumnsForGrid();
     window.addEventListener("resize", function(){
@@ -1120,113 +873,9 @@
       }
     });
 
-    var THUMBS_PER_PAGE = 15;
-    var coverIndex = 0;
-    var thumbPageCount = 1;
-
-    function setCover(idx){
-      if(!THUMB_ITEMS.length) return;
-      coverIndex = (idx + THUMB_ITEMS.length) % THUMB_ITEMS.length;
-      coverImg.src = THUMB_ITEMS[coverIndex].url;
-
-      var tiles = thumbPagesEl ? thumbPagesEl.querySelectorAll(".titem") : [];
-      for(var t=0;t<tiles.length;t++) tiles[t].classList.remove("active");
-
-      var activeTiles = thumbPagesEl ? thumbPagesEl.querySelectorAll('.titem[data-i="'+ coverIndex +'"]') : [];
-      for(var a=0;a<activeTiles.length;a++) activeTiles[a].classList.add("active");
-    }
-
-    function renderThumbPager(){
-      if(!THUMB_ITEMS.length) return;
-      if(thumbCount) thumbCount.textContent = String(THUMB_ITEMS.length);
-
-      var pages = chunk(THUMB_ITEMS, THUMBS_PER_PAGE);
-      thumbPageCount = pages.length;
-
-      thumbPagesEl.innerHTML = "";
-      for(var i=0;i<pages.length;i++){
-        var page = pages[i];
-        var pageEl = document.createElement("div");
-        pageEl.className = "thumbPage";
-
-        var grid = document.createElement("div");
-        grid.className = "thumbGrid";
-
-        for(var k=0;k<page.length;k++){
-          (function(localIdx, it){
-            var globalIndex = (i*THUMBS_PER_PAGE) + localIdx;
-
-            var tile = document.createElement("div");
-            tile.className = "titem";
-            tile.setAttribute("data-i", String(globalIndex));
-            tile.addEventListener("click", function(){ setCover(globalIndex); });
-
-            var img = document.createElement("img");
-            img.loading = "lazy";
-            img.alt = it.base;
-            img.src = it.url;
-
-            tile.appendChild(img);
-            grid.appendChild(tile);
-          })(k, page[k]);
-        }
-
-        pageEl.appendChild(grid);
-        thumbPagesEl.appendChild(pageEl);
-      }
-
-      buildDots(thumbDotsEl, thumbPageCount, function(i){
-        var w = thumbPagesEl.clientWidth || 1;
-        thumbPagesEl.scrollTo({ left: i*w, behavior:"smooth" });
-      });
-
-      function updateThumbPagerUI(){
-        var w = thumbPagesEl.clientWidth || 1;
-        var pi = Math.round(thumbPagesEl.scrollLeft / w);
-        if(pi < 0) pi = 0;
-        if(pi > thumbPageCount-1) pi = thumbPageCount-1;
-        setDotActive(thumbDotsEl, pi);
-        if(thumbMeta) thumbMeta.textContent = (pi+1) + "/" + thumbPageCount;
-      }
-
-      thumbPagesEl.onscroll = updateThumbPagerUI;
-      updateThumbPagerUI();
-
-      setCover(coverIndex);
-    }
-
-    if(btnThumbPrev) btnThumbPrev.addEventListener("click", function(){
-      var w = thumbPagesEl.clientWidth || 1;
-      var pi = Math.round(thumbPagesEl.scrollLeft / w);
-      var target = Math.max(0, pi-1);
-      thumbPagesEl.scrollTo({ left: target*w, behavior:"smooth" });
-    });
-    if(btnThumbNext) btnThumbNext.addEventListener("click", function(){
-      var w = thumbPagesEl.clientWidth || 1;
-      var pi = Math.round(thumbPagesEl.scrollLeft / w);
-      var target = Math.min(thumbPageCount-1, pi+1);
-      thumbPagesEl.scrollTo({ left: target*w, behavior:"smooth" });
-    });
-
-    if(btnCoverPrev) btnCoverPrev.addEventListener("click", function(){ setCover(coverIndex-1); });
-    if(btnCoverNext) btnCoverNext.addEventListener("click", function(){ setCover(coverIndex+1); });
-    if(btnOpenCover) btnOpenCover.addEventListener("click", function(){
-      if(THUMB_ITEMS[coverIndex]) openLightbox(THUMB_ITEMS[coverIndex].url, THUMB_ITEMS[coverIndex].base, "");
-    });
-
-    if(btnShuffleThumbs) btnShuffleThumbs.addEventListener("click", function(){
-      for(var i=THUMB_ITEMS.length-1; i>0; i--){
-        var j = Math.floor(Math.random()*(i+1));
-        var tmp = THUMB_ITEMS[i];
-        THUMB_ITEMS[i] = THUMB_ITEMS[j];
-        THUMB_ITEMS[j] = tmp;
-      }
-      coverIndex = 0;
-      renderThumbPager();
-      toast("썸네일을 섞었습니다 🎲");
-    });
-
-    // 슬라이드쇼
+    // =========================
+    // ✅ 슬라이드쇼
+    // =========================
     var slideIndex = 0;
     var showingA = true;
     var timer = null;
@@ -1237,7 +886,7 @@
       slideIndex = (idx + ITEMS.length) % ITEMS.length;
       var it = ITEMS[slideIndex];
 
-      if(slideTitle) slideTitle.textContent = it.base;
+      if(slideTitle) slideTitle.textContent = it.base || "사진";
       if(slideSub) slideSub.textContent = (slideIndex+1) + "/" + ITEMS.length;
 
       var target = showingA ? imgA : imgB;
@@ -1271,7 +920,9 @@
       if(ITEMS[slideIndex]) openLightbox(ITEMS[slideIndex].url, ITEMS[slideIndex].base, "");
     });
 
-    // 동영상 섹션
+    // =========================
+    // ✅ 동영상
+    // =========================
     function toYoutubeEmbed(url){
       var u = String(url||"").trim();
       if(!u) return "";
@@ -1331,12 +982,11 @@
       grid.appendChild(ch);
     }
 
-    // INIT
+    // =========================
+    // ✅ INIT (표시 문구 없음)
+    // =========================
     (async function init(){
       try{
-        setPill(pillRender, "렌더: 로딩", true);
-        statusMsg.textContent = "GitHub students 폴더에서 사진 목록을 가져오는 중…";
-
         var files = await fetchGitHubAllFiles();
         ITEMS = buildItemsFromFiles(files);
 
@@ -1344,34 +994,29 @@
           return String(a.file).localeCompare(String(b.file), "en");
         });
 
-        THUMB_ITEMS = ITEMS.slice();
-
-        setPill(pillData, "데이터: " + ITEMS.length + "장", ITEMS.length > 0);
-        setPill(pillRender, ITEMS.length ? "렌더: 완료" : "렌더: 없음", ITEMS.length > 0);
-
-        statusMsg.textContent = ITEMS.length
-          ? "정상 동작 중 ✅ (GitHub students 폴더 자동 로드)"
-          : "이미지 파일을 찾지 못했습니다. GH.path 경로를 확인해 주세요.";
-
         if(ITEMS.length){
-          renderThumbPager();
+          // 초기: 전체 썸네일 보여주기
+          runSearch("");
+          // 슬라이드쇼 첫 장
           setSlide(0);
           renderVideos();
+        }else{
+          emptyArea.style.display = "block";
         }
 
+        // URL q 파라미터 지원 (선택)
         try{
           var u = new URL(location.href);
           var qq = u.searchParams.get("q");
           if(qq){
             if(q) q.value = qq;
-            if(qTop) qTop.value = qq;
             runSearch(qq);
           }
         }catch(e){}
       }catch(e){
         console.error(e);
-        setPill(pillRender, "렌더: 에러", false);
-        statusMsg.textContent = "로딩 실패: " + (e && e.message ? e.message : "오류") + " (GH.owner/repo/path 확인)";
+        // 사용자 화면에는 조용히
+        emptyArea.style.display = "block";
       }
     })();
   </script>
