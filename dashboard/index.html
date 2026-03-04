@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>계명태권도 | Dojang Dashboard</title>
+  <title>계명태권도 | LIVE BOARD</title>
 
-  <!-- ✅ 대문에 링크 없이 "주소만" 운영 + 검색 노출 최소화 -->
+  <!-- ✅ 대문 링크 없이 운영 + 검색노출 최소화(숨김 운영) -->
   <meta name="robots" content="noindex,nofollow" />
   <meta name="theme-color" content="#0b0f19" />
 
@@ -43,12 +43,11 @@
       </header>
 
       <main class="content">
-        <!-- 상단: 랭킹 2열 -->
+        <!-- 1) 상단: 랭킹 2열 (문구 숨김) -->
         <section class="grid2">
           <div class="card">
             <div class="hd">
               <div class="title">🏆 랭킹 TOP 10</div>
-              <!-- ✅ 업데이트/설명 문구 숨김(HTML에서 제거) -->
             </div>
             <div class="ticker" id="pointsTicker">
               <div class="list" id="pointsList"></div>
@@ -58,20 +57,19 @@
           <div class="card">
             <div class="hd">
               <div class="title">🥋 단/선배 TOP 10</div>
-              <!-- ✅ 업데이트/설명 문구 숨김(HTML에서 제거) -->
             </div>
+            <!-- ✅ 반드시 beltTicker / beltList (먹통 방지) -->
             <div class="ticker" id="beltTicker">
               <div class="list" id="beltList"></div>
             </div>
           </div>
         </section>
 
-        <!-- 중단: 신규 + 사진 흐름 -->
+        <!-- 2) 중단: 신규 + 사진 흐름 -->
         <section class="mid">
           <div class="card">
             <div class="hd">
               <div class="title">🎉 이번 달 신규 등록</div>
-              <!-- ✅ “관장님이 간단히 수정” 숨김(HTML에서 제거) -->
             </div>
             <div class="ticker">
               <div class="list" id="newList" style="animation:none;"></div>
@@ -81,20 +79,19 @@
           <div class="card marqueeWrap">
             <div class="hd">
               <div class="title">📸 수련생 사진 흐름</div>
-              <!-- ✅ 안내 문구 숨김 -->
             </div>
+            <!-- ✅ 반드시 marquee / photoTrack (먹통 방지) -->
             <div class="marquee" id="marquee">
               <div class="track" id="photoTrack"></div>
             </div>
           </div>
         </section>
 
-        <!-- 하단: 오늘/이번달 + 오늘의 명예의 전당 -->
+        <!-- 3) 하단: 오늘/이번달 + 명예의 전당(운영상태 대체) -->
         <section class="bottom">
           <div class="card note">
             <div class="hd hdFlat">
               <div class="title">📅 오늘 & 이번 달</div>
-              <!-- ✅ “텍스트만 바꾸면 끝” 숨김 -->
             </div>
 
             <div class="kvs">
@@ -125,13 +122,13 @@
             </div>
           </div>
 
-          <!-- ✅ 운영 상태 대신: 오늘의 명예의 전당 -->
           <div class="card note">
             <div class="hd hdFlat">
               <div class="title">👑 오늘의 명예의 전당</div>
               <div class="subTiny">사무실에서 수정 → TV 즉시 반영</div>
             </div>
 
+            <!-- ✅ 반드시 awardsGrid (먹통 방지) -->
             <div class="awards" id="awardsGrid"></div>
 
             <div class="awardHint">
