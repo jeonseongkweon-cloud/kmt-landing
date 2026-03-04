@@ -20,7 +20,7 @@ const CONFIG = {
 const DAILY_AWARDS = [
   { title: "어제의 MVP",      id: "KM003", name: "김민규", tag: "노력 최고!" },
   { title: "어제의 웃음왕",   id: "KM001", name: "김예담", tag: "시간 약속 굿!" },
-  { title: "어제의 도복왕",   id: "KM056", name: "최기영", tag: "도복이 반짝!" },
+  { title: "어제의 도복왕",   id: "KM055", name: "최기영", tag: "도복이 반짝!" },
   { title: "어제의 인사왕",   id: "KM011", name: "김동언", tag: "인사 태도 최고!" },
   { title: "어제의 목소리왕", id: "KM048", name: "이주형", tag: "기합 우렁차다!" },
   { title: "어제의 정리왕",   id: "KM017", name: "김우리", tag: "정리정돈 멋짐!" },
