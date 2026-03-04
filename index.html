@@ -62,6 +62,7 @@
       payPageUrl: "pay/",
       noticePageUrl: "notice/",
       galleryPageUrl: "gallery/",
+      coachPageUrl: "coach/",
 
       logoImage: "https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png",
 
@@ -89,8 +90,7 @@
 
       introPoints: [
         "처음 등록 전, 아이 성향/목표에 맞는 반을 먼저 안내합니다.",
-        "안전·기본기·생활습관(예절/집중)을 함께 지도합니다.",
-        "차량운행은 상담 후 시간 배정(지역/시간에 따라 조정)됩니다."
+        "안전·기본기·생활습관(예절/집중)을 함께 지도합니다."
       ],
 
       trialText: "체험 수업/등록 안내는 카톡 문의로 빠르게 도와드립니다.",
@@ -200,16 +200,28 @@
     .brandText .t1{font-weight:950;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .brandText .t2{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .brandText .t3{font-size:12px;color:rgba(233,238,252,.70);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .ctaRow{display:flex;gap:8px;flex-wrap:wrap}
+
+    /* ✅ heroBar 버튼 정리: 2줄 + 우선순위 5개만 진하게 */
+    .ctaRow{
+      width:min(520px, 100%);
+      display:grid;
+      gap:8px;
+      grid-template-columns: repeat(4, 1fr);
+      align-content:start;
+    }
+    @media (min-width:720px){
+      .ctaRow{ grid-template-columns: repeat(5, 1fr); }
+    }
 
     .btn{
       display:inline-flex;align-items:center;justify-content:center;gap:8px;
-      padding:10px 12px;border-radius:14px;
+      padding:10px 10px;border-radius:14px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
       font-weight:950;font-size:13px;
       cursor:pointer;
-      min-width:92px;
+      min-width:0;
+      white-space:nowrap;
     }
     .btn.primary{
       background: linear-gradient(180deg, rgba(255,138,0,.95), rgba(255,138,0,.75));
@@ -726,16 +738,20 @@
             <div class="t3" id="slogan"></div>
           </div>
         </div>
-        <div class="ctaRow">
-          <a class="btn primary" id="callTop" href="#">📞 전화</a>
-          <a class="btn" id="kakaoTop" href="#" target="_blank" rel="noopener">🟡 카톡</a>
-          <a class="btn" id="bandTop" href="#" target="_blank" rel="noopener">🟢 밴드</a>
 
+        <!-- ✅ 2줄 + 우선순위 5개만 진하게 -->
+        <div class="ctaRow">
+          <!-- 우선순위 5 (Primary) -->
+          <a class="btn primary" id="callTop" href="#">📞 전화</a>
+          <a class="btn primary" id="kakaoTop" href="#" target="_blank" rel="noopener">🟡 카톡</a>
           <a class="btn primary" id="verifyTop" href="verification/">🔎 조회</a>
-          <a class="btn" id="growthTop" href="growth/">⭐ 성장 포인트</a>
-          <a class="btn" id="galleryTop" href="gallery/">🖼️ 갤러리 조회</a>
+          <a class="btn primary" id="growthTop" href="growth/">⭐ 포인트</a>
+          <a class="btn primary" id="galleryTop" href="gallery/">🖼️ 갤러리</a>
+
+          <!-- Secondary (연하게) -->
           <a class="btn" id="noticeTop" href="notice/">📢 공지</a>
           <a class="btn" id="payTop" href="pay/">💳 결제</a>
+          <a class="btn" id="bandTop" href="#" target="_blank" rel="noopener">🟢 밴드</a>
         </div>
       </div>
     </div>
@@ -797,12 +813,13 @@
       <a class="tile" href="plan/"><div class="ico">📘</div><div class="label">수련계획표</div><div class="sub">월간</div></a>
       <a class="tile" href="exam/"><div class="ico">🏅</div><div class="label">승급·승단심사안내</div><div class="sub">절차</div></a>
 
+      <a class="tile" href="coach/"><div class="ico">👤</div><div class="label">지도자 소개</div><div class="sub">관장 프로필</div></a>
+
       <a class="tile" href="verification/"><div class="ico">🔎</div><div class="label">수련생 조회</div><div class="sub">이름으로 확인</div></a>
       <a class="tile" href="growth/"><div class="ico">⭐</div><div class="label">성장 포인트 조회</div><div class="sub">이름으로 확인</div></a>
 
       <a class="tile" href="gallery/"><div class="ico">🖼️</div><div class="label">갤러리&영상</div><div class="sub">분위기</div></a>
       <a class="tile" href="#faq"><div class="ico">❓</div><div class="label">Q&A 모음</div><div class="sub">바로 보기</div></a>
-      <a class="tile" href="#shuttle"><div class="ico">🚌</div><div class="label">차량운행 문의</div><div class="sub">상담 후</div></a>
 
       <a class="tile" href="pay/"><div class="ico">💳</div><div class="label">결제 안내</div><div class="sub">계좌/QR</div></a>
       <a class="tile" href="#contact"><div class="ico">✅</div><div class="label">카톡 문의</div><div class="sub">바로 상담</div></a>
@@ -865,6 +882,7 @@
         <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
           <a class="btn" id="galleryBtnMid" href="gallery/">🖼️ 이름으로 사진 찾기</a>
           <a class="btn" id="growthBtnMid" href="growth/">⭐ 성장 포인트 조회</a>
+          <a class="btn" href="coach/">👤 지도자 소개</a>
         </div>
       </div>
     </section>
@@ -877,20 +895,6 @@
       </div>
       <div class="items">
         <div class="faqList" id="faqList"></div>
-      </div>
-    </section>
-
-    <!-- 차량 -->
-    <section class="panel" id="shuttle">
-      <div class="panelHeader">
-        <b>차량운행 문의</b>
-        <a class="moreBtn" href="#contact">문의</a>
-      </div>
-      <div class="items">
-        <div class="noteBox">
-          차량운행은 <b>상담 후 시간 배정</b>됩니다.<br/>
-          지역/수련시간에 따라 조정될 수 있습니다.
-        </div>
       </div>
     </section>
 
@@ -912,9 +916,17 @@
         <a class="btn" id="noticeBtn" href="notice/">📢 공지사항</a>
         <a class="btn" id="ytBtn" href="#" target="_blank" rel="noopener">▶️ 유튜브 채널</a>
         <a class="btn" id="payBtn" href="pay/">💳 결제 안내</a>
+
+        <a class="btn" href="coach/">👤 지도자 소개</a>
       </div>
 
+      <!-- ✅ #shuttle 패널 삭제 → 문의하기 안으로 한 줄 통합 -->
       <div class="noteBox" style="margin-top:12px;">
+        <b>차량운행 안내</b><br/>
+        차량운행은 <b>상담 후 시간 배정</b>되며, 지역/수련시간에 따라 조정될 수 있습니다.
+      </div>
+
+      <div class="noteBox" style="margin-top:10px;">
         <b>체험/등록 안내</b><br/>
         <span id="trialText"></span>
       </div>
@@ -1040,6 +1052,18 @@
     ["galleryTop","galleryBottom","galleryBtn","galleryBtnMid","galleryMoreBtn"].forEach(id=>{
       const el = $(id);
       if(el) el.href = g;
+    });
+
+    const n = KMT.noticePageUrl || "notice/";
+    ["noticeTop","noticeBtn"].forEach(id=>{
+      const el = $(id);
+      if(el) el.href = n;
+    });
+
+    const p = KMT.payPageUrl || "pay/";
+    ["payTop","payBtn"].forEach(id=>{
+      const el = $(id);
+      if(el) el.href = p;
     });
 
     const ytCh = KMT.youtubeChannelUrl || "https://www.youtube.com/";
@@ -1200,7 +1224,6 @@
       const HIDE_KEY = "kmt_homeadd_hide_until";
       const now = Date.now();
 
-      // 이미 '홈 화면 모드'면(standalone) 배너 숨김
       const isStandalone =
         window.matchMedia('(display-mode: standalone)').matches ||
         window.navigator.standalone === true;
@@ -1212,9 +1235,6 @@
 
       function isIOS(){
         return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      }
-      function isAndroid(){
-        return /Android/.test(navigator.userAgent);
       }
 
       function setTab(which){
@@ -1245,7 +1265,6 @@
 
       howBtn && howBtn.addEventListener("click", openModal);
       hideBtn && hideBtn.addEventListener("click", ()=>{
-        // 14일간 숨김
         localStorage.setItem(HIDE_KEY, String(Date.now() + 14*24*60*60*1000));
         bar && bar.classList.add("homeAddHide");
       });
