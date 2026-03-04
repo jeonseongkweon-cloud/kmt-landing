@@ -20,7 +20,7 @@
           <div class="logo">KM</div>
           <div class="brandText">
             <h1>계명태권도 LIVE BOARD</h1>
-            <p>도장 화면 전용 · 랭킹/행사/메시지 한눈에</p>
+            <p>도장 화면 전용 · 오늘도 한 칸 성장!</p>
           </div>
         </div>
 
@@ -47,8 +47,8 @@
         <section class="grid2">
           <div class="card">
             <div class="hd">
-              <div class="title">🏆 랭킹 TOP 10 <span class="badge">자동</span></div>
-              <div class="sub" id="pointsSub">업데이트: -</div>
+              <div class="title">🏆 랭킹 TOP 10</div>
+              <!-- ✅ 업데이트/설명 문구 숨김(HTML에서 제거) -->
             </div>
             <div class="ticker" id="pointsTicker">
               <div class="list" id="pointsList"></div>
@@ -57,8 +57,8 @@
 
           <div class="card">
             <div class="hd">
-              <div class="title">🥋 단/선배 TOP 10 <span class="badge">자동</span></div>
-              <div class="sub" id="beltSub">업데이트: -</div>
+              <div class="title">🥋 단/선배 TOP 10</div>
+              <!-- ✅ 업데이트/설명 문구 숨김(HTML에서 제거) -->
             </div>
             <div class="ticker" id="beltTicker">
               <div class="list" id="beltList"></div>
@@ -71,7 +71,7 @@
           <div class="card">
             <div class="hd">
               <div class="title">🎉 이번 달 신규 등록</div>
-              <div class="sub">여기는 관장님이 간단히 수정</div>
+              <!-- ✅ “관장님이 간단히 수정” 숨김(HTML에서 제거) -->
             </div>
             <div class="ticker">
               <div class="list" id="newList" style="animation:none;"></div>
@@ -81,7 +81,7 @@
           <div class="card marqueeWrap">
             <div class="hd">
               <div class="title">📸 수련생 사진 흐름</div>
-              <div class="sub">마우스 올리면 정지</div>
+              <!-- ✅ 안내 문구 숨김 -->
             </div>
             <div class="marquee" id="marquee">
               <div class="track" id="photoTrack"></div>
@@ -89,12 +89,12 @@
           </div>
         </section>
 
-        <!-- 하단: 오늘/이번달/메시지 -->
+        <!-- 하단: 오늘/이번달 + 오늘의 명예의 전당 -->
         <section class="bottom">
           <div class="card note">
             <div class="hd hdFlat">
-              <div class="title">📅 오늘 & 이번 달 한눈에</div>
-              <div class="sub">텍스트만 바꾸면 끝</div>
+              <div class="title">📅 오늘 & 이번 달</div>
+              <!-- ✅ “텍스트만 바꾸면 끝” 숨김 -->
             </div>
 
             <div class="kvs">
@@ -125,25 +125,17 @@
             </div>
           </div>
 
+          <!-- ✅ 운영 상태 대신: 오늘의 명예의 전당 -->
           <div class="card note">
             <div class="hd hdFlat">
-              <div class="title">⚙️ 운영 상태</div>
-              <div class="sub">데이터 연결/표시</div>
+              <div class="title">👑 오늘의 명예의 전당</div>
+              <div class="subTiny">사무실에서 수정 → TV 즉시 반영</div>
             </div>
 
-            <div class="kvs oneCol">
-              <div class="kv">
-                <div class="k">데이터 소스</div>
-                <div class="v" id="sourceState">로딩중…</div>
-              </div>
-              <div class="kv">
-                <div class="k">표시 모드</div>
-                <div class="v" id="modeState">TV 공개 모드 (이니셜 표시)</div>
-              </div>
-              <div class="kv">
-                <div class="k">TIP</div>
-                <div class="v">노트북에서 <span class="gold">F11</span> 전체화면 추천<br><small>또는 상단 “전체화면” 버튼</small></div>
-              </div>
+            <div class="awards" id="awardsGrid"></div>
+
+            <div class="awardHint">
+              ※ 수정 위치: <b>dashboard/dashboard.js</b> 안의 <b>DAILY_AWARDS</b>만 바꾸면 끝!
             </div>
           </div>
         </section>
