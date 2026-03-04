@@ -1,433 +1,975 @@
-:root{
-  --bg:#0b0f19;
-  --line:rgba(255,255,255,.10);
-  --text:rgba(255,255,255,.92);
-  --muted:rgba(255,255,255,.70);
-  --gold:#f6d36b;
-  --silver:#cbd5e1;
-  --bronze:#d6a77a;
-  --blue:#60a5fa;
-  --good:#34d399;
-  --warn:#fb7185;
-  --shadow: 0 20px 60px rgba(0,0,0,.45);
-  --r:18px;
-  --r2:26px;
-}
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>계명태권도 LIVE BOARD</title>
+  <meta name="theme-color" content="#0b0f19" />
 
-*{box-sizing:border-box}
-html,body{height:100%}
+  <style>
+    :root{
+      --bg:#0b0f19;
+      --line:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.70);
+      --gold:#f6d36b;
+      --silver:#cbd5e1;
+      --bronze:#d6a77a;
+      --blue:#60a5fa;
+      --good:#34d399;
+      --warn:#fb7185;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --r:18px;
+      --r2:26px;
+    }
 
-body{
-  margin:0;
-  background: radial-gradient(1200px 700px at 20% 20%, rgba(96,165,250,.18), transparent 55%),
-              radial-gradient(1200px 700px at 80% 30%, rgba(246,211,107,.12), transparent 60%),
-              linear-gradient(180deg, #070a12, var(--bg));
-  color:var(--text);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", Arial, sans-serif;
-  overflow:hidden;
-}
+    *{box-sizing:border-box}
+    html,body{height:100%}
 
-.stage{
-  height:100%;
-  width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:14px;
-}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 700px at 20% 20%, rgba(96,165,250,.18), transparent 55%),
+                  radial-gradient(1200px 700px at 80% 30%, rgba(246,211,107,.12), transparent 60%),
+                  linear-gradient(180deg, #070a12, var(--bg));
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", Arial, sans-serif;
+      overflow:hidden; /* ✅ 아래 패치에서 자동으로 덮어씁니다 */
+    }
 
-.frame{
-  width:min(96vw, calc(96vh * (4/3)));
-  height:min(96vh, calc(96vw * (3/4)));
-  border:1px solid var(--line);
-  border-radius: var(--r2);
-  box-shadow: var(--shadow);
-  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-  position:relative;
-  overflow:hidden;
-}
+    .stage{
+      height:100%;
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:14px;
+    }
 
-/* topbar */
-.topbar{
-  height:74px; /* 살짝 줄여서 본문을 더 크게 */
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:12px 18px;
-  border-bottom:1px solid var(--line);
-  background: linear-gradient(180deg, rgba(17,24,39,.9), rgba(15,23,42,.55));
-}
-.brand{display:flex; gap:12px; align-items:center; min-width:0;}
-.logo{
-  width:46px;height:46px;border-radius:14px;
-  border:1px solid rgba(246,211,107,.45);
-  background:
-    radial-gradient(14px 14px at 30% 30%, rgba(246,211,107,.35), transparent 60%),
-    radial-gradient(16px 16px at 70% 60%, rgba(96,165,250,.28), transparent 60%),
-    linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-  display:grid;place-items:center;
-  box-shadow: 0 10px 30px rgba(0,0,0,.35);
-  font-weight:900;
-  color:var(--gold);
-  letter-spacing:.5px;
-}
-.brandText{min-width:0}
-.brand h1{
-  margin:0;
-  font-size:18px;
-  line-height:1.2;
-  letter-spacing:-.2px;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.brand p{
-  margin:2px 0 0;
-  font-size:12px;
-  color:var(--muted);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
+    .frame{
+      width:min(96vw, calc(96vh * (4/3)));
+      height:min(96vh, calc(96vw * (3/4)));
+      border:1px solid var(--line);
+      border-radius: var(--r2);
+      box-shadow: var(--shadow);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      position:relative;
+      overflow:hidden; /* ✅ 아래 패치에서 자동으로 덮어씁니다 */
+    }
 
-.topinfo{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
-.pill{
-  display:flex; gap:8px; align-items:center;
-  padding:8px 10px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background: rgba(0,0,0,.18);
-  font-size:12px;
-  color:var(--muted);
-}
-.pillKey{color:var(--gold); font-weight:1000;}
-.dot{
-  width:8px;height:8px;border-radius:99px;
-  background: var(--good);
-  box-shadow:0 0 0 4px rgba(52,211,153,.12);
-}
-.dot.warn{background:var(--warn); box-shadow:0 0 0 4px rgba(251,113,133,.12);}
+    /* topbar */
+    .topbar{
+      height:74px; /* 살짝 줄여서 본문을 더 크게 */
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 18px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(17,24,39,.9), rgba(15,23,42,.55));
+      gap:10px;
+    }
+    .brand{display:flex; gap:12px; align-items:center; min-width:0;}
+    .logo{
+      width:46px;height:46px;border-radius:14px;
+      border:1px solid rgba(246,211,107,.45);
+      background:
+        radial-gradient(14px 14px at 30% 30%, rgba(246,211,107,.35), transparent 60%),
+        radial-gradient(16px 16px at 70% 60%, rgba(96,165,250,.28), transparent 60%),
+        linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      display:grid;place-items:center;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      font-weight:900;
+      color:var(--gold);
+      letter-spacing:.5px;
+      user-select:none;
+    }
+    .brandText{min-width:0}
+    .brand h1{
+      margin:0;
+      font-size:18px;
+      line-height:1.2;
+      letter-spacing:-.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .brand p{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
 
-.btns{display:flex; gap:8px; align-items:center;}
-.btn{
-  appearance:none;
-  border:1px solid var(--line);
-  background: rgba(0,0,0,.18);
-  color: var(--text);
-  padding:8px 10px;
-  border-radius:12px;
-  font-weight:800;
-  font-size:12px;
-  cursor:pointer;
-  transition:.15s transform ease, .15s background ease;
-  user-select:none;
-}
-.btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07);}
-.btn:active{transform: translateY(0px);}
+    .topinfo{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
+    .pill{
+      display:flex; gap:8px; align-items:center;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .pillKey{color:var(--gold); font-weight:1000;}
+    .dot{
+      width:8px;height:8px;border-radius:99px;
+      background: var(--good);
+      box-shadow:0 0 0 4px rgba(52,211,153,.12);
+    }
+    .dot.warn{background:var(--warn); box-shadow:0 0 0 4px rgba(251,113,133,.12);}
 
-/* layout: 랭킹 영역을 더 크게 (5줄쯤 보이게) */
-.content{
-  height: calc(100% - 74px);
-  padding:14px;
-  display:grid;
-  grid-template-rows: 1.35fr 110px 0.95fr; /* ✅ 상단 랭킹 확장 */
-  gap:12px;
-}
+    .btns{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      padding:8px 10px;
+      border-radius:12px;
+      font-weight:800;
+      font-size:12px;
+      cursor:pointer;
+      transition:.15s transform ease, .15s background ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07);}
+    .btn:active{transform: translateY(0px);}
 
-.grid2{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:12px;
-  min-height:0;
-}
+    /* layout: 랭킹 영역을 더 크게 (5줄쯤 보이게) */
+    .content{
+      height: calc(100% - 74px);
+      padding:14px;
+      display:grid;
+      grid-template-rows: 1.35fr 110px 0.95fr; /* ✅ 상단 랭킹 확장 */
+      gap:12px;
+    }
 
-.card{
-  border:1px solid var(--line);
-  border-radius: var(--r);
-  background: linear-gradient(180deg, rgba(17,24,39,.70), rgba(15,23,42,.40));
-  box-shadow: 0 12px 40px rgba(0,0,0,.28);
-  overflow:hidden;
-  min-height:0;
-  position:relative;
-}
-.hd{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:10px 12px;
-  border-bottom:1px solid var(--line);
-  background: rgba(0,0,0,.12);
-}
-.hdFlat{ margin:-12px -12px 0 -12px; border-radius:0; }
-.title{
-  display:flex; gap:8px; align-items:center;
-  font-weight:1000;
-  letter-spacing:-.2px;
-  font-size:14px;
-}
-.subTiny{font-size:11px; color:var(--muted); font-weight:900;}
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      min-height:0;
+    }
 
-/* ticker */
-.ticker{ height: calc(100% - 44px); overflow:hidden; position:relative; }
-.list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  padding:12px 12px;
-  animation: scrollY var(--speed, 22s) linear infinite;
-}
-.ticker:hover .list{ animation-play-state: paused; }
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      background: linear-gradient(180deg, rgba(17,24,39,.70), rgba(15,23,42,.40));
+      box-shadow: 0 12px 40px rgba(0,0,0,.28);
+      overflow:hidden;
+      min-height:0;
+      position:relative;
+    }
+    .hd{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 12px;
+      border-bottom:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+    }
+    .hdFlat{ margin:-12px -12px 0 -12px; border-radius:0; }
+    .title{
+      display:flex; gap:8px; align-items:center;
+      font-weight:1000;
+      letter-spacing:-.2px;
+      font-size:14px;
+    }
+    .subTiny{font-size:11px; color:var(--muted); font-weight:900;}
 
-@keyframes scrollY{
-  from{ transform: translateY(0); }
-  to{ transform: translateY(calc(-1 * var(--scrollH, 240px))); }
-}
+    /* ticker */
+    .ticker{ height: calc(100% - 44px); overflow:hidden; position:relative; }
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      padding:12px 12px;
+      animation: scrollY var(--speed, 22s) linear infinite;
+    }
+    .ticker:hover .list{ animation-play-state: paused; }
 
-.row{
-  display:grid;
-  grid-template-columns: 40px 1fr auto;
-  gap:10px;
-  align-items:center;
-  padding:12px 12px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.08);
-  background: rgba(0,0,0,.18);
-  position:relative;
-}
-.rank{
-  width:36px;height:36px;border-radius:12px;
-  display:grid;place-items:center;
-  font-weight:1000;
-  color: rgba(255,255,255,.92);
-  background: linear-gradient(145deg, rgba(96,165,250,.22), rgba(246,211,107,.15));
-  border:1px solid rgba(255,255,255,.10);
-}
-.name{
-  min-width:0;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  font-weight:1000;
-  font-size:15px;
-}
-.meta{
-  font-size:12px;
-  color:var(--muted);
-  font-weight:1000;
-  white-space:nowrap;
-}
+    @keyframes scrollY{
+      from{ transform: translateY(0); }
+      to{ transform: translateY(calc(-1 * var(--scrollH, 240px))); }
+    }
 
-/* ✅ TOP3 금/은/동 + 1등 반짝 */
-.row.top1{ border-color: rgba(246,211,107,.40); background: rgba(246,211,107,.10); }
-.row.top2{ border-color: rgba(203,213,225,.28); background: rgba(203,213,225,.08); }
-.row.top3{ border-color: rgba(214,167,122,.28); background: rgba(214,167,122,.08); }
+    .row{
+      display:grid;
+      grid-template-columns: 40px 1fr auto;
+      gap:10px;
+      align-items:center;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+      position:relative;
+    }
+    .rank{
+      width:36px;height:36px;border-radius:12px;
+      display:grid;place-items:center;
+      font-weight:1000;
+      color: rgba(255,255,255,.92);
+      background: linear-gradient(145deg, rgba(96,165,250,.22), rgba(246,211,107,.15));
+      border:1px solid rgba(255,255,255,.10);
+      user-select:none;
+    }
+    .name{
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      font-weight:1000;
+      font-size:15px;
+    }
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:1000;
+      white-space:nowrap;
+    }
 
-.rank.top1{ background: linear-gradient(145deg, rgba(246,211,107,.70), rgba(96,165,250,.12)); color:#111827; }
-.rank.top2{ background: linear-gradient(145deg, rgba(203,213,225,.70), rgba(96,165,250,.10)); color:#0b0f19; }
-.rank.top3{ background: linear-gradient(145deg, rgba(214,167,122,.70), rgba(96,165,250,.08)); color:#0b0f19; }
+    /* ✅ TOP3 금/은/동 + 1등 반짝 */
+    .row.top1{ border-color: rgba(246,211,107,.40); background: rgba(246,211,107,.10); }
+    .row.top2{ border-color: rgba(203,213,225,.28); background: rgba(203,213,225,.08); }
+    .row.top3{ border-color: rgba(214,167,122,.28); background: rgba(214,167,122,.08); }
 
-.row.top1::after{
-  content:"";
-  position:absolute;
-  inset:-2px;
-  background: linear-gradient(120deg, transparent 0%, rgba(246,211,107,.28) 40%, transparent 70%);
-  transform: translateX(-120%);
-  animation: shimmer 2.4s linear infinite;
-  pointer-events:none;
-}
-@keyframes shimmer{ to{ transform: translateX(120%); } }
+    .rank.top1{ background: linear-gradient(145deg, rgba(246,211,107,.70), rgba(96,165,250,.12)); color:#111827; }
+    .rank.top2{ background: linear-gradient(145deg, rgba(203,213,225,.70), rgba(96,165,250,.10)); color:#0b0f19; }
+    .rank.top3{ background: linear-gradient(145deg, rgba(214,167,122,.70), rgba(96,165,250,.08)); color:#0b0f19; }
 
-/* mid area */
-.mid{
-  display:grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap:12px;
-  min-height:0;
-}
+    .row.top1::after{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: linear-gradient(120deg, transparent 0%, rgba(246,211,107,.28) 40%, transparent 70%);
+      transform: translateX(-120%);
+      animation: shimmer 2.4s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes shimmer{ to{ transform: translateX(120%); } }
 
-/* marquee */
-.marqueeWrap{ height:100%; display:flex; flex-direction:column; min-height:0; }
-.marquee{ position:relative; height: calc(100% - 44px); overflow:hidden; }
-.track{
-  position:absolute;
-  top:50%;
-  transform: translateY(-50%);
-  display:flex;
-  gap:12px;
-  align-items:center;
-  animation: scrollX var(--speedX, 28s) linear infinite;
-  will-change: transform;
-}
-.marquee:hover .track{ animation-play-state: paused; }
-@keyframes scrollX{
-  from{ transform: translate(0, -50%); }
-  to{ transform: translate(calc(-1 * var(--scrollW, 1000px)), -50%); }
-}
+    /* mid area */
+    .mid{
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap:12px;
+      min-height:0;
+    }
 
-.avatar{
-  width:78px; height:78px;
-  border-radius:22px;
-  border:1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.18);
-  overflow:hidden;
-  flex:0 0 auto;
-  display:grid;
-  place-items:center;
-  position:relative;
-}
-.avatar img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  object-position: 50% 22%;
-  display:block;
-  filter: saturate(1.05) contrast(1.05);
-}
-.avatar .label{
-  position:absolute;
-  left:8px; right:8px; bottom:8px;
-  font-size:11px;
-  font-weight:1000;
-  padding:6px 8px;
-  border-radius:999px;
-  background: rgba(0,0,0,.45);
-  border:1px solid rgba(255,255,255,.12);
-  color: rgba(255,255,255,.92);
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  text-align:center;
-}
+    /* marquee */
+    .marqueeWrap{ height:100%; display:flex; flex-direction:column; min-height:0; }
+    .marquee{ position:relative; height: calc(100% - 44px); overflow:hidden; }
+    .track{
+      position:absolute;
+      top:50%;
+      transform: translateY(-50%);
+      display:flex;
+      gap:12px;
+      align-items:center;
+      animation: scrollX var(--speedX, 28s) linear infinite;
+      will-change: transform;
+    }
+    .marquee:hover .track{ animation-play-state: paused; }
+    @keyframes scrollX{
+      from{ transform: translate(0, -50%); }
+      to{ transform: translate(calc(-1 * var(--scrollW, 1000px)), -50%); }
+    }
 
-/* bottom */
-.bottom{
-  display:grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap:12px;
-  min-height:0;
-}
-.note{
-  padding:12px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  min-height:0;
-}
-.kvs{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:10px;
-}
-.kv{
-  border:1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.18);
-  border-radius:16px;
-  padding:10px 10px;
-  min-height:72px;
-}
-.kv .k{ font-size:11px; color:var(--muted); font-weight:1000; }
-.kv .v{ margin-top:6px; font-weight:1000; font-size:14px; line-height:1.25; }
-.kv .v small{ font-weight:900; color:var(--muted); font-size:12px; }
+    .avatar{
+      width:78px; height:78px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      overflow:hidden;
+      flex:0 0 auto;
+      display:grid;
+      place-items:center;
+      position:relative;
+    }
+    .avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position: 50% 22%;
+      display:block;
+      filter: saturate(1.05) contrast(1.05);
+    }
+    .avatar .label{
+      position:absolute;
+      left:8px; right:8px; bottom:8px;
+      font-size:11px;
+      font-weight:1000;
+      padding:6px 8px;
+      border-radius:999px;
+      background: rgba(0,0,0,.45);
+      border:1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.92);
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      text-align:center;
+    }
 
-.bigmsg{
-  border:1px solid rgba(246,211,107,.24);
-  background: linear-gradient(180deg, rgba(246,211,107,.10), rgba(0,0,0,.16));
-  border-radius:18px;
-  padding:12px 12px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.bigmsg .t{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
-.bigmsg .t .left{ font-weight:1000; font-size:14px; }
-.bigmsg .t .right{ font-size:11px; color:var(--muted); font-weight:900; white-space:nowrap; }
-.bigmsg .body{
-  font-size:18px;
-  font-weight:1000;
-  line-height:1.25;
-  letter-spacing:-.3px;
-  word-break:keep-all;
-  display:flex;
-  align-items:center;
-}
+    /* bottom */
+    .bottom{
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap:12px;
+      min-height:0;
+    }
+    .note{
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height:0;
+    }
+    .kvs{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .kv{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius:16px;
+      padding:10px 10px;
+      min-height:72px;
+    }
+    .kv .k{ font-size:11px; color:var(--muted); font-weight:1000; }
+    .kv .v{ margin-top:6px; font-weight:1000; font-size:14px; line-height:1.25; }
+    .kv .v small{ font-weight:900; color:var(--muted); font-size:12px; }
 
-.gold{ color: var(--gold); }
+    .bigmsg{
+      border:1px solid rgba(246,211,107,.24);
+      background: linear-gradient(180deg, rgba(246,211,107,.10), rgba(0,0,0,.16));
+      border-radius:18px;
+      padding:12px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .bigmsg .t{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .bigmsg .t .left{ font-weight:1000; font-size:14px; }
+    .bigmsg .t .right{ font-size:11px; color:var(--muted); font-weight:900; white-space:nowrap; }
+    .bigmsg .body{
+      font-size:18px;
+      font-weight:1000;
+      line-height:1.25;
+      letter-spacing:-.3px;
+      word-break:keep-all;
+      display:flex;
+      align-items:center;
+    }
 
-/* ✅ 명예의 전당 */
-.awards{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap:10px;
-  margin-top:6px;
-}
-.awardCard{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  padding:10px;
-  border-radius:16px;
-  border:1px solid rgba(255,255,255,.10);
-  background: rgba(0,0,0,.18);
-}
-.awardPhoto{
-  width:54px;height:54px;
-  border-radius:16px;
-  border:1px solid rgba(255,255,255,.12);
-  overflow:hidden;
-  background: rgba(0,0,0,.22);
-  flex:0 0 auto;
-  display:grid;
-  place-items:center;
-}
-.awardPhoto img{
-  width:100%;height:100%;
-  object-fit:cover;
-  object-position:50% 22%;
-}
-.awardTxt{min-width:0}
-.awardTitle{
-  font-size:12px;
-  color:var(--muted);
-  font-weight:1000;
-}
-.awardName{
-  margin-top:4px;
-  font-size:15px;
-  font-weight:1000;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.awardTag{
-  margin-top:2px;
-  font-size:11px;
-  color:rgba(255,255,255,.72);
-  font-weight:900;
-}
-.awardHint{
-  margin-top:8px;
-  font-size:11px;
-  color:rgba(255,255,255,.55);
-  font-weight:900;
-}
+    .gold{ color: var(--gold); }
 
-.foot{
-  position:absolute;
-  left:14px;
-  right:14px;
-  bottom:10px;
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  pointer-events:none;
-  color: rgba(255,255,255,.55);
-  font-size:11px;
-  font-weight:800;
-  text-shadow: 0 6px 22px rgba(0,0,0,.5);
-}
+    /* ✅ 명예의 전당 */
+    .awards{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:6px;
+    }
+    .awardCard{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:10px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      min-height:78px;
+    }
+    .awardPhoto{
+      width:54px;height:54px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+      background: rgba(0,0,0,.22);
+      flex:0 0 auto;
+      display:grid;
+      place-items:center;
+    }
+    .awardPhoto img{
+      width:100%;height:100%;
+      object-fit:cover;
+      object-position:50% 22%;
+      display:block;
+    }
+    .awardTxt{min-width:0}
+    .awardTitle{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:1000;
+    }
+    .awardName{
+      margin-top:4px;
+      font-size:15px;
+      font-weight:1000;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .awardTag{
+      margin-top:2px;
+      font-size:11px;
+      color:rgba(255,255,255,.72);
+      font-weight:900;
+    }
+    .awardHint{
+      margin-top:8px;
+      font-size:11px;
+      color:rgba(255,255,255,.55);
+      font-weight:900;
+    }
 
-@media (max-width: 820px){
-  .content{grid-template-rows: 1.2fr 108px 1fr;}
-  .avatar{width:68px;height:68px;border-radius:20px;}
-  .bigmsg .body{font-size:16px;}
-}
+    /* ✅ 명예전당 자동 교대(페이드) */
+    .awards.is-rotating{
+      position:relative;
+    }
+    .awards.fade-out{
+      opacity:0;
+      transform: translateY(2px);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    .awards.fade-in{
+      opacity:1;
+      transform: translateY(0);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+
+    .foot{
+      position:absolute;
+      left:14px;
+      right:14px;
+      bottom:10px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      pointer-events:none;
+      color: rgba(255,255,255,.55);
+      font-size:11px;
+      font-weight:800;
+      text-shadow: 0 6px 22px rgba(0,0,0,.5);
+    }
+
+    @media (max-width: 820px){
+      .content{grid-template-rows: 1.2fr 108px 1fr;}
+      .avatar{width:68px;height:68px;border-radius:20px;}
+      .bigmsg .body{font-size:16px;}
+    }
+
+    /* =========================================================
+       ✅✅✅ 추가 패치 (노트북/모바일 잘림 해결 + 얇은 스크롤 + 자동교대)
+       ========================================================= */
+
+    /* 1) 페이지 자체 스크롤 허용 (잘림 해결 핵심) */
+    body{
+      overflow:auto; /* 기존 hidden 덮어쓰기 */
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* 2) 프레임이 작아지면 내용 접근 가능하게 */
+    .frame{
+      overflow:auto; /* 기존 hidden 덮어쓰기 */
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* 3) 카드 내부 레이아웃 안정화 */
+    .card{ display:flex; flex-direction:column; }
+    .ticker, .marquee, .note{ flex:1; min-height:0; }
+
+    /* 4) 명예전당이 잘리는 경우 내부 스크롤도 가능(보험) */
+    .awards{
+      overflow:auto;
+      max-height: 100%;
+      padding-right:6px;
+    }
+
+    /* 5) 아주 작은 높이에서 footer 겹침 방지 */
+    @media (max-height: 760px){
+      .foot{ display:none; }
+    }
+
+    /* 6) 모바일/작은 화면: 2열 → 1열 + 고정 높이 해제 */
+    @media (max-width: 820px){
+      .frame{
+        width:100vw;
+        height:100vh;
+        border-radius:0;
+      }
+      .stage{ padding:0; }
+
+      .content{
+        height:auto;              /* 고정 높이 해제 */
+        grid-template-rows:auto;  /* 고정 3단 해제 */
+      }
+      .grid2, .mid, .bottom{
+        grid-template-columns:1fr; /* 2열 → 1열 */
+      }
+      .topbar{
+        height:auto;
+        flex-wrap:wrap;
+        align-items:flex-start;
+      }
+      .btns{ width:100%; justify-content:flex-start; }
+      .topinfo{ width:100%; justify-content:flex-start; }
+    }
+
+    /* 7) 스크롤 얇게(눈에 덜 띄게) */
+    /* Firefox */
+    *{
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.22) transparent;
+    }
+    /* Chrome/Edge/Safari */
+    *::-webkit-scrollbar{ width:8px; height:8px; }
+    *::-webkit-scrollbar-track{ background: transparent; }
+    *::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,.18);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    *::-webkit-scrollbar-thumb:hover{ background: rgba(255,255,255,.28); }
+
+    /* 8) 명예전당이 "모드"일 때 스크롤바 거의 안 보이게(선택적) */
+    .awards.is-rotating{ overflow:hidden; padding-right:0; }
+  </style>
+</head>
+
+<body>
+  <div class="stage">
+    <div class="frame" id="frame">
+      <!-- TOPBAR -->
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo">KM</div>
+          <div class="brandText">
+            <h1>계명태권도 LIVE BOARD</h1>
+            <p>도장 화면 전용 · 오늘도 한 걸음 성장!</p>
+          </div>
+        </div>
+
+        <div class="topinfo">
+          <div class="pill"><span class="dot" id="liveDot"></span><b class="pillKey">LIVE</b><span id="liveText">연결됨</span></div>
+          <div class="pill"><b class="pillKey">이번달</b> <span id="monthLabel">3월</span></div>
+        </div>
+
+        <div class="btns">
+          <button class="btn" onclick="toggleFull()">전체화면</button>
+          <button class="btn" onclick="location.reload()">새로고침</button>
+        </div>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="content">
+        <!-- TOP: Ranking 2 columns -->
+        <div class="grid2">
+          <section class="card">
+            <div class="hd">
+              <div class="title">🏆 랭킹 TOP 10</div>
+              <div class="subTiny" id="rankHint">자동 롤링</div>
+            </div>
+            <div class="ticker" id="rankTicker">
+              <div class="list" id="rankList"></div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="hd">
+              <div class="title">🥋 단선배 TOP 10</div>
+              <div class="subTiny" id="danHint">자동 롤링</div>
+            </div>
+            <div class="ticker" id="danTicker">
+              <div class="list" id="danList"></div>
+            </div>
+          </section>
+        </div>
+
+        <!-- MID: New + Photo flow -->
+        <div class="mid">
+          <section class="card">
+            <div class="hd">
+              <div class="title">🎉 이번 달 신규 등록</div>
+              <div class="subTiny" id="newHint">환영합니다!</div>
+            </div>
+            <div class="note">
+              <div class="bigmsg">
+                <div class="t">
+                  <div class="left">신규</div>
+                  <div class="right" id="newCount">0명</div>
+                </div>
+                <div class="body" id="newNames">등록된 신규가 없습니다.</div>
+              </div>
+              <div class="awardHint">※ 신규 등록은 자동 반영됩니다.</div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="hd">
+              <div class="title">📸 수련생 사진 흐름</div>
+              <div class="subTiny">자동 롤링</div>
+            </div>
+            <div class="marqueeWrap">
+              <div class="marquee">
+                <div class="track" id="photoTrack"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- BOTTOM: Events + Hall of fame -->
+        <div class="bottom">
+          <section class="card">
+            <div class="hd">
+              <div class="title">🗓️ 오늘 & 이번 달</div>
+              <div class="subTiny" id="todayTime">--:--</div>
+            </div>
+            <div class="note">
+              <div class="kvs">
+                <div class="kv">
+                  <div class="k">오늘 주요 수련</div>
+                  <div class="v" id="todayMain">기본기 · 발차기 집중</div>
+                </div>
+                <div class="kv">
+                  <div class="k">오늘의 미션</div>
+                  <div class="v" id="todayMission">인사 크게 하기 <small>· 약속 실천</small></div>
+                </div>
+                <div class="kv">
+                  <div class="k">이번 달 행사</div>
+                  <div class="v" id="monthEvent">토요일 심사 연습 <small>· 명예의 날</small></div>
+                </div>
+                <div class="kv">
+                  <div class="k">D-day</div>
+                  <div class="v" id="ddayText">심사까지 D-14 <small>· 열매맺기</small></div>
+                </div>
+              </div>
+              <div class="bigmsg">
+                <div class="t">
+                  <div class="left">오늘 한마디</div>
+                  <div class="right">사무실에서 수정 → TV 즉시 반영</div>
+                </div>
+                <div class="body">오늘도 <span class="gold">한 번 더</span> 해보자!</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="hd">
+              <div class="title">🏅 오늘의 명예 전당</div>
+              <div class="subTiny" id="hofMode">8명 교대 표시</div>
+            </div>
+            <div class="note">
+              <!-- ✅ 여기: JS가 자동으로 4명씩 교대로 렌더링 -->
+              <div class="awards" id="awardsGrid"></div>
+              <div class="awardHint" id="hofHint">※ 작은 화면에서는 4명씩 자동으로 교대 표시됩니다.</div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="foot">
+        <div>© Keimyung Taekwondo · Dojang Dashboard</div>
+        <div id="clockFoot">--:--</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ================================
+      ✅ 샘플 데이터 (여기만 바꾸면 됩니다)
+      ================================ */
+    const DATA = {
+      monthLabel: "3월",
+      rankingTop: [
+        {name:"하석진", pts:590},
+        {name:"김승찬", pts:580},
+        {name:"황찬규", pts:560},
+        {name:"오레온", pts:560},
+        {name:"김민구", pts:550},
+        {name:"이서안", pts:540},
+        {name:"박지민", pts:530},
+        {name:"김예담", pts:520},
+        {name:"정다움", pts:510},
+        {name:"오윤후", pts:500},
+      ],
+      danTop: [
+        {name:"김민구", dan:"5단"},
+        {name:"김예담", dan:"5단"},
+        {name:"박지민", dan:"4단"},
+        {name:"정다움", dan:"4단"},
+        {name:"이서안", dan:"3단"},
+        {name:"하석진", dan:"3단"},
+        {name:"김승찬", dan:"2단"},
+        {name:"황찬규", dan:"2단"},
+        {name:"오레온", dan:"1단"},
+        {name:"오윤후", dan:"1단"},
+      ],
+      newStudents: ["이서안", "김강민", "박지민"],
+      // 사진 흐름 (샘플 이미지. 실제는 본인 링크로 교체)
+      photoFlow: [
+        {name:"김민구", img:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=60"},
+        {name:"김예담", img:"https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?auto=format&fit=crop&w=200&q=60"},
+        {name:"박지민", img:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=60"},
+        {name:"이서안", img:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=60"},
+        {name:"정다움", img:"https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?auto=format&fit=crop&w=200&q=60"},
+        {name:"오윤후", img:"https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=200&q=60"},
+        {name:"하석진", img:"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=60"},
+        {name:"김승찬", img:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=60"},
+      ],
+      // ✅ 명예의 전당 8명 (4명씩 교대 표시)
+      hallOfFame: [
+        {title:"오늘의 MVP", name:"김민구", tag:"노력 최고", img:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=60"},
+        {title:"오늘의 웃음왕", name:"김예담", tag:"분위기 메이커", img:"https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?auto=format&fit=crop&w=200&q=60"},
+        {title:"오늘의 단정왕", name:"최기연", tag:"정리정돈 만렙", img:"https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=200&q=60"},
+        {title:"오늘의 인사왕", name:"김동태", tag:"인사 태도 최고", img:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=60"},
+        {title:"오늘의 집중왕", name:"이서안", tag:"눈빛이 레이저", img:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=60"},
+        {title:"오늘의 성실왕", name:"정다움", tag:"꾸준함의 승리", img:"https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?auto=format&fit=crop&w=200&q=60"},
+        {title:"오늘의 도전왕", name:"황찬규", tag:"한 번 더!", img:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=60"},
+        {title:"오늘의 배려왕", name:"오윤후", tag:"친구 챙김 최고", img:"https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?auto=format&fit=crop&w=200&q=60"},
+      ]
+    };
+
+    /* ================================
+      ✅ 유틸
+      ================================ */
+    function pad2(n){ return String(n).padStart(2,"0"); }
+    function nowTime(){
+      const d = new Date();
+      return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    }
+    function setLive(ok){
+      const dot = document.getElementById("liveDot");
+      const text = document.getElementById("liveText");
+      if(ok){
+        dot.classList.remove("warn");
+        text.textContent = "연결됨";
+      }else{
+        dot.classList.add("warn");
+        text.textContent = "오프라인";
+      }
+    }
+    function toggleFull(){
+      const el = document.documentElement;
+      if(!document.fullscreenElement){
+        el.requestFullscreen?.();
+      }else{
+        document.exitFullscreen?.();
+      }
+    }
+
+    /* ================================
+      ✅ 랭킹 렌더 + ticker 높이 자동 계산
+      ================================ */
+    function renderTicker(listEl, items, mode){
+      // mode: "pts" or "dan"
+      listEl.innerHTML = "";
+      items.forEach((it, i)=>{
+        const row = document.createElement("div");
+        row.className = "row " + (i===0?"top1":i===1?"top2":i===2?"top3":"");
+        row.innerHTML = `
+          <div class="rank ${i===0?"top1":i===1?"top2":i===2?"top3":""}">${i+1}</div>
+          <div class="name">${it.name}</div>
+          <div class="meta">${mode==="pts" ? `${it.pts} P` : it.dan}</div>
+        `;
+        listEl.appendChild(row);
+      });
+
+      // ticker 무한 스크롤: "복제"해서 이어붙이기
+      const clone = listEl.cloneNode(true);
+      clone.classList.remove("list");
+      clone.classList.add("list");
+      listEl.parentElement.appendChild(clone);
+
+      // 스크롤 길이 계산
+      requestAnimationFrame(()=>{
+        const h = listEl.scrollHeight;
+        listEl.parentElement.style.setProperty("--scrollH", h + "px");
+        // 속도: 항목 많을수록 조금 길게
+        const sec = Math.max(18, Math.min(30, items.length * 2.2));
+        listEl.parentElement.style.setProperty("--speed", sec + "s");
+      });
+    }
+
+    /* ================================
+      ✅ 사진 흐름 (가로 마퀴) 길이 자동 계산
+      ================================ */
+    function renderPhotoFlow(trackEl, items){
+      trackEl.innerHTML = "";
+      const makeAvatar = (it)=>{
+        const a = document.createElement("div");
+        a.className = "avatar";
+        a.innerHTML = `
+          <img alt="${it.name}" src="${it.img}" />
+          <div class="label">${it.name}</div>
+        `;
+        return a;
+      };
+
+      items.forEach(it=>trackEl.appendChild(makeAvatar(it)));
+      // 복제해서 끊김 없게
+      items.forEach(it=>trackEl.appendChild(makeAvatar(it)));
+
+      requestAnimationFrame(()=>{
+        const w = trackEl.scrollWidth / 2; // 실제 1세트 길이
+        trackEl.style.setProperty("--scrollW", w + "px");
+        // 속도: 길이에 비례해서 적당히
+        const sec = Math.max(18, Math.min(40, w / 60));
+        trackEl.style.setProperty("--speedX", sec + "s");
+      });
+    }
+
+    /* ================================
+      ✅ 명예의 전당: 8명 → 4명씩 자동 교대 (스크롤 없는 방식)
+      - 작은 화면/노트북 높이에서 자동으로 '교대 모드' 적용
+      ================================ */
+    function renderAwardsGrid(gridEl, items, startIndex, count){
+      const slice = [];
+      for(let i=0;i<count;i++){
+        slice.push(items[(startIndex + i) % items.length]);
+      }
+      gridEl.innerHTML = slice.map(it=>`
+        <div class="awardCard">
+          <div class="awardPhoto"><img alt="${it.name}" src="${it.img}"></div>
+          <div class="awardTxt">
+            <div class="awardTitle">${it.title}</div>
+            <div class="awardName">${it.name}</div>
+            <div class="awardTag">${it.tag}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function shouldRotateAwards(){
+      // ✅ 노트북/작은 높이/모바일이면 자동 교대 모드
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      return (w <= 1200) || (h <= 820);
+    }
+
+    function startAwardsRotation(){
+      const grid = document.getElementById("awardsGrid");
+      const hint = document.getElementById("hofHint");
+      const mode = document.getElementById("hofMode");
+
+      const items = DATA.hallOfFame.slice();
+      if(items.length <= 4){
+        grid.classList.remove("is-rotating");
+        renderAwardsGrid(grid, items, 0, Math.min(4, items.length));
+        hint.textContent = "※ 명예 전당이 표시됩니다.";
+        mode.textContent = `${items.length}명 표시`;
+        return { stop(){}, refresh(){} };
+      }
+
+      let idx = 0;
+      let timer = null;
+
+      function apply(modeRotate){
+        if(modeRotate){
+          grid.classList.add("is-rotating");
+          mode.textContent = "8명 교대 표시";
+          hint.textContent = "※ 작은 화면에서는 4명씩 자동으로 교대 표시됩니다.";
+          // 첫 렌더
+          renderAwardsGrid(grid, items, idx, 4);
+          // 주기 교대
+          clearInterval(timer);
+          timer = setInterval(()=>{
+            grid.classList.remove("fade-in");
+            grid.classList.add("fade-out");
+            setTimeout(()=>{
+              idx = (idx + 4) % items.length;
+              renderAwardsGrid(grid, items, idx, 4);
+              grid.classList.remove("fade-out");
+              grid.classList.add("fade-in");
+            }, 260);
+          }, 6000);
+          // 초기 페이드 상태
+          grid.classList.add("fade-in");
+        }else{
+          // 큰 화면: 8명 그대로 보여주기(스크롤 없이)
+          clearInterval(timer);
+          timer = null;
+          grid.classList.remove("is-rotating","fade-out","fade-in");
+          mode.textContent = "8명 전체 표시";
+          hint.textContent = "※ 큰 화면에서는 8명이 한 번에 표시됩니다.";
+          grid.innerHTML = items.map(it=>`
+            <div class="awardCard">
+              <div class="awardPhoto"><img alt="${it.name}" src="${it.img}"></div>
+              <div class="awardTxt">
+                <div class="awardTitle">${it.title}</div>
+                <div class="awardName">${it.name}</div>
+                <div class="awardTag">${it.tag}</div>
+              </div>
+            </div>
+          `).join("");
+        }
+      }
+
+      function refresh(){
+        apply(shouldRotateAwards());
+      }
+
+      refresh();
+      window.addEventListener("resize", refresh, {passive:true});
+
+      return {
+        stop(){
+          clearInterval(timer);
+          timer = null;
+          window.removeEventListener("resize", refresh);
+        },
+        refresh
+      };
+    }
+
+    /* ================================
+      ✅ 신규 표시
+      ================================ */
+    function renderNew(){
+      const names = DATA.newStudents || [];
+      document.getElementById("newCount").textContent = `${names.length}명`;
+      document.getElementById("newNames").textContent =
+        names.length ? names.join(", ") + " 환영합니다!" : "등록된 신규가 없습니다.";
+    }
+
+    /* ================================
+      ✅ 시계
+      ================================ */
+    function startClock(){
+      const el1 = document.getElementById("todayTime");
+      const el2 = document.getElementById("clockFoot");
+      const tick = ()=>{
+        const t = nowTime();
+        el1.textContent = t;
+        el2.textContent = t;
+      };
+      tick();
+      setInterval(tick, 1000 * 15);
+    }
+
+    /* ================================
+      ✅ 시작
+      ================================ */
+    document.getElementById("monthLabel").textContent = DATA.monthLabel;
+    setLive(true);
+    startClock();
+
+    // Ranking tickers
+    renderTicker(document.getElementById("rankList"), DATA.rankingTop, "pts");
+    renderTicker(document.getElementById("danList"), DATA.danTop, "dan");
+
+    // Photo flow
+    renderPhotoFlow(document.getElementById("photoTrack"), DATA.photoFlow);
+
+    // New
+    renderNew();
+
+    // Hall of fame rotation
+    startAwardsRotation();
+  </script>
+</body>
+</html>
