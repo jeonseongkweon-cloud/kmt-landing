@@ -18,14 +18,14 @@ const CONFIG = {
 };
 
 const DAILY_AWARDS = [
-  { title: "오늘의 MVP",      id: "KM001", name: "김예담", tag: "노력 최고!" },
-  { title: "오늘의 출석왕",   id: "KM002", name: "이서안", tag: "시간 약속 굿!" },
-  { title: "오늘의 도복왕",   id: "KM003", name: "김강민", tag: "도복이 반짝!" },
-  { title: "오늘의 인사왕",   id: "KM004", name: "박민규", tag: "인사 태도 최고!" },
-  { title: "오늘의 목소리왕", id: "KM005", name: "오윤후", tag: "기합 우렁차다!" },
-  { title: "오늘의 정리왕",   id: "KM006", name: "윤호은", tag: "정리정돈 멋짐!" },
-  { title: "오늘의 배려왕",   id: "KM007", name: "정우빈", tag: "친구 돕기 최고!" },
-  { title: "오늘의 집중왕",   id: "KM008", name: "최서준", tag: "눈빛이 다르다!" },
+  { title: "어제의 MVP",      id: "KM003", name: "김민규", tag: "노력 최고!" },
+  { title: "어제의 웃음왕",   id: "KM001", name: "김예담", tag: "시간 약속 굿!" },
+  { title: "어제의 도복왕",   id: "KM044", name: "이서안", tag: "도복이 반짝!" },
+  { title: "어제의 인사왕",   id: "KM011", name: "김동언", tag: "인사 태도 최고!" },
+  { title: "어제의 목소리왕", id: "KM048", name: "이주형", tag: "기합 우렁차다!" },
+  { title: "어제의 정리왕",   id: "KM017", name: "김우리", tag: "정리정돈 멋짐!" },
+  { title: "어제의 배려왕",   id: "KM016", name: "김시율", tag: "친구 돕기 최고!" },
+  { title: "어제의 집중왕",   id: "KM057", name: "하석진", tag: "눈빛이 다르다!" },
 ];
 
 const $ = (id) => document.getElementById(id);
