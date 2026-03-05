@@ -12,8 +12,6 @@
       --text:rgba(255,255,255,.92);
       --muted:rgba(255,255,255,.70);
       --gold:#f6d36b;
-      --silver:#cbd5e1;
-      --bronze:#d6a77a;
       --blue:#60a5fa;
       --good:#34d399;
       --warn:#fb7185;
@@ -21,7 +19,6 @@
       --r:18px;
       --r2:26px;
     }
-
     *{box-sizing:border-box}
     html,body{height:100%}
     :root{ color-scheme: dark; }
@@ -55,10 +52,9 @@
       box-shadow: var(--shadow);
       background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
       position:relative;
-      overflow:hidden; /* ✅ 내부 잘림/복제 노출 방지 */
+      overflow:hidden;
     }
 
-    /* topbar */
     .topbar{
       height:74px;
       display:flex;
@@ -139,15 +135,12 @@
     .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07);}
     .btn:active{transform: translateY(0px);}
 
-    /* ✅ 핵심 수정: 가운데 줄(신규등록/사진흐름) 높이 고정 110px → 자동(minmax) */
+    /* ✅ 가운데 줄 자동 확장(잘림 방지) */
     .content{
       height: calc(100% - 74px);
       padding:14px;
       display:grid;
-      grid-template-rows:
-        1.35fr
-        minmax(150px, .55fr)
-        0.95fr;
+      grid-template-rows: 1.35fr minmax(150px, .55fr) 0.95fr;
       gap:12px;
       min-height:0;
     }
@@ -187,13 +180,8 @@
     }
     .subTiny{font-size:11px; color:var(--muted); font-weight:900;}
 
-    /* ticker */
-    .ticker{
-      height: calc(100% - 44px);
-      overflow:hidden;
-      position:relative;
-      min-height:0;
-    }
+    /* ✅ ticker */
+    .ticker{ height: calc(100% - 44px); overflow:hidden; position:relative; min-height:0; }
     .list{
       display:flex;
       flex-direction:column;
@@ -203,18 +191,18 @@
       animation: scrollY var(--speed, 20s) linear infinite;
     }
     .ticker:hover .list{ animation-play-state: paused; }
-
     @keyframes scrollY{
       from{ transform: translateY(0); }
       to{ transform: translateY(calc(-1 * var(--scrollH, 300px))); }
     }
 
+    /* ✅ 랭킹 row: 사진 포함 */
     .row{
       display:grid;
-      grid-template-columns: 40px 1fr auto;
+      grid-template-columns: 40px 40px 1fr auto; /* rank + photo + name + meta */
       gap:10px;
       align-items:center;
-      padding:12px 12px;
+      padding:10px 12px;
       border-radius:14px;
       border:1px solid rgba(255,255,255,.08);
       background: rgba(0,0,0,.18);
@@ -227,6 +215,22 @@
       color: rgba(255,255,255,.92);
       background: linear-gradient(145deg, rgba(96,165,250,.22), rgba(246,211,107,.15));
       border:1px solid rgba(255,255,255,.10);
+    }
+    .miniPhoto{
+      width:38px;height:38px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+      background: rgba(0,0,0,.18);
+      display:grid;place-items:center;
+      flex:0 0 auto;
+      position:relative;
+    }
+    .miniPhoto img{ width:100%; height:100%; object-fit:cover; object-position:50% 22%; display:block; }
+    .phFallback{
+      font-weight:1000;
+      font-size:12px;
+      color:rgba(255,255,255,.85);
+      letter-spacing:-.2px;
     }
     .name{
       min-width:0;
@@ -244,8 +248,8 @@
     }
 
     .row.top1{ border-color: rgba(246,211,107,.40); background: rgba(246,211,107,.10); }
-    .row.top2{ border-color: rgba(203,213,225,.28); background: rgba(203,213,225,.08); }
-    .row.top3{ border-color: rgba(214,167,122,.28); background: rgba(214,167,122,.08); }
+    .row.top2{ border-color: rgba(255,255,255,.20); background: rgba(255,255,255,.06); }
+    .row.top3{ border-color: rgba(246,211,107,.16); background: rgba(246,211,107,.06); }
     .rank.top1{ background: linear-gradient(145deg, rgba(246,211,107,.70), rgba(96,165,250,.12)); color:#111827; }
     .rank.top2{ background: linear-gradient(145deg, rgba(203,213,225,.70), rgba(96,165,250,.10)); color:#0b0f19; }
     .rank.top3{ background: linear-gradient(145deg, rgba(214,167,122,.70), rgba(96,165,250,.08)); color:#0b0f19; }
@@ -257,11 +261,43 @@
       gap:12px;
       min-height:0;
     }
-    /* ✅ mid 두 카드가 높이 꽉 채우도록 */
     .mid > .card{ height:100%; min-height:150px; }
-    .mid .note{ flex:1; min-height:0; }
 
-    /* marquee */
+    .note{
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height:0;
+      flex:1;
+    }
+
+    .bigmsg{
+      border:1px solid rgba(246,211,107,.24);
+      background: linear-gradient(180deg, rgba(246,211,107,.10), rgba(0,0,0,.16));
+      border-radius:18px;
+      padding:12px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-height:86px;
+    }
+    .bigmsg .t{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .bigmsg .t .left{ font-weight:1000; font-size:14px; }
+    .bigmsg .t .right{ display:none; } /* ✅ 숨김 */
+    .bigmsg .body{
+      font-size:18px;
+      font-weight:1000;
+      line-height:1.25;
+      letter-spacing:-.3px;
+      word-break:keep-all;
+      display:flex;
+      align-items:center;
+      color:var(--text);
+    }
+    .gold{ color: var(--gold); }
+
+    /* ✅ 사진 흐름 */
     .marqueeWrap{
       height:100%;
       display:flex;
@@ -271,8 +307,8 @@
     }
     .marquee{
       position:relative;
-      flex:1;              /* ✅ 고정높이 대신 남는 공간 다 사용 */
-      min-height:86px;     /* ✅ 너무 작아져서 잘리는 것 방지 */
+      flex:1;
+      min-height:92px;
       overflow:hidden;
       border:1px solid rgba(255,255,255,.08);
       border-radius:16px;
@@ -294,9 +330,8 @@
       from{ transform: translate(0, -50%); }
       to{ transform: translate(calc(-1 * var(--scrollW, 900px)), -50%); }
     }
-
     .avatar{
-      width:74px; height:74px;      /* ✅ 약간 줄여서 안전하게 */
+      width:72px; height:72px;
       border-radius:22px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.18);
@@ -338,15 +373,6 @@
       min-height:0;
     }
 
-    .note{
-      padding:12px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      min-height:0;
-      flex:1;
-    }
-
     .kvs{
       display:grid;
       grid-template-columns: 1fr 1fr;
@@ -363,32 +389,6 @@
     .kv .v{ margin-top:6px; font-weight:1000; font-size:14px; line-height:1.25; color:var(--text); }
     .kv .v small{ font-weight:900; color:var(--muted); font-size:12px; }
 
-    .bigmsg{
-      border:1px solid rgba(246,211,107,.24);
-      background: linear-gradient(180deg, rgba(246,211,107,.10), rgba(0,0,0,.16));
-      border-radius:18px;
-      padding:12px 12px;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      min-height:86px;
-    }
-    .bigmsg .t{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
-    .bigmsg .t .left{ font-weight:1000; font-size:14px; }
-    .bigmsg .t .right{ display:none; }
-    .bigmsg .body{
-      font-size:18px;
-      font-weight:1000;
-      line-height:1.25;
-      letter-spacing:-.3px;
-      word-break:keep-all;
-      display:flex;
-      align-items:center;
-      color:var(--text);
-    }
-    .gold{ color: var(--gold); }
-
-    /* 명예의 전당 */
     .awards{
       display:grid;
       grid-template-columns: 1fr 1fr;
@@ -434,27 +434,8 @@
     }
     .awardTag{ margin-top:2px; font-size:11px; color:rgba(255,255,255,.72); font-weight:900; }
 
-    .awards.fade-out{
-      opacity:0;
-      transform: translateY(2px);
-      transition: opacity .25s ease, transform .25s ease;
-    }
-    .awards.fade-in{
-      opacity:1;
-      transform: translateY(0);
-      transition: opacity .25s ease, transform .25s ease;
-    }
-
-    /* 얇은 스크롤바 */
-    *{ scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.22) transparent; }
-    *::-webkit-scrollbar{ width:8px; height:8px; }
-    *::-webkit-scrollbar-track{ background: transparent; }
-    *::-webkit-scrollbar-thumb{
-      background: rgba(255,255,255,.18);
-      border-radius: 999px;
-      border: 2px solid transparent;
-      background-clip: padding-box;
-    }
+    .awards.fade-out{ opacity:0; transform: translateY(2px); transition: opacity .25s ease, transform .25s ease; }
+    .awards.fade-in{ opacity:1; transform: translateY(0); transition: opacity .25s ease, transform .25s ease; }
 
     .foot{ display:none; }
 
@@ -467,19 +448,12 @@
         overflow:auto;
         -webkit-overflow-scrolling: touch;
       }
-      .content{
-        height:auto;
-        grid-template-rows:auto;
-      }
+      .content{ height:auto; grid-template-rows:auto; }
       .grid2, .mid, .bottom{ grid-template-columns: 1fr; }
       .topbar{ height:auto; flex-wrap:wrap; align-items:flex-start; }
       .btns, .topinfo{ width:100%; justify-content:flex-start; }
-      .avatar{ width:68px; height:68px; }
+      .avatar{ width:66px; height:66px; }
       .marquee{ min-height:92px; }
-    }
-
-    @media (max-height: 760px){
-      .frame{ overflow:auto; }
     }
   </style>
 </head>
@@ -492,13 +466,13 @@
           <div class="logo">KM</div>
           <div class="brandText">
             <h1>계명태권도 LIVE BOARD</h1>
-            <p>도장 화면 전용 · 오늘도 한 걸음 성장!</p>
+            <p>구글시트 연동 · 사진/랭킹 자동 반영</p>
           </div>
         </div>
 
         <div class="topinfo">
-          <div class="pill"><span class="dot" id="liveDot"></span><b class="pillKey">LIVE</b><span id="liveText">연결됨</span></div>
-          <div class="pill"><b class="pillKey">이번달</b> <span id="monthLabel">3월</span></div>
+          <div class="pill"><span class="dot" id="liveDot"></span><b class="pillKey">LIVE</b><span id="liveText">로딩중</span></div>
+          <div class="pill"><b class="pillKey">이번달</b> <span id="monthLabel">-</span></div>
         </div>
 
         <div class="btns">
@@ -511,20 +485,20 @@
         <div class="grid2">
           <section class="card">
             <div class="hd">
-              <div class="title">🏆 랭킹 TOP 10</div>
-              <div class="subTiny">자동 롤링</div>
+              <div class="title">🏆 랭킹 TOP 10 (사진 포함)</div>
+              <div class="subTiny" id="rankHint">자동 롤링</div>
             </div>
-            <div class="ticker" id="rankTicker">
+            <div class="ticker">
               <div class="list" id="rankList"></div>
             </div>
           </section>
 
           <section class="card">
             <div class="hd">
-              <div class="title">🥋 단선배 TOP 10</div>
+              <div class="title">🥋 단/급 TOP 10</div>
               <div class="subTiny">자동 롤링</div>
             </div>
-            <div class="ticker" id="danTicker">
+            <div class="ticker">
               <div class="list" id="danList"></div>
             </div>
           </section>
@@ -534,7 +508,7 @@
           <section class="card">
             <div class="hd">
               <div class="title">🎉 이번 달 신규 등록</div>
-              <div class="subTiny">환영합니다!</div>
+              <div class="subTiny">샘플(원하면 시트 연동 가능)</div>
             </div>
             <div class="note">
               <div class="bigmsg">
@@ -549,8 +523,8 @@
 
           <section class="card">
             <div class="hd">
-              <div class="title">📸 수련생 사진 흐름</div>
-              <div class="subTiny">자동 롤링</div>
+              <div class="title">📸 수련생 사진 흐름 (시트의 포토링크)</div>
+              <div class="subTiny" id="photoHint">자동 롤링</div>
             </div>
             <div class="marqueeWrap">
               <div class="marquee">
@@ -570,19 +544,19 @@
               <div class="kvs">
                 <div class="kv">
                   <div class="k">오늘 주요 수련</div>
-                  <div class="v" id="todayMain">기본기 · 발차기 집중</div>
+                  <div class="v">기본기 · 발차기 집중</div>
                 </div>
                 <div class="kv">
                   <div class="k">오늘의 미션</div>
-                  <div class="v" id="todayMission">인사 크게 하기 <small>· 약속 실천</small></div>
+                  <div class="v">인사 크게 하기 <small>· 약속 실천</small></div>
                 </div>
                 <div class="kv">
                   <div class="k">이번 달 행사</div>
-                  <div class="v" id="monthEvent">토요일 심사 연습 <small>· 명예의 날</small></div>
+                  <div class="v">토요일 심사 연습 <small>· 명예의 날</small></div>
                 </div>
                 <div class="kv">
                   <div class="k">D-day</div>
-                  <div class="v" id="ddayText">심사까지 D-14 <small>· 열매맺기</small></div>
+                  <div class="v">심사까지 D-14 <small>· 열매맺기</small></div>
                 </div>
               </div>
 
@@ -599,7 +573,7 @@
           <section class="card">
             <div class="hd">
               <div class="title">🏅 오늘의 명예 전당</div>
-              <div class="subTiny" id="hofMode">자동 교대</div>
+              <div class="subTiny">사진은 시트에서 자동 매칭</div>
             </div>
             <div class="note">
               <div class="awards fade-in" id="awardsGrid"></div>
@@ -608,73 +582,36 @@
         </div>
       </div>
 
-      <div class="foot" id="debugFoot">숨김</div>
+      <div class="foot">숨김</div>
     </div>
   </div>
 
   <script>
-    const DATA = {
-      monthLabel: "3월",
+    /* ✅ 관장님 CSV 주소 */
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=0&single=true&output=csv";
 
-      rankingTop: [
-        {name:"김민규", pts:600},
-        {name:"하석진", pts:590},
-        {name:"김성찬", pts:580},
-        {name:"황찬규", pts:580},
-        {name:"오레온", pts:560},
-        {name:"김예성", pts:550},
-        {name:"이윤재", pts:530},
-        {name:"김나라", pts:510},
-        {name:"김우리", pts:510},
-        {name:"김예담", pts:500},
-      ],
-
-      danTop: [
-        {name:"김민규", dan:"6단"},
-        {name:"김성찬", dan:"6단"},
-        {name:"박다현", dan:"5단"},
-        {name:"윤겸", dan:"5단"},
-        {name:"박동훈", dan:"4단"},
-        {name:"박정민", dan:"4단"},
-        {name:"전하루", dan:"4단"},
-        {name:"김주원", dan:"4단"},
-        {name:"하석진", dan:"3단"},
-        {name:"이윤재", dan:"3단"},
-      ],
-
-      newStudents: ["홍길동"],
-
-      photoFlow: [
-        {name:"김민규", img:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=60"},
-        {name:"김예담", img:"https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?auto=format&fit=crop&w=200&q=60"},
-        {name:"박정민", img:"https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=200&q=60"},
-        {name:"하석진", img:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=60"},
-        {name:"김주원", img:"https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?auto=format&fit=crop&w=200&q=60"},
-        {name:"전하루", img:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=60"},
-      ],
-
-      hallOfFame: [
-        {title:"어제의 MVP", name:"김민규", tag:"노력 최고", img:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=60"},
-        {title:"어제의 웃음왕", name:"김예담", tag:"시간 약속 굿!", img:"https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?auto=format&fit=crop&w=200&q=60"},
-        {title:"어제의 도전왕", name:"최기연", tag:"도복이 반짝!", img:"https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=200&q=60"},
-        {title:"어제의 인사왕", name:"김동태", tag:"인사 태도 최고", img:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=60"},
-        {title:"어제의 집중왕", name:"하석진", tag:"눈빛이 다르다!", img:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=60"},
-        {title:"어제의 성실왕", name:"김우리", tag:"정리정돈 멋짐!", img:"https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?auto=format&fit=crop&w=200&q=60"},
-        {title:"어제의 배려왕", name:"김주원", tag:"친구 돕기 최고!", img:"https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?auto=format&fit=crop&w=200&q=60"},
-        {title:"어제의 목소리왕", name:"이윤재", tag:"기합 우렁차다!", img:"https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=200&q=60"},
-      ]
-    };
+    // ✅ 명예전당(이건 지금처럼 수동 문구로 두고, 사진만 시트에서 자동 연결)
+    const HALL_OF_FAME = [
+      {title:"어제의 MVP", name:"김민규", tag:"노력 최고"},
+      {title:"어제의 웃음왕", name:"김예담", tag:"시간 약속 굿!"},
+      {title:"어제의 도전왕", name:"최기연", tag:"도복이 반짝!"},
+      {title:"어제의 인사왕", name:"김동태", tag:"인사 태도 최고"},
+      {title:"어제의 집중왕", name:"하석진", tag:"눈빛이 다르다!"},
+      {title:"어제의 성실왕", name:"김우리", tag:"정리정돈 멋짐!"},
+      {title:"어제의 배려왕", name:"김주원", tag:"친구 돕기 최고!"},
+      {title:"어제의 목소리왕", name:"이윤재", tag:"기합 우렁차다!"},
+    ];
 
     function pad2(n){ return String(n).padStart(2,"0"); }
     function nowTime(){
       const d = new Date();
       return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
     }
-    function setLive(ok){
+    function setLive(ok, msg){
       const dot = document.getElementById("liveDot");
       const text = document.getElementById("liveText");
-      if(ok){ dot.classList.remove("warn"); text.textContent="연결됨"; }
-      else{ dot.classList.add("warn"); text.textContent="오프라인"; }
+      if(ok){ dot.classList.remove("warn"); text.textContent = msg || "연결됨"; }
+      else{ dot.classList.add("warn"); text.textContent = msg || "오프라인"; }
     }
     function toggleFull(){
       const el = document.documentElement;
@@ -682,12 +619,98 @@
       else document.exitFullscreen?.();
     }
 
+    /* ===== CSV 파서(따옴표/쉼표 대응) ===== */
+    function parseCSV(text){
+      const rows = [];
+      let row = [];
+      let cur = "";
+      let inQuotes = false;
+
+      for(let i=0;i<text.length;i++){
+        const c = text[i];
+        const n = text[i+1];
+
+        if(c === '"' ){
+          if(inQuotes && n === '"'){ cur += '"'; i++; }
+          else inQuotes = !inQuotes;
+          continue;
+        }
+
+        if(!inQuotes && c === ','){
+          row.push(cur.trim());
+          cur = "";
+          continue;
+        }
+
+        if(!inQuotes && (c === '\n' || c === '\r')){
+          if(c === '\r' && n === '\n') i++;
+          row.push(cur.trim());
+          cur = "";
+          if(row.some(v => v !== "")) rows.push(row);
+          row = [];
+          continue;
+        }
+
+        cur += c;
+      }
+      row.push(cur.trim());
+      if(row.some(v => v !== "")) rows.push(row);
+      return rows;
+    }
+
+    function toNumber(v){
+      const n = Number(String(v||"").replace(/[^\d.-]/g,""));
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    // "1단,2023-01" / "3급" / "무급" 같은 텍스트를 점수로 바꿔 정렬
+    function parseRankLabel(raw){
+      const s = String(raw||"").trim();
+      if(!s) return {score:0, label:""};
+      if(s.includes("무급")) return {score:0, label:"무급"};
+
+      // 첫 번째 토큰만(콤마 앞)
+      const main = s.split(",")[0].trim();
+      const mDan = main.match(/(\d+)\s*단/);
+      const mGeup = main.match(/(\d+)\s*급/);
+
+      if(mDan) return {score: 100 + Number(mDan[1]), label: `${Number(mDan[1])}단`};
+      if(mGeup) return {score: Number(mGeup[1]), label: `${Number(mGeup[1])}급`};
+
+      return {score:0, label: main};
+    }
+
+    function initialsKR(name){
+      const s = String(name||"").trim();
+      if(!s) return "KM";
+      // 한국어 2글자면 그대로, 아니면 앞 2글자
+      return s.slice(0,2);
+    }
+
+    function safeImg(url){
+      const u = String(url||"").trim();
+      if(!u) return "";
+      // 외부도 허용(관장님 sheet가 wix 이미지라서) — 대신 http(s)만
+      if(/^https?:\/\//i.test(u)) return u;
+      return "";
+    }
+
+    function photoBoxHTML(name, photoUrl){
+      const src = safeImg(photoUrl);
+      if(src){
+        return `<div class="miniPhoto"><img alt="${name}" src="${src}" loading="lazy"></div>`;
+      }
+      return `<div class="miniPhoto"><div class="phFallback">${initialsKR(name)}</div></div>`;
+    }
+
+    /* ✅ ticker: 한 리스트 안에서 2번 반복(복제 노출 없음) */
     function renderTicker(listEl, items, mode){
       const makeRow = (it, i)=>`
         <div class="row ${i===0?"top1":i===1?"top2":i===2?"top3":""}">
           <div class="rank ${i===0?"top1":i===1?"top2":i===2?"top3":""}">${i+1}</div>
+          ${photoBoxHTML(it.name, it.photo)}
           <div class="name">${it.name}</div>
-          <div class="meta">${mode==="pts" ? `${it.pts} P` : it.dan}</div>
+          <div class="meta">${mode==="pts" ? `${it.pts} P` : (it.label || it.dan || "")}</div>
         </div>
       `;
       const baseHTML = items.map(makeRow).join("");
@@ -701,111 +724,63 @@
       });
     }
 
-    function renderNew(){
-      const names = DATA.newStudents || [];
-      document.getElementById("newNames").textContent =
-        names.length ? `${names.join(", ")} 환영합니다!` : "등록된 신규가 없습니다.";
-    }
-
+    /* ✅ 사진 흐름 */
     function renderPhotoFlow(trackEl, items){
       const makeAvatar = (it)=>`
         <div class="avatar">
-          <img alt="${it.name}" src="${it.img}" />
+          ${
+            safeImg(it.photo)
+              ? `<img alt="${it.name}" src="${safeImg(it.photo)}" loading="lazy" />`
+              : `<div class="phFallback" style="font-size:16px">${initialsKR(it.name)}</div>`
+          }
           <div class="label">${it.name}</div>
         </div>
       `;
-      trackEl.innerHTML = items.map(makeAvatar).join("") + items.map(makeAvatar).join("");
 
-      const imgs = Array.from(trackEl.querySelectorAll("img"));
-      let loaded = 0;
+      // 끊김 없는 롤링용 2세트
+      trackEl.innerHTML = items.map(makeAvatar).join("") + items.map(makeAvatar).join("");
 
       const finalize = ()=>{
         const w = trackEl.scrollWidth / 2;
         trackEl.style.setProperty("--scrollW", w + "px");
-        const sec = Math.max(18, Math.min(40, w / 60));
+        const sec = Math.max(18, Math.min(42, w / 60));
         trackEl.style.animationDuration = sec + "s";
       };
 
+      // 이미지 로드 후 폭 계산
+      const imgs = Array.from(trackEl.querySelectorAll("img"));
+      let loaded = 0;
+      if(imgs.length === 0) { setTimeout(finalize, 60); return; }
+
       imgs.forEach(img=>{
-        if(img.complete){
-          loaded++;
-          if(loaded >= imgs.length) finalize();
-        }else{
-          img.addEventListener("load", ()=>{
-            loaded++;
-            if(loaded >= imgs.length) finalize();
-          }, {once:true});
-          img.addEventListener("error", ()=>{
-            loaded++;
-            if(loaded >= imgs.length) finalize();
-          }, {once:true});
+        const done = ()=>{ loaded++; if(loaded >= imgs.length) finalize(); };
+        if(img.complete) done();
+        else{
+          img.addEventListener("load", done, {once:true});
+          img.addEventListener("error", done, {once:true});
         }
       });
-      setTimeout(finalize, 800);
+
+      setTimeout(finalize, 900);
     }
 
-    function shouldRotateAwards(){
-      return (window.innerWidth <= 1200) || (window.innerHeight <= 820);
-    }
-
-    function renderAwards(grid, items, start, count){
-      const slice=[];
-      for(let i=0;i<count;i++) slice.push(items[(start+i)%items.length]);
-      grid.innerHTML = slice.map(it=>`
-        <div class="awardCard">
-          <div class="awardPhoto"><img alt="${it.name}" src="${it.img}"></div>
-          <div class="awardTxt">
-            <div class="awardTitle">${it.title}</div>
-            <div class="awardName">${it.name}</div>
-            <div class="awardTag">${it.tag}</div>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    function startAwardsRotation(){
-      const grid = document.getElementById("awardsGrid");
-      const items = DATA.hallOfFame || [];
-      let idx = 0;
-      let timer = null;
-
-      const apply = ()=>{
-        const rotate = shouldRotateAwards();
-        if(items.length <= 4){
-          clearInterval(timer); timer=null;
-          renderAwards(grid, items, 0, items.length);
-          return;
-        }
-        if(rotate){
-          clearInterval(timer);
-          renderAwards(grid, items, idx, 4);
-          timer = setInterval(()=>{
-            grid.classList.remove("fade-in");
-            grid.classList.add("fade-out");
-            setTimeout(()=>{
-              idx = (idx + 4) % items.length;
-              renderAwards(grid, items, idx, 4);
-              grid.classList.remove("fade-out");
-              grid.classList.add("fade-in");
-            }, 260);
-          }, 6000);
-        }else{
-          clearInterval(timer); timer=null;
-          grid.innerHTML = items.map(it=>`
-            <div class="awardCard">
-              <div class="awardPhoto"><img alt="${it.name}" src="${it.img}"></div>
-              <div class="awardTxt">
-                <div class="awardTitle">${it.title}</div>
-                <div class="awardName">${it.name}</div>
-                <div class="awardTag">${it.tag}</div>
-              </div>
+    function renderAwardsFromSheet(grid, awards, photoByName){
+      grid.innerHTML = awards.map(it=>{
+        const photo = photoByName.get(it.name) || "";
+        return `
+          <div class="awardCard">
+            <div class="awardPhoto">
+              ${ safeImg(photo) ? `<img alt="${it.name}" src="${safeImg(photo)}" loading="lazy">`
+                               : `<div class="phFallback">${initialsKR(it.name)}</div>`}
             </div>
-          `).join("");
-        }
-      };
-
-      apply();
-      window.addEventListener("resize", apply, {passive:true});
+            <div class="awardTxt">
+              <div class="awardTitle">${it.title}</div>
+              <div class="awardName">${it.name}</div>
+              <div class="awardTag">${it.tag}</div>
+            </div>
+          </div>
+        `;
+      }).join("");
     }
 
     function startClock(){
@@ -815,16 +790,108 @@
       setInterval(tick, 1000*15);
     }
 
-    document.getElementById("monthLabel").textContent = DATA.monthLabel;
-    setLive(true);
+    /* ====== 구글시트 로드 → 화면 구성 ====== */
+    async function loadFromSheet(){
+      setLive(true, "로딩중…");
+      const url = CSV_URL + (CSV_URL.includes("?") ? "&" : "?") + "t=" + Date.now();
+
+      const res = await fetch(url, {cache:"no-store"});
+      if(!res.ok) throw new Error("CSV fetch 실패: " + res.status);
+
+      const text = await res.text();
+      const rows = parseCSV(text);
+      if(rows.length < 2) throw new Error("CSV 데이터가 비어있습니다.");
+
+      const header = rows[0];
+      const idx = (name)=> header.indexOf(name);
+
+      const iId = idx("아이디");
+      const iName = idx("이름");
+      const iPhoto = idx("포토링크");
+      const iPts = idx("합계포인트");
+      const iTkd = idx("태권도단증");
+      const iKmd = idx("검도단증");       // 시트에 있는 "검도단증"
+      const iKms = idx("검도무술단증");   // 혹시 쓰는 경우
+
+      if(iName === -1 || iPhoto === -1 || iPts === -1){
+        throw new Error("헤더 컬럼을 찾을 수 없습니다. (필수: 이름, 포토링크, 합계포인트)");
+      }
+
+      // 학생 목록 만들기
+      const students = rows.slice(1).map(r=>{
+        const id = r[iId] || "";
+        const name = r[iName] || "";
+        const photo = r[iPhoto] || "";
+        const pts = toNumber(r[iPts]);
+        const tkd = (iTkd>=0 ? r[iTkd] : "") || "";
+        const kmd = (iKmd>=0 ? r[iKmd] : "") || "";
+        const kms = (iKms>=0 ? r[iKms] : "") || "";
+        return {id, name, photo, pts, tkd, kmd, kms};
+      }).filter(s=>String(s.name||"").trim().length>0);
+
+      // 이름→사진 매핑
+      const photoByName = new Map();
+      students.forEach(s=>{
+        const key = String(s.name).trim();
+        if(key && !photoByName.has(key) && String(s.photo||"").trim()) photoByName.set(key, s.photo);
+      });
+
+      // ✅ 랭킹 TOP10: 합계포인트 내림차순
+      const rankingTop = [...students]
+        .sort((a,b)=>b.pts - a.pts)
+        .slice(0,10)
+        .map(s=>({name:s.name, pts:s.pts, photo:s.photo}));
+
+      // ✅ 단/급 TOP10: 검도단증(없으면 검도무술단증, 없으면 태권도단증)
+      const danTop = [...students]
+        .map(s=>{
+          const raw = s.kmd || s.kms || s.tkd || "";
+          const parsed = parseRankLabel(raw);
+          return {name:s.name, score: parsed.score, label: parsed.label, photo:s.photo};
+        })
+        .sort((a,b)=>b.score - a.score)
+        .slice(0,10);
+
+      // ✅ 사진 흐름: 포토링크 있는 학생들 위주(최대 14명)
+      const flow = students
+        .filter(s=>safeImg(s.photo))
+        .slice(0,14)
+        .map(s=>({name:s.name, photo:s.photo}));
+
+      // 이번달 표시
+      const d = new Date();
+      document.getElementById("monthLabel").textContent = `${d.getMonth()+1}월`;
+
+      // 화면 출력
+      renderTicker(document.getElementById("rankList"), rankingTop, "pts");
+      renderTicker(document.getElementById("danList"), danTop, "dan");
+
+      if(flow.length >= 3){
+        renderPhotoFlow(document.getElementById("photoTrack"), flow);
+        document.getElementById("photoHint").textContent = `시트 연동 (${flow.length}명)`;
+      }else{
+        document.getElementById("photoTrack").innerHTML = `<div style="padding:10px 12px; color:rgba(255,255,255,.7); font-weight:900">포토링크가 있는 학생이 부족합니다.</div>`;
+      }
+
+      // 명예전당: 사진만 자동 매칭
+      renderAwardsFromSheet(document.getElementById("awardsGrid"), HALL_OF_FAME, photoByName);
+
+      setLive(true, "연결됨");
+      document.getElementById("rankHint").textContent = `시트 연동 (${students.length}명)`;
+    }
+
+    // 시작
     startClock();
-    renderNew();
+    setLive(true, "로딩중…");
 
-    renderTicker(document.getElementById("rankList"), DATA.rankingTop, "pts");
-    renderTicker(document.getElementById("danList"), DATA.danTop, "dan");
+    // 신규등록은 샘플
+    document.getElementById("newNames").textContent = "홍길동 환영합니다!";
 
-    renderPhotoFlow(document.getElementById("photoTrack"), DATA.photoFlow);
-    startAwardsRotation();
+    loadFromSheet().catch(err=>{
+      console.error(err);
+      setLive(false, "시트 오류");
+      alert("구글시트 연동 오류: " + err.message);
+    });
   </script>
 </body>
 </html>
