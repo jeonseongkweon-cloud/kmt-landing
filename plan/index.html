@@ -1,212 +1,299 @@
 <!doctype html>
 <html lang="ko">
 <head>
+
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+
 <title>이번 달 수련 계획표 | 계명태권도</title>
-<meta name="description" content="계명태권도 이번 달 수련 계획표. 유치부·초등부 목표와 주간 수련 방향을 안내합니다." />
+
+<meta name="description" content="계명태권도 이번 달 수련 계획표 안내" />
 <meta name="theme-color" content="#0b0f19" />
 
-<!-- (일반 캐시 완화) -->
+<!-- 캐시 방지 -->
 <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 
 <style>
-:root{
-  --bg:#0b0f19;
-  --panel:#0f1628;
-  --panel2:#0c1222;
-  --line:rgba(255,255,255,.10);
-  --line2:rgba(36,52,90,.55);
-  --text:#e9eefc;
-  --muted:rgba(233,238,252,.75);
-  --accent:#ff8a00;
-  --shadow:0 20px 60px rgba(0,0,0,.45);
-  --r:22px;
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  color:var(--text);
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;
-  background:
-    radial-gradient(1200px 600px at 50% -10%, rgba(255,138,0,.18), transparent 60%),
-    radial-gradient(900px 520px at 10% 10%, rgba(96,165,250,.10), transparent 55%),
-    linear-gradient(180deg,#060a13,var(--bg));
-}
-a{color:inherit;text-decoration:none}
-.wrap{max-width:980px;margin:0 auto;padding:16px 14px 92px}
-.panel{
-  border:1px solid var(--line2);
-  background:linear-gradient(180deg,rgba(15,22,40,.92),rgba(13,19,34,.90));
-  border-radius:var(--r);
-  box-shadow:var(--shadow);
-  overflow:hidden;
-}
-.head{
-  padding:14px 14px 12px;
-  border-bottom:1px solid rgba(36,52,90,.45);
-  background:linear-gradient(90deg,rgba(20,40,90,.75),rgba(10,14,28,.0));
-  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;
-}
-.title{margin:0;font-weight:950;font-size:18px;letter-spacing:.2px}
-.sub{margin:6px 0 0;font-size:12px;color:var(--muted)}
-.right{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-.badge{
-  font-size:12px;font-weight:900;
-  padding:8px 10px;border-radius:999px;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(255,255,255,.06);
-  white-space:nowrap;
-}
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  padding:9px 12px;border-radius:14px;
-  border:1px solid rgba(255,255,255,.16);
-  background:rgba(255,255,255,.06);
-  font-weight:950;font-size:13px;
-}
-.btn:hover{transform:translateY(-1px)}
-.items{padding:14px;display:flex;flex-direction:column;gap:12px}
 
-.note{
-  padding:12px 14px;border-radius:16px;
-  border:1px solid rgba(255,138,0,.30);
-  background:rgba(255,138,0,.08);
-  font-size:12.5px;line-height:1.75;
+:root{
+--bg:#0b0f19;
+--panel:#0f1628;
+--panel2:#0c1222;
+--line:rgba(255,255,255,.1);
+--line2:rgba(36,52,90,.55);
+--text:#e9eefc;
+--muted:rgba(233,238,252,.75);
+--accent:#ff8a00;
+--shadow:0 20px 60px rgba(0,0,0,.45);
 }
-.grid{display:grid;grid-template-columns:1fr;gap:12px}
-@media (min-width:860px){.grid{grid-template-columns:1fr 1fr}}
+
+*{box-sizing:border-box}
+
+html,body{
+height:100%;
+margin:0;
+font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;
+color:var(--text);
+background:
+radial-gradient(1200px 600px at 50% -10%, rgba(255,138,0,.18), transparent 60%),
+linear-gradient(180deg,#060a13,var(--bg));
+}
+
+.wrap{
+max-width:980px;
+margin:auto;
+padding:20px 16px 120px;
+}
+
+.panel{
+border:1px solid var(--line2);
+background:linear-gradient(180deg,rgba(15,22,40,.92),rgba(13,19,34,.90));
+border-radius:22px;
+box-shadow:var(--shadow);
+overflow:hidden;
+}
+
+.head{
+padding:14px 16px;
+border-bottom:1px solid var(--line2);
+background:linear-gradient(90deg,rgba(20,40,90,.75),rgba(10,14,28,.0));
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.title{
+margin:0;
+font-weight:900;
+font-size:17px;
+}
+
+.sub{
+font-size:12px;
+color:var(--muted);
+margin-top:4px;
+}
+
+.month{
+font-size:12px;
+padding:6px 10px;
+border-radius:20px;
+border:1px solid rgba(255,255,255,.15);
+background:rgba(255,255,255,.06);
+}
+
+/* ✅ 홈으로 버튼(추가) */
+.homeBtn{
+font-size:12px;
+padding:6px 10px;
+border-radius:20px;
+border:1px solid rgba(255,255,255,.15);
+background:rgba(255,255,255,.06);
+color:var(--text);
+text-decoration:none;
+white-space:nowrap;
+}
+.homeBtn:hover{
+border-color:rgba(255,138,0,.35);
+background:rgba(255,138,0,.10);
+}
+
+.items{
+padding:16px;
+display:flex;
+flex-direction:column;
+gap:12px;
+}
 
 .card{
-  border-radius:18px;
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.03);
-  padding:16px;
-}
-.card h2{margin:0 0 8px;font-size:15px;font-weight:950}
-.p{margin:0;color:rgba(233,238,252,.86);font-size:12.8px;line-height:1.8}
-.list{margin-top:10px;display:grid;gap:8px;padding:0;list-style:none}
-.list li{
-  padding:10px 10px 10px 12px;border-radius:14px;
-  border:1px solid rgba(255,255,255,.10);
-  background:rgba(255,255,255,.03);
-  font-size:12.6px;line-height:1.7;
-  position:relative;
-}
-.list li:before{
-  content:"";position:absolute;left:10px;top:12px;
-  width:6px;height:6px;border-radius:50%;
-  background:rgba(255,138,0,.95);
-  box-shadow:0 0 0 4px rgba(255,138,0,.12);
-}
-.footer{
-  margin-top:2px;
-  padding:12px 14px;
-  border-top:1px solid rgba(36,52,90,.45);
-  color:rgba(233,238,252,.68);
-  font-size:11.5px;line-height:1.7;
+border-radius:18px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.03);
+padding:16px;
 }
 
-/* 하단 홈 버튼 바 */
-.bottomBar{
-  position:fixed;left:0;right:0;bottom:0;
-  background:rgba(7,9,16,.78);
-  border-top:1px solid rgba(36,52,90,.55);
-  backdrop-filter:blur(10px);
-  padding:10px 12px;
+.card h2{
+margin:0 0 8px;
+font-size:14px;
+font-weight:900;
 }
-.bottomInner{max-width:980px;margin:0 auto;display:flex;gap:10px}
-.bottomInner .btn{width:100%}
+
+.card p{
+margin:0;
+font-size:13px;
+line-height:1.7;
+color:var(--muted);
+}
+
+.list{
+margin-top:10px;
+display:grid;
+gap:6px;
+}
+
+.item{
+font-size:13px;
+padding-left:10px;
+}
+
+.item:before{
+content:"• ";
+color:var(--accent);
+}
+
+.note{
+padding:12px 14px;
+border-radius:16px;
+border:1px solid rgba(255,138,0,.3);
+background:rgba(255,138,0,.08);
+font-size:12px;
+line-height:1.7;
+}
+
 </style>
+
 </head>
 
+
 <body>
-  <div class="wrap">
-    <section class="panel">
-      <div class="head">
-        <div>
-          <h1 class="title">📘 이번 달 수련 계획표</h1>
-          <div class="sub">구조 >> 교차원리, 교차원리 기반 무도</div>
-        </div>
 
-        <div class="right">
-          <div class="badge">🗓️ 2026년 3월</div>
-          <a class="btn" href="../">🏠 홈으로</a>
-        </div>
-      </div>
+<div class="wrap">
 
-      <div class="items">
-        <div class="note">
-          <b>한 달 동안의 “성장 방향”을 한 장으로 안내합니다.</b><br/>
-          수업 내용은 아이들의 컨디션/발달 단계에 따라 안전하게 조정될 수 있습니다.
-        </div>
+<section class="panel">
 
-        <div class="grid">
-          <!-- 유치부 -->
-          <article class="card">
-            <h2>🧸 유치부 수련 목표 (성장 체조 중심)</h2>
-            <p class="p">
-              3월 유치부는 <b>성장 체조</b>를 중심으로, 안전한 교구와 도장 기구를 활용해
-              <b>기초 체력·균형·리듬·협력</b>을 자연스럽게 키우는 수업으로 진행합니다.
-              또한 태권도의 기본 동작을 “놀이형”으로 연결해 자신감을 높입니다.
-            </p>
-            <ul class="list">
-              <li><b>성장 체조</b>로 유연성·균형감각·리듬감 향상</li>
-              <li>안전한 <b>교구 수업</b>을 통한 발달(대·소근육)</li>
-              <li><b>태권도 기본 동작</b>(서기·주먹·발차기 기초) 친숙해지기</li>
-              <li>친구들과의 <b>협력 활동</b>으로 사회성·배려 습관 만들기</li>
-              <li>도장 내 <b>안전 기구</b>를 활용한 안전한 도전·성취 경험</li>
-            </ul>
-          </article>
+<div class="head">
 
-          <!-- 초등부 -->
-          <article class="card">
-            <h2>🥋 초등부 수련 목표 (심사 대비 강화)</h2>
-            <p class="p">
-              3월 초등부는 <b>3월 14일 진행되는 국기원 제1차 성품단 심사</b>를 대비하여,
-              한 달 동안 <b>품새</b>, <b>1인 발차기</b>, <b>겨루기</b> 중심으로 수업 비중을 높여 진행합니다.
-            </p>
-            <ul class="list">
-              <li><b>품새 완성도</b> 향상(선·각도·시선·호흡·타이밍)</li>
-              <li><b>1인 발차기</b> 정확도/속도/균형 강화</li>
-              <li><b>겨루기</b> 기초(거리·스텝·가드·반응) 안전 반복</li>
-              <li><b>엄어품새·거북이 품새·2배속 품새·리턴 품새</b>로 효율적 반복</li>
-            </ul>
-          </article>
-        </div>
-      </div>
+<div>
+<h1 class="title">📘 이번 달 수련 계획표</h1>
+<div class="sub">구조 >> 교차원리, 교차원리 기반 무도</div>
+</div>
 
-      <div class="footer">
-        ※ 안내: 위 계획은 월간 흐름 기준이며, 반별 인원/아이 컨디션/학교 일정에 따라 안전하게 조정될 수 있습니다.
-      </div>
-    </section>
+<!-- ✅ 여기만 추가: (월 표시 유지) + 홈으로 버튼 1개 -->
+<div style="display:flex; gap:8px; align-items:center;">
+  <div class="month">
+    2026년 3월
   </div>
+  <a class="homeBtn" href="../">🏠 홈으로</a>
+</div>
 
-  <!-- 하단 홈 버튼만 -->
-  <div class="bottomBar">
-    <div class="bottomInner">
-      <a class="btn" href="../">🏠 홈으로</a>
-    </div>
-  </div>
+</div>
 
-  <!-- (선택) 서비스워커 캐시 정리 시도: 재발 방지용 -->
-  <script>
-  (async () => {
-    try{
-      if ('serviceWorker' in navigator) {
-        const regs = await navigator.serviceWorker.getRegistrations();
-        // plan 페이지는 최신 반영이 중요하니, 여기서 SW를 끊어두는 전략
-        for (const reg of regs) await reg.unregister();
-      }
-      if ('caches' in window) {
-        const keys = await caches.keys();
-        await Promise.all(keys.map(k => caches.delete(k)));
-      }
-    }catch(e){}
-  })();
-  </script>
+
+<div class="items">
+
+<div class="note">
+월간 수련 목표와 방향을 안내합니다.<br>
+수업 내용은 아이들의 컨디션과 발달 단계에 따라 조정될 수 있습니다.
+</div>
+
+
+<!-- 유치부 -->
+
+<div class="card">
+
+<h2>🧸 유치부 수련 목표</h2>
+
+<p>
+성장 체조 중심 수업으로 균형감각과 협동심을 기르며<br>
+태권도의 기본 동작을 자연스럽게 익히는 것을 목표로 합니다.
+</p>
+
+<div class="list">
+
+<div class="item">성장 체조를 통한 신체 발달</div>
+<div class="item">교구 활용 협력 활동</div>
+<div class="item">태권도 기본 동작 익히기</div>
+<div class="item">친구들과의 협력 능력 향상</div>
+<div class="item">도장 안전 기구 활용 체험</div>
+
+</div>
+
+</div>
+
+
+
+<!-- 초등부 -->
+
+<div class="card">
+
+<h2>🥋 초등부 수련 목표</h2>
+
+<p>
+3월 14일 국기원 제1차 성품단 심사를 대비하여<br>
+품새 · 발차기 · 겨루기 중심으로 수련을 진행합니다.
+</p>
+
+<div class="list">
+
+<div class="item">품새 정확도 향상</div>
+<div class="item">1인 발차기 훈련 강화</div>
+<div class="item">겨루기 기본기 반복 훈련</div>
+
+</div>
+
+</div>
+
+
+
+<!-- 품새 훈련 -->
+
+<div class="card">
+
+<h2>📌 계명태권도 품새 훈련</h2>
+
+<div class="list">
+
+<div class="item">엄어품새</div>
+<div class="item">거북이 품새</div>
+<div class="item">2배속 품새</div>
+<div class="item">리턴 품새</div>
+
+</div>
+
+<p style="margin-top:10px">
+품새의 정확성과 리듬을 향상시키기 위한 훈련 방식으로 수업이 진행됩니다.
+</p>
+
+</div>
+
+
+</div>
+
+</section>
+
+</div>
+
+
+<!-- 서비스워커 자동 해제 시도 -->
+
+<script>
+(async () => {
+try {
+
+if ('serviceWorker' in navigator) {
+const regs = await navigator.serviceWorker.getRegistrations();
+for (const reg of regs) {
+await reg.unregister();
+}
+}
+
+if ('caches' in window) {
+const keys = await caches.keys();
+for (const k of keys) {
+await caches.delete(k);
+}
+}
+
+console.log("Service Worker cache cleared");
+
+} catch(e) {
+console.log("SW cleanup skipped");
+}
+})();
+</script>
+
+
 </body>
 </html>
