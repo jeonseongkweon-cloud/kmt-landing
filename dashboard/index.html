@@ -143,12 +143,12 @@
     .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07);}
     .btn:active{transform: translateY(0px);}
 
-    /* ✅ 3단 레이아웃 (TOP / MID / BOTTOM) */
+    /* ✅ TOP(랭킹/단급)와 MID(신규/MVP) 높이를 동일하게 맞춤 */
     .content{
       height: calc(100% - var(--topbarH));
       padding:14px;
       display:grid;
-      grid-template-rows: 1.20fr 0.95fr 0.70fr; /* MID를 넉넉히 */
+      grid-template-rows: 1fr 1fr 0.70fr; /* TOP = MID 동일 */
       gap:var(--gap);
       min-height:0;
       overflow:hidden;
@@ -172,6 +172,7 @@
       display:flex;
       flex-direction:column;
     }
+
     .hd{
       display:flex;
       justify-content:space-between;
@@ -181,13 +182,19 @@
       background: rgba(0,0,0,.12);
       flex:0 0 auto;
     }
+
     .title{
       display:flex; gap:8px; align-items:center;
       font-weight:1000;
       letter-spacing:-.2px;
       font-size:14px;
     }
-    .title.small{ font-size:13px; } /* ✅ “이번 달 신규 등록” 더 작게 */
+    .title.small{ font-size:13px; }
+
+    /* ✅ 안내 문구들은 숨김(아이들용 UI 정리) */
+    .hint{ display:none !important; }
+
+    /* 시간 표시용 */
     .subTiny{font-size:11px; color:var(--muted); font-weight:900;}
 
     .ticker{ height: calc(100% - 44px); overflow:hidden; position:relative; min-height:0; }
@@ -246,7 +253,7 @@
       text-overflow:ellipsis;
       white-space:nowrap;
       font-weight:1000;
-      font-size:15px; /* ✅ 기준 폰트 */
+      font-size:15px;
     }
     .meta{
       font-size:12px;
@@ -262,10 +269,10 @@
     .rank.top2{ background: linear-gradient(145deg, rgba(203,213,225,.70), rgba(96,165,250,.10)); color:#0b0f19; }
     .rank.top3{ background: linear-gradient(145deg, rgba(214,167,122,.70), rgba(96,165,250,.08)); color:#0b0f19; }
 
-    /* ✅ MID: 신규등록 + (수련생 사진흐름 삭제) 대신 “어제의 MVP(칭찬 8)” */
+    /* ✅ MID도 TOP과 동일한 1:1 폭 */
     .mid{
       display:grid;
-      grid-template-columns: 1.05fr 0.95fr;
+      grid-template-columns: 1fr 1fr; /* TOP과 동일 */
       gap:var(--gap);
       min-height:0;
     }
@@ -279,6 +286,7 @@
       flex:1;
     }
 
+    /* ✅ 신규등록: 빈 공간 “비어보이는 느낌” 제거(세로 중앙 정렬) + 길어지면 자동 줄바꿈 */
     .bigmsg{
       border:1px solid rgba(246,211,107,.24);
       background: linear-gradient(180deg, rgba(246,211,107,.10), rgba(0,0,0,.16));
@@ -287,28 +295,53 @@
       display:flex;
       flex-direction:column;
       gap:8px;
-      min-height:86px;
+      min-height:0;
+      flex:1;                 /* ✅ 카드 안에서 남는 높이까지 채움 */
     }
-    .bigmsg .t{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
-    .bigmsg .t .left{ font-weight:1000; font-size:13px; } /* ✅ 조금 작게 */
+    .bigmsg .t{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex:0 0 auto;
+    }
+    .bigmsg .t .left{ font-weight:1000; font-size:13px; }
     .bigmsg .body{
-      font-size:15px;            /* ✅ 랭킹 이름과 동일하게 */
+      font-size:15px;         /* ✅ 랭킹 이름과 동일 */
       font-weight:1000;
       line-height:1.35;
       letter-spacing:-.2px;
       word-break:keep-all;
       white-space:normal;
       color:var(--text);
+      flex:1;                 /* ✅ 남는 공간을 채우며 */
+      display:flex;
+      align-items:center;     /* ✅ 짧으면 가운데로 */
     }
 
-    /* ✅ MVP 8개: 2열×4줄 (노트북에서도 글자 안 깨지게) */
+    /* ✅ MVP 4개씩 보여주고 자동 교체 */
+    .awardsWrap{
+      position:relative;
+      min-height:0;
+      flex:1;
+      display:flex;
+    }
     .awards{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:10px;
       min-height:0;
       align-content:start;
+      width:100%;
+      opacity:1;
+      transform: translateY(0);
+      transition: opacity .28s ease, transform .28s ease;
     }
+    .awards.is-fadeout{
+      opacity:0;
+      transform: translateY(3px);
+    }
+
     .awardCard{
       display:flex;
       gap:10px;
@@ -337,23 +370,23 @@
       display:block;
     }
     .awardTxt{min-width:0; width:100%;}
+    .awardTitle,
+    .awardName,
+    .awardTag{
+      white-space:nowrap;
+      word-break:keep-all;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
     .awardTitle{
       font-size:12px;
       color:var(--muted);
       font-weight:1000;
-      white-space:nowrap;        /* ✅ 글자 깨짐 방지 */
-      word-break:keep-all;
-      overflow:hidden;
-      text-overflow:ellipsis;
     }
     .awardName{
       margin-top:4px;
       font-size:15px;
       font-weight:1000;
-      white-space:nowrap;        /* ✅ 글자 깨짐 방지 */
-      word-break:keep-all;
-      overflow:hidden;
-      text-overflow:ellipsis;
       color:var(--text);
     }
     .awardTag{
@@ -361,13 +394,8 @@
       font-size:11px;
       color:rgba(255,255,255,.72);
       font-weight:900;
-      white-space:nowrap;        /* ✅ 글자 깨짐 방지 */
-      word-break:keep-all;
-      overflow:hidden;
-      text-overflow:ellipsis;
     }
 
-    /* ✅ BOTTOM: “오늘 & 이번 달”만 크게 (명예전당은 MID로 이동했으니) */
     .bottom{
       display:grid;
       grid-template-columns: 1fr;
@@ -404,11 +432,12 @@
       .grid2, .mid, .bottom{ grid-template-columns: 1fr; }
       .topbar{ height:auto; flex-wrap:wrap; align-items:flex-start; }
       .btns, .topinfo{ width:100%; justify-content:flex-start; }
-      .awards{ grid-template-columns: 1fr 1fr; }
+      .kvs{ grid-template-columns: 1fr; }
+      .bigmsg .body{ align-items:flex-start; }
     }
 
     @media (max-height: 760px){
-      .content{ grid-template-rows: 1.12fr 1.08fr 0.70fr; }
+      .content{ grid-template-rows: 1fr 1fr 0.78fr; }
       .awardCard{ min-height:74px; padding:9px; }
       .awardPhoto{ width:50px; height:50px; }
       .awardName{ font-size:14px; }
@@ -445,7 +474,7 @@
           <section class="card">
             <div class="hd">
               <div class="title">🏆 랭킹 TOP 10 (사진 포함)</div>
-              <div class="subTiny" id="rankHint">자동 롤링</div>
+              <div class="subTiny hint" id="rankHint">시트 연동</div><!-- ✅ 숨김 -->
             </div>
             <div class="ticker">
               <div class="list" id="rankList"></div>
@@ -455,7 +484,7 @@
           <section class="card">
             <div class="hd">
               <div class="title">🥋 단/급 TOP 10</div>
-              <div class="subTiny">시트 N/O 기반</div>
+              <div class="subTiny hint">시트 N/O 기반</div><!-- ✅ 숨김 -->
             </div>
             <div class="ticker">
               <div class="list" id="danList"></div>
@@ -463,12 +492,12 @@
           </section>
         </div>
 
-        <!-- MID -->
+        <!-- MID (TOP과 동일 배열/폭/높이) -->
         <div class="mid">
           <section class="card">
             <div class="hd">
               <div class="title small">🎉 이번 달 신규 등록</div>
-              <div class="subTiny">샘플(원하면 시트 연동 가능)</div>
+              <div class="subTiny hint">샘플(원하면 시트 연동 가능)</div><!-- ✅ 숨김 -->
             </div>
             <div class="note">
               <div class="bigmsg">
@@ -480,14 +509,15 @@
             </div>
           </section>
 
-          <!-- ✅ 수련생 사진 흐름 삭제 -> 어제의 MVP(칭찬 8)로 교체 -->
           <section class="card">
             <div class="hd">
               <div class="title">🌟 어제의 MVP (칭찬 8)</div>
-              <div class="subTiny">사진은 시트에서 자동 매칭</div>
+              <div class="subTiny hint">사진은 시트에서 자동 매칭</div><!-- ✅ 숨김 -->
             </div>
             <div class="note">
-              <div class="awards" id="awardsGrid"></div>
+              <div class="awardsWrap">
+                <div class="awards" id="awardsGrid"></div>
+              </div>
             </div>
           </section>
         </div>
@@ -517,7 +547,6 @@
   <script>
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=0&single=true&output=csv";
 
-    // ✅ “명예 전당” 표현 대신: 어제 칭찬 8
     const HALL_OF_FAME = [
       {title:"어제의 MVP", name:"김민규", tag:"노력 최고"},
       {title:"어제의 웃음왕", name:"김예담", tag:"시간 약속 굿!"},
@@ -561,13 +590,11 @@
           else inQuotes = !inQuotes;
           continue;
         }
-
         if(!inQuotes && c === ','){
           row.push(cur.trim());
           cur = "";
           continue;
         }
-
         if(!inQuotes && (c === '\n' || c === '\r')){
           if(c === '\r' && n === '\n') i++;
           row.push(cur.trim());
@@ -576,7 +603,6 @@
           row = [];
           continue;
         }
-
         cur += c;
       }
       row.push(cur.trim());
@@ -630,8 +656,18 @@
       });
     }
 
-    function renderAwardsFromSheet(grid, awards, photoByName){
-      grid.innerHTML = awards.map(it=>{
+    /* ✅ MVP 8개를 4개씩 교체 */
+    let mvpIndex = 0;
+    const MVP_PAGE_SIZE = 4;
+    const MVP_INTERVAL_MS = 5000; // 5초마다 교체 (원하면 4초로 바꿔드림)
+
+    function renderAwardsPage(grid, awards, photoByName, startIndex){
+      const slice = [];
+      for(let i=0;i<MVP_PAGE_SIZE;i++){
+        slice.push(awards[(startIndex + i) % awards.length]);
+      }
+
+      grid.innerHTML = slice.map(it=>{
         const photo = photoByName.get(it.name) || "";
         return `
           <div class="awardCard">
@@ -649,6 +685,26 @@
           </div>
         `;
       }).join("");
+    }
+
+    function startAwardsRotation(grid, awards, photoByName){
+      if(!grid || !awards || awards.length <= MVP_PAGE_SIZE){
+        renderAwardsPage(grid, awards, photoByName, 0);
+        return;
+      }
+
+      // 첫 페이지
+      mvpIndex = 0;
+      renderAwardsPage(grid, awards, photoByName, mvpIndex);
+
+      setInterval(()=>{
+        grid.classList.add("is-fadeout");
+        setTimeout(()=>{
+          mvpIndex = (mvpIndex + MVP_PAGE_SIZE) % awards.length;
+          renderAwardsPage(grid, awards, photoByName, mvpIndex);
+          grid.classList.remove("is-fadeout");
+        }, 260);
+      }, MVP_INTERVAL_MS);
     }
 
     function startClock(){
@@ -719,10 +775,14 @@
       renderTicker(document.getElementById("rankList"), rankingTop, "pts");
       renderTicker(document.getElementById("danList"), danTop, "dan");
 
-      renderAwardsFromSheet(document.getElementById("awardsGrid"), HALL_OF_FAME, photoByName);
+      // ✅ MVP 로테이션 시작
+      startAwardsRotation(document.getElementById("awardsGrid"), HALL_OF_FAME, photoByName);
 
       setLive(true, "연결됨");
-      document.getElementById("rankHint").textContent = `시트 연동 (${students.length}명)`;
+
+      // ✅ 힌트 텍스트는 숨김 처리되어 있지만, 혹시라도 남아있어도 내용 업데이트 안함
+      const rankHint = document.getElementById("rankHint");
+      if(rankHint) rankHint.textContent = "";
     }
 
     startClock();
