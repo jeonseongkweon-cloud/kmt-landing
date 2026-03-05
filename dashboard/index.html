@@ -143,12 +143,11 @@
     .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07);}
     .btn:active{transform: translateY(0px);}
 
-    /* ✅ TOP(랭킹/단급)와 MID(신규/MVP) 높이를 동일하게 맞춤 */
     .content{
       height: calc(100% - var(--topbarH));
       padding:14px;
       display:grid;
-      grid-template-rows: 1fr 1fr 0.70fr; /* TOP = MID 동일 */
+      grid-template-rows: 1fr 1fr 0.70fr;
       gap:var(--gap);
       min-height:0;
       overflow:hidden;
@@ -191,10 +190,7 @@
     }
     .title.small{ font-size:13px; }
 
-    /* ✅ 안내 문구들은 숨김(아이들용 UI 정리) */
     .hint{ display:none !important; }
-
-    /* 시간 표시용 */
     .subTiny{font-size:11px; color:var(--muted); font-weight:900;}
 
     .ticker{ height: calc(100% - 44px); overflow:hidden; position:relative; min-height:0; }
@@ -269,10 +265,9 @@
     .rank.top2{ background: linear-gradient(145deg, rgba(203,213,225,.70), rgba(96,165,250,.10)); color:#0b0f19; }
     .rank.top3{ background: linear-gradient(145deg, rgba(214,167,122,.70), rgba(96,165,250,.08)); color:#0b0f19; }
 
-    /* ✅ MID도 TOP과 동일한 1:1 폭 */
     .mid{
       display:grid;
-      grid-template-columns: 1fr 1fr; /* TOP과 동일 */
+      grid-template-columns: 1fr 1fr;
       gap:var(--gap);
       min-height:0;
     }
@@ -286,7 +281,6 @@
       flex:1;
     }
 
-    /* ✅ 신규등록: 빈 공간 “비어보이는 느낌” 제거(세로 중앙 정렬) + 길어지면 자동 줄바꿈 */
     .bigmsg{
       border:1px solid rgba(246,211,107,.24);
       background: linear-gradient(180deg, rgba(246,211,107,.10), rgba(0,0,0,.16));
@@ -296,7 +290,7 @@
       flex-direction:column;
       gap:8px;
       min-height:0;
-      flex:1;                 /* ✅ 카드 안에서 남는 높이까지 채움 */
+      flex:1;
     }
     .bigmsg .t{
       display:flex;
@@ -307,19 +301,18 @@
     }
     .bigmsg .t .left{ font-weight:1000; font-size:13px; }
     .bigmsg .body{
-      font-size:15px;         /* ✅ 랭킹 이름과 동일 */
+      font-size:15px;
       font-weight:1000;
       line-height:1.35;
       letter-spacing:-.2px;
       word-break:keep-all;
       white-space:normal;
       color:var(--text);
-      flex:1;                 /* ✅ 남는 공간을 채우며 */
+      flex:1;
       display:flex;
-      align-items:center;     /* ✅ 짧으면 가운데로 */
+      align-items:center;
     }
 
-    /* ✅ MVP 4개씩 보여주고 자동 교체 */
     .awardsWrap{
       position:relative;
       min-height:0;
@@ -492,23 +485,26 @@
           </section>
         </div>
 
-        <!-- MID (TOP과 동일 배열/폭/높이) -->
+        <!-- MID -->
         <div class="mid">
           <section class="card">
             <div class="hd">
               <div class="title small">🎉 이번 달 신규 등록</div>
               <div class="subTiny hint">샘플(원하면 시트 연동 가능)</div><!-- ✅ 숨김 -->
             </div>
+
             <div class="note">
+              <!-- ✅ FIX: newNames를 bigmsg 안으로 넣음 -->
               <div class="bigmsg">
                 <div class="t">
                   <div class="left">3월 등록</div>
                 </div>
-</div>
-<div class="body" id="newNames">
-이승우 / 이수형 / 윤이현 /민서준 / 김관우 / 송정현<br>
-오윤후 / 이준범 / 김도훈 모두 환영합니다!!
-</div>
+
+                <div class="body" id="newNames">
+                  이승우 / 이수형 / 윤이현 / 민서준 / 김관우 / 송정현<br>
+                  오윤후 / 이준범 / 김도훈 모두 환영합니다!!
+                </div>
+              </div>
             </div>
           </section>
 
@@ -659,10 +655,9 @@
       });
     }
 
-    /* ✅ MVP 8개를 4개씩 교체 */
     let mvpIndex = 0;
     const MVP_PAGE_SIZE = 4;
-    const MVP_INTERVAL_MS = 5000; // 5초마다 교체 (원하면 4초로 바꿔드림)
+    const MVP_INTERVAL_MS = 5000;
 
     function renderAwardsPage(grid, awards, photoByName, startIndex){
       const slice = [];
@@ -696,7 +691,6 @@
         return;
       }
 
-      // 첫 페이지
       mvpIndex = 0;
       renderAwardsPage(grid, awards, photoByName, mvpIndex);
 
@@ -778,12 +772,10 @@
       renderTicker(document.getElementById("rankList"), rankingTop, "pts");
       renderTicker(document.getElementById("danList"), danTop, "dan");
 
-      // ✅ MVP 로테이션 시작
       startAwardsRotation(document.getElementById("awardsGrid"), HALL_OF_FAME, photoByName);
 
       setLive(true, "연결됨");
 
-      // ✅ 힌트 텍스트는 숨김 처리되어 있지만, 혹시라도 남아있어도 내용 업데이트 안함
       const rankHint = document.getElementById("rankHint");
       if(rankHint) rankHint.textContent = "";
     }
