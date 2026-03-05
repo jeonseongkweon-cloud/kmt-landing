@@ -3,148 +3,819 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>계명태권도 | LIVE BOARD</title>
-
-  <!-- ✅ 대문 링크 없이 운영 + 검색노출 최소화(숨김 운영) -->
-  <meta name="robots" content="noindex,nofollow" />
+  <title>계명태권도 LIVE BOARD</title>
   <meta name="theme-color" content="#0b0f19" />
+  <style>
+    :root{
+      --bg:#0b0f19;
+      --line:rgba(255,255,255,.10);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.70);
+      --gold:#f6d36b;
+      --silver:#cbd5e1;
+      --bronze:#d6a77a;
+      --blue:#60a5fa;
+      --good:#34d399;
+      --warn:#fb7185;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --r:18px;
+      --r2:26px;
+    }
 
-  <link rel="stylesheet" href="./dashboard.css" />
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    :root{ color-scheme: dark; }
+
+    body{
+      margin:0;
+      background:
+        radial-gradient(1200px 700px at 20% 20%, rgba(96,165,250,.18), transparent 55%),
+        radial-gradient(1200px 700px at 80% 30%, rgba(246,211,107,.12), transparent 60%),
+        linear-gradient(180deg, #070a12, var(--bg));
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", Arial, sans-serif;
+      overflow:auto; /* ✅ 페이지 자체는 스크롤 허용 */
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .stage{
+      min-height:100%;
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:14px;
+    }
+
+    /* ✅ 데스크탑은 프레임 고정(예쁘게), 작은 화면에서만 프레임 스크롤 */
+    .frame{
+      width:min(96vw, calc(96vh * (4/3)));
+      height:min(96vh, calc(96vw * (3/4)));
+      border:1px solid var(--line);
+      border-radius: var(--r2);
+      box-shadow: var(--shadow);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      position:relative;
+      overflow:hidden; /* ✅ 데스크탑에서 내부 스크롤/복제 노출 방지 핵심 */
+    }
+
+    /* topbar */
+    .topbar{
+      height:74px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 18px;
+      border-bottom:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(17,24,39,.9), rgba(15,23,42,.55));
+      gap:10px;
+    }
+    .brand{display:flex; gap:12px; align-items:center; min-width:0;}
+    .logo{
+      width:46px;height:46px;border-radius:14px;
+      border:1px solid rgba(246,211,107,.45);
+      background:
+        radial-gradient(14px 14px at 30% 30%, rgba(246,211,107,.35), transparent 60%),
+        radial-gradient(16px 16px at 70% 60%, rgba(96,165,250,.28), transparent 60%),
+        linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      display:grid;place-items:center;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      font-weight:900;
+      color:var(--gold);
+      letter-spacing:.5px;
+      user-select:none;
+    }
+    .brandText{min-width:0}
+    .brand h1{
+      margin:0;
+      font-size:18px;
+      line-height:1.2;
+      letter-spacing:-.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .brand p{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .topinfo{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
+    .pill{
+      display:flex; gap:8px; align-items:center;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .pillKey{color:var(--gold); font-weight:1000;}
+    .dot{
+      width:8px;height:8px;border-radius:99px;
+      background: var(--good);
+      box-shadow:0 0 0 4px rgba(52,211,153,.12);
+    }
+    .dot.warn{background:var(--warn); box-shadow:0 0 0 4px rgba(251,113,133,.12);}
+
+    .btns{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+    .btn{
+      appearance:none;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      color: var(--text);
+      padding:8px 10px;
+      border-radius:12px;
+      font-weight:800;
+      font-size:12px;
+      cursor:pointer;
+      transition:.15s transform ease, .15s background ease;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07);}
+    .btn:active{transform: translateY(0px);}
+
+    /* layout */
+    .content{
+      height: calc(100% - 74px);
+      padding:14px;
+      display:grid;
+      grid-template-rows: 1.35fr 110px 0.95fr;
+      gap:12px;
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      min-height:0;
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      background: linear-gradient(180deg, rgba(17,24,39,.70), rgba(15,23,42,.40));
+      box-shadow: 0 12px 40px rgba(0,0,0,.28);
+      overflow:hidden;
+      min-height:0;
+      position:relative;
+      display:flex;
+      flex-direction:column;
+    }
+    .hd{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 12px;
+      border-bottom:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+    }
+    .title{
+      display:flex; gap:8px; align-items:center;
+      font-weight:1000;
+      letter-spacing:-.2px;
+      font-size:14px;
+    }
+    .subTiny{font-size:11px; color:var(--muted); font-weight:900;}
+
+    /* ✅ ticker: “보이는 건 5줄 정도” + 아래로 흘러가며 롤링 */
+    .ticker{
+      height: calc(100% - 44px);
+      overflow:hidden; /* ✅ 복제 노출 방지 핵심 */
+      position:relative;
+    }
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      padding:12px;
+      will-change: transform;
+      animation: scrollY var(--speed, 20s) linear infinite;
+    }
+    .ticker:hover .list{ animation-play-state: paused; }
+
+    @keyframes scrollY{
+      from{ transform: translateY(0); }
+      to{ transform: translateY(calc(-1 * var(--scrollH, 300px))); }
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 40px 1fr auto;
+      gap:10px;
+      align-items:center;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+      position:relative;
+    }
+    .rank{
+      width:36px;height:36px;border-radius:12px;
+      display:grid;place-items:center;
+      font-weight:1000;
+      color: rgba(255,255,255,.92);
+      background: linear-gradient(145deg, rgba(96,165,250,.22), rgba(246,211,107,.15));
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .name{
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      font-weight:1000;
+      font-size:15px;
+    }
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:1000;
+      white-space:nowrap;
+    }
+
+    .row.top1{ border-color: rgba(246,211,107,.40); background: rgba(246,211,107,.10); }
+    .row.top2{ border-color: rgba(203,213,225,.28); background: rgba(203,213,225,.08); }
+    .row.top3{ border-color: rgba(214,167,122,.28); background: rgba(214,167,122,.08); }
+    .rank.top1{ background: linear-gradient(145deg, rgba(246,211,107,.70), rgba(96,165,250,.12)); color:#111827; }
+    .rank.top2{ background: linear-gradient(145deg, rgba(203,213,225,.70), rgba(96,165,250,.10)); color:#0b0f19; }
+    .rank.top3{ background: linear-gradient(145deg, rgba(214,167,122,.70), rgba(96,165,250,.08)); color:#0b0f19; }
+
+    /* mid area */
+    .mid{
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap:12px;
+      min-height:0;
+    }
+
+    /* marquee (사진 흐름) */
+    .marqueeWrap{ height:100%; display:flex; flex-direction:column; min-height:0; }
+    .marquee{ position:relative; height: calc(100% - 44px); overflow:hidden; }
+    .track{
+      position:absolute;
+      top:50%;
+      transform: translateY(-50%);
+      display:flex;
+      gap:12px;
+      align-items:center;
+      animation: scrollX var(--speedX, 28s) linear infinite;
+      will-change: transform;
+    }
+    .marquee:hover .track{ animation-play-state: paused; }
+    @keyframes scrollX{
+      from{ transform: translate(0, -50%); }
+      to{ transform: translate(calc(-1 * var(--scrollW, 900px)), -50%); }
+    }
+
+    .avatar{
+      width:78px; height:78px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      overflow:hidden;
+      flex:0 0 auto;
+      display:grid;
+      place-items:center;
+      position:relative;
+    }
+    .avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      object-position: 50% 22%;
+      display:block;
+      filter: saturate(1.05) contrast(1.05);
+    }
+    .avatar .label{
+      position:absolute;
+      left:8px; right:8px; bottom:8px;
+      font-size:11px;
+      font-weight:1000;
+      padding:6px 8px;
+      border-radius:999px;
+      background: rgba(0,0,0,.45);
+      border:1px solid rgba(255,255,255,.12);
+      color: rgba(255,255,255,.92);
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      text-align:center;
+    }
+
+    /* bottom */
+    .bottom{
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap:12px;
+      min-height:0;
+    }
+    .note{
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height:0;
+      flex:1;
+    }
+
+    /* ✅ 오늘&이번달 네모 박스 복구 */
+    .kvs{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .kv{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius:16px;
+      padding:10px 10px;
+      min-height:72px;
+    }
+    .kv .k{ font-size:11px; color:var(--muted); font-weight:1000; }
+    .kv .v{ margin-top:6px; font-weight:1000; font-size:14px; line-height:1.25; color:var(--text); }
+    .kv .v small{ font-weight:900; color:var(--muted); font-size:12px; }
+
+    .bigmsg{
+      border:1px solid rgba(246,211,107,.24);
+      background: linear-gradient(180deg, rgba(246,211,107,.10), rgba(0,0,0,.16));
+      border-radius:18px;
+      padding:12px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .bigmsg .t{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .bigmsg .t .left{ font-weight:1000; font-size:14px; }
+    .bigmsg .t .right{ display:none; } /* ✅ “사무실에서 수정 → TV 즉시 반영” 숨김 */
+    .bigmsg .body{
+      font-size:18px;
+      font-weight:1000;
+      line-height:1.25;
+      letter-spacing:-.3px;
+      word-break:keep-all;
+      display:flex;
+      align-items:center;
+      color:var(--text);
+    }
+    .gold{ color: var(--gold); }
+
+    /* 명예의 전당 */
+    .awards{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top:6px;
+    }
+    .awardCard{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:10px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      min-height:78px;
+    }
+    .awardPhoto{
+      width:54px;height:54px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+      background: rgba(0,0,0,.22);
+      flex:0 0 auto;
+      display:grid;
+      place-items:center;
+    }
+    .awardPhoto img{
+      width:100%;height:100%;
+      object-fit:cover;
+      object-position:50% 22%;
+      display:block;
+    }
+    .awardTxt{min-width:0}
+    .awardTitle{ font-size:12px; color:var(--muted); font-weight:1000; }
+    .awardName{
+      margin-top:4px;
+      font-size:15px;
+      font-weight:1000;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      color:var(--text);
+    }
+    .awardTag{ margin-top:2px; font-size:11px; color:rgba(255,255,255,.72); font-weight:900; }
+
+    /* ✅ 명예전당 자동 교대(페이드) */
+    .awards.fade-out{
+      opacity:0;
+      transform: translateY(2px);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    .awards.fade-in{
+      opacity:1;
+      transform: translateY(0);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+
+    /* ✅ 얇은 스크롤바 */
+    *{ scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.22) transparent; }
+    *::-webkit-scrollbar{ width:8px; height:8px; }
+    *::-webkit-scrollbar-track{ background: transparent; }
+    *::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,.18);
+      border-radius: 999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+
+    /* ✅ 하단 디버그/푸터 숨김(관장님 요청) */
+    .foot{ display:none; }
+
+    /* ✅ 작은 화면에서는 프레임 스크롤 허용 + 1열 */
+    @media (max-width: 820px){
+      .stage{ padding:0; }
+      .frame{
+        width:100vw;
+        height:100vh;
+        border-radius:0;
+        overflow:auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .content{
+        height:auto;
+        grid-template-rows:auto;
+      }
+      .grid2, .mid, .bottom{ grid-template-columns: 1fr; }
+      .topbar{ height:auto; flex-wrap:wrap; align-items:flex-start; }
+      .btns, .topinfo{ width:100%; justify-content:flex-start; }
+    }
+
+    @media (max-height: 760px){
+      .frame{ overflow:auto; } /* ✅ 구형 노트북 대비 */
+    }
+  </style>
 </head>
 
 <body>
   <div class="stage">
     <div class="frame" id="frame">
-      <header class="topbar">
+      <div class="topbar">
         <div class="brand">
           <div class="logo">KM</div>
           <div class="brandText">
             <h1>계명태권도 LIVE BOARD</h1>
-            <p>도장 화면 전용 · 오늘도 한 칸 성장!</p>
+            <p>도장 화면 전용 · 오늘도 한 걸음 성장!</p>
           </div>
         </div>
 
         <div class="topinfo">
-          <div class="pill">
-            <span class="dot" id="liveDot"></span>
-            <span id="nowText">로딩중…</span>
-          </div>
-          <div class="pill">
-            <span class="pillKey">이번달</span>
-            <span id="monthText">-</span>
-          </div>
-
-          <div class="btns">
-            <button class="btn" id="btnFullscreen">전체화면</button>
-            <button class="btn" id="btnPause">일시정지</button>
-            <button class="btn" id="btnReload">새로고침</button>
-          </div>
+          <div class="pill"><span class="dot" id="liveDot"></span><b class="pillKey">LIVE</b><span id="liveText">연결됨</span></div>
+          <div class="pill"><b class="pillKey">이번달</b> <span id="monthLabel">3월</span></div>
         </div>
-      </header>
 
-      <main class="content">
-        <!-- 1) 상단: 랭킹 2열 (문구 숨김) -->
-        <section class="grid2">
-          <div class="card">
+        <div class="btns">
+          <button class="btn" onclick="toggleFull()">전체화면</button>
+          <button class="btn" onclick="location.reload()">새로고침</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="grid2">
+          <section class="card">
             <div class="hd">
               <div class="title">🏆 랭킹 TOP 10</div>
+              <div class="subTiny">자동 롤링</div>
             </div>
-            <div class="ticker" id="pointsTicker">
-              <div class="list" id="pointsList"></div>
+            <div class="ticker" id="rankTicker">
+              <div class="list" id="rankList"></div>
             </div>
-          </div>
+          </section>
 
-          <div class="card">
+          <section class="card">
             <div class="hd">
-              <div class="title">🥋 단/선배 TOP 10</div>
+              <div class="title">🥋 단선배 TOP 10</div>
+              <div class="subTiny">자동 롤링</div>
             </div>
-            <!-- ✅ 반드시 beltTicker / beltList (먹통 방지) -->
-            <div class="ticker" id="beltTicker">
-              <div class="list" id="beltList"></div>
+            <div class="ticker" id="danTicker">
+              <div class="list" id="danList"></div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
 
-        <!-- 2) 중단: 신규 + 사진 흐름 -->
-        <section class="mid">
-          <div class="card">
+        <div class="mid">
+          <section class="card">
             <div class="hd">
               <div class="title">🎉 이번 달 신규 등록</div>
+              <div class="subTiny">환영합니다!</div>
             </div>
-            <div class="ticker">
-              <div class="list" id="newList" style="animation:none;"></div>
+            <div class="note">
+              <div class="bigmsg">
+                <div class="t">
+                  <div class="left">신규</div>
+                  <div class="right"></div>
+                </div>
+                <div class="body" id="newNames">홍길동 환영합니다!</div>
+              </div>
             </div>
-          </div>
+          </section>
 
-          <div class="card marqueeWrap">
+          <section class="card">
             <div class="hd">
               <div class="title">📸 수련생 사진 흐름</div>
+              <div class="subTiny">자동 롤링</div>
             </div>
-            <!-- ✅ 반드시 marquee / photoTrack (먹통 방지) -->
-            <div class="marquee" id="marquee">
-              <div class="track" id="photoTrack"></div>
-            </div>
-          </div>
-        </section>
-
-        <!-- 3) 하단: 오늘/이번달 + 명예의 전당(운영상태 대체) -->
-        <section class="bottom">
-          <div class="card note">
-            <div class="hd hdFlat">
-              <div class="title">📅 오늘 & 이번 달</div>
-            </div>
-
-            <div class="kvs">
-              <div class="kv">
-                <div class="k">오늘 주요 수련</div>
-                <div class="v" id="todayTraining">기본기 + 발차기 집중<br><small>예: 앞차기/옆차기/돌려차기</small></div>
-              </div>
-              <div class="kv">
-                <div class="k">오늘의 미션</div>
-                <div class="v" id="todayMission">인사 크게 하기!<br><small>“예의”는 습관이다</small></div>
-              </div>
-              <div class="kv">
-                <div class="k">이번 달 행사</div>
-                <div class="v" id="monthEvent">토요일 심사 연습 / 영화의 날<br><small>합숙: (날짜 입력)</small></div>
-              </div>
-              <div class="kv">
-                <div class="k">D-Day</div>
-                <div class="v" id="dday">심사까지 <span class="gold">D-14</span><br><small>원하면 자동 계산도 가능</small></div>
+            <div class="marqueeWrap">
+              <div class="marquee">
+                <div class="track" id="photoTrack"></div>
               </div>
             </div>
+          </section>
+        </div>
 
-            <div class="bigmsg">
-              <div class="t">
-                <div class="left">🎤 관장님 한마디</div>
-                <div class="right" id="msgDate">-</div>
+        <div class="bottom">
+          <section class="card">
+            <div class="hd">
+              <div class="title">🗓️ 오늘 & 이번 달</div>
+              <div class="subTiny" id="todayTime">--:--</div>
+            </div>
+            <div class="note">
+              <div class="kvs">
+                <div class="kv">
+                  <div class="k">오늘 주요 수련</div>
+                  <div class="v" id="todayMain">기본기 · 발차기 집중</div>
+                </div>
+                <div class="kv">
+                  <div class="k">오늘의 미션</div>
+                  <div class="v" id="todayMission">인사 크게 하기 <small>· 약속 실천</small></div>
+                </div>
+                <div class="kv">
+                  <div class="k">이번 달 행사</div>
+                  <div class="v" id="monthEvent">토요일 심사 연습 <small>· 명예의 날</small></div>
+                </div>
+                <div class="kv">
+                  <div class="k">D-day</div>
+                  <div class="v" id="ddayText">심사까지 D-14 <small>· 열매맺기</small></div>
+                </div>
               </div>
-              <div class="body" id="coachMessage">오늘도 “성장” 한 칸만 올라가자. 꾸준함이 실력이다!</div>
+
+              <div class="bigmsg">
+                <div class="t">
+                  <div class="left">관장님 한마디</div>
+                  <div class="right"></div>
+                </div>
+                <div class="body">오늘도 <span class="gold">성장</span> 한 칸만 올라가자. 꾸준함이 실력이다!</div>
+              </div>
             </div>
-          </div>
+          </section>
 
-          <div class="card note">
-            <div class="hd hdFlat">
-              <div class="title">👑 오늘의 명예의 전당</div>
-              <div class="subTiny">사무실에서 수정 → TV 즉시 반영</div>
+          <section class="card">
+            <div class="hd">
+              <div class="title">🏅 오늘의 명예 전당</div>
+              <div class="subTiny" id="hofMode">자동 교대</div>
             </div>
-
-            <!-- ✅ 반드시 awardsGrid (먹통 방지) -->
-            <div class="awards" id="awardsGrid"></div>
-
-            <div class="awardHint">
-              ※ 수정 위치: <b>dashboard/dashboard.js</b> 안의 <b>DAILY_AWARDS</b>만 바꾸면 끝!
+            <div class="note">
+              <div class="awards fade-in" id="awardsGrid"></div>
             </div>
-          </div>
-        </section>
-      </main>
+          </section>
+        </div>
+      </div>
 
-      <footer class="foot">
-        <div>© Keimyung Taekwondo · Dojang Dashboard</div>
-        <div id="footClock">-</div>
-      </footer>
+      <div class="foot" id="debugFoot">숨김</div>
     </div>
   </div>
 
-  <script src="./dashboard.js"></script>
+  <script>
+    /* ✅ 여기 DATA만 바꾸면 됩니다 */
+    const DATA = {
+      monthLabel: "3월",
+
+      rankingTop: [
+        {name:"김민규", pts:600},
+        {name:"하석진", pts:590},
+        {name:"김성찬", pts:580},
+        {name:"황찬규", pts:580},
+        {name:"오레온", pts:560},
+        {name:"김예성", pts:550},
+        {name:"이윤재", pts:530},
+        {name:"김나라", pts:510},
+        {name:"김우리", pts:510},
+        {name:"김예담", pts:500},
+      ],
+
+      danTop: [
+        {name:"김민규", dan:"6단"},
+        {name:"김성찬", dan:"6단"},
+        {name:"박다현", dan:"5단"},
+        {name:"윤겸", dan:"5단"},
+        {name:"박동훈", dan:"4단"},
+        {name:"박정민", dan:"4단"},
+        {name:"전하루", dan:"4단"},
+        {name:"김주원", dan:"4단"},
+        {name:"하석진", dan:"3단"},
+        {name:"이윤재", dan:"3단"},
+      ],
+
+      /* ✅ 신규등록 샘플: 홍길동 1명 */
+      newStudents: ["홍길동"],
+
+      /* ✅ 사진 흐름(샘플). 실제는 본인 사진 링크로 바꿔서 쓰시면 됩니다 */
+      photoFlow: [
+        {name:"김민규", img:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=60"},
+        {name:"김예담", img:"https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?auto=format&fit=crop&w=200&q=60"},
+        {name:"박정민", img:"https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=200&q=60"},
+        {name:"하석진", img:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=60"},
+        {name:"김주원", img:"https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?auto=format&fit=crop&w=200&q=60"},
+        {name:"전하루", img:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=60"},
+      ],
+
+      hallOfFame: [
+        {title:"어제의 MVP", name:"김민규", tag:"노력 최고", img:"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=60"},
+        {title:"어제의 웃음왕", name:"김예담", tag:"시간 약속 굿!", img:"https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?auto=format&fit=crop&w=200&q=60"},
+        {title:"어제의 도전왕", name:"최기연", tag:"도복이 반짝!", img:"https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=200&q=60"},
+        {title:"어제의 인사왕", name:"김동태", tag:"인사 태도 최고", img:"https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=60"},
+        {title:"어제의 집중왕", name:"하석진", tag:"눈빛이 다르다!", img:"https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=200&q=60"},
+        {title:"어제의 성실왕", name:"김우리", tag:"정리정돈 멋짐!", img:"https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?auto=format&fit=crop&w=200&q=60"},
+        {title:"어제의 배려왕", name:"김주원", tag:"친구 돕기 최고!", img:"https://images.unsplash.com/photo-1524502397800-2eeaad7c3fe5?auto=format&fit=crop&w=200&q=60"},
+        {title:"어제의 목소리왕", name:"이윤재", tag:"기합 우렁차다!", img:"https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=200&q=60"},
+      ]
+    };
+
+    function pad2(n){ return String(n).padStart(2,"0"); }
+    function nowTime(){
+      const d = new Date();
+      return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    }
+    function setLive(ok){
+      const dot = document.getElementById("liveDot");
+      const text = document.getElementById("liveText");
+      if(ok){ dot.classList.remove("warn"); text.textContent="연결됨"; }
+      else{ dot.classList.add("warn"); text.textContent="오프라인"; }
+    }
+    function toggleFull(){
+      const el = document.documentElement;
+      if(!document.fullscreenElement) el.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    }
+
+    /* ✅ 랭킹/단선배: “한 리스트 안에서” 내용만 2번 반복 (복제 노출 없음) */
+    function renderTicker(listEl, items, mode){
+      const makeRow = (it, i)=>`
+        <div class="row ${i===0?"top1":i===1?"top2":i===2?"top3":""}">
+          <div class="rank ${i===0?"top1":i===1?"top2":i===2?"top3":""}">${i+1}</div>
+          <div class="name">${it.name}</div>
+          <div class="meta">${mode==="pts" ? `${it.pts} P` : it.dan}</div>
+        </div>
+      `;
+      const baseHTML = items.map(makeRow).join("");
+      listEl.innerHTML = baseHTML + baseHTML; // ✅ 2번 반복(끊김 없이 롤링)
+
+      requestAnimationFrame(()=>{
+        // scrollH는 “원본 1세트 높이”만큼만 이동
+        const oneSetHeight = listEl.scrollHeight / 2;
+        listEl.parentElement.style.setProperty("--scrollH", oneSetHeight + "px");
+
+        // 속도는 항목에 맞게
+        const sec = Math.max(18, Math.min(28, items.length * 2.1));
+        listEl.style.animationDuration = sec + "s";
+      });
+    }
+
+    function renderNew(){
+      const names = DATA.newStudents || [];
+      document.getElementById("newNames").textContent =
+        names.length ? `${names.join(", ")} 환영합니다!` : "등록된 신규가 없습니다.";
+    }
+
+    /* ✅ 사진 흐름: 2세트 반복 + 폭 계산 (이미지 로드 후 계산) */
+    function renderPhotoFlow(trackEl, items){
+      const makeAvatar = (it)=>`
+        <div class="avatar">
+          <img alt="${it.name}" src="${it.img}" />
+          <div class="label">${it.name}</div>
+        </div>
+      `;
+      trackEl.innerHTML = items.map(makeAvatar).join("") + items.map(makeAvatar).join("");
+
+      const imgs = Array.from(trackEl.querySelectorAll("img"));
+      let loaded = 0;
+
+      const finalize = ()=>{
+        // 1세트 폭 = 전체/2
+        const w = trackEl.scrollWidth / 2;
+        trackEl.style.setProperty("--scrollW", w + "px");
+        const sec = Math.max(18, Math.min(40, w / 60));
+        trackEl.style.animationDuration = sec + "s";
+      };
+
+      imgs.forEach(img=>{
+        if(img.complete){
+          loaded++;
+          if(loaded >= imgs.length) finalize();
+        }else{
+          img.addEventListener("load", ()=>{
+            loaded++;
+            if(loaded >= imgs.length) finalize();
+          }, {once:true});
+          img.addEventListener("error", ()=>{
+            loaded++;
+            if(loaded >= imgs.length) finalize();
+          }, {once:true});
+        }
+      });
+
+      // 혹시 로드 이벤트가 안 잡혀도 0.8초 후 한 번 계산
+      setTimeout(finalize, 800);
+    }
+
+    /* ✅ 명예전당: 작은 화면이면 4명씩 교대 / 큰 화면이면 8명 그대로 */
+    function shouldRotateAwards(){
+      return (window.innerWidth <= 1200) || (window.innerHeight <= 820);
+    }
+
+    function renderAwards(grid, items, start, count){
+      const slice=[];
+      for(let i=0;i<count;i++) slice.push(items[(start+i)%items.length]);
+      grid.innerHTML = slice.map(it=>`
+        <div class="awardCard">
+          <div class="awardPhoto"><img alt="${it.name}" src="${it.img}"></div>
+          <div class="awardTxt">
+            <div class="awardTitle">${it.title}</div>
+            <div class="awardName">${it.name}</div>
+            <div class="awardTag">${it.tag}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function startAwardsRotation(){
+      const grid = document.getElementById("awardsGrid");
+      const items = DATA.hallOfFame || [];
+      let idx = 0;
+      let timer = null;
+
+      const apply = ()=>{
+        const rotate = shouldRotateAwards();
+        if(items.length <= 4){
+          clearInterval(timer); timer=null;
+          renderAwards(grid, items, 0, items.length);
+          return;
+        }
+        if(rotate){
+          clearInterval(timer);
+          renderAwards(grid, items, idx, 4);
+          timer = setInterval(()=>{
+            grid.classList.remove("fade-in");
+            grid.classList.add("fade-out");
+            setTimeout(()=>{
+              idx = (idx + 4) % items.length;
+              renderAwards(grid, items, idx, 4);
+              grid.classList.remove("fade-out");
+              grid.classList.add("fade-in");
+            }, 260);
+          }, 6000);
+        }else{
+          clearInterval(timer); timer=null;
+          // 큰 화면은 8명 전부
+          grid.innerHTML = items.map(it=>`
+            <div class="awardCard">
+              <div class="awardPhoto"><img alt="${it.name}" src="${it.img}"></div>
+              <div class="awardTxt">
+                <div class="awardTitle">${it.title}</div>
+                <div class="awardName">${it.name}</div>
+                <div class="awardTag">${it.tag}</div>
+              </div>
+            </div>
+          `).join("");
+        }
+      };
+
+      apply();
+      window.addEventListener("resize", apply, {passive:true});
+    }
+
+    function startClock(){
+      const el = document.getElementById("todayTime");
+      const tick = ()=>{ el.textContent = nowTime(); };
+      tick();
+      setInterval(tick, 1000*15);
+    }
+
+    // 시작
+    document.getElementById("monthLabel").textContent = DATA.monthLabel;
+    setLive(true);
+    startClock();
+    renderNew();
+
+    renderTicker(document.getElementById("rankList"), DATA.rankingTop, "pts");
+    renderTicker(document.getElementById("danList"), DATA.danTop, "dan");
+
+    renderPhotoFlow(document.getElementById("photoTrack"), DATA.photoFlow);
+    startAwardsRotation();
+  </script>
 </body>
 </html>
