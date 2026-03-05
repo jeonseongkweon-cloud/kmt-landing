@@ -135,7 +135,6 @@
     .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07);}
     .btn:active{transform: translateY(0px);}
 
-    /* ✅ 가운데 줄 자동 확장(잘림 방지) */
     .content{
       height: calc(100% - 74px);
       padding:14px;
@@ -180,7 +179,6 @@
     }
     .subTiny{font-size:11px; color:var(--muted); font-weight:900;}
 
-    /* ✅ ticker */
     .ticker{ height: calc(100% - 44px); overflow:hidden; position:relative; min-height:0; }
     .list{
       display:flex;
@@ -196,10 +194,9 @@
       to{ transform: translateY(calc(-1 * var(--scrollH, 300px))); }
     }
 
-    /* ✅ 랭킹 row: 사진 포함 */
     .row{
       display:grid;
-      grid-template-columns: 40px 40px 1fr auto; /* rank + photo + name + meta */
+      grid-template-columns: 40px 40px 1fr auto;
       gap:10px;
       align-items:center;
       padding:10px 12px;
@@ -254,7 +251,6 @@
     .rank.top2{ background: linear-gradient(145deg, rgba(203,213,225,.70), rgba(96,165,250,.10)); color:#0b0f19; }
     .rank.top3{ background: linear-gradient(145deg, rgba(214,167,122,.70), rgba(96,165,250,.08)); color:#0b0f19; }
 
-    /* mid area */
     .mid{
       display:grid;
       grid-template-columns: 1.1fr 0.9fr;
@@ -284,7 +280,7 @@
     }
     .bigmsg .t{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
     .bigmsg .t .left{ font-weight:1000; font-size:14px; }
-    .bigmsg .t .right{ display:none; } /* ✅ 숨김 */
+    .bigmsg .t .right{ display:none; }
     .bigmsg .body{
       font-size:18px;
       font-weight:1000;
@@ -297,7 +293,6 @@
     }
     .gold{ color: var(--gold); }
 
-    /* ✅ 사진 흐름 */
     .marqueeWrap{
       height:100%;
       display:flex;
@@ -365,7 +360,6 @@
       text-align:center;
     }
 
-    /* bottom */
     .bottom{
       display:grid;
       grid-template-columns: 1.1fr 0.9fr;
@@ -496,7 +490,7 @@
           <section class="card">
             <div class="hd">
               <div class="title">🥋 단/급 TOP 10</div>
-              <div class="subTiny">자동 롤링</div>
+              <div class="subTiny">시트 N/O 기반</div>
             </div>
             <div class="ticker">
               <div class="list" id="danList"></div>
@@ -516,7 +510,7 @@
                   <div class="left">신규</div>
                   <div class="right"></div>
                 </div>
-                <div class="body" id="newNames">이승우/이수형/민서준/송정현/오윤후/윤이현/김관우!</div>
+                <div class="body" id="newNames">홍길동 환영합니다!</div>
               </div>
             </div>
           </section>
@@ -544,7 +538,7 @@
               <div class="kvs">
                 <div class="kv">
                   <div class="k">오늘 주요 수련</div>
-                  <div class="v">기본기 · 태극4,5장 · 발차기 </div>
+                  <div class="v">기본기 · 발차기 집중</div>
                 </div>
                 <div class="kv">
                   <div class="k">오늘의 미션</div>
@@ -556,7 +550,7 @@
                 </div>
                 <div class="kv">
                   <div class="k">D-day</div>
-                  <div class="v">심사까지 D-09 <small>· 열매맺기</small></div>
+                  <div class="v">심사까지 D-14 <small>· 열매맺기</small></div>
                 </div>
               </div>
 
@@ -587,10 +581,8 @@
   </div>
 
   <script>
-    /* ✅ 관장님 CSV 주소 */
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=0&single=true&output=csv";
 
-    // ✅ 명예전당(이건 지금처럼 수동 문구로 두고, 사진만 시트에서 자동 연결)
     const HALL_OF_FAME = [
       {title:"어제의 MVP", name:"김민규", tag:"노력 최고"},
       {title:"어제의 웃음왕", name:"김예담", tag:"시간 약속 굿!"},
@@ -619,7 +611,6 @@
       else document.exitFullscreen?.();
     }
 
-    /* ===== CSV 파서(따옴표/쉼표 대응) ===== */
     function parseCSV(text){
       const rows = [];
       let row = [];
@@ -663,34 +654,15 @@
       return Number.isFinite(n) ? n : 0;
     }
 
-    // "1단,2023-01" / "3급" / "무급" 같은 텍스트를 점수로 바꿔 정렬
-    function parseRankLabel(raw){
-      const s = String(raw||"").trim();
-      if(!s) return {score:0, label:""};
-      if(s.includes("무급")) return {score:0, label:"무급"};
-
-      // 첫 번째 토큰만(콤마 앞)
-      const main = s.split(",")[0].trim();
-      const mDan = main.match(/(\d+)\s*단/);
-      const mGeup = main.match(/(\d+)\s*급/);
-
-      if(mDan) return {score: 100 + Number(mDan[1]), label: `${Number(mDan[1])}단`};
-      if(mGeup) return {score: Number(mGeup[1]), label: `${Number(mGeup[1])}급`};
-
-      return {score:0, label: main};
-    }
-
     function initialsKR(name){
       const s = String(name||"").trim();
       if(!s) return "KM";
-      // 한국어 2글자면 그대로, 아니면 앞 2글자
       return s.slice(0,2);
     }
 
     function safeImg(url){
       const u = String(url||"").trim();
       if(!u) return "";
-      // 외부도 허용(관장님 sheet가 wix 이미지라서) — 대신 http(s)만
       if(/^https?:\/\//i.test(u)) return u;
       return "";
     }
@@ -703,14 +675,13 @@
       return `<div class="miniPhoto"><div class="phFallback">${initialsKR(name)}</div></div>`;
     }
 
-    /* ✅ ticker: 한 리스트 안에서 2번 반복(복제 노출 없음) */
     function renderTicker(listEl, items, mode){
       const makeRow = (it, i)=>`
         <div class="row ${i===0?"top1":i===1?"top2":i===2?"top3":""}">
           <div class="rank ${i===0?"top1":i===1?"top2":i===2?"top3":""}">${i+1}</div>
           ${photoBoxHTML(it.name, it.photo)}
           <div class="name">${it.name}</div>
-          <div class="meta">${mode==="pts" ? `${it.pts} P` : (it.label || it.dan || "")}</div>
+          <div class="meta">${mode==="pts" ? `${it.pts} P` : (it.label || "")}</div>
         </div>
       `;
       const baseHTML = items.map(makeRow).join("");
@@ -724,7 +695,6 @@
       });
     }
 
-    /* ✅ 사진 흐름 */
     function renderPhotoFlow(trackEl, items){
       const makeAvatar = (it)=>`
         <div class="avatar">
@@ -737,7 +707,6 @@
         </div>
       `;
 
-      // 끊김 없는 롤링용 2세트
       trackEl.innerHTML = items.map(makeAvatar).join("") + items.map(makeAvatar).join("");
 
       const finalize = ()=>{
@@ -747,7 +716,6 @@
         trackEl.style.animationDuration = sec + "s";
       };
 
-      // 이미지 로드 후 폭 계산
       const imgs = Array.from(trackEl.querySelectorAll("img"));
       let loaded = 0;
       if(imgs.length === 0) { setTimeout(finalize, 60); return; }
@@ -790,7 +758,6 @@
       setInterval(tick, 1000*15);
     }
 
-    /* ====== 구글시트 로드 → 화면 구성 ====== */
     async function loadFromSheet(){
       setLive(true, "로딩중…");
       const url = CSV_URL + (CSV_URL.includes("?") ? "&" : "?") + "t=" + Date.now();
@@ -809,60 +776,57 @@
       const iName = idx("이름");
       const iPhoto = idx("포토링크");
       const iPts = idx("합계포인트");
-      const iTkd = idx("태권도단증");
-      const iKmd = idx("검도단증");       // 시트에 있는 "검도단증"
-      const iKms = idx("검도무술단증");   // 혹시 쓰는 경우
+
+      /* ✅ 여기만 추가/사용: N/O 컬럼 */
+      const iDanLabel = idx("단증합계");     // N열(표시용)
+      const iRankScore = idx("rank_score");  // O열(정렬용)
 
       if(iName === -1 || iPhoto === -1 || iPts === -1){
         throw new Error("헤더 컬럼을 찾을 수 없습니다. (필수: 이름, 포토링크, 합계포인트)");
       }
+      if(iDanLabel === -1 || iRankScore === -1){
+        throw new Error("단/급 TOP10용 컬럼을 찾을 수 없습니다. (필수: 단증합계, rank_score)");
+      }
 
-      // 학생 목록 만들기
       const students = rows.slice(1).map(r=>{
         const id = r[iId] || "";
         const name = r[iName] || "";
         const photo = r[iPhoto] || "";
         const pts = toNumber(r[iPts]);
-        const tkd = (iTkd>=0 ? r[iTkd] : "") || "";
-        const kmd = (iKmd>=0 ? r[iKmd] : "") || "";
-        const kms = (iKms>=0 ? r[iKms] : "") || "";
-        return {id, name, photo, pts, tkd, kmd, kms};
+
+        /* ✅ N/O 저장 */
+        const danLabel = (iDanLabel>=0 ? r[iDanLabel] : "") || "";
+        const rankScore = (iRankScore>=0 ? toNumber(r[iRankScore]) : 0);
+
+        return {id, name, photo, pts, danLabel, rankScore};
       }).filter(s=>String(s.name||"").trim().length>0);
 
-      // 이름→사진 매핑
       const photoByName = new Map();
       students.forEach(s=>{
         const key = String(s.name).trim();
         if(key && !photoByName.has(key) && String(s.photo||"").trim()) photoByName.set(key, s.photo);
       });
 
-      // ✅ 랭킹 TOP10: 합계포인트 내림차순
       const rankingTop = [...students]
         .sort((a,b)=>b.pts - a.pts)
         .slice(0,10)
         .map(s=>({name:s.name, pts:s.pts, photo:s.photo}));
 
-      // ✅ 단/급 TOP10: 검도단증(없으면 검도무술단증, 없으면 태권도단증)
+      /* ✅✅✅ 여기만 교체: 단/급 TOP10 = O로 정렬 + N으로 표시 */
       const danTop = [...students]
-        .map(s=>{
-          const raw = s.kmd || s.kms || s.tkd || "";
-          const parsed = parseRankLabel(raw);
-          return {name:s.name, score: parsed.score, label: parsed.label, photo:s.photo};
-        })
-        .sort((a,b)=>b.score - a.score)
-        .slice(0,10);
+        .filter(s => String(s.danLabel||"").trim().length > 0)
+        .sort((a,b)=> (b.rankScore||0) - (a.rankScore||0))
+        .slice(0,10)
+        .map(s=>({name:s.name, label:s.danLabel, photo:s.photo}));
 
-      // ✅ 사진 흐름: 포토링크 있는 학생들 위주(최대 14명)
       const flow = students
         .filter(s=>safeImg(s.photo))
         .slice(0,14)
         .map(s=>({name:s.name, photo:s.photo}));
 
-      // 이번달 표시
       const d = new Date();
       document.getElementById("monthLabel").textContent = `${d.getMonth()+1}월`;
 
-      // 화면 출력
       renderTicker(document.getElementById("rankList"), rankingTop, "pts");
       renderTicker(document.getElementById("danList"), danTop, "dan");
 
@@ -873,18 +837,14 @@
         document.getElementById("photoTrack").innerHTML = `<div style="padding:10px 12px; color:rgba(255,255,255,.7); font-weight:900">포토링크가 있는 학생이 부족합니다.</div>`;
       }
 
-      // 명예전당: 사진만 자동 매칭
       renderAwardsFromSheet(document.getElementById("awardsGrid"), HALL_OF_FAME, photoByName);
 
       setLive(true, "연결됨");
       document.getElementById("rankHint").textContent = `시트 연동 (${students.length}명)`;
     }
 
-    // 시작
     startClock();
     setLive(true, "로딩중…");
-
-    // 신규등록은 샘플
     document.getElementById("newNames").textContent = "홍길동 환영합니다!";
 
     loadFromSheet().catch(err=>{
