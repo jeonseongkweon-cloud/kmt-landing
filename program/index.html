@@ -3,71 +3,783 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>프로그램 소개 | 계명태권도</title>
+  <title>프로그램 | 계명태권도</title>
+  <meta name="description" content="유치부·초등부 나이별/단계별 프로그램, 50분 수업 흐름, 운영시간, DOUBLE CROSS(교차원리) 연계까지 한 번에 안내합니다." />
   <meta name="theme-color" content="#0b0f19" />
+
   <style>
-    :root{--bg:#0b0f19;--panel:#0f1628;--line:#24345a;--text:#e9eefc;--muted:#a9b6d6;--accent:#ff8a00;--shadow:0 16px 40px rgba(0,0,0,.38)}
+    :root{
+      --bg:#0b0f19;
+      --panel:#0f1628;
+      --card:#121c33;
+      --line:rgba(36,52,90,.55);
+      --text:#e9eefc;
+      --muted:#a9b6d6;
+      --accent:#ff8a00;
+      --blue:#60a5fa;
+      --good:#34d399;
+      --shadow: 0 16px 40px rgba(0,0,0,.38);
+      --r:18px;
+      --r2:22px;
+      --gap:12px;
+    }
     *{box-sizing:border-box}
-    body{margin:0;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;background:radial-gradient(1200px 600px at 50% -10%, rgba(255,138,0,.18), transparent 60%),linear-gradient(180deg,#060a13,var(--bg))}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", sans-serif;
+      background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(255,138,0,.18), transparent 60%),
+        linear-gradient(180deg, #060a13, var(--bg));
+      -webkit-font-smoothing: antialiased;
+    }
     a{color:inherit;text-decoration:none}
-    .wrap{max-width:980px;margin:0 auto;padding:14px 14px 110px}
-    .panel{border:1px solid rgba(36,52,90,.55);background:linear-gradient(180deg,rgba(15,22,40,.92),rgba(13,19,34,.90));border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
-    .head{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid rgba(36,52,90,.45);background:linear-gradient(90deg,rgba(20,40,90,.75),rgba(10,14,28,.0))}
-    .title{margin:0;font-size:16px;font-weight:950}
-    .sub{margin:4px 0 0;font-size:12px;color:rgba(233,238,252,.72)}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);font-weight:950;font-size:13px;white-space:nowrap;-webkit-tap-highlight-color:transparent}
-    .btn.primary{background:linear-gradient(180deg,rgba(255,138,0,.95),rgba(255,138,0,.75));border-color:rgba(255,138,0,.35);color:#101019}
-    .items{padding:14px}
-    .note{padding:12px 14px;border-radius:18px;border:1px solid rgba(255,138,0,.22);background:rgba(255,138,0,.07);font-size:12px;line-height:1.7}
-    .card{margin-top:10px;border-radius:18px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03);padding:14px}
-    .h{font-weight:950;margin:0 0 6px}
-    .p{margin:0;color:rgba(233,238,252,.88);font-size:12px;line-height:1.7}
-    .bottomBar{position:fixed;left:0;right:0;bottom:0;background:rgba(7,9,16,.78);border-top:1px solid rgba(36,52,90,.55);backdrop-filter:blur(10px);padding:10px 12px}
-    .bottomInner{max-width:980px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap}
-    .bbtn{flex:1;min-width:120px}
+    .wrap{max-width:1040px;margin:0 auto;padding:14px 14px 120px}
+    section{scroll-margin-top: 84px;}
+
+    /* Topbar */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      margin:0 -14px 12px;
+      padding:12px 14px;
+      background: rgba(7,9,16,.78);
+      border-bottom:1px solid rgba(36,52,90,.55);
+      backdrop-filter: blur(10px);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .brand{display:flex; align-items:center; gap:10px; min-width:0;}
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      display:grid; place-items:center;
+      font-weight:950;
+    }
+    .brandText{min-width:0}
+    .brandText .t1{font-weight:950;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .brandText .t2{font-size:12px;color:rgba(233,238,252,.70);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    .homeBtn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 12px; border-radius:14px;
+      border:1px solid rgba(255,138,0,.35);
+      background: linear-gradient(180deg, rgba(255,138,0,.95), rgba(255,138,0,.75));
+      color:#101019; font-weight:950; font-size:13px;
+      white-space:nowrap;
+    }
+
+    /* Hero */
+    .hero{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(15,22,40,.92), rgba(13,19,34,.88));
+      border-radius:var(--r2);
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      padding:16px 14px;
+      position:relative;
+    }
+    .hero:before{
+      content:"";
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(520px 220px at 85% 10%, rgba(96,165,250,.12), transparent 62%),
+        radial-gradient(520px 220px at 15% 0%, rgba(255,138,0,.12), transparent 62%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .hero > *{position:relative}
+    .hero h1{margin:0 0 8px; font-size:18px; letter-spacing:-.2px}
+    .hero p{margin:0; color:rgba(233,238,252,.78); font-size:13px; line-height:1.6}
+
+    .pills{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:9px 11px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      font-size:12px; font-weight:900;
+      color:rgba(233,238,252,.92);
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.18)}
+    .dot.acc{background: rgba(255,138,0,.9); border-color: rgba(255,138,0,.35)}
+    .dot.blue{background: rgba(96,165,250,.9); border-color: rgba(96,165,250,.35)}
+    .dot.good{background: rgba(52,211,153,.9); border-color: rgba(52,211,153,.35)}
+
+    /* Buttons */
+    .btnRow{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 12px; border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      font-weight:950; font-size:13px;
+      white-space:nowrap;
+      transition: transform .10s ease, background .15s ease, border-color .15s ease;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.10)}
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(255,138,0,.95), rgba(255,138,0,.75));
+      border-color: rgba(255,138,0,.35);
+      color:#101019;
+    }
+
+    /* Section */
+    .sectionTitle{
+      margin:18px 4px 10px;
+      display:flex; align-items:flex-end; justify-content:space-between; gap:10px;
+    }
+    .sectionTitle h2{margin:0; font-size:15px}
+    .sectionTitle .mini{font-size:12px; color:var(--muted)}
+    .panel{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(15,22,40,.92), rgba(13,19,34,.90));
+      border-radius:var(--r2);
+      overflow:hidden;
+      box-shadow: var(--shadow);
+    }
+    .panelHead{
+      padding:12px 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid rgba(36,52,90,.45);
+      background: linear-gradient(90deg, rgba(20,40,90,.75), rgba(10,14,28,.0));
+      flex-wrap:wrap;
+    }
+    .panelHead b{font-size:14px}
+    .panelBody{padding:12px}
+
+    /* Cards grid */
+    .grid{display:grid; grid-template-columns:1fr; gap:10px;}
+    @media (min-width:720px){ .grid{grid-template-columns:1fr 1fr;} }
+
+    .card{
+      position:relative;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      padding:14px;
+      overflow:hidden;
+      transition: transform .10s ease, border-color .15s ease;
+      min-height: 130px;
+    }
+    .card:hover{ transform: translateY(-1px); border-color: rgba(255,138,0,.35); }
+    .glow{
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(520px 220px at 85% 10%, rgba(96,165,250,.14), transparent 62%),
+        radial-gradient(520px 220px at 15% 0%, rgba(255,138,0,.12), transparent 62%);
+      pointer-events:none;
+      opacity:.95;
+    }
+    .kicker{font-size:12px; color:rgba(233,238,252,.72); font-weight:900}
+    .card h3{margin:8px 0 6px; font-size:14px}
+    .card p{margin:0; color:rgba(233,238,252,.78); font-size:12px; line-height:1.6}
+    .cta{
+      display:inline-flex; align-items:center; gap:8px;
+      margin-top:10px;
+      font-size:12px;
+      font-weight:950;
+      color:rgba(255,138,0,.95);
+    }
+
+    /* Timetable cards */
+    .timeCard{
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(18,28,51,.88), rgba(12,18,34,.92));
+      padding:14px;
+    }
+    .timeTop{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      flex-wrap:wrap; margin-bottom:10px;
+    }
+    .timeTitle{font-weight:950; font-size:14px}
+    .badge{
+      font-size:11px; font-weight:950;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: rgba(233,238,252,.90);
+      white-space:nowrap;
+    }
+    .timeRow{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:9px 10px; border-radius:14px;
+      background: rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      margin-top:8px;
+      font-size:13px;
+    }
+    .timeRow span{color:rgba(233,238,252,.72); font-weight:800}
+    .timeRow b{font-weight:950}
+    .hint{margin-top:8px; font-size:12px; color:var(--muted); line-height:1.5}
+
+    /* Flow list */
+    .list{display:grid; gap:8px; margin:0; padding:0; list-style:none;}
+    .li{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+    .ico{
+      width:38px; height:38px; border-radius:14px;
+      display:grid; place-items:center;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      font-weight:950;
+      flex:0 0 auto;
+    }
+    .li b{display:block; font-size:13px}
+    .li span{display:block; font-size:12px; color:rgba(233,238,252,.72); margin-top:2px; line-height:1.5}
+
+    /* Video */
+    .videoGrid{display:grid; gap:10px;}
+    @media (min-width:860px){ .videoGrid{grid-template-columns:1fr 1fr;} }
+    .ytBox{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:18px;
+      overflow:hidden;
+      background: rgba(255,255,255,.03);
+    }
+    .ytHead{
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      background: linear-gradient(90deg, rgba(255,138,0,.10), rgba(10,14,28,.0));
+    }
+    .ytHead b{font-size:13px}
+    .ytMini{font-size:12px; color:rgba(233,238,252,.72)}
+    .ytFrameWrap{position:relative; padding-top:56.25%;}
+    .ytFrameWrap iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+
+    /* Comparison table */
+    .compare{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:18px;
+      background: rgba(255,255,255,.03);
+    }
+    .compare th, .compare td{
+      padding:12px 12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      font-size:12px;
+      line-height:1.6;
+      vertical-align:top;
+    }
+    .compare tr:last-child td{border-bottom:0}
+    .compare th{
+      text-align:left;
+      font-size:12px;
+      color:rgba(233,238,252,.88);
+      background: rgba(255,255,255,.04);
+      border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      font-weight:950;
+      font-size:11px;
+      white-space:nowrap;
+    }
+    .chip.acc{border-color: rgba(255,138,0,.25); background: rgba(255,138,0,.10)}
+    .chip.blue{border-color: rgba(96,165,250,.25); background: rgba(96,165,250,.10)}
+
+    /* CTA highlight */
+    .callout{
+      padding:12px 14px;
+      border-radius:18px;
+      border:1px dashed rgba(255,255,255,.16);
+      background: rgba(255,255,255,.03);
+      color:rgba(233,238,252,.82);
+      font-size:12px;
+      line-height:1.7;
+    }
+
+    /* Reveal animation (subtle) */
+    .reveal{opacity:0; transform: translateY(10px); transition: opacity .45s ease, transform .45s ease;}
+    .reveal.on{opacity:1; transform:none;}
+
+    /* Footer */
+    .footer{
+      margin-top:14px;
+      padding:16px 10px;
+      text-align:center;
+      color:rgba(233,238,252,.60);
+      font-size:12px;
+    }
+    .footLinks{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:8px}
+    .footLinks a{
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color:rgba(233,238,252,.85);
+    }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <section class="panel">
-      <div class="head">
-        <div>
-          <h1 class="title">🥋 프로그램 소개</h1>
-          <div class="sub">구조 >> 교차원리, 교차원리 기반 무도</div>
+  <div class="wrap" id="top">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">🥋</div>
+        <div class="brandText">
+          <div class="t1">프로그램</div>
+          <div class="t2">구조 >> 교차원리, 교차원리 기반 무도</div>
         </div>
-        <a class="btn" href="../">🏠 홈으로</a>
       </div>
+      <a class="homeBtn" href="../">🏠 홈으로</a>
+    </div>
 
-      <div class="items">
-        <div class="note">
-          <b>안전하게 시작하고, 자신감 있게 성장합니다</b><br/>
-          • 기초체력 + 바른 자세 + 예절 습관<br/>
-          • 단계별 기본기(기본/응용)로 성취감 향상<br/>
-          • 집중력/협동심/생활리듬을 함께 지도합니다
-        </div>
+    <!-- =========================
+      ✅ 편집구역(텍스트/시간/영상/링크 수정은 여기만!)
+    ========================== -->
+    <script>
+      const PROGRAM = {
+        heroTitle: "나이별 · 단계별 프로그램 (50분 수업 시스템)",
+        heroDesc:
+          "유치부/초등부의 발달 단계에 맞춰 ‘기초체력·바른자세·집중·예절’을 구조화된 흐름으로 지도합니다. 또한 DOUBLE CROSS를 통해 구조 >> 교차원리, 교차원리 기반 무도로 확장할 수 있도록 설계합니다.",
+        pills: [
+          { dot:"acc",  text:"50분 수업" },
+          { dot:"blue", text:"유치부 전용시간" },
+          { dot:"good", text:"초등부 다회차 운영" },
+          { dot:"",     text:"DOUBLE CROSS 연계" }
+        ],
 
-        <div class="card">
-          <div class="h">유치부</div>
-          <div class="p">놀이형 기초체력 + 균형감각 + 기본 예절을 중심으로 ‘즐겁게 시작’합니다.</div>
-        </div>
-        <div class="card">
-          <div class="h">초등부</div>
-          <div class="p">기본기(자세/이동/발차기) + 체력 + 집중훈련을 균형 있게 지도합니다.</div>
-        </div>
-        <div class="card">
-          <div class="h">성장 관리</div>
-          <div class="p">아이 성향·목표에 맞춰 반을 안내하고, 단계별로 성취감을 쌓아갑니다.</div>
+        // ✅ 루트 구조(전총재님 설계 반영)
+        links: {
+          kids: "./kids/",
+          elementary: "./elementary/",
+          growth: "./growth/",
+          doublecross: "./doublecross/",
+          contact: "../#contact"
+        },
+
+        // ✅ 시간표(정확 반영: 유치부전용 4:30~5:15)
+        scheduleTitle: "운영 시간 요약",
+        scheduleDesc:
+          "아이의 하교 시간/컨디션에 맞춰 선택할 수 있도록 시간대를 운영합니다. (모든 수업 50분 기준)",
+        scheduleCards: [
+          {
+            title:"유치부(전용수련)",
+            badge:"4:30 ~ 5:15",
+            rows:[ { label:"유치부 전용", time:"4:30 ~ 5:15" } ],
+            hint:"유치부는 ‘예측 가능한 순서’로 안정감과 집중력을 만들어 줍니다."
+          },
+          {
+            title:"초등부",
+            badge:"3:00 / 3:30 / 5:40 / 6:50",
+            rows:[
+              { label:"초등부", time:"3:00 ~ 3:50" },
+              { label:"도담도담반", time:"3:30 ~ 4:20" },
+              { label:"초등부", time:"5:40 ~ 6:30" },
+              { label:"초등부", time:"6:50 ~ 7:40" }
+            ],
+            hint:"기본동작→발차기→품새→미트→인성→정리운동, 50분 완성 루틴입니다."
+          }
+        ],
+
+        // 프로그램 카드(허브)
+        programTitle: "프로그램 바로가기",
+        programDesc:
+          "각 프로그램은 독립 페이지로 더 자세히 안내합니다.",
+        programCards: [
+          {
+            kicker:"유치부",
+            title:"놀이형 기초체력 + 균형감각 + 예절",
+            desc:"준비운동 → 기본동작 → 앉아 발차기 → 성장체조 → 학교체육 → 인성교육",
+            hrefKey:"kids",
+            cta:"유치부 프로그램 보기 →"
+          },
+          {
+            kicker:"초등부",
+            title:"기본기 + 일인발차기 + 품새 + 미트겨루기",
+            desc:"준비운동 → 기본동작 → 일인발차기 → 품새 → 미트겨루기 → 인성교육 → 정리운동",
+            hrefKey:"elementary",
+            cta:"초등부 프로그램 보기 →"
+          },
+          {
+            kicker:"성장관리",
+            title:"목표·기록·칭찬으로 ‘성장’이 보이게",
+            desc:"노력의 가시화로 동기부여. 학부모 소통과 아이의 자기주도성을 함께 강화합니다.",
+            hrefKey:"growth",
+            cta:"성장관리 보기 →"
+          },
+          {
+            kicker:"DOUBLE CROSS",
+            title:"구조 >> 교차원리, 교차원리 기반 무도",
+            desc:"양손 협응·균형·반응을 강화하는 확장 프로그램. 단계별로 연결됩니다.",
+            hrefKey:"doublecross",
+            cta:"DOUBLE CROSS 보기 →"
+          }
+        ],
+
+        // ✅ 대표 영상 2개(전총재님 링크 반영)
+        videoTitle: "프로그램 대표 영상",
+        videoDesc:
+          "실제 분위기를 가장 빠르게 확인하는 방법은 영상입니다. 유치부/초등부 대표 영상을 준비했습니다.",
+        videos: [
+          {
+            title:"유치부 대표 영상",
+            mini:"놀이형 루틴 + 기본 습관",
+            youtubeId:"aHZSZ1YHIAY",
+            btnText:"유치부 프로그램 페이지 →",
+            hrefKey:"kids"
+          },
+          {
+            title:"초등부 대표 영상",
+            mini:"기본기 + 품새 + 미트 훈련",
+            youtubeId:"wWIAPVvrnSw",
+            btnText:"초등부 프로그램 페이지 →",
+            hrefKey:"elementary"
+          }
+        ],
+
+        // ✅ 비교표(끝판왕 옵션)
+        compareTitle: "유치부 vs 초등부 한눈에 보기",
+        compareRows: [
+          {
+            key:"수업 목적",
+            kids:"즐겁게 시작 + 균형감각/기초체력 + 예절 습관 만들기",
+            elem:"기본기 완성 + 품새/미트로 성취감 강화 + 자신감 확장"
+          },
+          {
+            key:"진행 방식",
+            kids:"짧고 명확한 단위 활동을 연결(집중 유지)",
+            elem:"기술 단위를 누적(기본동작→발차기→품새→미트)"
+          },
+          {
+            key:"대표 루틴",
+            kids:"준비운동 → 기본동작 → 앉아 발차기 → 성장체조 → 학교체육 → 인성교육",
+            elem:"준비운동 → 기본동작 → 일인발차기 → 품새 → 미트겨루기 → 인성교육 → 정리운동"
+          }
+        ],
+
+        // ✅ 반 추천 카드(끝판왕 옵션)
+        recommendTitle: "우리 아이 반 추천(1분)",
+        recommendDesc:
+          "카톡 문의 시 아래 3가지만 보내주시면 가장 맞는 시간/반으로 안내해드립니다.",
+        recommendBullets: [
+          "① 아이 나이/학년",
+          "② 목표(체력/자신감/자세/대회 등)",
+          "③ 차량 필요 여부"
+        ],
+
+        // 운영 포인트(대문과 중복 최소화)
+        trustTitle: "운영 포인트",
+        trustDesc:
+          "‘강하게’보다 먼저 ‘바르게’. 바른 성장이 결국 강한 자신감을 만듭니다.",
+        trust: [
+          { icon:"🎯", title:"단계별 목표", desc:"오늘 할 수 있는 목표를 명확히 제시해 성취감을 쌓습니다." },
+          { icon:"🛡", title:"안전 우선", desc:"준비운동/정리운동, 난이도 조절로 안전을 최우선으로 운영합니다." },
+          { icon:"🤝", title:"예절·태도", desc:"도장 안에서 만든 습관이 생활에서도 이어지도록 지도합니다." }
+        ],
+
+        // CTA
+        ctaTitle: "바로 상담받기",
+        ctaDesc: "체험 수업/등록 안내는 카톡 문의로 빠르게 도와드립니다."
+      };
+    </script>
+    <!-- ========================= -->
+
+    <!-- Hero -->
+    <section class="hero reveal">
+      <h1 id="heroTitle"></h1>
+      <p id="heroDesc"></p>
+      <div class="pills" id="pills"></div>
+
+      <div class="btnRow">
+        <a class="btn primary" id="btnKids" href="#">유치부</a>
+        <a class="btn primary" id="btnElem" href="#">초등부</a>
+        <a class="btn" id="btnGrowth" href="#">성장관리</a>
+        <a class="btn" id="btnDC" href="#">DOUBLE CROSS</a>
+        <a class="btn" id="btnContactTop" href="#">카톡 문의</a>
+      </div>
+    </section>
+
+    <!-- Timetable -->
+    <div class="sectionTitle">
+      <h2 id="scheduleTitle"></h2>
+      <div class="mini">✅ 유치부 전용 4:30–5:15 포함</div>
+    </div>
+    <section class="panel reveal">
+      <div class="panelHead">
+        <b>시간표 요약</b>
+        <span class="mini" id="scheduleDesc"></span>
+      </div>
+      <div class="panelBody">
+        <div class="grid" id="scheduleGrid"></div>
+      </div>
+    </section>
+
+    <!-- Program cards -->
+    <div class="sectionTitle">
+      <h2 id="programTitle"></h2>
+      <div class="mini" id="programDesc"></div>
+    </div>
+    <section class="panel reveal">
+      <div class="panelBody">
+        <div class="grid" id="programGrid"></div>
+      </div>
+    </section>
+
+    <!-- Videos -->
+    <div class="sectionTitle">
+      <h2 id="videoTitle"></h2>
+      <div class="mini" id="videoDesc"></div>
+    </div>
+    <section class="panel reveal">
+      <div class="panelBody">
+        <div class="videoGrid" id="videoGrid"></div>
+      </div>
+    </section>
+
+    <!-- Compare -->
+    <div class="sectionTitle">
+      <h2 id="compareTitle"></h2>
+      <div class="mini">차이를 보면 선택이 쉬워집니다</div>
+    </div>
+    <section class="panel reveal">
+      <div class="panelBody">
+        <table class="compare" aria-label="유치부 초등부 비교표">
+          <thead>
+            <tr>
+              <th style="width:22%">구분</th>
+              <th><span class="chip acc">유치부</span></th>
+              <th><span class="chip blue">초등부</span></th>
+            </tr>
+          </thead>
+          <tbody id="compareBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Recommend -->
+    <div class="sectionTitle">
+      <h2 id="recTitle"></h2>
+      <div class="mini">딱 3가지만 보내주세요</div>
+    </div>
+    <section class="panel reveal">
+      <div class="panelBody">
+        <div class="callout">
+          <b id="recDesc"></b>
+          <ul style="margin:10px 0 0; padding-left:18px" id="recList"></ul>
+          <div class="btnRow" style="margin-top:12px">
+            <a class="btn primary" id="btnContact" href="#">카톡 문의하기 →</a>
+            <a class="btn" id="btnTop" href="#top">맨위로</a>
+          </div>
         </div>
       </div>
     </section>
+
+    <!-- Trust -->
+    <div class="sectionTitle">
+      <h2 id="trustTitle"></h2>
+      <div class="mini" id="trustDesc"></div>
+    </div>
+    <section class="panel reveal">
+      <div class="panelBody">
+        <ul class="list" id="trustList"></ul>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <div class="sectionTitle">
+      <h2 id="ctaTitle"></h2>
+      <div class="mini">상담/체험 안내</div>
+    </div>
+    <section class="panel reveal">
+      <div class="panelBody">
+        <div class="card" style="margin-top:0">
+          <div class="glow" aria-hidden="true"></div>
+          <div class="kicker">마지막 한 방</div>
+          <h3 style="margin:8px 0 6px">지금 문의하면, 아이에게 맞는 반으로 바로 안내</h3>
+          <p id="ctaDesc"></p>
+          <div class="btnRow">
+            <a class="btn primary" id="btnContact2" href="#">카톡 문의하기 →</a>
+            <a class="btn" href="../">홈으로</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      © <span id="year"></span> 계명태권도 · Program
+      <div class="footLinks">
+        <a href="../">홈으로</a>
+        <a id="footKids" href="#">유치부</a>
+        <a id="footElem" href="#">초등부</a>
+        <a id="footGrowth" href="#">성장관리</a>
+        <a id="footDC" href="#">DOUBLE CROSS</a>
+      </div>
+    </div>
+
   </div>
 
-  <div class="bottomBar">
-    <div class="bottomInner">
-      <a class="btn bbtn" href="../">🏠 홈으로</a>
-      <a class="btn bbtn primary" href="../#contact">🟡 카톡 문의</a>
-      <a class="btn bbtn" href="../schedule/">🗓️ 시간표</a>
-    </div>
-  </div>
+  <script>
+    const $ = (id)=>document.getElementById(id);
+
+    // hero
+    $("heroTitle").textContent = PROGRAM.heroTitle;
+    $("heroDesc").textContent  = PROGRAM.heroDesc;
+
+    // pills
+    const pills = $("pills");
+    PROGRAM.pills.forEach(p=>{
+      const el = document.createElement("span");
+      el.className = "pill";
+      const dot = document.createElement("span");
+      dot.className = "dot" + (p.dot ? " " + p.dot : "");
+      el.appendChild(dot);
+      el.appendChild(document.createTextNode(" " + p.text));
+      pills.appendChild(el);
+    });
+
+    // top quick buttons
+    $("btnKids").href      = PROGRAM.links.kids;
+    $("btnElem").href      = PROGRAM.links.elementary;
+    $("btnGrowth").href    = PROGRAM.links.growth;
+    $("btnDC").href        = PROGRAM.links.doublecross;
+    $("btnContactTop").href= PROGRAM.links.contact;
+
+    // schedule
+    $("scheduleTitle").textContent = PROGRAM.scheduleTitle;
+    $("scheduleDesc").textContent  = PROGRAM.scheduleDesc;
+
+    const sg = $("scheduleGrid");
+    PROGRAM.scheduleCards.forEach(c=>{
+      const div = document.createElement("div");
+      div.className = "timeCard";
+      div.innerHTML = `
+        <div class="timeTop">
+          <div class="timeTitle">${c.title}</div>
+          <div class="badge">${c.badge}</div>
+        </div>
+        ${c.rows.map(r=>`
+          <div class="timeRow"><span>${r.label}</span><b>${r.time}</b></div>
+        `).join("")}
+        ${c.hint ? `<div class="hint">※ ${c.hint}</div>` : ``}
+      `;
+      sg.appendChild(div);
+    });
+
+    // program cards
+    $("programTitle").textContent = PROGRAM.programTitle;
+    $("programDesc").textContent  = PROGRAM.programDesc;
+
+    const pg = $("programGrid");
+    PROGRAM.programCards.forEach(c=>{
+      const a = document.createElement("a");
+      a.className = "card";
+      a.href = PROGRAM.links[c.hrefKey] || "#";
+      a.innerHTML = `
+        <div class="glow" aria-hidden="true"></div>
+        <div class="kicker">${c.kicker}</div>
+        <h3>${c.title}</h3>
+        <p>${c.desc}</p>
+        <span class="cta">${c.cta}</span>
+      `;
+      pg.appendChild(a);
+    });
+
+    // videos
+    $("videoTitle").textContent = PROGRAM.videoTitle;
+    $("videoDesc").textContent  = PROGRAM.videoDesc;
+
+    const vg = $("videoGrid");
+    PROGRAM.videos.forEach(v=>{
+      const wrap = document.createElement("div");
+      wrap.className = "ytBox";
+      const href = PROGRAM.links[v.hrefKey] || "#";
+      wrap.innerHTML = `
+        <div class="ytHead">
+          <div>
+            <b>${v.title}</b>
+            <div class="ytMini">${v.mini}</div>
+          </div>
+          <a class="btn" href="${href}">자세히</a>
+        </div>
+        <div class="ytFrameWrap">
+          <iframe
+            src="https://www.youtube.com/embed/${v.youtubeId}"
+            title="${v.title}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen></iframe>
+        </div>
+        <div style="padding:12px">
+          <a class="btn primary" href="${href}">${v.btnText}</a>
+        </div>
+      `;
+      vg.appendChild(wrap);
+    });
+
+    // compare
+    $("compareTitle").textContent = PROGRAM.compareTitle;
+    const cb = $("compareBody");
+    cb.innerHTML = PROGRAM.compareRows.map(r=>`
+      <tr>
+        <td><b>${r.key}</b></td>
+        <td>${r.kids}</td>
+        <td>${r.elem}</td>
+      </tr>
+    `).join("");
+
+    // recommend
+    $("recTitle").textContent = PROGRAM.recommendTitle;
+    $("recDesc").textContent  = PROGRAM.recommendDesc;
+    const rl = $("recList");
+    rl.innerHTML = (PROGRAM.recommendBullets || []).map(x=>`<li>${x}</li>`).join("");
+
+    // trust
+    $("trustTitle").textContent = PROGRAM.trustTitle;
+    $("trustDesc").textContent  = PROGRAM.trustDesc;
+    const tl = $("trustList");
+    PROGRAM.trust.forEach(t=>{
+      const li = document.createElement("li");
+      li.className = "li";
+      li.innerHTML = `
+        <div class="ico">${t.icon}</div>
+        <div><b>${t.title}</b><span>${t.desc}</span></div>
+      `;
+      tl.appendChild(li);
+    });
+
+    // cta
+    $("ctaTitle").textContent = PROGRAM.ctaTitle;
+    $("ctaDesc").textContent  = PROGRAM.ctaDesc;
+    $("btnContact").href      = PROGRAM.links.contact;
+    $("btnContact2").href     = PROGRAM.links.contact;
+
+    // footer links
+    $("footKids").href   = PROGRAM.links.kids;
+    $("footElem").href   = PROGRAM.links.elementary;
+    $("footGrowth").href = PROGRAM.links.growth;
+    $("footDC").href     = PROGRAM.links.doublecross;
+
+    // year
+    $("year").textContent = new Date().getFullYear();
+
+    // reveal animation
+    const io = new IntersectionObserver((ents)=>{
+      ents.forEach(e=>{
+        if(e.isIntersecting){
+          e.target.classList.add("on");
+          io.unobserve(e.target);
+        }
+      });
+    }, {threshold: .12});
+    document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+  </script>
 </body>
 </html>
