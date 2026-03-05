@@ -1,299 +1,310 @@
 <!doctype html>
 <html lang="ko">
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>이번 달 수련 계획표 | 계명태권도</title>
+  <meta name="theme-color" content="#0b0f19" />
+  <meta name="description" content="계명태권도 이번 달 수련 계획표. 유치부·초등부 목표와 주간 수련 방향을 안내합니다." />
 
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <!-- 캐시 완화(일반 캐시용 / 서비스워커는 별도) -->
+  <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
 
-<title>이번 달 수련 계획표 | 계명태권도</title>
+  <style>
+    :root{
+      --bg:#0b0f19;
+      --card:#0f1628;
+      --card2:#0c1222;
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(36,52,90,.55);
+      --text:#e9eefc;
+      --muted:rgba(233,238,252,.72);
+      --accent:#ff8a00;
+      --accent2:#60a5fa;
+      --good:#34d399;
+      --shadow:0 18px 54px rgba(0,0,0,.42);
+      --r:22px;
+      --r2:18px;
+      --max:980px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;
+      background:
+        radial-gradient(1200px 620px at 50% -10%, rgba(255,138,0,.18), transparent 60%),
+        radial-gradient(900px 520px at 10% 10%, rgba(96,165,250,.10), transparent 55%),
+        linear-gradient(180deg,#060a13,var(--bg));
+    }
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:var(--max);margin:0 auto;padding:16px 14px 40px}
+    .panel{
+      border:1px solid var(--line2);
+      background:linear-gradient(180deg,rgba(15,22,40,.92),rgba(12,18,34,.90));
+      border-radius:var(--r);
+      overflow:hidden;
+      box-shadow:var(--shadow);
+    }
+    .head{
+      padding:14px 14px 12px;
+      border-bottom:1px solid rgba(36,52,90,.45);
+      background:linear-gradient(90deg,rgba(20,40,90,.75),rgba(10,14,28,.0));
+    }
+    .topline{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .title{margin:0;font-size:18px;font-weight:950;letter-spacing:.2px}
+    .frame{margin:6px 0 0;font-size:12px;color:var(--muted)}
+    .right{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      font-size:12px;font-weight:900;white-space:nowrap;
+    }
+    .badge.accent{border-color:rgba(255,138,0,.35);background:rgba(255,138,0,.10)}
+    .badge.blue{border-color:rgba(96,165,250,.35);background:rgba(96,165,250,.10)}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:9px 12px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.06);
+      font-weight:950;font-size:13px;white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .items{padding:14px}
+    .note{
+      padding:12px 14px;border-radius:18px;
+      border:1px solid rgba(255,138,0,.22);
+      background:rgba(255,138,0,.07);
+      font-size:12.5px;line-height:1.75;
+    }
 
-<meta name="description" content="계명태권도 이번 달 수련 계획표 안내" />
-<meta name="theme-color" content="#0b0f19" />
+    .grid{margin-top:12px;display:grid;grid-template-columns:1fr;gap:12px}
+    @media (min-width:860px){.grid{grid-template-columns:1fr 1fr}}
 
-<!-- 캐시 방지 -->
-<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+    .card{
+      border-radius:var(--r2);
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.02));
+      padding:14px;
+    }
+    .cardHead{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .cardTitle{margin:0;font-size:15px;font-weight:950;display:flex;align-items:center;gap:10px}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      font-size:12px;font-weight:900;color:rgba(255,255,255,.90);
+    }
+    .pill.good{border-color:rgba(52,211,153,.28);background:rgba(52,211,153,.10)}
+    .pill.blue{border-color:rgba(96,165,250,.28);background:rgba(96,165,250,.10)}
+    .pill.accent{border-color:rgba(255,138,0,.30);background:rgba(255,138,0,.10)}
 
-<style>
+    .p{margin:0;color:rgba(233,238,252,.88);font-size:12.6px;line-height:1.85}
+    .kicker{
+      margin:12px 0 8px;
+      font-size:12px;color:rgba(233,238,252,.75);
+      display:flex;align-items:center;gap:8px;
+    }
+    .kdot{
+      width:8px;height:8px;border-radius:50%;
+      background:rgba(96,165,250,.9);
+      box-shadow:0 0 0 4px rgba(96,165,250,.12);
+      flex:0 0 auto;
+    }
 
-:root{
---bg:#0b0f19;
---panel:#0f1628;
---panel2:#0c1222;
---line:rgba(255,255,255,.1);
---line2:rgba(36,52,90,.55);
---text:#e9eefc;
---muted:rgba(233,238,252,.75);
---accent:#ff8a00;
---shadow:0 20px 60px rgba(0,0,0,.45);
-}
+    .ul{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+    .li{
+      padding:10px 10px 10px 12px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      font-size:12.6px;line-height:1.7;
+      position:relative;
+    }
+    .li:before{
+      content:"";position:absolute;left:10px;top:12px;
+      width:6px;height:6px;border-radius:50%;
+      background:rgba(255,138,0,.9);
+      box-shadow:0 0 0 4px rgba(255,138,0,.12);
+    }
 
-*{box-sizing:border-box}
+    .weeks{margin-top:10px;display:grid;gap:8px}
+    .wk{
+      padding:10px 12px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(12,18,34,.55);
+      display:flex;gap:10px;align-items:flex-start;
+    }
+    .wkTag{
+      flex:0 0 auto;min-width:54px;text-align:center;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      font-size:12px;font-weight:950;color:rgba(255,255,255,.92);
+    }
+    .wkTxt{font-size:12.6px;line-height:1.7;color:rgba(233,238,252,.88)}
 
-html,body{
-height:100%;
-margin:0;
-font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;
-color:var(--text);
-background:
-radial-gradient(1200px 600px at 50% -10%, rgba(255,138,0,.18), transparent 60%),
-linear-gradient(180deg,#060a13,var(--bg));
-}
-
-.wrap{
-max-width:980px;
-margin:auto;
-padding:20px 16px 120px;
-}
-
-.panel{
-border:1px solid var(--line2);
-background:linear-gradient(180deg,rgba(15,22,40,.92),rgba(13,19,34,.90));
-border-radius:22px;
-box-shadow:var(--shadow);
-overflow:hidden;
-}
-
-.head{
-padding:14px 16px;
-border-bottom:1px solid var(--line2);
-background:linear-gradient(90deg,rgba(20,40,90,.75),rgba(10,14,28,.0));
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.title{
-margin:0;
-font-weight:900;
-font-size:17px;
-}
-
-.sub{
-font-size:12px;
-color:var(--muted);
-margin-top:4px;
-}
-
-.month{
-font-size:12px;
-padding:6px 10px;
-border-radius:20px;
-border:1px solid rgba(255,255,255,.15);
-background:rgba(255,255,255,.06);
-}
-
-/* ✅ 홈으로 버튼(추가) */
-.homeBtn{
-font-size:12px;
-padding:6px 10px;
-border-radius:20px;
-border:1px solid rgba(255,255,255,.15);
-background:rgba(255,255,255,.06);
-color:var(--text);
-text-decoration:none;
-white-space:nowrap;
-}
-.homeBtn:hover{
-border-color:rgba(255,138,0,.35);
-background:rgba(255,138,0,.10);
-}
-
-.items{
-padding:16px;
-display:flex;
-flex-direction:column;
-gap:12px;
-}
-
-.card{
-border-radius:18px;
-border:1px solid var(--line);
-background:rgba(255,255,255,.03);
-padding:16px;
-}
-
-.card h2{
-margin:0 0 8px;
-font-size:14px;
-font-weight:900;
-}
-
-.card p{
-margin:0;
-font-size:13px;
-line-height:1.7;
-color:var(--muted);
-}
-
-.list{
-margin-top:10px;
-display:grid;
-gap:6px;
-}
-
-.item{
-font-size:13px;
-padding-left:10px;
-}
-
-.item:before{
-content:"• ";
-color:var(--accent);
-}
-
-.note{
-padding:12px 14px;
-border-radius:16px;
-border:1px solid rgba(255,138,0,.3);
-background:rgba(255,138,0,.08);
-font-size:12px;
-line-height:1.7;
-}
-
-</style>
-
+    .foot{
+      padding:12px 14px;
+      border-top:1px solid rgba(36,52,90,.45);
+      color:rgba(233,238,252,.68);
+      font-size:11.6px;line-height:1.75;
+      background:linear-gradient(180deg,rgba(10,14,28,.10),rgba(10,14,28,.0));
+    }
+  </style>
 </head>
 
-
 <body>
+  <div class="wrap">
+    <section class="panel">
+      <div class="head">
+        <div class="topline">
+          <div>
+            <h1 class="title">📘 이번 달 수련 계획표</h1>
+            <div class="frame">구조 >> 교차원리, 교차원리 기반 무도</div>
+          </div>
 
-<div class="wrap">
+          <div class="right">
+            <div class="badge accent">🗓️ 2026년 3월</div>
+            <div class="badge blue">📌 유치부 · 초등부</div>
+            <a class="btn" href="../">🏠 홈으로</a>
+          </div>
+        </div>
+      </div>
 
-<section class="panel">
+      <div class="items">
+        <div class="note">
+          <b>한 달 동안의 “성장 방향”을 한 장으로 안내합니다.</b><br/>
+          • 반별 목표(발달/기본/품새/체력)를 중심으로 주차별 흐름이 이어집니다.<br/>
+          • 수업 내용은 아이들의 컨디션·발달 단계·학교 일정에 따라 안전하게 조정됩니다.<br/>
+          • 궁금한 점은 언제든 상담으로 자세히 안내드립니다.
+        </div>
 
-<div class="head">
+        <div class="grid">
+          <!-- 유치부 -->
+          <article class="card">
+            <div class="cardHead">
+              <h2 class="cardTitle">🧸 유치부 (성장 체조 중심)</h2>
+              <div class="pill good">발달 · 협력 · 안전</div>
+            </div>
 
-<div>
-<h1 class="title">📘 이번 달 수련 계획표</h1>
-<div class="sub">구조 >> 교차원리, 교차원리 기반 무도</div>
-</div>
+            <p class="p">
+              3월 유치부는 <b>성장 체조</b>와 <b>교구 활동</b>을 중심으로
+              균형·리듬·협력·자신감을 자연스럽게 키우는 수업으로 진행합니다.
+              태권도의 기본 동작은 “놀이형 루틴”으로 연결하여 <b>성취 경험</b>을 만들어 줍니다.
+            </p>
 
-<!-- ✅ 여기만 추가: (월 표시 유지) + 홈으로 버튼 1개 -->
-<div style="display:flex; gap:8px; align-items:center;">
-  <div class="month">
-    2026년 3월
+            <div class="kicker"><span class="kdot"></span><b>핵심 목표</b></div>
+            <ul class="ul">
+              <li class="li"><b>성장 체조</b>로 유연성·균형감각·리듬감 향상</li>
+              <li class="li">안전한 <b>교구 수업</b>을 통한 대근육/소근육 발달</li>
+              <li class="li"><b>태권도 기본 동작</b>(서기·주먹·발차기 기초) 친숙해지기</li>
+              <li class="li">친구들과의 <b>협력 미션</b>으로 사회성·배려 습관 만들기</li>
+              <li class="li">도장 <b>안전 기구</b>를 활용한 안전한 도전·성취 경험</li>
+            </ul>
+
+            <div class="kicker"><span class="kdot"></span><b>주간 흐름(1~4주)</b></div>
+            <div class="weeks">
+              <div class="wk">
+                <div class="wkTag">1주</div>
+                <div class="wkTxt">성장 체조 기본 루틴 + 균형/리듬 놀이 + “안전 약속” 습관 만들기</div>
+              </div>
+              <div class="wk">
+                <div class="wkTag">2주</div>
+                <div class="wkTxt">교구 협력 미션 + 기본 발차기 기초(정확도/거리감) + 칭찬 루틴</div>
+              </div>
+              <div class="wk">
+                <div class="wkTag">3주</div>
+                <div class="wkTxt">기본 동작 연결(서기→주먹→발차기) + 짝 활동(협력) + 리듬 강화</div>
+              </div>
+              <div class="wk">
+                <div class="wkTag">4주</div>
+                <div class="wkTxt">미니 챌린지(안전하게 도전) + 성취 발표 + 생활예절(인사/정리) 습관화</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- 초등부 -->
+          <article class="card">
+            <div class="cardHead">
+              <h2 class="cardTitle">🥋 초등부 (심사 대비 강화)</h2>
+              <div class="pill accent">품새 · 발차기 · 겨루기</div>
+            </div>
+
+            <p class="p">
+              3월 초등부는 <b>3월 14일 진행되는 국기원 제1차 성품단 심사</b>를 대비하여,
+              한 달 동안 <b>품새</b>, <b>1인 발차기</b>, <b>겨루기</b> 중심으로 수업 비중을 높여 진행합니다.
+              심사에서 “실수 포인트”가 되는 구간은 <b>반복 효율</b>을 올려 잡아드립니다.
+            </p>
+
+            <div class="kicker"><span class="kdot"></span><b>핵심 목표</b></div>
+            <ul class="ul">
+              <li class="li"><b>품새 완성도</b> 향상(선·각도·시선·호흡·타이밍)</li>
+              <li class="li"><b>1인 발차기</b> 정확도/속도/균형 강화(기본기 재정렬)</li>
+              <li class="li"><b>겨루기</b> 기초(거리·스텝·가드·반응) 안전하게 반복</li>
+              <li class="li">“잘하기”보다 <b>바르게·꾸준히</b>로 자신감과 기본기를 함께</li>
+            </ul>
+
+            <div class="kicker"><span class="kdot"></span><b>계명태권도 품새 강화 루틴</b></div>
+            <ul class="ul">
+              <li class="li"><b>엄어품새</b> : 핵심 포인트를 “한 문장 구호”로 고정</li>
+              <li class="li"><b>거북이 품새</b> : 느리게 정확히(선/각도/무게중심) 잡고 가기</li>
+              <li class="li"><b>2배속 품새</b> : 리듬·연결·전환 속도감 훈련</li>
+              <li class="li"><b>리턴 품새</b> : 실수 구간 즉시 되돌려 반복(약점만 타격)</li>
+            </ul>
+
+            <div class="kicker"><span class="kdot"></span><b>주간 흐름(1~4주)</b></div>
+            <div class="weeks">
+              <div class="wk">
+                <div class="wkTag">1주</div>
+                <div class="wkTxt">심사 기준 공유 + 품새 정렬(선/각/시선) + 거북이 품새로 정확도 고정</div>
+              </div>
+              <div class="wk">
+                <div class="wkTag">2주</div>
+                <div class="wkTxt">1인 발차기 집중(균형/정확도) + 엄어품새로 포인트 암기/고정</div>
+              </div>
+              <div class="wk">
+                <div class="wkTag">3주</div>
+                <div class="wkTxt">겨루기 기초(거리/스텝/가드) + 2배속 품새로 연결/전환 강화</div>
+              </div>
+              <div class="wk">
+                <div class="wkTag">4주</div>
+                <div class="wkTxt">리턴 품새로 약점 보완 + 심사 시뮬레이션(컨디션/예절 포함) 최종 점검</div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="foot">
+        ※ 안내: 위 계획은 월간 흐름 기준이며, 반별 인원/아이 컨디션/학교 일정에 따라 안전하게 조정될 수 있습니다.<br/>
+        ※ 목표: “잘하게”보다 “바르게·꾸준히”를 우선으로, 자신감과 기본기를 함께 키웁니다.
+      </div>
+    </section>
   </div>
-  <a class="homeBtn" href="../">🏠 홈으로</a>
-</div>
 
-</div>
-
-
-<div class="items">
-
-<div class="note">
-월간 수련 목표와 방향을 안내합니다.<br>
-수업 내용은 아이들의 컨디션과 발달 단계에 따라 조정될 수 있습니다.
-</div>
-
-
-<!-- 유치부 -->
-
-<div class="card">
-
-<h2>🧸 유치부 수련 목표</h2>
-
-<p>
-성장 체조 중심 수업으로 균형감각과 협동심을 기르며<br>
-태권도의 기본 동작을 자연스럽게 익히는 것을 목표로 합니다.
-</p>
-
-<div class="list">
-
-<div class="item">성장 체조를 통한 신체 발달</div>
-<div class="item">교구 활용 협력 활동</div>
-<div class="item">태권도 기본 동작 익히기</div>
-<div class="item">친구들과의 협력 능력 향상</div>
-<div class="item">도장 안전 기구 활용 체험</div>
-
-</div>
-
-</div>
-
-
-
-<!-- 초등부 -->
-
-<div class="card">
-
-<h2>🥋 초등부 수련 목표</h2>
-
-<p>
-3월 14일 국기원 제1차 성품단 심사를 대비하여<br>
-품새 · 발차기 · 겨루기 중심으로 수련을 진행합니다.
-</p>
-
-<div class="list">
-
-<div class="item">품새 정확도 향상</div>
-<div class="item">1인 발차기 훈련 강화</div>
-<div class="item">겨루기 기본기 반복 훈련</div>
-
-</div>
-
-</div>
-
-
-
-<!-- 품새 훈련 -->
-
-<div class="card">
-
-<h2>📌 계명태권도 품새 훈련</h2>
-
-<div class="list">
-
-<div class="item">엄어품새</div>
-<div class="item">거북이 품새</div>
-<div class="item">2배속 품새</div>
-<div class="item">리턴 품새</div>
-
-</div>
-
-<p style="margin-top:10px">
-품새의 정확성과 리듬을 향상시키기 위한 훈련 방식으로 수업이 진행됩니다.
-</p>
-
-</div>
-
-
-</div>
-
-</section>
-
-</div>
-
-
-<!-- 서비스워커 자동 해제 시도 -->
-
-<script>
-(async () => {
-try {
-
-if ('serviceWorker' in navigator) {
-const regs = await navigator.serviceWorker.getRegistrations();
-for (const reg of regs) {
-await reg.unregister();
-}
-}
-
-if ('caches' in window) {
-const keys = await caches.keys();
-for (const k of keys) {
-await caches.delete(k);
-}
-}
-
-console.log("Service Worker cache cleared");
-
-} catch(e) {
-console.log("SW cleanup skipped");
-}
-})();
-</script>
-
-
+  <!-- 서비스워커 캐시 정리 시도(재발 방지용) -->
+  <script>
+  (async () => {
+    try {
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        for (const reg of regs) { await reg.unregister(); }
+      }
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      }
+    } catch(e) {}
+  })();
+  </script>
 </body>
 </html>
