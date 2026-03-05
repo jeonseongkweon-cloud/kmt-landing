@@ -4,43 +4,34 @@
   --text:rgba(255,255,255,.92);
   --muted:rgba(255,255,255,.70);
   --gold:#f6d36b;
-  --silver:#cbd5e1;
-  --bronze:#d6a77a;
   --blue:#60a5fa;
   --good:#34d399;
   --warn:#fb7185;
   --shadow: 0 20px 60px rgba(0,0,0,.45);
   --r:18px;
   --r2:26px;
-
-  /* ✅ 레이아웃 안정용 */
   --topbarH:74px;
   --gap:12px;
 }
 
-*{ box-sizing:border-box; }
+*{box-sizing:border-box}
+html,body{height:100%}
+:root{ color-scheme: dark; }
 
-html,body{ height:100%; }
-
-/* ✅ 다크모드 강제 유지 + 전체는 스크롤 최소화 */
 body{
   margin:0;
   background:
     radial-gradient(1200px 700px at 20% 20%, rgba(96,165,250,.18), transparent 55%),
     radial-gradient(1200px 700px at 80% 30%, rgba(246,211,107,.12), transparent 60%),
-    linear-gradient(180deg,#070a12,#0b0f19);
+    linear-gradient(180deg, #070a12, var(--bg));
   color:var(--text);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", Arial, sans-serif;
-
-  /* ✅ 여기서 스크롤을 잡아버리면 내부 높이 계산이 흔들릴 수 있어서 */
-  overflow:hidden;
+  overflow:hidden; /* ✅ 프레임 고정 */
+  -webkit-overflow-scrolling: touch;
 }
 
-/* ========================== */
-/* Stage */
-/* ========================== */
 .stage{
-  height:100%;
+  min-height:100%;
   width:100%;
   display:flex;
   align-items:center;
@@ -48,29 +39,20 @@ body{
   padding:14px;
 }
 
-/* ========================== */
-/* Frame */
-/* ========================== */
 .frame{
   width:min(96vw, calc(96vh * (4/3)));
   height:min(96vh, calc(96vw * (3/4)));
   border:1px solid var(--line);
-  border-radius:var(--r2);
-  box-shadow:var(--shadow);
+  border-radius: var(--r2);
+  box-shadow: var(--shadow);
   background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
   position:relative;
-
-  /* ✅ 프레임은 '자체 스크롤'을 최소화하고 내부 카드만 필요시 스크롤 */
   overflow:hidden;
-
   display:flex;
   flex-direction:column;
   min-height:0;
 }
 
-/* ========================== */
-/* Topbar */
-/* ========================== */
 .topbar{
   height:var(--topbarH);
   display:flex;
@@ -79,40 +61,35 @@ body{
   padding:12px 18px;
   border-bottom:1px solid var(--line);
   background: linear-gradient(180deg, rgba(17,24,39,.9), rgba(15,23,42,.55));
+  gap:10px;
   flex:0 0 auto;
 }
 
-.brand{
-  display:flex;
-  gap:12px;
-  align-items:center;
-  min-width:0;
-}
-
+.brand{display:flex; gap:12px; align-items:center; min-width:0;}
 .logo{
-  width:46px;
-  height:46px;
-  border-radius:14px;
+  width:46px;height:46px;border-radius:14px;
   border:1px solid rgba(246,211,107,.45);
   background:
     radial-gradient(14px 14px at 30% 30%, rgba(246,211,107,.35), transparent 60%),
     radial-gradient(16px 16px at 70% 60%, rgba(96,165,250,.28), transparent 60%),
     linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-  display:grid;
-  place-items:center;
+  display:grid;place-items:center;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
   font-weight:900;
   color:var(--gold);
-  box-shadow:0 10px 30px rgba(0,0,0,.35);
+  letter-spacing:.5px;
+  user-select:none;
 }
-
+.brandText{min-width:0}
 .brand h1{
   margin:0;
   font-size:18px;
+  line-height:1.2;
+  letter-spacing:-.2px;
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
-
 .brand p{
   margin:2px 0 0;
   font-size:12px;
@@ -122,47 +99,53 @@ body{
   text-overflow:ellipsis;
 }
 
-/* ========================== */
-/* Buttons */
-/* ========================== */
-.btn{
+.topinfo{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
+.pill{
+  display:flex; gap:8px; align-items:center;
+  padding:8px 10px;
+  border-radius:999px;
   border:1px solid var(--line);
-  background:rgba(0,0,0,.18);
-  color:var(--text);
+  background: rgba(0,0,0,.18);
+  font-size:12px;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.pillKey{color:var(--gold); font-weight:1000;}
+.dot{
+  width:8px;height:8px;border-radius:99px;
+  background: var(--good);
+  box-shadow:0 0 0 4px rgba(52,211,153,.12);
+}
+.dot.warn{background:var(--warn); box-shadow:0 0 0 4px rgba(251,113,133,.12);}
+
+.btns{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+.btn{
+  appearance:none;
+  border:1px solid var(--line);
+  background: rgba(0,0,0,.18);
+  color: var(--text);
   padding:8px 10px;
   border-radius:12px;
   font-weight:800;
   font-size:12px;
   cursor:pointer;
-  transition:.15s;
+  transition:.15s transform ease, .15s background ease;
+  user-select:none;
 }
-.btn:hover{
-  transform:translateY(-1px);
-  background:rgba(255,255,255,.07);
-}
+.btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.07);}
+.btn:active{transform: translateY(0px);}
 
-/* ========================== */
-/* Content Layout (핵심) */
-/* ========================== */
+/* ✅ 핵심: 하단(명예의 전당) 비율을 키워 노트북 잘림 방지 */
 .content{
-  /* ✅ topbar 제외한 나머지 공간을 정확히 채우기 */
   height: calc(100% - var(--topbarH));
   padding:14px;
   display:grid;
-
-  /* ✅ 하단(오늘&이번달/명예전당)이 안 보이는 문제 해결: 하단 비율 증가 */
-  grid-template-rows: 1.25fr 120px 1.20fr;
-
+  grid-template-rows: 1.20fr minmax(140px, .55fr) 1.25fr;
   gap:var(--gap);
   min-height:0;
-
-  /* ✅ 프레임 내부 스크롤은 content에서만 허용(필요시) */
   overflow:hidden;
 }
 
-/* ========================== */
-/* Grid */
-/* ========================== */
 .grid2{
   display:grid;
   grid-template-columns: 1fr 1fr;
@@ -170,18 +153,16 @@ body{
   min-height:0;
 }
 
-/* ========================== */
-/* Cards */
-/* ========================== */
 .card{
   border:1px solid var(--line);
-  border-radius:var(--r);
+  border-radius: var(--r);
   background: linear-gradient(180deg, rgba(17,24,39,.70), rgba(15,23,42,.40));
-  box-shadow:0 12px 40px rgba(0,0,0,.28);
+  box-shadow: 0 12px 40px rgba(0,0,0,.28);
   overflow:hidden;
+  min-height:0;
+  position:relative;
   display:flex;
   flex-direction:column;
-  min-height:0;
 }
 
 .hd{
@@ -190,63 +171,198 @@ body{
   align-items:center;
   padding:10px 12px;
   border-bottom:1px solid var(--line);
-  background:rgba(0,0,0,.12);
+  background: rgba(0,0,0,.12);
   flex:0 0 auto;
 }
-
-/* ========================== */
-/* Ranking */
-/* ========================== */
-.ticker{
-  height:calc(100% - 44px);
-  overflow:hidden;
-  position:relative;
-  min-height:0;
+.title{
+  display:flex; gap:8px; align-items:center;
+  font-weight:1000;
+  letter-spacing:-.2px;
+  font-size:14px;
 }
+.subTiny{font-size:11px; color:var(--muted); font-weight:900;}
+
+.ticker{ height: calc(100% - 44px); overflow:hidden; position:relative; min-height:0; }
 .list{
   display:flex;
   flex-direction:column;
   gap:10px;
   padding:12px;
-  animation:scrollY 22s linear infinite;
+  will-change: transform;
+  animation: scrollY var(--speed, 20s) linear infinite;
 }
+.ticker:hover .list{ animation-play-state: paused; }
 @keyframes scrollY{
-  from{ transform:translateY(0); }
-  to{ transform:translateY(calc(-1 * var(--scrollH, 240px))); }
-}
-.row{
-  display:grid;
-  grid-template-columns: 40px 1fr auto;
-  gap:10px;
-  align-items:center;
-  padding:12px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.08);
-  background:rgba(0,0,0,.18);
-}
-.rank{
-  width:36px;
-  height:36px;
-  border-radius:12px;
-  display:grid;
-  place-items:center;
-  font-weight:1000;
-  background: linear-gradient(145deg, rgba(96,165,250,.22), rgba(246,211,107,.15));
+  from{ transform: translateY(0); }
+  to{ transform: translateY(calc(-1 * var(--scrollH, 300px))); }
 }
 
-/* ========================== */
-/* Mid area */
-/* ========================== */
+.row{
+  display:grid;
+  grid-template-columns: 40px 40px 1fr auto;
+  gap:10px;
+  align-items:center;
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.08);
+  background: rgba(0,0,0,.18);
+  position:relative;
+}
+.rank{
+  width:36px;height:36px;border-radius:12px;
+  display:grid;place-items:center;
+  font-weight:1000;
+  color: rgba(255,255,255,.92);
+  background: linear-gradient(145deg, rgba(96,165,250,.22), rgba(246,211,107,.15));
+  border:1px solid rgba(255,255,255,.10);
+}
+.miniPhoto{
+  width:38px;height:38px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  overflow:hidden;
+  background: rgba(0,0,0,.18);
+  display:grid;place-items:center;
+  flex:0 0 auto;
+  position:relative;
+}
+.miniPhoto img{ width:100%; height:100%; object-fit:cover; object-position:50% 22%; display:block; }
+.phFallback{
+  font-weight:1000;
+  font-size:12px;
+  color:rgba(255,255,255,.85);
+  letter-spacing:-.2px;
+}
+.name{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-weight:1000;
+  font-size:15px;
+}
+.meta{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:1000;
+  white-space:nowrap;
+}
+
+.row.top1{ border-color: rgba(246,211,107,.40); background: rgba(246,211,107,.10); }
+.row.top2{ border-color: rgba(255,255,255,.20); background: rgba(255,255,255,.06); }
+.row.top3{ border-color: rgba(246,211,107,.16); background: rgba(246,211,107,.06); }
+.rank.top1{ background: linear-gradient(145deg, rgba(246,211,107,.70), rgba(96,165,250,.12)); color:#111827; }
+.rank.top2{ background: linear-gradient(145deg, rgba(203,213,225,.70), rgba(96,165,250,.10)); color:#0b0f19; }
+.rank.top3{ background: linear-gradient(145deg, rgba(214,167,122,.70), rgba(96,165,250,.08)); color:#0b0f19; }
+
 .mid{
   display:grid;
   grid-template-columns: 1.1fr 0.9fr;
   gap:var(--gap);
   min-height:0;
 }
+.mid > .card{ height:100%; min-height:140px; }
 
-/* ========================== */
-/* Bottom (하단 2개 안 보임 해결) */
-/* ========================== */
+.note{
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-height:0;
+  flex:1;
+}
+
+.bigmsg{
+  border:1px solid rgba(246,211,107,.24);
+  background: linear-gradient(180deg, rgba(246,211,107,.10), rgba(0,0,0,.16));
+  border-radius:18px;
+  padding:12px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  min-height:86px;
+}
+.bigmsg .t{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.bigmsg .t .left{ font-weight:1000; font-size:14px; }
+.bigmsg .t .right{ display:none; }
+.bigmsg .body{
+  font-size:18px;
+  font-weight:1000;
+  line-height:1.25;
+  letter-spacing:-.3px;
+  word-break:keep-all;
+  display:flex;
+  align-items:center;
+  color:var(--text);
+}
+.gold{ color: var(--gold); }
+
+.marqueeWrap{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  padding:12px;
+}
+.marquee{
+  position:relative;
+  flex:1;
+  min-height:92px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  background: rgba(0,0,0,.14);
+}
+.track{
+  position:absolute;
+  top:50%;
+  transform: translateY(-50%);
+  display:flex;
+  gap:12px;
+  align-items:center;
+  animation: scrollX var(--speedX, 28s) linear infinite;
+  will-change: transform;
+  padding:10px 12px;
+}
+.marquee:hover .track{ animation-play-state: paused; }
+@keyframes scrollX{
+  from{ transform: translate(0, -50%); }
+  to{ transform: translate(calc(-1 * var(--scrollW, 900px)), -50%); }
+}
+.avatar{
+  width:72px; height:72px;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+  overflow:hidden;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  position:relative;
+}
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position: 50% 22%;
+  display:block;
+  filter: saturate(1.05) contrast(1.05);
+}
+.avatar .label{
+  position:absolute;
+  left:8px; right:8px; bottom:8px;
+  font-size:11px;
+  font-weight:1000;
+  padding:6px 8px;
+  border-radius:999px;
+  background: rgba(0,0,0,.45);
+  border:1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.92);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  text-align:center;
+}
+
 .bottom{
   display:grid;
   grid-template-columns: 1.1fr 0.9fr;
@@ -254,52 +370,13 @@ body{
   min-height:0;
 }
 
-/* ✅ 하단 카드 내부에서만 필요 시 스크롤 */
-.bottom .card{
-  min-height:0;
-}
-.bottom .card .note{
-  min-height:0;
-  overflow:auto;
-  padding:12px;
-}
-
-/* ========================== */
-/* "관장님 한마디" (더 넓게) */
-/* ========================== */
-.bigmsg{
-  border:1px solid rgba(246,211,107,.24);
-  background: linear-gradient(180deg, rgba(246,211,107,.10), rgba(0,0,0,.16));
-  border-radius:18px;
-  padding:16px 16px;
-
-  /* ✅ 더 길게 쓰기 */
-  min-height: 140px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.bigmsg .body{
-  font-size:20px;
-  font-weight:1000;
-  line-height:1.35;
-  letter-spacing:-.3px;
-  white-space:normal;
-  word-break:keep-all;
-}
-
-/* ========================== */
-/* Awards (명예의 전당) */
-/* ========================== */
+/* ✅ 명예의 전당: 8개를 2줄(4×2)로 고정 → 세로 높이 확 줄어 노트북에 안전 */
+.awardsWrap{ padding:12px; min-height:0; }
 .awards{
   display:grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap:10px;
-
-  /* ✅ overflow:hidden 때문에 잘리던 문제 해결 */
-  overflow:auto;
-  padding:12px;
-
+  margin-top:0;
   min-height:0;
 }
 
@@ -310,72 +387,87 @@ body{
   padding:10px;
   border-radius:16px;
   border:1px solid rgba(255,255,255,.10);
-  background:rgba(0,0,0,.18);
-
-  /* ✅ 박스가 너무 압축돼 잘리는 것 방지 */
-  min-height: 84px;
+  background: rgba(0,0,0,.18);
+  min-height:76px;
 }
-
 .awardPhoto{
-  width:54px;
-  height:54px;
+  width:50px;height:50px;
   border-radius:16px;
+  border:1px solid rgba(255,255,255,.12);
   overflow:hidden;
-  background:rgba(0,0,0,.20);
+  background: rgba(0,0,0,.22);
   flex:0 0 auto;
+  display:grid;
+  place-items:center;
 }
-
-/* ========================== */
-/* Thin Scrollbar */
-/* ========================== */
-*{
-  scrollbar-width:thin;
-  scrollbar-color:rgba(255,255,255,.25) transparent;
+.awardPhoto img{
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:50% 22%;
+  display:block;
 }
-::-webkit-scrollbar{ width:6px; height:6px; }
-::-webkit-scrollbar-thumb{
-  background:rgba(255,255,255,.25);
-  border-radius:10px;
+.awardTxt{min-width:0}
+.awardTitle{ font-size:12px; color:var(--muted); font-weight:1000; }
+.awardName{
+  margin-top:4px;
+  font-size:14px;
+  font-weight:1000;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  color:var(--text);
 }
-::-webkit-scrollbar-track{ background:transparent; }
+.awardTag{ margin-top:2px; font-size:11px; color:rgba(255,255,255,.72); font-weight:900; }
 
-/* ========================== */
-/* Mobile */
-/* ========================== */
-@media (max-width:820px){
-  body{ overflow:auto; } /* 모바일은 전체 스크롤 자연스럽게 */
+.awards.fade-out{ opacity:0; transform: translateY(2px); transition: opacity .25s ease, transform .25s ease; }
+.awards.fade-in{ opacity:1; transform: translateY(0); transition: opacity .25s ease, transform .25s ease; }
 
+.kvs{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:10px;
+}
+.kv{
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+  border-radius:16px;
+  padding:10px 10px;
+  min-height:72px;
+}
+.kv .k{ font-size:11px; color:var(--muted); font-weight:1000; }
+.kv .v{ margin-top:6px; font-weight:1000; font-size:14px; line-height:1.25; color:var(--text); }
+.kv .v small{ font-weight:900; color:var(--muted); font-size:12px; }
+
+.foot{ display:none; }
+
+/* 모바일 */
+@media (max-width: 820px){
+  body{ overflow:auto; }
   .stage{ padding:0; }
   .frame{
     width:100vw;
     height:100vh;
     border-radius:0;
+    overflow:auto;
+    -webkit-overflow-scrolling: touch;
   }
+  .content{ height:auto; grid-template-rows:auto; overflow:visible; }
+  .grid2, .mid, .bottom{ grid-template-columns: 1fr; }
+  .topbar{ height:auto; flex-wrap:wrap; align-items:flex-start; }
+  .btns, .topinfo{ width:100%; justify-content:flex-start; }
+  .avatar{ width:66px; height:66px; }
+  .marquee{ min-height:92px; }
 
-  .content{
-    height:auto;
-    grid-template-rows:auto;
-    overflow:visible;
-  }
-
-  .grid2,
-  .mid,
-  .bottom{
-    grid-template-columns:1fr;
-  }
-
-  .bigmsg{ min-height: 160px; }
-  .bigmsg .body{ font-size:18px; }
+  /* 모바일에서는 명예의 전당 2열 */
+  .awards{ grid-template-columns: 1fr 1fr; }
 }
 
-/* ========================== */
-/* Small Height Laptop */
-/* ========================== */
-@media (max-height:760px){
-  .foot{ display:none; }
-
-  /* ✅ 세로 짧은 노트북에서 하단이 더 잘 보이도록 */
+/* 세로가 짧은 노트북(예: 1366×768) 추가 보정 */
+@media (max-height: 760px){
   .content{
-    grid-template-rows: 1.15fr 110px 1.35fr;
+    grid-template-rows: 1.12fr minmax(120px, .50fr) 1.38fr;
   }
+  .awardCard{ min-height:72px; padding:9px; }
+  .awardPhoto{ width:46px; height:46px; }
+  .awardName{ font-size:13px; }
 }
