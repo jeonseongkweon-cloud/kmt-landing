@@ -26,6 +26,25 @@
     .qrWrap{margin-top:10px;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.10)}
     img{display:block;width:100%;height:auto}
     .note{margin-top:10px;padding:12px 14px;border-radius:18px;border:1px solid rgba(255,138,0,.22);background:rgba(255,138,0,.07);font-size:12px;line-height:1.7}
+
+    /* ✅ Refund */
+    .refund{margin-top:12px}
+    .refund .ttl{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,138,0,.25);background:rgba(255,138,0,.08);font-size:11px;font-weight:900;color:rgba(233,238,252,.92)}
+    .refund .muted{color:rgba(233,238,252,.72);font-size:11px;line-height:1.7;margin:6px 0 0}
+    .list{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+    .li{padding:10px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03);font-size:12px;line-height:1.7;color:rgba(233,238,252,.90)}
+    .grid2{display:grid;gap:10px}
+    @media (min-width:760px){.grid2{grid-template-columns:1fr 1fr}}
+    .table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:16px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.02)}
+    .table th,.table td{padding:10px 10px;font-size:12px;line-height:1.4;border-bottom:1px solid rgba(255,255,255,.08)}
+    .table th{font-weight:950;text-align:left;color:rgba(233,238,252,.92);background:rgba(255,255,255,.03)}
+    .table tr:last-child td{border-bottom:none}
+    .k{color:rgba(233,238,252,.72)}
+    .strong{font-weight:950}
+    .calc{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:11px; color:rgba(233,238,252,.88)}
+    .divider{height:1px;background:rgba(36,52,90,.45);margin:14px 0}
+
     .bottomBar{position:fixed;left:0;right:0;bottom:0;background:rgba(7,9,16,.78);border-top:1px solid rgba(36,52,90,.55);backdrop-filter:blur(10px);padding:10px 12px}
     .bottomInner{max-width:980px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap}
     .bbtn{flex:1;min-width:120px}
@@ -68,6 +87,96 @@
         <div class="note">
           결제 관련 문의는 홈에서 카톡 문의 버튼을 눌러주시면 가장 빠릅니다.
         </div>
+
+        <!-- ✅ 환불 규정 (결제 페이지 하단 삽입) -->
+        <div class="divider"></div>
+
+        <div class="card refund" id="refund">
+          <div class="ttl">
+            <div class="h" style="margin:0">📌 수련비 환불 규정</div>
+            <span class="badge">일할 계산 기준</span>
+          </div>
+          <div class="muted">
+            계명태권도는 공정하고 투명한 운영을 위해 아래 환불 기준을 적용합니다.
+            <br/>※ 본 규정은 <b>수개월 이상 수련 후 개인 사정(이사/시간 변경 등)</b>으로 중단 시 주로 적용됩니다.
+          </div>
+
+          <ul class="list">
+            <li class="li">
+              <span class="strong">① 납부 기준</span><br/>
+              수련비는 <b>등록일 기준 1개월 단위 선납</b>입니다. (예: 3/11 등록 → 다음 결제일 4/11)
+            </li>
+            <li class="li">
+              <span class="strong">② 환불 기준</span><br/>
+              중도 퇴관 시 <b>사용일수 기준 일할 계산</b> 후 환불합니다.<br/>
+              <div class="calc">환불금 = 납부 수련비 − (하루 기준 금액 × 사용일수)</div>
+            </li>
+            <li class="li">
+              <span class="strong">③ 기준일</span><br/>
+              환불은 <b>수련 중단 의사를 도장에 전달한 날</b>을 기준으로 계산됩니다.
+            </li>
+          </ul>
+
+          <div style="height:10px"></div>
+
+          <div class="grid2">
+            <div class="li">
+              <div class="strong" style="margin-bottom:8px">하루 기준 금액 (월 30일 기준)</div>
+              <table class="table" aria-label="환불 하루 기준">
+                <tr>
+                  <th>수련 형태</th>
+                  <th>월 수련비</th>
+                  <th>하루 기준</th>
+                </tr>
+                <tr>
+                  <td class="k">주 5일 수련</td>
+                  <td>165,000원</td>
+                  <td><b>5,500원</b></td>
+                </tr>
+                <tr>
+                  <td class="k">주 3일 수련</td>
+                  <td>145,000원</td>
+                  <td><b>4,800원</b></td>
+                </tr>
+              </table>
+              <div class="muted" style="margin-top:8px">
+                ※ 편의상 일 단위로 산정하며, 월은 30일 기준으로 계산합니다.
+              </div>
+            </div>
+
+            <div class="li">
+              <div class="strong" style="margin-bottom:8px">환불 예시</div>
+              <div class="p" style="font-size:12px">
+                등록일: <b>3월 11일</b> / 주5일(165,000원)<br/>
+                6월 1일 중단 → 6월 11일까지 <b>10일</b> 남음<br/><br/>
+                <span class="calc">10일 × 5,500원 = 55,000원</span><br/>
+                👉 환불금: <b>55,000원</b>
+              </div>
+              <div class="muted" style="margin-top:8px">
+                ※ 실제 환불금은 사용일수에 따라 달라질 수 있습니다.
+              </div>
+            </div>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <ul class="list">
+            <li class="li">
+              <span class="strong">④ 환불 제외 항목</span><br/>
+              도복, 띠, 개인 장비, 심사비, 행사 참가비 등은 환불 대상에서 제외됩니다.
+            </li>
+            <li class="li">
+              <span class="strong">⑤ 환불 처리</span><br/>
+              환불 요청 후 <b>7일 이내</b> 계좌 환불 처리됩니다.
+            </li>
+          </ul>
+
+          <div class="note" style="margin-top:12px">
+            환불 문의는 <b>카톡 문의</b>로 “아이이름/중단일/환불계좌”를 보내주시면 빠르게 안내드립니다.
+          </div>
+        </div>
+        <!-- /환불 규정 -->
+
       </div>
     </section>
   </div>
