@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>초등부 프로그램 | 계명태권도</title>
+  <meta name="description" content="초등부 50분 수업. 준비운동→기본동작→일인발차기→품새→미트겨루기→인성교육→정리운동. 운영: 3:00, 3:30(도담도담), 5:40, 6:50" />
+  <meta name="theme-color" content="#0b0f19" />
+  <style>
+    :root{--bg:#0b0f19;--line:rgba(36,52,90,.55);--text:#e9eefc;--muted:#a9b6d6;--accent:#ff8a00;--shadow:0 16px 40px rgba(0,0,0,.38);--r2:22px}
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;
+      background:radial-gradient(1200px 600px at 50% -10%, rgba(255,138,0,.18), transparent 60%),linear-gradient(180deg,#060a13,var(--bg));-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1040px;margin:0 auto;padding:14px 14px 120px}
+    .topbar{position:sticky;top:0;z-index:50;margin:0 -14px 12px;padding:12px 14px;background:rgba(7,9,16,.78);border-bottom:1px solid rgba(36,52,90,.55);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .brand{display:flex;gap:10px;align-items:center;min-width:0}
+    .logo{width:42px;height:42px;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);display:grid;place-items:center;font-weight:950}
+    .t1{font-weight:950;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .t2{font-size:12px;color:rgba(233,238,252,.70);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .homeBtn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,138,0,.35);background:linear-gradient(180deg, rgba(255,138,0,.95), rgba(255,138,0,.75));color:#101019;font-weight:950;font-size:13px;white-space:nowrap}
+    .hero{border:1px solid var(--line);background:linear-gradient(180deg, rgba(15,22,40,.92), rgba(13,19,34,.88));border-radius:var(--r2);box-shadow:var(--shadow);padding:16px 14px;position:relative;overflow:hidden}
+    .hero:before{content:"";position:absolute;inset:-1px;pointer-events:none;background:radial-gradient(520px 220px at 85% 10%, rgba(96,165,250,.12), transparent 62%),radial-gradient(520px 220px at 15% 0%, rgba(255,138,0,.12), transparent 62%);opacity:.95}
+    .hero>*{position:relative}
+    .hero h1{margin:0 0 8px;font-size:18px}
+    .hero p{margin:0;color:rgba(233,238,252,.78);font-size:13px;line-height:1.6}
+    .btnRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);font-weight:950;font-size:13px;white-space:nowrap}
+    .btn.primary{background:linear-gradient(180deg, rgba(255,138,0,.95), rgba(255,138,0,.75));border-color:rgba(255,138,0,.35);color:#101019}
+    .sectionTitle{margin:18px 4px 10px;display:flex;justify-content:space-between;align-items:flex-end;gap:10px}
+    .sectionTitle h2{margin:0;font-size:15px}
+    .mini{font-size:12px;color:var(--muted)}
+    .panel{border:1px solid var(--line);background:linear-gradient(180deg, rgba(15,22,40,.92), rgba(13,19,34,.90));border-radius:var(--r2);box-shadow:var(--shadow);overflow:hidden}
+    .panelBody{padding:12px}
+    .timeCard{border-radius:18px;border:1px solid rgba(255,255,255,.10);background:linear-gradient(180deg, rgba(18,28,51,.88), rgba(12,18,34,.92));padding:14px}
+    .badge{font-size:11px;font-weight:950;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);white-space:nowrap}
+    .timeRow{display:flex;justify-content:space-between;gap:10px;padding:9px 10px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);font-size:13px;margin-top:8px}
+    .timeRow span{color:rgba(233,238,252,.72);font-weight:800}
+    .hint{margin-top:8px;font-size:12px;color:var(--muted);line-height:1.5}
+    .list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+    .li{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03)}
+    .ico{width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10);font-weight:950;flex:0 0 auto}
+    .li b{display:block;font-size:13px}
+    .li span{display:block;font-size:12px;color:rgba(233,238,252,.72);margin-top:2px;line-height:1.5}
+    .ytBox{border:1px solid rgba(255,255,255,.12);border-radius:18px;overflow:hidden;background:rgba(255,255,255,.03)}
+    .ytHead{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.10);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;background:linear-gradient(90deg, rgba(255,138,0,.10), rgba(10,14,28,.0))}
+    .ytFrameWrap{position:relative;padding-top:56.25%}
+    .ytFrameWrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+    .footer{margin-top:14px;padding:16px 10px;text-align:center;color:rgba(233,238,252,.60);font-size:12px}
+  </style>
+</head>
+
+<body>
+  <div class="wrap" id="top">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">🧒</div>
+        <div>
+          <div class="t1">초등부 프로그램</div>
+          <div class="t2">구조 >> 교차원리, 교차원리 기반 무도</div>
+        </div>
+      </div>
+      <a class="homeBtn" href="../../">🏠 홈으로</a>
+    </div>
+
+    <script>
+      const PAGE = {
+        title: "초등부 50분 프로그램 (기본기→품새→미트)",
+        desc: "초등부는 ‘성취감’이 핵심입니다. 기본동작을 누적해 일인발차기·품새·미트훈련으로 연결하고, 인성교육과 정리운동으로 끝을 정리합니다.",
+        times: [
+          {label:"초등부", time:"3:00 ~ 3:50"},
+          {label:"도담도담반", time:"3:30 ~ 4:20"},
+          {label:"초등부", time:"5:40 ~ 6:30"},
+          {label:"초등부", time:"6:50 ~ 7:40"}
+        ],
+        hint: "각 반은 아이 성향/목표에 따라 안내합니다. (모든 수업 50분)",
+        flow: [
+          {i:"1", t:"준비운동", d:"부상 예방 + 집중 모드 전환."},
+          {i:"2", t:"기본동작", d:"자세·중심·정확도를 올려 발차기 기반을 만듭니다."},
+          {i:"3", t:"일인발차기", d:"정확도/속도/균형을 단계별로 강화합니다."},
+          {i:"4", t:"품새", d:"리듬·호흡·동작 연결. 자신감이 눈에 보이게 올라옵니다."},
+          {i:"5", t:"미트겨루기", d:"타격감·반응·거리감. 안전하게 ‘재밌는 운동’으로 완성."},
+          {i:"6", t:"인성교육", d:"약속·정리·태도. 실력만큼 중요한 습관을 지도합니다."},
+          {i:"7", t:"정리운동", d:"호흡 정리 + 스트레칭. 몸과 마음을 마무리합니다."}
+        ],
+        youtubeId:"wWIAPVvrnSw",
+        links:{
+          hub:"../",
+          kids:"../kids/",
+          growth:"../growth/",
+          dc:"../doublecross/",
+          contact:"../../#contact"
+        }
+      };
+    </script>
+
+    <section class="hero">
+      <h1 id="h1"></h1>
+      <p id="p"></p>
+
+      <div class="btnRow">
+        <a class="btn primary" id="btnContact" href="#">카톡 문의</a>
+        <a class="btn" id="btnHub" href="#">프로그램 허브</a>
+        <a class="btn" id="btnKids" href="#">유치부</a>
+        <a class="btn" id="btnGrowth" href="#">성장관리</a>
+        <a class="btn" id="btnDC" href="#">DOUBLE CROSS</a>
+      </div>
+    </section>
+
+    <div class="sectionTitle">
+      <h2>운영 시간</h2>
+      <div class="mini">다회차 운영</div>
+    </div>
+    <section class="panel">
+      <div class="panelBody">
+        <div class="timeCard">
+          <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
+            <div style="font-weight:950;font-size:14px">초등부 운영 시간</div>
+            <div class="badge">50분 수업</div>
+          </div>
+          <div id="times"></div>
+          <div class="hint" id="hint"></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="sectionTitle">
+      <h2>수업 흐름(50분)</h2>
+      <div class="mini">누적형 구조</div>
+    </div>
+    <section class="panel">
+      <div class="panelBody">
+        <ul class="list" id="flow"></ul>
+      </div>
+    </section>
+
+    <div class="sectionTitle">
+      <h2>대표 영상</h2>
+      <div class="mini">기본기 + 품새 + 미트</div>
+    </div>
+    <section class="panel">
+      <div class="panelBody">
+        <div class="ytBox">
+          <div class="ytHead">
+            <b>초등부 대표 영상</b>
+            <span class="mini">성취감이 올라오는 루틴</span>
+          </div>
+          <div class="ytFrameWrap">
+            <iframe id="yt"
+              src=""
+              title="초등부 대표 영상"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen></iframe>
+          </div>
+          <div style="padding:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <a class="btn primary" href="../../#contact">카톡 문의하기 →</a>
+            <a class="btn" href="../">프로그램 허브 →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">© <span id="year"></span> 계명태권도 · Elementary</div>
+  </div>
+
+  <script>
+    const $ = (id)=>document.getElementById(id);
+    $("h1").textContent = PAGE.title;
+    $("p").textContent  = PAGE.desc;
+
+    $("btnContact").href = PAGE.links.contact;
+    $("btnHub").href     = PAGE.links.hub;
+    $("btnKids").href    = PAGE.links.kids;
+    $("btnGrowth").href  = PAGE.links.growth;
+    $("btnDC").href      = PAGE.links.dc;
+
+    const times = $("times");
+    PAGE.times.forEach(t=>{
+      const d = document.createElement("div");
+      d.className = "timeRow";
+      d.innerHTML = `<span>${t.label}</span><b>${t.time}</b>`;
+      times.appendChild(d);
+    });
+    $("hint").textContent = "※ " + PAGE.hint;
+
+    const flow = $("flow");
+    PAGE.flow.forEach(s=>{
+      const li = document.createElement("li");
+      li.className = "li";
+      li.innerHTML = `<div class="ico">${s.i}</div><div><b>${s.t}</b><span>${s.d}</span></div>`;
+      flow.appendChild(li);
+    });
+
+    $("yt").src = `https://www.youtube.com/embed/${PAGE.youtubeId}`;
+    $("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
