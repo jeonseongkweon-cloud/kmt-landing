@@ -845,7 +845,8 @@
 
     startClock();
     setLive(true, "로딩중…");
-    document.getElementById("newNames").textContent = "홍길동 환영합니다!";
+const el = document.getElementById("newNames");
+if(el && !el.textContent.trim()) el.textContent = "홍길동 환영합니다!";
 
     loadFromSheet().catch(err=>{
       console.error(err);
