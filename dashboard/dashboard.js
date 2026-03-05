@@ -1,360 +1,275 @@
-/* =========================================================
-   Keimyung Taekwondo | LIVE BOARD
-   - Points TOP10: '합계포인트' 기준
-   - Senior/Belt TOP10: 'rank_score' 기준(정렬용) + '단증합계'(표시용)
-   ========================================================= */
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=0&single=true&output=csv";
 
-const CONFIG = {
-  csvUrl:
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=0&single=true&output=csv",
-  photoBaseUrl: "/gallery/images/students/",
-  photoSuffix: "_01.jpg",
-  topN: 10,
-  scrollSecondsPoints: 22,
-  scrollSecondsBelt: 24,
-  photoScrollSeconds: 28,
-  privacyMode: "full",
-  photoCount: 18,
-};
-
-const DAILY_AWARDS = [
-  { title: "어제의 MVP",      id: "KM003", name: "김민규", tag: "노력 최고!" },
-  { title: "어제의 웃음왕",   id: "KM001", name: "김예담", tag: "시간 약속 굿!" },
-  { title: "어제의 도복왕",   id: "KM055", name: "최기영", tag: "도복이 반짝!" },
-  { title: "어제의 인사왕",   id: "KM011", name: "김동언", tag: "인사 태도 최고!" },
-  { title: "어제의 목소리왕", id: "KM048", name: "이주형", tag: "기합 우렁차다!" },
-  { title: "어제의 정리왕",   id: "KM017", name: "김우리", tag: "정리정돈 멋짐!" },
-  { title: "어제의 배려왕",   id: "KM016", name: "김시율", tag: "친구 돕기 최고!" },
-  { title: "어제의 집중왕",   id: "KM057", name: "하석진", tag: "눈빛이 다르다!" },
+const HALL_OF_FAME = [
+  {title:"어제의 MVP", name:"김민규", tag:"노력 최고"},
+  {title:"어제의 웃음왕", name:"김예담", tag:"시간 약속 굿!"},
+  {title:"어제의 도전왕", name:"최기영", tag:"도복이 반짝!"},
+  {title:"어제의 인사왕", name:"김동언", tag:"인사 태도 최고"},
+  {title:"어제의 집중왕", name:"하석진", tag:"눈빛이 다르다!"},
+  {title:"어제의 성실왕", name:"김우리", tag:"정리정돈 멋짐!"},
+  {title:"어제의 배려왕", name:"김시율", tag:"친구 돕기 최고!"},
+  {title:"어제의 목소리왕", name:"이주형", tag:"기합 우렁차다!"},
 ];
 
-const $ = (id) => document.getElementById(id);
-
-/* =========================
-   Utils
-   ========================= */
-function escapeHtml(s) {
-  return String(s ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+function pad2(n){ return String(n).padStart(2,"0"); }
+function nowTime(){
+  const d = new Date();
+  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
 }
-function fmt(n) {
-  try { return new Intl.NumberFormat("ko-KR").format(n); }
-  catch { return String(n); }
+function setLive(ok, msg){
+  const dot = document.getElementById("liveDot");
+  const text = document.getElementById("liveText");
+  if(!dot || !text) return;
+  if(ok){ dot.classList.remove("warn"); text.textContent = msg || "연결됨"; }
+  else{ dot.classList.add("warn"); text.textContent = msg || "오프라인"; }
 }
-function applyPrivacy(name, id) {
-  if (CONFIG.privacyMode === "full") return (name || id || "-").trim();
-  if (CONFIG.privacyMode === "id") return (id || name || "-").trim();
-  const s = String(name ?? "").trim();
-  return s ? (s[0] + "*") : (id || "-");
-}
-function numLike(v) {
-  const s = String(v ?? "").replace(/\s+/g, "").replace(/,/g, "");
-  const n = Number(s.replace(/[^\d.-]/g, ""));
-  return Number.isFinite(n) ? n : 0;
+function toggleFull(){
+  const el = document.documentElement;
+  if(!document.fullscreenElement) el.requestFullscreen?.();
+  else document.exitFullscreen?.();
 }
 
-/* =========================
-   URL sanitize (csv가 2번 붙어도 첫 url만 사용)
-   ========================= */
-function sanitizeCsvUrl(url) {
-  const s = String(url || "");
-  const idx = s.indexOf("https://docs.google.com/spreadsheets/");
-  if (idx === -1) return s.trim();
-  const cut = s.indexOf("https://docs.google.com/spreadsheets/", idx + 10);
-  return (cut > -1 ? s.slice(idx, cut) : s.slice(idx)).trim();
-}
-
-/* =========================
-   CSV parse
-   ========================= */
-function parseCSV(text) {
-  const rowsArr = [];
+function parseCSV(text){
+  const rows = [];
   let row = [];
   let cur = "";
   let inQuotes = false;
 
-  const s = String(text ?? "").replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    const n = text[i+1];
 
-  for (let i = 0; i < s.length; i++) {
-    const ch = s[i];
-    if (inQuotes) {
-      if (ch === '"') {
-        if (s[i + 1] === '"') { cur += '"'; i++; }
-        else inQuotes = false;
-      } else cur += ch;
-    } else {
-      if (ch === '"') inQuotes = true;
-      else if (ch === ",") { row.push(cur); cur = ""; }
-      else if (ch === "\n") { row.push(cur); rowsArr.push(row); row = []; cur = ""; }
-      else cur += ch;
+    if(c === '"' ){
+      if(inQuotes && n === '"'){ cur += '"'; i++; }
+      else inQuotes = !inQuotes;
+      continue;
     }
-  }
-  row.push(cur);
-  rowsArr.push(row);
 
-  while (rowsArr.length && rowsArr[rowsArr.length - 1].every(v => String(v ?? "").trim() === "")) rowsArr.pop();
-  if (rowsArr.length <= 1) return [];
-
-  const headers = rowsArr[0].map(h => String(h ?? "").trim());
-
-  const out = [];
-  for (let r = 1; r < rowsArr.length; r++) {
-    const cols = rowsArr[r];
-    const obj = { __cols: cols, __headers: headers };
-    headers.forEach((h, idx) => (obj[h] = String(cols[idx] ?? "").trim()));
-    out.push(obj);
-  }
-  return out;
-}
-
-async function loadCsv(url) {
-  const clean = sanitizeCsvUrl(url);
-  const res = await fetch(clean, { cache: "no-store" });
-  if (!res.ok) throw new Error("CSV fetch 실패: " + res.status);
-  return parseCSV(await res.text());
-}
-
-/* =========================
-   Header matching (느슨하게)
-   ========================= */
-function cleanKey(k) {
-  return String(k ?? "")
-    .replace(/\uFEFF/g, "")
-    .replace(/[\u200B-\u200D\u2060]/g, "")
-    .replace(/\s+/g, "")
-    .trim()
-    .toLowerCase();
-}
-function findColIndexByHeader(headers, candidates) {
-  const norm = headers.map(h => cleanKey(h));
-  const want = candidates.map(c => cleanKey(c));
-  for (let i = 0; i < norm.length; i++) {
-    for (const w of want) {
-      if (norm[i] === w) return i;
+    if(!inQuotes && c === ','){
+      row.push(cur.trim());
+      cur = "";
+      continue;
     }
-  }
-  for (let i = 0; i < norm.length; i++) {
-    for (const w of want) {
-      if (norm[i].includes(w) || w.includes(norm[i])) return i;
+
+    if(!inQuotes && (c === '\n' || c === '\r')){
+      if(c === '\r' && n === '\n') i++;
+      row.push(cur.trim());
+      cur = "";
+      if(row.some(v => v !== "")) rows.push(row);
+      row = [];
+      continue;
     }
+
+    cur += c;
   }
-  return -1;
+  row.push(cur.trim());
+  if(row.some(v => v !== "")) rows.push(row);
+  return rows;
 }
-function getByKeys(row, keys) {
-  const map = new Map();
-  for (const [k, v] of Object.entries(row)) map.set(cleanKey(k), v);
-  for (const k of keys) {
-    const v = map.get(cleanKey(k));
-    if (v !== undefined && String(v).trim() !== "") return v;
-  }
+
+function toNumber(v){
+  const n = Number(String(v||"").replace(/[^\d.-]/g,""));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function initialsKR(name){
+  const s = String(name||"").trim();
+  if(!s) return "KM";
+  return s.slice(0,2);
+}
+
+function safeImg(url){
+  const u = String(url||"").trim();
+  if(!u) return "";
+  if(/^https?:\/\//i.test(u)) return u;
   return "";
 }
 
-/* =========================
-   Rows mapping
-   - Points: 합계포인트
-   - Belt display: 단증합계 (N열)
-   - Belt sort: rank_score (O열)
-   ========================= */
-function mapRows(rows) {
-  if (!rows.length) return [];
-
-  const headers = rows[0].__headers || [];
-
-  const pointIdx = findColIndexByHeader(headers, [
-    "합계포인트", "합계 포인트", "포인트합계", "총포인트", "누적포인트", "포인트"
-  ]);
-
-  const beltLabelIdx = findColIndexByHeader(headers, [
-    "단증합계", "단증 합계"
-  ]);
-
-  const rankScoreIdx = findColIndexByHeader(headers, [
-    "rank_score", "rankscore", "정렬점수", "단급점수", "단급스코어"
-  ]);
-
-  return rows.map(r => {
-    const cols = Array.isArray(r.__cols) ? r.__cols : [];
-
-    const id = String(getByKeys(r, ["아이디","id","ID","코드","번호"]) || "").toUpperCase().trim();
-    const name = String(getByKeys(r, ["이름","name","성명","학생","수련생"]) || "").trim();
-
-    // 포인트
-    let scoreRaw = getByKeys(r, ["합계포인트","합계 포인트","포인트합계","총포인트","누적포인트","포인트"]);
-    if (!scoreRaw && pointIdx >= 0 && cols[pointIdx] != null) scoreRaw = cols[pointIdx];
-    const points = numLike(scoreRaw);
-
-    // 표시용 단증합계
-    let beltLabel = getByKeys(r, ["단증합계","단증 합계"]);
-    if (!beltLabel && beltLabelIdx >= 0 && cols[beltLabelIdx] != null) beltLabel = cols[beltLabelIdx];
-    beltLabel = String(beltLabel ?? "").trim();
-
-    // 정렬용 rank_score
-    let beltScoreRaw = getByKeys(r, ["rank_score","rankscore","정렬점수","단급점수","단급스코어"]);
-    if (!beltScoreRaw && rankScoreIdx >= 0 && cols[rankScoreIdx] != null) beltScoreRaw = cols[rankScoreIdx];
-    const beltScore = numLike(beltScoreRaw);
-
-    return {
-      id,
-      name,
-      points,
-      beltLabel: beltLabel || "-",
-      beltScore: beltScore || 0,
-    };
-  }).filter(x => x.id || x.name);
+function photoBoxHTML(name, photoUrl){
+  const src = safeImg(photoUrl);
+  if(src){
+    return `<div class="miniPhoto"><img alt="${name}" src="${src}" loading="lazy"></div>`;
+  }
+  return `<div class="miniPhoto"><div class="phFallback">${initialsKR(name)}</div></div>`;
 }
 
-/* =========================
-   Render helpers
-   ========================= */
-function setSpeedY(tickerEl, seconds) { tickerEl.style.setProperty("--speed", seconds + "s"); }
-function setSpeedX(trackEl, seconds) { trackEl.style.setProperty("--speedX", seconds + "s"); }
+function renderTicker(listEl, items, mode){
+  const makeRow = (it, i)=>`
+    <div class="row ${i===0?"top1":i===1?"top2":i===2?"top3":""}">
+      <div class="rank ${i===0?"top1":i===1?"top2":i===2?"top3":""}">${i+1}</div>
+      ${photoBoxHTML(it.name, it.photo)}
+      <div class="name">${it.name}</div>
+      <div class="meta">${mode==="pts" ? `${it.pts} P` : (it.label || "")}</div>
+    </div>
+  `;
+  const baseHTML = items.map(makeRow).join("");
+  listEl.innerHTML = baseHTML + baseHTML;
 
-function renderTicker(listEl, items, type) {
-  const top = items.slice(0, CONFIG.topN);
-  const html = top.map((it, idx) => {
-    const rankNum = idx + 1;
-    const displayName = applyPrivacy(it.name, it.id);
-    const meta = (type === "points")
-      ? `${fmt(it.points)} P`
-      : (it.beltLabel || "-");
-
-    const topClass = rankNum === 1 ? "top1" : rankNum === 2 ? "top2" : rankNum === 3 ? "top3" : "";
-    return `
-      <div class="row ${topClass}">
-        <div class="rank ${topClass}">${rankNum}</div>
-        <div class="name">${escapeHtml(displayName)}</div>
-        <div class="meta">${escapeHtml(meta)}</div>
-      </div>
-    `;
-  }).join("");
-
-  listEl.innerHTML = html + html;
+  requestAnimationFrame(()=>{
+    const oneSetHeight = listEl.scrollHeight / 2;
+    listEl.parentElement.style.setProperty("--scrollH", oneSetHeight + "px");
+    const sec = Math.max(18, Math.min(28, items.length * 2.1));
+    listEl.style.animationDuration = sec + "s";
+  });
 }
 
-function renderAwards() {
-  const grid = $("awardsGrid");
-  if (!grid) return;
+function renderPhotoFlow(trackEl, items){
+  const makeAvatar = (it)=>`
+    <div class="avatar">
+      ${
+        safeImg(it.photo)
+          ? `<img alt="${it.name}" src="${safeImg(it.photo)}" loading="lazy" />`
+          : `<div class="phFallback" style="font-size:16px">${initialsKR(it.name)}</div>`
+      }
+      <div class="label">${it.name}</div>
+    </div>
+  `;
 
-  const base = (CONFIG.photoBaseUrl || "").trim().replace(/\/?$/, "/");
-  const suffix = CONFIG.photoSuffix || "_01.jpg";
+  trackEl.innerHTML = items.map(makeAvatar).join("") + items.map(makeAvatar).join("");
 
-  grid.innerHTML = (DAILY_AWARDS || []).map(a => {
-    const id = (a.id || "").toUpperCase();
-    const showName = applyPrivacy(a.name, id);
-    const src = id ? base + id + suffix : "";
+  const finalize = ()=>{
+    const w = trackEl.scrollWidth / 2;
+    trackEl.style.setProperty("--scrollW", w + "px");
+    const sec = Math.max(18, Math.min(42, w / 60));
+    trackEl.style.animationDuration = sec + "s";
+  };
+
+  const imgs = Array.from(trackEl.querySelectorAll("img"));
+  let loaded = 0;
+  if(imgs.length === 0) { setTimeout(finalize, 60); return; }
+
+  imgs.forEach(img=>{
+    const done = ()=>{ loaded++; if(loaded >= imgs.length) finalize(); };
+    if(img.complete) done();
+    else{
+      img.addEventListener("load", done, {once:true});
+      img.addEventListener("error", done, {once:true});
+    }
+  });
+
+  setTimeout(finalize, 900);
+}
+
+function renderAwardsFromSheet(grid, awards, photoByName){
+  grid.innerHTML = awards.map(it=>{
+    const photo = photoByName.get(it.name) || "";
     return `
       <div class="awardCard">
         <div class="awardPhoto">
-          ${src ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(showName)}" loading="lazy" onerror="this.style.display='none'">`
-               : `<div style="font-weight:1000;color:var(--gold);opacity:.9;">KM</div>`}
+          ${ safeImg(photo) ? `<img alt="${it.name}" src="${safeImg(photo)}" loading="lazy">`
+                           : `<div class="phFallback">${initialsKR(it.name)}</div>`}
         </div>
         <div class="awardTxt">
-          <div class="awardTitle">${escapeHtml(a.title || "오늘의 ★")}</div>
-          <div class="awardName">${escapeHtml(showName)}</div>
-          <div class="awardTag">${escapeHtml(a.tag || "")}</div>
+          <div class="awardTitle">${it.title}</div>
+          <div class="awardName">${it.name}</div>
+          <div class="awardTag">${it.tag}</div>
         </div>
       </div>
     `;
   }).join("");
 }
 
-function renderPhotoMarquee(items) {
-  const track = $("photoTrack");
-  if (!track) return;
-
-  const base = (CONFIG.photoBaseUrl || "").trim().replace(/\/?$/, "/");
-  const suffix = CONFIG.photoSuffix || "_01.jpg";
-
-  const seen = new Set();
-  const picked = [];
-  for (const it of items) {
-    const id = (it.id || "").toUpperCase();
-    if (!id || seen.has(id)) continue;
-    seen.add(id);
-    picked.push({ id, label: applyPrivacy(it.name, id) });
-    if (picked.length >= CONFIG.photoCount) break;
-  }
-
-  const arr = picked.map(x => ({ label: x.label, src: base + x.id + suffix }));
-  const doubled = arr.concat(arr);
-
-  track.innerHTML = doubled.map(it => `
-    <div class="avatar">
-      <img src="${escapeHtml(it.src)}" alt="${escapeHtml(it.label)}" loading="lazy"
-           onerror="this.style.display='none'" />
-      <div class="label">${escapeHtml(it.label)}</div>
-    </div>
-  `).join("");
-}
-
-function wireControls() {
-  const btnFullscreen = $("btnFullscreen");
-  if (btnFullscreen) {
-    btnFullscreen.addEventListener("click", async () => {
-      const el = $("frame") || document.documentElement;
-      try {
-        if (!document.fullscreenElement) await el.requestFullscreen();
-        else await document.exitFullscreen();
-      } catch (_) {}
-    });
-  }
-  const btnReload = $("btnReload");
-  if (btnReload) btnReload.addEventListener("click", () => location.reload());
-}
-
-function startClock() {
-  const footClock = $("footClock");
-  const monthText = $("monthText");
-  const msgDate = $("msgDate");
-  const nowText = $("nowText");
-
-  const initHeader = () => {
-    const d = new Date();
-    if (monthText) monthText.textContent = `${d.getMonth() + 1}월`;
-    if (msgDate) msgDate.textContent = `${d.getMonth() + 1}월 ${d.getDate()}일`;
-    if (nowText) nowText.textContent = "LIVE";
-  };
-  const tick = () => {
-    const d = new Date();
-    const hh = String(d.getHours()).padStart(2, "0");
-    const mm = String(d.getMinutes()).padStart(2, "0");
-    if (footClock) footClock.textContent = `${hh}:${mm}`;
-  };
-
-  initHeader();
+function startClock(){
+  const el = document.getElementById("todayTime");
+  const tick = ()=>{ if(el) el.textContent = nowTime(); };
   tick();
-  setInterval(tick, 1000);
+  setInterval(tick, 1000*15);
 }
 
-/* =========================
-   Init
-   ========================= */
-async function init() {
-  if ($("pointsTicker")) setSpeedY($("pointsTicker"), CONFIG.scrollSecondsPoints);
-  if ($("beltTicker")) setSpeedY($("beltTicker"), CONFIG.scrollSecondsBelt);
-  if ($("photoTrack")) setSpeedX($("photoTrack"), CONFIG.photoScrollSeconds);
+async function loadFromSheet(){
+  setLive(true, "로딩중…");
+  const url = CSV_URL + (CSV_URL.includes("?") ? "&" : "?") + "t=" + Date.now();
 
-  renderAwards();
-  wireControls();
-  startClock();
+  const res = await fetch(url, {cache:"no-store"});
+  if(!res.ok) throw new Error("CSV fetch 실패: " + res.status);
 
-  const raw = await loadCsv(CONFIG.csvUrl);
-  const data = mapRows(raw);
+  const text = await res.text();
+  const rows = parseCSV(text);
+  if(rows.length < 2) throw new Error("CSV 데이터가 비어있습니다.");
 
-  // ✅ 포인트 TOP10
-  const pointsSorted = [...data].sort((a, b) => b.points - a.points);
-  if ($("pointsList")) renderTicker($("pointsList"), pointsSorted, "points");
+  const header = rows[0];
+  const idx = (name)=> header.indexOf(name);
 
-  // ✅ 단/선배 TOP10: rank_score 내림차순(핵심!)
-  const beltSorted = [...data].sort((a, b) => (b.beltScore - a.beltScore) || (b.points - a.points));
-  if ($("beltList")) renderTicker($("beltList"), beltSorted, "belt");
+  const iId = idx("아이디");
+  const iName = idx("이름");
+  const iPhoto = idx("포토링크");
+  const iPts = idx("합계포인트");
 
-  renderPhotoMarquee([...pointsSorted, ...beltSorted]);
+  const iDanLabel = idx("단증합계");     // N열(표시용)
+  const iRankScore = idx("rank_score");  // O열(정렬용)
+
+  if(iName === -1 || iPhoto === -1 || iPts === -1){
+    throw new Error("헤더 컬럼을 찾을 수 없습니다. (필수: 이름, 포토링크, 합계포인트)");
+  }
+  if(iDanLabel === -1 || iRankScore === -1){
+    throw new Error("단/급 TOP10용 컬럼을 찾을 수 없습니다. (필수: 단증합계, rank_score)");
+  }
+
+  const students = rows.slice(1).map(r=>{
+    const id = r[iId] || "";
+    const name = r[iName] || "";
+    const photo = r[iPhoto] || "";
+    const pts = toNumber(r[iPts]);
+
+    const danLabel = (iDanLabel>=0 ? r[iDanLabel] : "") || "";
+    const rankScore = (iRankScore>=0 ? toNumber(r[iRankScore]) : 0);
+
+    return {id, name, photo, pts, danLabel, rankScore};
+  }).filter(s=>String(s.name||"").trim().length>0);
+
+  const photoByName = new Map();
+  students.forEach(s=>{
+    const key = String(s.name).trim();
+    if(key && !photoByName.has(key) && String(s.photo||"").trim()) photoByName.set(key, s.photo);
+  });
+
+  const rankingTop = [...students]
+    .sort((a,b)=>b.pts - a.pts)
+    .slice(0,10)
+    .map(s=>({name:s.name, pts:s.pts, photo:s.photo}));
+
+  const danTop = [...students]
+    .filter(s => String(s.danLabel||"").trim().length > 0)
+    .sort((a,b)=> (b.rankScore||0) - (a.rankScore||0))
+    .slice(0,10)
+    .map(s=>({name:s.name, label:s.danLabel, photo:s.photo}));
+
+  const flow = students
+    .filter(s=>safeImg(s.photo))
+    .slice(0,14)
+    .map(s=>({name:s.name, photo:s.photo}));
+
+  const d = new Date();
+  const monthEl = document.getElementById("monthLabel");
+  if(monthEl) monthEl.textContent = `${d.getMonth()+1}월`;
+
+  renderTicker(document.getElementById("rankList"), rankingTop, "pts");
+  renderTicker(document.getElementById("danList"), danTop, "dan");
+
+  if(flow.length >= 3){
+    renderPhotoFlow(document.getElementById("photoTrack"), flow);
+    const hint = document.getElementById("photoHint");
+    if(hint) hint.textContent = `시트 연동 (${flow.length}명)`;
+  }else{
+    document.getElementById("photoTrack").innerHTML =
+      `<div style="padding:10px 12px; color:rgba(255,255,255,.7); font-weight:900">포토링크가 있는 학생이 부족합니다.</div>`;
+  }
+
+  renderAwardsFromSheet(document.getElementById("awardsGrid"), HALL_OF_FAME, photoByName);
+
+  setLive(true, "연결됨");
+  const rankHint = document.getElementById("rankHint");
+  if(rankHint) rankHint.textContent = `시트 연동 (${students.length}명)`;
 }
 
-init().catch(console.error);
+startClock();
+setLive(true, "로딩중…");
+
+const el = document.getElementById("newNames");
+if(el && !el.textContent.trim()) el.textContent = "홍길동 환영합니다!";
+
+loadFromSheet().catch(err=>{
+  console.error(err);
+  setLive(false, "시트 오류");
+  alert("구글시트 연동 오류: " + err.message);
+});
