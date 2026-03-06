@@ -4,25 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>처음 오신 학부모 안내 | 계명태권도</title>
-  <meta name="description" content="계명태권도 처음 오신 학부모 안내: 도복/가방/등록/차량/보강/문의까지 한 번에 정리했습니다." />
+  <meta name="description" content="계명태권도 처음 오신 학부모 안내. 등록 절차, 도복, 가방, 차량, 보강수업, 유치부/초등부 구분, 문의 방법까지 한 번에 확인하세요." />
   <meta name="theme-color" content="#0b0f19" />
 
-  <!-- OG -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="처음 오신 학부모 안내 | 계명태권도" />
-  <meta property="og:description" content="도복·가방·등록·차량·보강·문의까지 한 번에 확인하세요." />
+  <meta property="og:description" content="처음 등록 전 꼭 확인하면 좋은 안내를 한 페이지에 정리했습니다." />
   <meta property="og:image" content="https://static.wixstatic.com/media/abf917_9a323d3a71994964a4b962b29393fbf9~mv2.jpg" />
   <meta property="og:url" content="https://계명태권도.com/first/" />
 
-  <!-- (선택) 아이콘: 대문과 동일 -->
   <link rel="icon" type="image/png" sizes="192x192"
         href="https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png" />
   <link rel="apple-touch-icon" sizes="192x192"
         href="https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png" />
 
-  <!-- =====================================================
-    ✅ 대문(KMT) 설정과 동일하게 유지: 여기만 바꾸면 first도 같이 바뀜
-  ====================================================== -->
   <script>
     const KMT = {
       dojoName: "계명태권도",
@@ -32,81 +27,96 @@
       phone: "010-4477-2772",
       bandUrl: "https://band.us/n/a8a7b9Xahdgb8",
       kakaoUrl: "https://open.kakao.com/o/gF8p81hi",
-
       youtubeChannelUrl: "https://www.youtube.com/@%EA%B3%84%EB%AA%85%ED%83%9C%EA%B6%8C%EB%8F%84%EC%9A%B8%EC%82%B0",
 
-      verificationPageUrl: "../verification/",
-      growthPageUrl: "../growth/",
-      payPageUrl: "../pay/",
-      noticePageUrl: "../notice/",
-      galleryPageUrl: "../gallery/",
-      coachPageUrl: "../coach/",
+      homeUrl: "../",
       schedulePageUrl: "../schedule/",
       programPageUrl: "../program/",
       planPageUrl: "../plan/",
       examPageUrl: "../exam/",
+      payPageUrl: "../pay/",
+      coachPageUrl: "../coach/",
+      galleryPageUrl: "../gallery/",
+      noticePageUrl: "../notice/",
 
       logoImage: "https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png",
-      heroImages: [
-        "https://static.wixstatic.com/media/abf917_951d85fca9694590a8f2fd38ff592b39~mv2.jpg",
-        "https://static.wixstatic.com/media/abf917_9a323d3a71994964a4b962b29393fbf9~mv2.jpg",
-        "https://static.wixstatic.com/media/abf917_ba6bfb5cef4d4c79a071f1891b2862be~mv2.jpg",
-        "https://static.wixstatic.com/media/abf917_f1771f9de8504c5cb66e5a62dd4168ff~mv2.jpg"
-      ]
+      heroImage: "https://static.wixstatic.com/media/abf917_9a323d3a71994964a4b962b29393fbf9~mv2.jpg"
     };
   </script>
 
   <style>
     :root{
       --bg:#0b0f19;
-      --panel:#0f1628;
+      --panel:#10192f;
+      --panel2:#0f1628;
       --card:#121c33;
       --line:#24345a;
       --text:#e9eefc;
       --muted:#a9b6d6;
       --accent:#ff8a00;
-      --shadow: 0 16px 40px rgba(0,0,0,.38);
+      --gold:#f6d36b;
+      --blue:#60a5fa;
+      --good:#34d399;
+      --shadow:0 18px 42px rgba(0,0,0,.38);
       --r:22px;
     }
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
       color:var(--text);
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", sans-serif;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;
       background:
-        radial-gradient(1200px 600px at 50% -10%, rgba(255,138,0,.18), transparent 60%),
+        radial-gradient(1200px 600px at 50% -10%, rgba(255,138,0,.14), transparent 60%),
         linear-gradient(180deg, #060a13, var(--bg));
-      -webkit-font-smoothing: antialiased;
+      -webkit-font-smoothing:antialiased;
     }
     a{color:inherit;text-decoration:none}
-    .wrap{max-width:1040px;margin:0 auto;padding:14px 14px 120px}
+    .wrap{max-width:920px;margin:0 auto;padding:18px 14px 120px}
     section{scroll-margin-top:14px}
 
-    /* TOP mini bar */
-    .topMini{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin:2px 2px 12px;
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: rgba(7,9,16,.68);
+      border-bottom:1px solid rgba(36,52,90,.45);
     }
-    .crumb{
+    .topin{
+      max-width:920px; margin:0 auto; padding:12px 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+    }
+    .brand{
       display:flex; align-items:center; gap:10px; min-width:0;
-      color: rgba(233,238,252,.86);
-      font-weight:950;
-      letter-spacing:.1px;
     }
-    .crumb small{
-      display:block; font-weight:800;
-      color: rgba(233,238,252,.64);
-      font-size:12px;
-      margin-top:2px;
+    .logo{
+      width:42px; height:42px; border-radius:14px;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      background-position:center;
+      background-repeat:no-repeat;
+      background-size:contain;
+      flex:0 0 auto;
+    }
+    .brandText{min-width:0}
+    .brandText .t1{
+      font-size:15px; font-weight:950;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
-    .topActions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+    .brandText .t2{
+      font-size:12px; color:var(--muted);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .topBtns{
+      display:flex; gap:8px; flex-wrap:wrap;
+    }
     .btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:8px;
-      padding:10px 10px;border-radius:14px;
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      padding:10px 12px;
+      min-height:42px;
+      border-radius:14px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
-      font-weight:950;font-size:13px;
+      font-weight:950; font-size:13px;
       cursor:pointer;
       white-space:nowrap;
     }
@@ -115,163 +125,184 @@
       border-color: rgba(255,138,0,.35);
       color:#101019;
     }
+    .btn.soft{
+      border-color: rgba(96,165,250,.25);
+      background: rgba(96,165,250,.08);
+    }
 
-    /* HERO (대문 톤) */
     .hero{
+      margin-top:14px;
       border:1px solid rgba(36,52,90,.55);
-      background: linear-gradient(180deg, rgba(15,22,40,.92), rgba(13,19,34,.88));
-      border-radius:22px;
+      border-radius:28px;
       overflow:hidden;
-      box-shadow: var(--shadow);
+      background:
+        linear-gradient(180deg, rgba(15,22,40,.96), rgba(11,15,25,.95));
+      box-shadow:var(--shadow);
     }
-    .heroSlide{
-      position:relative;
+    .heroImage{
+      aspect-ratio: 16 / 8;
+      min-height:260px;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.46)),
+        center / cover no-repeat;
+      display:flex;
+      align-items:end;
+      padding:18px;
+    }
+    .heroBox{
       width:100%;
-      aspect-ratio: 4 / 5;
-      background:#0c111f;
+      max-width:700px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(8,12,24,.64);
+      backdrop-filter: blur(6px);
+      border-radius:22px;
+      padding:16px 16px;
     }
-    @media (min-width:860px){
-      .heroSlide{ max-height:520px; }
-    }
-    .heroSlide .layer{
-      position:absolute; inset:0;
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-color:#0c111f;
-      opacity:0;
-      transform: translateX(18px);
-      transition: opacity .55s ease, transform .55s ease;
-      filter: saturate(1.03) contrast(1.01);
-    }
-    .heroSlide .layer.on{ opacity:1; transform: translateX(0); }
-    .heroSlide:after{
-      content:"";
-      position:absolute; inset:0;
-      background: linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.45));
-      pointer-events:none;
-    }
-    .dots{
-      position:absolute; right:14px; bottom:12px;
-      display:flex; gap:6px; z-index:3;
-    }
-    .dot{
-      width:8px;height:8px;border-radius:999px;
-      background: rgba(255,255,255,.35);
-      border:1px solid rgba(255,255,255,.22);
-      cursor:pointer;
-    }
-    .dot.on{ background: rgba(255,138,0,.9); border-color: rgba(255,138,0,.35); }
-
-    .heroBar{
-      display:flex;gap:12px;align-items:center;justify-content:space-between;
-      padding:12px 14px;
-      background: rgba(8,10,18,.70);
-      backdrop-filter: blur(10px);
-      border-top:1px solid rgba(36,52,90,.4);
-      flex-wrap:wrap;
-    }
-    .brand{display:flex;align-items:center;gap:10px;min-width:0;flex:1}
-    .logo{
-      width:44px;height:44px;border-radius:14px;
+    .heroKicker{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
       background: rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
-      flex:0 0 auto;
-      background-position:center;
-      background-repeat:no-repeat;
-      background-size:contain;
+      color:rgba(233,238,252,.86);
+      font-size:12px; font-weight:900;
+      margin-bottom:10px;
     }
-    .brandText{min-width:0}
-    .brandText .t1{font-weight:950;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .brandText .t2{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .brandText .t3{font-size:12px;color:rgba(233,238,252,.70);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .heroKicker .dot{
+      width:8px; height:8px; border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 14px rgba(255,138,0,.38);
+    }
+    .hero h1{
+      margin:0;
+      font-size:28px;
+      line-height:1.28;
+      letter-spacing:-.3px;
+    }
+    .hero p{
+      margin:10px 0 0;
+      color:rgba(233,238,252,.82);
+      font-size:14px;
+      line-height:1.7;
+    }
+    .heroBtns{
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:14px 18px 18px;
+      border-top:1px solid rgba(36,52,90,.45);
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.00));
+    }
 
-    .ctaRow{
-      width:min(520px, 100%);
-      display:grid;
-      gap:8px;
-      grid-template-columns: repeat(4, 1fr);
-      align-content:start;
-    }
-    @media (min-width:720px){
-      .ctaRow{ grid-template-columns: repeat(5, 1fr); }
-    }
-
-    /* panels */
     .panel{
-      margin-top:12px;
+      margin-top:14px;
       border:1px solid rgba(36,52,90,.55);
-      background: linear-gradient(180deg, rgba(15,22,40,.92), rgba(13,19,34,.90));
-      border-radius:22px;
+      border-radius:24px;
       overflow:hidden;
-      box-shadow: var(--shadow);
+      background: linear-gradient(180deg, rgba(15,22,40,.95), rgba(11,15,25,.94));
+      box-shadow:var(--shadow);
     }
-    .panelHeader{
-      padding:12px 14px;
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    .panelHead{
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
       border-bottom:1px solid rgba(36,52,90,.45);
       background: linear-gradient(90deg, rgba(20,40,90,.75), rgba(10,14,28,.0));
-      flex-wrap:wrap;
     }
-    .panelHeader b{font-size:14px}
-    .moreBtn{
-      font-size:12px;color:var(--muted);
-      border:1px solid rgba(255,255,255,.12);
-      padding:7px 10px;border-radius:12px;
-      background: rgba(255,255,255,.05);
-      white-space:nowrap;
+    .panelHead b{font-size:15px}
+    .panelHead .sub{
+      font-size:12px; color:var(--muted);
     }
-    .items{padding:12px}
+    .items{padding:14px}
 
-    /* info cards */
-    .cardGrid{display:grid; grid-template-columns:1fr; gap:10px;}
-    @media (min-width:720px){ .cardGrid{grid-template-columns:1fr 1fr;} }
+    .introGrid{
+      display:grid; grid-template-columns:1fr; gap:10px;
+    }
+    @media (min-width:720px){
+      .introGrid{grid-template-columns:1fr 1fr;}
+    }
 
-    .infoCard{
-      border-radius:18px;
+    .card{
+      border-radius:20px;
       border:1px solid rgba(255,255,255,.10);
-      background: linear-gradient(180deg, rgba(18,28,51,.88), rgba(12,18,34,.92));
+      background: linear-gradient(180deg, rgba(18,28,51,.90), rgba(12,18,34,.94));
       padding:14px;
-      overflow:hidden;
     }
-    .infoTop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;}
-    .infoTitle{font-weight:950;font-size:14px}
-    .tag{
-      font-size:11px;color: rgba(233,238,252,.82);
-      padding:6px 10px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
+    .card .top{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .card .title{
+      font-size:14px; font-weight:950;
+    }
+    .badge{
+      font-size:11px;
+      padding:6px 9px;
+      border-radius:999px;
       background: rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.12);
+      color: rgba(233,238,252,.82);
       white-space:nowrap;
     }
-    .infoText{
-      margin-top:10px;
+    .card .txt{
       font-size:13px;
-      line-height:1.65;
+      line-height:1.7;
       color: rgba(233,238,252,.88);
     }
-    .infoText b{color:rgba(255,255,255,.95)}
-    .infoText .accent{color:var(--accent); font-weight:950}
+    .card .txt b{color:#fff}
+    .card .txt .accent{color:var(--accent); font-weight:950}
     .miniList{
       margin:10px 0 0;
       padding-left:18px;
-      color: rgba(233,238,252,.78);
+      color:rgba(233,238,252,.76);
       font-size:12px;
       line-height:1.7;
     }
 
-    .noteBox{
-      margin-top:10px;
-      padding:12px 14px;
-      border-radius:18px;
-      border:1px solid rgba(255,138,0,.22);
-      background: rgba(255,138,0,.07);
-      color: rgba(233,238,252,.92);
-      font-size:12px;
+    .stepRow{
+      display:grid; grid-template-columns:1fr; gap:10px;
+    }
+    @media (min-width:760px){
+      .stepRow{grid-template-columns:repeat(3,1fr);}
+    }
+    .step{
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(18,28,51,.90), rgba(12,18,34,.94));
+      padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .stepNum{
+      width:34px; height:34px; border-radius:12px;
+      display:grid; place-items:center;
+      background: rgba(255,138,0,.12);
+      border:1px solid rgba(255,138,0,.25);
+      color:#ffd9a8;
+      font-size:14px; font-weight:950;
+      margin-bottom:10px;
+    }
+    .step b{
+      display:block; font-size:14px; margin-bottom:6px;
+    }
+    .step p{
+      margin:0;
+      color:rgba(233,238,252,.80);
+      font-size:13px;
       line-height:1.65;
     }
 
-    /* FAQ */
-    .faqList{display:grid;gap:10px;}
+    .wideNotice{
+      margin-top:10px;
+      padding:14px 14px;
+      border-radius:18px;
+      border:1px solid rgba(255,138,0,.24);
+      background: rgba(255,138,0,.08);
+      color:rgba(233,238,252,.92);
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    .faqList{
+      display:grid; gap:10px;
+    }
     details.faq{
       border-radius:18px;
       border:1px solid rgba(255,255,255,.10);
@@ -281,62 +312,61 @@
     details.faq summary{
       list-style:none;
       cursor:pointer;
-      padding:12px 14px;
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      font-weight:950;font-size:13px;
+      padding:14px 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      font-size:14px;
+      font-weight:950;
     }
-    details.faq summary::-webkit-details-marker{display:none;}
+    details.faq summary::-webkit-details-marker{display:none}
     .faqA{
       padding:0 14px 14px;
-      color:rgba(233,238,252,.85);
-      font-size:12px;
-      line-height:1.7;
+      color:rgba(233,238,252,.84);
+      font-size:13px;
+      line-height:1.75;
     }
     .chev{opacity:.7}
 
-    /* quick tiles */
-    .quickGrid{display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;}
-    @media (min-width:640px){ .quickGrid{grid-template-columns: repeat(4, 1fr);} }
-    .tile{
-      background: linear-gradient(180deg, rgba(18,28,51,.95), rgba(12,18,34,.92));
-      border:1px solid rgba(36,52,90,.55);
-      border-radius:18px;
-      padding:12px 10px;
-      box-shadow: 0 10px 24px rgba(0,0,0,.25);
-      display:flex;flex-direction:column;align-items:center;gap:8px;
-      text-align:center;
-      min-height:92px;
-      transition: transform .10s ease, border-color .15s ease;
+    .linkRow{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:10px;
     }
-    .tile:hover{transform: translateY(-1px);border-color: rgba(255,138,0,.35)}
-    .ico{
-      width:46px;height:46px;border-radius:15px;
-      display:grid;place-items:center;
-      background: rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.10);
-      font-size:22px;
-    }
-    .tile .label{font-size:12px;font-weight:950}
-    .tile .sub{font-size:11px;color:var(--muted);margin-top:-6px}
 
-    /* bottom bar */
+    .contactGrid{
+      display:grid; grid-template-columns:1fr; gap:10px;
+    }
+    @media (min-width:720px){
+      .contactGrid{grid-template-columns:1fr 1fr;}
+    }
+
+    .footer{
+      margin-top:16px;
+      text-align:center;
+      color:rgba(233,238,252,.60);
+      font-size:12px;
+      line-height:1.6;
+    }
+
     .bottomBar{
-      position:fixed;left:0;right:0;bottom:0;
+      position:fixed; left:0; right:0; bottom:0;
+      z-index:60;
       background: rgba(7,9,16,.78);
       border-top:1px solid rgba(36,52,90,.55);
       backdrop-filter: blur(10px);
       padding:10px 12px;
-      z-index:999;
     }
-    .bottomInner{max-width:1040px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap}
+    .bottomInner{
+      max-width:920px; margin:0 auto;
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
     .bbtn{
       flex:1;
-      display:flex;align-items:center;justify-content:center;gap:8px;
-      padding:12px 10px;border-radius:16px;
+      min-width:130px;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      padding:12px 10px;
+      border-radius:16px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.05);
-      font-weight:950;font-size:13px;
-      min-width:120px;
+      font-weight:950; font-size:13px;
       white-space:nowrap;
     }
     .bbtn.primary{
@@ -344,257 +374,256 @@
       border-color: rgba(255,138,0,.35);
       color:#101019;
     }
-    .foot{
-      margin-top:10px;
-      color: rgba(233,238,252,.60);
-      font-size:12px;
-      text-align:center;
+
+    @media (max-width:640px){
+      .hero h1{font-size:23px}
+      .heroImage{aspect-ratio: 5 / 5; min-height:220px}
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap" id="top">
-
-    <!-- 상단 미니바 -->
-    <div class="topMini">
-      <div class="crumb">
-        <div>
-          <div style="font-size:14px;">👋 처음 오신 학부모 안내</div>
-          <small id="subTitleTop"></small>
+  <div class="topbar">
+    <div class="topin">
+      <div class="brand">
+        <div class="logo" id="logo"></div>
+        <div class="brandText">
+          <div class="t1" id="dojoName"></div>
+          <div class="t2" id="subTitle"></div>
         </div>
       </div>
-      <div class="topActions">
-        <a class="btn" id="homeBtn" href="../">🏠 홈</a>
-        <a class="btn primary" id="kakaoTop2" href="#" target="_blank" rel="noopener">🟡 카톡 문의</a>
+
+      <div class="topBtns">
+        <a class="btn" id="homeBtn" href="#">🏠 홈으로</a>
+        <a class="btn primary" id="kakaoTop" href="#" target="_blank" rel="noopener">🟡 카톡 문의</a>
       </div>
     </div>
+  </div>
 
-    <!-- HERO -->
-    <div class="hero">
-      <div class="heroSlide" id="heroSlide">
-        <div class="dots" id="dots"></div>
+  <main class="wrap" id="top">
+    <section class="hero">
+      <div class="heroImage" id="heroImage">
+        <div class="heroBox">
+          <div class="heroKicker"><span class="dot"></span> 처음 오신 학부모님을 위한 안내</div>
+          <h1>처음 등록 전에 궁금한 내용을<br/>한 번에 정리해 두었습니다.</h1>
+          <p>
+            계명태권도는 <b style="color:#f6d36b">유치부·초등부 전문 수련 도장</b>입니다.<br/>
+            처음 오신 분들이 가장 궁금해하시는 <b>등록 절차, 도복, 가방, 차량, 보강수업, 문의 방법</b>을
+            읽기 쉽게 정리했습니다.
+          </p>
+        </div>
       </div>
-      <div class="heroBar">
-        <div class="brand">
-          <div class="logo" id="logo"></div>
-          <div class="brandText">
-            <div class="t1" id="dojoName"></div>
-            <div class="t2" id="subTitle"></div>
-            <div class="t3" id="slogan"></div>
+
+      <div class="heroBtns">
+        <a class="btn primary" id="callHero" href="#">📞 전화 문의</a>
+        <a class="btn" id="programHero" href="#">🥋 수련 프로그램 보기</a>
+        <a class="btn" id="planHero" href="#">📘 수련 계획표 보기</a>
+        <a class="btn" id="scheduleHero" href="#">🗓️ 수련 시간표 보기</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panelHead">
+        <b>처음 등록 흐름</b>
+        <span class="sub">처음 오신 분은 이 순서만 보셔도 전체 흐름이 잡힙니다</span>
+      </div>
+      <div class="items">
+        <div class="stepRow">
+          <div class="step">
+            <div class="stepNum">1</div>
+            <b>상담 / 체험</b>
+            <p>
+              아이의 나이와 성향, 수련 목적, 차량 필요 여부를 기준으로
+              가장 맞는 방향을 먼저 안내해 드립니다.
+            </p>
+          </div>
+
+          <div class="step">
+            <div class="stepNum">2</div>
+            <b>반 배정 / 시간 안내</b>
+            <p>
+              유치부·초등부 구분과 시간표를 기준으로 반을 정하고,
+              필요한 경우 차량 여부도 함께 상담합니다.
+            </p>
+          </div>
+
+          <div class="step">
+            <div class="stepNum">3</div>
+            <b>등록 / 수련 시작</b>
+            <p>
+              등록 후 바로 수련을 시작할 수 있으며,
+              시작일이 며칠 뒤여도 도복과 가방을 미리 받을 수 있습니다.
+            </p>
           </div>
         </div>
 
-        <div class="ctaRow">
-          <!-- Primary -->
-          <a class="btn primary" id="callTop" href="#">📞 전화</a>
-          <a class="btn primary" id="kakaoTop" href="#" target="_blank" rel="noopener">🟡 카톡</a>
-          <a class="btn primary" id="planTop" href="#">📘 수련계획표</a>
-          <a class="btn primary" id="scheduleTop" href="#">🗓️ 시간표</a>
-          <a class="btn primary" id="payTop" href="#">💳 결제</a>
-
-          <!-- Secondary -->
-          <a class="btn" id="verifyTop" href="#">🔎 조회</a>
-          <a class="btn" id="growthTop" href="#">⭐ 포인트</a>
-          <a class="btn" id="galleryTop" href="#">🖼️ 갤러리</a>
-          <a class="btn" id="bandTop" href="#" target="_blank" rel="noopener">🟢 밴드</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- 빠른 길찾기 -->
-    <section class="panel" id="quick">
-      <div class="panelHeader">
-        <b>빠른 길찾기</b>
-        <a class="moreBtn" href="#contact">문의하기</a>
-      </div>
-      <div class="items">
-        <div class="quickGrid">
-          <a class="tile" id="planTile" href="#"><div class="ico">📘</div><div class="label">수련계획표</div><div class="sub">수업 흐름</div></a>
-          <a class="tile" id="scheduleTile" href="#"><div class="ico">🗓️</div><div class="label">수련시간표</div><div class="sub">반/시간</div></a>
-          <a class="tile" id="programTile" href="#"><div class="ico">🥋</div><div class="label">프로그램</div><div class="sub">연령별</div></a>
-          <a class="tile" id="examTile" href="#"><div class="ico">🏅</div><div class="label">심사안내</div><div class="sub">절차</div></a>
-
-          <a class="tile" id="payTile" href="#"><div class="ico">💳</div><div class="label">결제 안내</div><div class="sub">계좌/QR</div></a>
-          <a class="tile" id="coachTile" href="#"><div class="ico">👤</div><div class="label">지도자 소개</div><div class="sub">관장 프로필</div></a>
-          <a class="tile" id="galleryTile" href="#"><div class="ico">🖼️</div><div class="label">갤러리</div><div class="sub">분위기</div></a>
-          <a class="tile" href="#faq"><div class="ico">❓</div><div class="label">FAQ</div><div class="sub">바로 보기</div></a>
-        </div>
-
-        <div class="noteBox">
-          📌 빠르게 안내받으려면 카톡에 이렇게 보내주세요 🙂<br/>
-          <b>① 아이 이름 ② 학년/나이 ③ 차량 필요 여부</b><br/>
-          그리고 등록 진행을 위해 <b>생년월일</b>도 함께 보내주시면 가장 빠릅니다.
+        <div class="wideNotice">
+          ✅ 빠르게 안내받으시려면 카톡이나 문자로 <b>아이 이름 + 학년/나이 + 차량 필요 여부 + 생년월일</b>을 보내주시면 가장 빠릅니다.
         </div>
       </div>
     </section>
 
-    <!-- 핵심 안내 -->
-    <section class="panel" id="core">
-      <div class="panelHeader">
+    <section class="panel">
+      <div class="panelHead">
         <b>처음 오신 분 핵심 안내</b>
-        <a class="moreBtn" href="#uniform">도복/가방</a>
+        <span class="sub">가장 많이 물어보는 내용을 먼저 정리했습니다</span>
       </div>
       <div class="items">
-        <div class="cardGrid">
-          <div class="infoCard">
-            <div class="infoTop">
-              <div class="infoTitle">계명태권도는 어떤 도장인가요?</div>
-              <span class="tag">핵심</span>
+        <div class="introGrid">
+          <div class="card">
+            <div class="top">
+              <div class="title">계명태권도는 어떤 도장인가요?</div>
+              <span class="badge">핵심</span>
             </div>
-            <div class="infoText">
-              <b class="accent">유치부·초등부</b> 전문 수련 도장입니다.<br/>
-              안전을 최우선으로, <b>기본기·체력·예절·집중력</b>을 균형 있게 지도합니다.
-            </div>
-          </div>
-
-          <div class="infoCard">
-            <div class="infoTop">
-              <div class="infoTitle">처음 등록 흐름은 어떻게 되나요?</div>
-              <span class="tag">3단계</span>
-            </div>
-            <div class="infoText">
-              <b>상담/체험</b> → <b>반 배정(시간/레벨)</b> → <b>등록 후 수련 시작</b> 순서입니다.<br/>
-              차량 필요 여부는 상담 후 동선/시간을 고려해 결정합니다.
+            <div class="txt">
+              <span class="accent">유치부·초등부 전문</span> 수련 도장입니다.<br/>
+              단순히 운동만 하는 곳이 아니라,
+              <b>기본기 · 체력 · 예절 · 집중력 · 자신감</b>을 함께 성장시키는 방향으로 지도합니다.
             </div>
           </div>
 
-          <div class="infoCard">
-            <div class="infoTop">
-              <div class="infoTitle">처음 등록 시 준비할 것은?</div>
-              <span class="tag">간단</span>
+          <div class="card">
+            <div class="top">
+              <div class="title">처음 등록 시 따로 준비할 것이 있나요?</div>
+              <span class="badge">간단</span>
             </div>
-            <div class="infoText">
+            <div class="txt">
               별도 준비물은 거의 없습니다.<br/>
-              홈페이지 기반으로 관리되므로 <b class="accent">생년월일</b>만 카톡/문자로 알려주시면 등록 진행이 쉬워집니다.
+              홈페이지를 통해 관리되기 때문에 <span class="accent">생년월일</span>만 알려주시면 등록 진행이 쉬워집니다.
             </div>
             <ul class="miniList">
-              <li>주소는 필요 없고, <b>생년월일</b>만 받으면 됩니다.</li>
+              <li>주소는 받지 않아도 되고, 생년월일만 있으면 됩니다.</li>
+              <li>문의는 전화, 카톡, 문자 모두 가능합니다.</li>
             </ul>
           </div>
 
-          <div class="infoCard">
-            <div class="infoTop">
-              <div class="infoTitle">유치부/초등부는 어떻게 나뉘나요?</div>
-              <span class="tag">연령</span>
+          <div class="card">
+            <div class="top">
+              <div class="title">유치부와 초등부는 어떻게 나뉘나요?</div>
+              <span class="badge">연령</span>
             </div>
-            <div class="infoText">
+            <div class="txt">
               <b>나이 기준</b>으로 구분합니다.<br/>
-              <b>유치원까지</b>는 유치부 수업, <b>초등 1~6학년</b>은 초등부로 운영됩니다.
+              유치원까지는 유치부 수업이 가능하고,
+              초등학교 1학년부터 6학년까지는 초등부로 운영됩니다.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="top">
+              <div class="title">수업은 어떤 순서로 진행되나요?</div>
+              <span class="badge">바로가기</span>
+            </div>
+            <div class="txt">
+              수업의 흐름과 주차별 구성은 반과 시기에 따라 달라질 수 있으므로
+              <span class="accent">수련 계획표</span>를 참고하시면 가장 정확합니다.
+            </div>
+            <div class="linkRow">
+              <a class="btn primary" id="planBtn" href="#">📘 수련 계획표 보기</a>
+              <a class="btn soft" id="programBtn" href="#">🥋 프로그램 보기</a>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 도복/가방 -->
-    <section class="panel" id="uniform">
-      <div class="panelHeader">
+    <section class="panel">
+      <div class="panelHead">
         <b>도복 · 가방 안내</b>
-        <a class="moreBtn" href="#faq">FAQ 보기</a>
+        <span class="sub">처음 등록 시 가장 궁금해하시는 부분입니다</span>
       </div>
       <div class="items">
-        <div class="cardGrid">
-          <div class="infoCard">
-            <div class="infoTop">
-              <div class="infoTitle">도복은 꼭 구매해야 하나요?</div>
-              <span class="tag">필수</span>
+        <div class="introGrid">
+          <div class="card">
+            <div class="top">
+              <div class="title">도복은 꼭 구매해야 하나요?</div>
+              <span class="badge">필수</span>
             </div>
-            <div class="infoText">
-              네. 태권도는 <b>통일된 복장</b>으로 수련하기 때문에 <b class="accent">도복은 반드시 구매</b>해야 합니다.<br/>
-              도복은 <b>당일 바로 지급</b> 가능합니다.
-            </div>
-            <ul class="miniList">
-              <li><b>오늘 결제 + 수련은 며칠 뒤</b> 시작하는 경우에도, <b>도복과 가방을 미리 지급</b>해 드립니다.</li>
-            </ul>
-          </div>
-
-          <div class="infoCard">
-            <div class="infoTop">
-              <div class="infoTitle">가방은 무료인가요?</div>
-              <span class="tag">무료</span>
-            </div>
-            <div class="infoText">
-              네, <b class="accent">가방은 무료 지급</b>합니다.
+            <div class="txt">
+              네, 태권도는 <b>통일된 복장으로 수련</b>하기 때문에
+              <span class="accent">도복은 반드시 구매</span>해야 합니다.
             </div>
           </div>
 
-          <div class="infoCard">
-            <div class="infoTop">
-              <div class="infoTitle">여름/겨울 도복은 따로 있나요?</div>
-              <span class="tag">선택</span>
+          <div class="card">
+            <div class="top">
+              <div class="title">도복은 언제 받을 수 있나요?</div>
+              <span class="badge">당일 가능</span>
             </div>
-            <div class="infoText">
-              기본은 <b class="accent">사계절용 도복</b>입니다.<br/>
-              입관 시 더운 여름이라면 <b>여름 반팔 도복</b>으로 수련하다가,
+            <div class="txt">
+              도복은 <b>당일 바로 지급</b> 가능합니다.<br/>
+              오늘 결제하고 수련 시작일이 며칠 뒤라 하더라도,
+              필요하면 <span class="accent">도복과 가방을 미리 지급</span>해 드립니다.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="top">
+              <div class="title">가방은 무료인가요?</div>
+              <span class="badge">무료</span>
+            </div>
+            <div class="txt">
+              네, <span class="accent">가방은 무료 지급</span>합니다.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="top">
+              <div class="title">여름/겨울 도복은 따로 있나요?</div>
+              <span class="badge">안내</span>
+            </div>
+            <div class="txt">
+              기본은 <b>사계절용 도복</b>입니다.<br/>
+              처음 입관 시기가 더운 여름이라면 <b>여름 반팔 도복</b>으로 수련할 수 있고,
               가을 시즌에는 필요에 따라 기본 사계절 도복을 다시 준비할 수 있습니다.
             </div>
-            <ul class="miniList">
-              <li>겨울 전용 도복을 따로 “필수”로 두진 않지만, 계절에 맞춰 안내합니다.</li>
-            </ul>
           </div>
+        </div>
 
-          <div class="infoCard">
-            <div class="infoTop">
-              <div class="infoTitle">수업 순서는 어떻게 진행되나요?</div>
-              <span class="tag">바로가기</span>
-            </div>
-            <div class="infoText">
-              수업 흐름과 주차별 구성은 <b class="accent">수련 계획표</b>에 가장 정확히 담겨 있습니다.<br/>
-              아래 버튼으로 바로 확인해 주세요.
-            </div>
-            <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-              <a class="btn primary" id="planBtn" href="#">📘 수련 계획표 보기</a>
-              <a class="btn" id="programBtn" href="#">🥋 프로그램 보기</a>
-            </div>
-          </div>
+        <div class="wideNotice">
+          👕 처음 오신 분들이 가장 헷갈리는 부분이 도복인데, 계절과 시작 시기에 맞춰 가장 편한 선택으로 안내해 드립니다.
         </div>
       </div>
     </section>
 
-    <!-- 차량/보강 -->
-    <section class="panel" id="ops">
-      <div class="panelHeader">
-        <b>차량(픽업) · 보강수업</b>
-        <a class="moreBtn" href="#contact">바로 문의</a>
+    <section class="panel">
+      <div class="panelHead">
+        <b>차량 · 보강수업 안내</b>
+        <span class="sub">가정마다 상황이 달라 상담 후 조율합니다</span>
       </div>
       <div class="items">
-        <div class="cardGrid">
-          <div class="infoCard">
-            <div class="infoTop">
-              <div class="infoTitle">차량(픽업)은 누구나 가능한가요?</div>
-              <span class="tag">상담 후</span>
+        <div class="introGrid">
+          <div class="card">
+            <div class="top">
+              <div class="title">차량(픽업)은 누구나 가능한가요?</div>
+              <span class="badge">상담 후</span>
             </div>
-            <div class="infoText">
-              차량 운행은 <b class="accent">상담 후</b> 결정됩니다.<br/>
-              아이의 위치/시간/동선을 고려해 배정되며, 상황에 따라 조정될 수 있습니다.
+            <div class="txt">
+              차량 운행은 무조건 자동 배정이 아니라,
+              <span class="accent">상담 후 결정</span>됩니다.<br/>
+              지역, 시간, 동선을 고려하여 가장 적절한 방법으로 안내합니다.
             </div>
           </div>
 
-          <div class="infoCard">
-            <div class="infoTop">
-              <div class="infoTitle">결석하면 보강이 되나요?</div>
-              <span class="tag">월 1회</span>
+          <div class="card">
+            <div class="top">
+              <div class="title">결석하면 보강이 되나요?</div>
+              <span class="badge">월 1회</span>
             </div>
-            <div class="infoText">
-              네, 보강 가능합니다.<br/>
-              결석 보완을 위해 <b class="accent">월 1회 보강 수업</b>이 진행됩니다. (토요일 운영 / 매주는 아님)
+            <div class="txt">
+              네, 가능합니다.<br/>
+              결석 보완을 위해 <span class="accent">월 1회 보강 수업</span>이 진행됩니다.
+              보강은 토요일에 운영되며, 매주가 아니라 월 1회 기준입니다.
             </div>
           </div>
-        </div>
-
-        <div class="noteBox">
-          ✅ “차량/보강”은 아이마다 상황이 달라서, 상담 시 가장 편한 방식으로 안내드려요.<br/>
-          부담 없이 카톡으로 문의 주세요 🙂
         </div>
       </div>
     </section>
 
-    <!-- FAQ -->
     <section class="panel" id="faq">
-      <div class="panelHeader">
-        <b>자주 묻는 질문 (FAQ)</b>
-        <a class="moreBtn" href="#contact">문의하기</a>
+      <div class="panelHead">
+        <b>자주 묻는 질문</b>
+        <span class="sub">상담 전에 읽어보시면 훨씬 편합니다</span>
       </div>
       <div class="items">
         <div class="faqList">
@@ -602,182 +631,158 @@
             <summary>도복은 꼭 구매해야 되나요? <span class="chev">▾</span></summary>
             <div class="faqA">
               네. 태권도는 통일된 복장으로 수련하기 때문에 <b style="color:#ff8a00">도복은 반드시 구매</b>해야 합니다.
-              도복은 <b>당일 바로 지급</b> 가능하며, 수련 시작일이 며칠 뒤라도 <b>도복과 가방을 미리 지급</b>해 드릴 수 있습니다.
+            </div>
+          </details>
+
+          <details class="faq">
+            <summary>도복은 언제 받을 수 있나요? <span class="chev">▾</span></summary>
+            <div class="faqA">
+              도복은 <b>당일 바로 지급</b> 가능합니다. 오늘 결제하고 실제 수련 시작일이 며칠 뒤여도,
+              도복과 가방을 미리 지급해 드릴 수 있습니다.
             </div>
           </details>
 
           <details class="faq">
             <summary>가방은 무료인가요? <span class="chev">▾</span></summary>
             <div class="faqA">
-              네. <b style="color:#ff8a00">가방은 무료로 지급</b>합니다.
+              네. <b style="color:#ff8a00">가방은 무료 지급</b>입니다.
             </div>
           </details>
 
           <details class="faq">
             <summary>여름/겨울 도복은 따로 있나요? <span class="chev">▾</span></summary>
             <div class="faqA">
-              기본은 <b style="color:#ff8a00">사계절용 도복</b>입니다.
-              입관 시 더운 여름이라면 <b>여름 반팔 도복</b>으로 수련하다가, 가을 시즌에는 필요에 따라 기본 도복을 다시 준비할 수 있습니다.
+              기본은 사계절용 도복입니다. 다만 여름 입관 시에는 여름 반팔 도복으로 먼저 수련할 수 있고,
+              계절이 바뀌면 기본 도복을 다시 준비할 수 있습니다.
             </div>
           </details>
 
           <details class="faq">
-            <summary>수업은 어떤 순서로 진행되나요? <span class="chev">▾</span></summary>
+            <summary>차량 운행은 누구나 가능한가요? <span class="chev">▾</span></summary>
             <div class="faqA">
-              수업 흐름/주차별 구성은 반과 시기에 따라 달라질 수 있어 <b style="color:#ff8a00">수련 계획표</b>를 참고하시면 가장 정확합니다.<br/><br/>
-              <a class="btn primary" id="planFaqBtn" href="#">📘 수련 계획표 바로가기</a>
-            </div>
-          </details>
-
-          <details class="faq">
-            <summary>차량(픽업)은 누구나 가능한가요? <span class="chev">▾</span></summary>
-            <div class="faqA">
-              차량 운행은 <b style="color:#ff8a00">상담 후</b> 아이의 위치/시간/동선을 고려하여 결정합니다.
-              필요하시면 언제든 문의해 주세요.
+              차량 운행은 상담 후 결정됩니다. 아이의 위치, 시간, 지역, 동선을 고려해 안내합니다.
             </div>
           </details>
 
           <details class="faq">
             <summary>결석하면 보강이 되나요? <span class="chev">▾</span></summary>
             <div class="faqA">
-              네. 결석 보완을 위해 <b style="color:#ff8a00">월 1회 보강 수업</b>이 진행됩니다. (토요일 운영 / 매주 아님)
+              네. 월 1회 보강 수업이 진행됩니다. 토요일 운영이며, 매주 진행되는 방식은 아닙니다.
             </div>
           </details>
 
           <details class="faq">
-            <summary>처음 등록 시 준비할 것은 있나요? <span class="chev">▾</span></summary>
+            <summary>처음 등록 시 꼭 보내야 하는 정보는 무엇인가요? <span class="chev">▾</span></summary>
             <div class="faqA">
-              따로 준비물은 거의 없습니다. 홈페이지를 통해 관리가 이루어지므로 등록을 위해 <b style="color:#ff8a00">생년월일</b>만 카톡/문자로 알려주시면 됩니다.
+              등록 진행을 위해 <b style="color:#ff8a00">생년월일</b>을 알려주시면 됩니다.
+              빠른 상담을 위해 아이 이름, 학년/나이, 차량 필요 여부도 함께 보내주시면 좋습니다.
             </div>
           </details>
 
           <details class="faq">
-            <summary>유치부/초등부는 어떻게 구분하나요? <span class="chev">▾</span></summary>
+            <summary>수련 프로그램이나 계획표도 볼 수 있나요? <span class="chev">▾</span></summary>
             <div class="faqA">
-              나이 기준으로 구분합니다. 유치원까지는 유치부 수업, 초등 1~6학년은 초등부 수업으로 운영됩니다.
+              네. 아래 버튼으로 바로 이동할 수 있습니다.<br/><br/>
+              <a class="btn primary" id="planFaqBtn" href="#">📘 수련 계획표 보기</a>
+              <a class="btn soft" id="programFaqBtn" href="#" style="margin-left:8px;">🥋 프로그램 보기</a>
             </div>
           </details>
         </div>
-
-        <div class="foot">© <span id="dojoName2"></span> · All rights reserved.</div>
       </div>
     </section>
 
-    <!-- 문의하기 -->
     <section class="panel" id="contact">
-      <div class="panelHeader">
+      <div class="panelHead">
         <b>문의하기</b>
-        <a class="moreBtn" href="#top">맨위로</a>
+        <span class="sub">편한 방법으로 연락 주시면 됩니다</span>
       </div>
+      <div class="items">
+        <div class="contactGrid">
+          <div class="card">
+            <div class="top">
+              <div class="title">가장 빠른 문의</div>
+              <span class="badge">추천</span>
+            </div>
+            <div class="txt">
+              카톡, 전화, 문자 모두 가능합니다.<br/>
+              <b>아이 이름 + 학년/나이 + 차량 필요 여부 + 생년월일</b>을 보내주시면 안내가 가장 빠릅니다.
+            </div>
+            <div class="linkRow">
+              <a class="btn primary" id="callBtn" href="#">📞 전화 문의</a>
+              <a class="btn" id="kakaoBtn" href="#" target="_blank" rel="noopener">🟡 카톡 문의</a>
+            </div>
+          </div>
 
-      <div class="items" style="display:grid; gap:10px;">
-        <a class="btn primary" id="callBtn" href="#">📞 전화상담</a>
-        <a class="btn" id="kakaoBtn" href="#" target="_blank" rel="noopener">🟡 카톡 문의</a>
-        <a class="btn" id="bandBtn" href="#" target="_blank" rel="noopener">🟢 밴드 바로가기</a>
+          <div class="card">
+            <div class="top">
+              <div class="title">추가로 더 보고 싶은 페이지</div>
+              <span class="badge">바로가기</span>
+            </div>
+            <div class="txt">
+              더 자세한 정보가 필요하시면 아래 페이지를 함께 확인해 주세요.
+            </div>
+            <div class="linkRow">
+              <a class="btn soft" id="scheduleBtn" href="#">🗓️ 수련 시간표</a>
+              <a class="btn soft" id="programBtn2" href="#">🥋 수련 프로그램</a>
+              <a class="btn soft" id="payBtn" href="#">💳 결제 안내</a>
+              <a class="btn soft" id="coachBtn" href="#">👤 지도자 소개</a>
+            </div>
+          </div>
+        </div>
 
-        <a class="btn" id="payBtn" href="#">💳 결제 안내</a>
-        <a class="btn" id="noticeBtn" href="#">📢 공지사항</a>
-        <a class="btn" id="ytBtn" href="#" target="_blank" rel="noopener">▶️ 유튜브 채널</a>
-
-        <a class="btn" id="scheduleBtn" href="#">🗓️ 수련시간표</a>
-        <a class="btn" id="programBtn2" href="#">🥋 프로그램</a>
-        <a class="btn" id="coachBtn" href="#">👤 지도자 소개</a>
-
-        <a class="btn" id="verifyBtn" href="#">🔎 수련생 조회</a>
-        <a class="btn" id="growthBtn" href="#">⭐ 성장 포인트 조회</a>
-        <a class="btn" id="galleryBtn" href="#">🖼️ 갤러리</a>
-      </div>
-
-      <div class="noteBox" style="margin-top:12px;">
-        <b>빠른 상담 팁</b><br/>
-        카톡 문의 시 <b>아이 이름 + 학년/나이 + 차량 필요 여부</b>를 보내주시면 반 안내가 빠릅니다.<br/>
-        등록 진행을 위해 <b>생년월일</b>도 함께 보내주시면 가장 편해요 🙂
+        <div class="wideNotice">
+          처음 오신 분 안내 페이지는 “필요한 내용만 시원하게 보는 페이지”로 구성했습니다.  
+          더 자세한 것은 상담 또는 각 안내 페이지에서 이어서 확인하시면 됩니다.
+        </div>
       </div>
     </section>
 
-  </div>
+    <div class="footer">
+      © <span id="dojoName2"></span> · All rights reserved.
+    </div>
+  </main>
 
-  <!-- Bottom fixed -->
   <div class="bottomBar">
     <div class="bottomInner">
-      <a class="bbtn" href="../">🏠 홈</a>
-      <a class="bbtn" id="callBottom" href="#">📞 전화</a>
-      <a class="bbtn primary" id="kakaoBottom" href="#" target="_blank" rel="noopener">🟡 카톡</a>
-      <a class="bbtn" id="bandBottom" href="#" target="_blank" rel="noopener">🟢 밴드</a>
+      <a class="bbtn" id="homeBottom" href="#">🏠 홈</a>
       <a class="bbtn" id="planBottom" href="#">📘 계획표</a>
-      <a class="bbtn" id="payBottom" href="#">💳 결제</a>
+      <a class="bbtn primary" id="kakaoBottom" href="#" target="_blank" rel="noopener">🟡 카톡 문의</a>
     </div>
   </div>
 
   <script>
     const $ = (id)=>document.getElementById(id);
 
-    // texts
     $("dojoName").textContent = KMT.dojoName;
     $("dojoName2").textContent = KMT.dojoName;
     $("subTitle").textContent = KMT.subTitle;
-    $("subTitleTop").textContent = KMT.subTitle;
-    $("slogan").textContent = KMT.slogan;
 
-    // logo
-    if(KMT.logoImage) $("logo").style.backgroundImage = `url('${KMT.logoImage}')`;
+    if(KMT.logoImage){
+      $("logo").style.backgroundImage = `url('${KMT.logoImage}')`;
+    }
+    if(KMT.heroImage){
+      $("heroImage").style.backgroundImage =
+        `linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.46)), url('${KMT.heroImage}')`;
+    }
 
-    // tel
     const tel = `tel:${String(KMT.phone).replaceAll("-","")}`;
-    ["callTop","callBtn","callBottom"].forEach(id => { const el=$(id); if(el) el.href = tel; });
 
-    // kakao/band/youtube
-    ["kakaoTop","kakaoTop2","kakaoBtn","kakaoBottom"].forEach(id=>{ const el=$(id); if(el) el.href = KMT.kakaoUrl; });
-    ["bandTop","bandBtn","bandBottom"].forEach(id=>{ const el=$(id); if(el) el.href = KMT.bandUrl; });
-    ["ytBtn"].forEach(id=>{ const el=$(id); if(el) el.href = KMT.youtubeChannelUrl; });
+    const setHref = (ids, url) => {
+      ids.forEach(id=>{
+        const el = $(id);
+        if(el) el.href = url;
+      });
+    };
 
-    // pages
-    const setHref = (ids, url) => ids.forEach(id=>{ const el=$(id); if(el) el.href = url; });
+    setHref(["homeBtn","homeBottom"], KMT.homeUrl || "../");
+    setHref(["callHero","callBtn"], tel);
+    setHref(["kakaoTop","kakaoBtn","kakaoBottom"], KMT.kakaoUrl);
+    setHref(["programHero","programBtn","programBtn2","programFaqBtn"], KMT.programPageUrl);
+    setHref(["planHero","planBtn","planFaqBtn","planBottom"], KMT.planPageUrl);
+    setHref(["scheduleHero","scheduleBtn"], KMT.schedulePageUrl);
+    setHref(["payBtn"], KMT.payPageUrl);
+    setHref(["coachBtn"], KMT.coachPageUrl);
 
-    setHref(["verifyTop","verifyBtn"], KMT.verificationPageUrl || "../verification/");
-    setHref(["growthTop","growthBtn"], KMT.growthPageUrl || "../growth/");
-    setHref(["galleryTop","galleryBtn","galleryTile"], KMT.galleryPageUrl || "../gallery/");
-    setHref(["payTop","payBtn","payTile","payBottom"], KMT.payPageUrl || "../pay/");
-    setHref(["noticeBtn"], KMT.noticePageUrl || "../notice/");
-    setHref(["coachBtn","coachTile"], KMT.coachPageUrl || "../coach/");
-    setHref(["scheduleTop","scheduleBtn","scheduleTile"], KMT.schedulePageUrl || "../schedule/");
-    setHref(["programTile","programBtn","programBtn2"], KMT.programPageUrl || "../program/");
-    setHref(["planTop","planBtn","planFaqBtn","planTile","planBottom"], KMT.planPageUrl || "../plan/");
-    setHref(["examTile"], KMT.examPageUrl || "../exam/");
-
-    // HERO slideshow
-    const hero = $("heroSlide");
-    const dots = $("dots");
-    const imgs = (KMT.heroImages || []).filter(Boolean);
-    let idx = 0;
-
-    // clear
-    hero.querySelectorAll(".layer").forEach(n=>n.remove());
-    dots.innerHTML = "";
-
-    imgs.forEach((src,i)=>{
-      const layer = document.createElement("div");
-      layer.className = "layer" + (i===0 ? " on" : "");
-      layer.style.backgroundImage = `url('${src}')`;
-      hero.appendChild(layer);
-
-      const dot = document.createElement("div");
-      dot.className = "dot" + (i===0 ? " on" : "");
-      dot.addEventListener("click", ()=>show(i));
-      dots.appendChild(dot);
-    });
-
-    function show(n){
-      idx = n;
-      const layers = hero.querySelectorAll(".layer");
-      layers.forEach((el,i)=>el.classList.toggle("on", i===idx));
-      [...dots.children].forEach((el,i)=>el.classList.toggle("on", i===idx));
-    }
-    if(imgs.length > 1){
-      setInterval(()=>show((idx+1)%imgs.length), 3200);
-    }
-
-    // smooth scroll for hash links
     document.querySelectorAll('a[href^="#"]').forEach(a=>{
       a.addEventListener('click', (e)=>{
         const id = a.getAttribute('href');
