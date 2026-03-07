@@ -16,19 +16,13 @@
     :root{
       --bg:#0b0f19;
       --bg2:#060a13;
-      --panel:#10182b;
-      --panel2:#0f1728;
-      --line:rgba(255,255,255,.10);
-      --lineStrong:rgba(246,193,95,.24);
       --text:#e9eefc;
       --muted:#a9b6d6;
       --gold:#f6c15f;
-      --gold2:#ff8a00;
+      --orange:#ff8a00;
       --blue:#60a5fa;
+      --line:rgba(255,255,255,.10);
       --shadow:0 18px 44px rgba(0,0,0,.38);
-      --r:18px;
-      --r2:24px;
-      --r3:30px;
       --max:1180px;
     }
 
@@ -128,8 +122,7 @@
       overflow:hidden;
       border-radius:30px;
       border:1px solid rgba(255,255,255,.08);
-      background:
-        linear-gradient(180deg, rgba(17,24,39,.96), rgba(11,15,25,.96));
+      background:linear-gradient(180deg, rgba(17,24,39,.96), rgba(11,15,25,.96));
       box-shadow:var(--shadow);
     }
 
@@ -157,7 +150,7 @@
 
     .heroGrid{
       display:grid;
-      grid-template-columns:1.1fr .9fr;
+      grid-template-columns:1.08fr .92fr;
       gap:18px;
       align-items:start;
     }
@@ -228,11 +221,17 @@
       box-shadow:0 12px 30px rgba(0,0,0,.24);
     }
 
+    /* 핵심 수정: 메인 이미지를 세로로 더 길게 + 잘리지 않게 */
+    .heroMainWrap{
+      background:#0d1422;
+      padding:10px;
+    }
     .heroMain{
       width:100%;
-      aspect-ratio:16/10;
-      object-fit:cover;
-      background:#101827;
+      aspect-ratio:9/16;
+      object-fit:contain;
+      object-position:center center;
+      background:#0d1422;
     }
 
     .heroCap{
@@ -260,11 +259,17 @@
       gap:12px;
     }
 
+    /* 핵심 수정: 세로 포스터 길게 + contain */
+    .posterWrap{
+      background:#0d1422;
+      padding:10px;
+    }
     .posterImage{
       width:100%;
-      aspect-ratio:3/4.3;
-      object-fit:cover;
-      background:#0f1728;
+      aspect-ratio:9/16;
+      object-fit:contain;
+      object-position:center center;
+      background:#0d1422;
     }
 
     .miniInfo{
@@ -483,12 +488,6 @@
       margin-bottom:12px;
     }
 
-    .galleryNote{
-      font-size:12px;
-      color:rgba(233,238,252,.66);
-      white-space:nowrap;
-    }
-
     .galleryGrid{
       display:grid;
       grid-template-columns:repeat(4,minmax(0,1fr));
@@ -514,11 +513,17 @@
       box-shadow:0 12px 28px rgba(0,0,0,.24);
     }
 
+    /* 핵심 수정: 갤러리 이미지 전부 세로형 + contain */
+    .thumbImgWrap{
+      background:#0d1422;
+      padding:8px;
+    }
     .thumbBtn img{
       width:100%;
-      aspect-ratio:1/1;
-      object-fit:cover;
-      background:#0f1728;
+      aspect-ratio:9/16;
+      object-fit:contain;
+      object-position:center center;
+      background:#0d1422;
     }
 
     .thumbMeta{
@@ -678,10 +683,20 @@
       .heroStats{grid-template-columns:1fr}
       .grid4,.grid3,.grid2,.galleryGrid{grid-template-columns:1fr}
       .galleryHeader{display:block}
-      .galleryNote{display:block;margin-top:6px;white-space:normal}
       .btn,.homeBtn{font-size:12px}
       .card,.step,.faqItem,.quote,.cta,.miniInfo{padding:14px}
-      .thumbBtn img{aspect-ratio:4/3}
+
+      .heroMain{
+        aspect-ratio:9/16;
+      }
+
+      .posterImage{
+        aspect-ratio:9/16;
+      }
+
+      .thumbBtn img{
+        aspect-ratio:9/16;
+      }
     }
   </style>
 </head>
@@ -730,13 +745,15 @@
 
           <div class="heroVisual">
             <div class="imageCard">
-              <img
-                class="heroMain"
-                src="../../assets/images/doublecross/doublecross-main.jpg"
-                alt="DOUBLE CROSS 대표 이미지"
-                loading="eager"
-                decoding="async"
-              />
+              <div class="heroMainWrap">
+                <img
+                  class="heroMain"
+                  src="../../assets/images/doublecross/doublecross-main.jpg"
+                  alt="DOUBLE CROSS 대표 이미지"
+                  loading="eager"
+                  decoding="async"
+                />
+              </div>
               <div class="heroCap">
                 <b>DOUBLE CROSS 메인 비주얼</b>
                 <span>교차 감각, 협응, 집중, 반응의 흐름을 상징하는 대표 이미지입니다.</span>
@@ -745,16 +762,14 @@
 
             <div class="sideCards">
               <div class="imageCard">
-                <img
-                  class="posterImage"
-                  src="../../assets/images/doublecross/doublecross-vertical-poster.jpg.jpg"
-                  alt="DOUBLE CROSS 세로 포스터"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div class="heroCap">
-                  <b>세로 포스터</b>
-                  <span>모바일에서 보기 좋은 세로형 안내 이미지입니다.</span>
+                <div class="posterWrap">
+                  <img
+                    class="posterImage"
+                    src="../../assets/images/doublecross/doublecross-vertical-poster.jpg.jpg"
+                    alt="DOUBLE CROSS 세로 포스터"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
               </div>
 
@@ -935,102 +950,105 @@
                 메인 이미지와 썸네일 이미지를 한곳에 모았습니다. 이미지 클릭 시 크게 볼 수 있습니다.
               </p>
             </div>
-            <div class="galleryNote">모바일에서도 1열 자동 정렬</div>
           </div>
 
           <div class="galleryGrid">
             <button class="thumbBtn" type="button" data-title="대표 이미지" data-src="../../assets/images/doublecross/doublecross-main.jpg">
-              <img src="../../assets/images/doublecross/doublecross-main.jpg" alt="DOUBLE CROSS 대표 이미지" loading="lazy" decoding="async">
+              <div class="thumbImgWrap">
+                <img src="../../assets/images/doublecross/doublecross-main.jpg" alt="DOUBLE CROSS 대표 이미지" loading="lazy" decoding="async">
+              </div>
               <div class="thumbMeta">대표 이미지</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="세로 포스터" data-src="../../assets/images/doublecross/doublecross-vertical-poster.jpg.jpg">
-              <img src="../../assets/images/doublecross/doublecross-vertical-poster.jpg.jpg" alt="DOUBLE CROSS 세로 포스터" loading="lazy" decoding="async">
+              <div class="thumbImgWrap">
+                <img src="../../assets/images/doublecross/doublecross-vertical-poster.jpg.jpg" alt="DOUBLE CROSS 세로 포스터" loading="lazy" decoding="async">
+              </div>
               <div class="thumbMeta">세로 포스터</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 01" data-src="../../assets/images/doublecross/doublecross-thumb_01.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_01.jpg" alt="DOUBLE CROSS 썸네일 01" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_01.jpg" alt="DOUBLE CROSS 썸네일 01" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 01</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 02" data-src="../../assets/images/doublecross/doublecross-thumb_02.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_02.jpg" alt="DOUBLE CROSS 썸네일 02" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_02.jpg" alt="DOUBLE CROSS 썸네일 02" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 02</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 03" data-src="../../assets/images/doublecross/doublecross-thumb_03.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_03.jpg" alt="DOUBLE CROSS 썸네일 03" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_03.jpg" alt="DOUBLE CROSS 썸네일 03" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 03</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 04" data-src="../../assets/images/doublecross/doublecross-thumb_04.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_04.jpg" alt="DOUBLE CROSS 썸네일 04" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_04.jpg" alt="DOUBLE CROSS 썸네일 04" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 04</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 05" data-src="../../assets/images/doublecross/doublecross-thumb_05.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_05.jpg" alt="DOUBLE CROSS 썸네일 05" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_05.jpg" alt="DOUBLE CROSS 썸네일 05" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 05</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 06" data-src="../../assets/images/doublecross/doublecross-thumb_06.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_06.jpg" alt="DOUBLE CROSS 썸네일 06" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_06.jpg" alt="DOUBLE CROSS 썸네일 06" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 06</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 07" data-src="../../assets/images/doublecross/doublecross-thumb_07.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_07.jpg" alt="DOUBLE CROSS 썸네일 07" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_07.jpg" alt="DOUBLE CROSS 썸네일 07" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 07</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 08" data-src="../../assets/images/doublecross/doublecross-thumb_08.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_08.jpg" alt="DOUBLE CROSS 썸네일 08" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_08.jpg" alt="DOUBLE CROSS 썸네일 08" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 08</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 09" data-src="../../assets/images/doublecross/doublecross-thumb_09.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_09.jpg" alt="DOUBLE CROSS 썸네일 09" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_09.jpg" alt="DOUBLE CROSS 썸네일 09" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 09</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 10" data-src="../../assets/images/doublecross/doublecross-thumb_10.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_10.jpg" alt="DOUBLE CROSS 썸네일 10" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_10.jpg" alt="DOUBLE CROSS 썸네일 10" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 10</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 11" data-src="../../assets/images/doublecross/doublecross-thumb_11.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_11.jpg" alt="DOUBLE CROSS 썸네일 11" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_11.jpg" alt="DOUBLE CROSS 썸네일 11" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 11</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 12" data-src="../../assets/images/doublecross/doublecross-thumb_12.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_12.jpg" alt="DOUBLE CROSS 썸네일 12" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_12.jpg" alt="DOUBLE CROSS 썸네일 12" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 12</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 13" data-src="../../assets/images/doublecross/doublecross-thumb_13.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_13.jpg" alt="DOUBLE CROSS 썸네일 13" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_13.jpg" alt="DOUBLE CROSS 썸네일 13" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 13</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 14" data-src="../../assets/images/doublecross/doublecross-thumb_14.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_14.jpg" alt="DOUBLE CROSS 썸네일 14" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_14.jpg" alt="DOUBLE CROSS 썸네일 14" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 14</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 15" data-src="../../assets/images/doublecross/doublecross-thumb_15.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_15.jpg" alt="DOUBLE CROSS 썸네일 15" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_15.jpg" alt="DOUBLE CROSS 썸네일 15" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 15</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 16" data-src="../../assets/images/doublecross/doublecross-thumb_16.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_16.jpg" alt="DOUBLE CROSS 썸네일 16" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_16.jpg" alt="DOUBLE CROSS 썸네일 16" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 16</div>
             </button>
 
             <button class="thumbBtn" type="button" data-title="썸네일 17" data-src="../../assets/images/doublecross/doublecross-thumb_17.jpg">
-              <img src="../../assets/images/doublecross/doublecross-thumb_17.jpg" alt="DOUBLE CROSS 썸네일 17" loading="lazy" decoding="async">
+              <div class="thumbImgWrap"><img src="../../assets/images/doublecross/doublecross-thumb_17.jpg" alt="DOUBLE CROSS 썸네일 17" loading="lazy" decoding="async"></div>
               <div class="thumbMeta">썸네일 17</div>
             </button>
           </div>
