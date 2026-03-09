@@ -6,47 +6,185 @@
   <title>결제 안내 | 계명태권도</title>
   <meta name="theme-color" content="#0b0f19" />
   <style>
-    :root{--bg:#0b0f19;--text:#e9eefc;--muted:#a9b6d6;--accent:#ff8a00;--shadow:0 16px 40px rgba(0,0,0,.38)}
+    :root{
+      --bg:#0b0f19;
+      --text:#e9eefc;
+      --muted:#a9b6d6;
+      --accent:#ff8a00;
+      --shadow:0 16px 40px rgba(0,0,0,.38)
+    }
     *{box-sizing:border-box}
-    body{margin:0;color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;background:radial-gradient(1200px 600px at 50% -10%, rgba(255,138,0,.18), transparent 60%),linear-gradient(180deg,#060a13,var(--bg))}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;
+      background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(255,138,0,.18), transparent 60%),
+        linear-gradient(180deg,#060a13,var(--bg))
+    }
     a{color:inherit;text-decoration:none}
     .wrap{max-width:980px;margin:0 auto;padding:14px 14px 110px}
-    .panel{border:1px solid rgba(36,52,90,.55);background:linear-gradient(180deg,rgba(15,22,40,.92),rgba(13,19,34,.90));border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
-    .head{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid rgba(36,52,90,.45);background:linear-gradient(90deg,rgba(20,40,90,.75),rgba(10,14,28,.0))}
+    .panel{
+      border:1px solid rgba(36,52,90,.55);
+      background:linear-gradient(180deg,rgba(15,22,40,.92),rgba(13,19,34,.90));
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:var(--shadow)
+    }
+    .head{
+      padding:12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      border-bottom:1px solid rgba(36,52,90,.45);
+      background:linear-gradient(90deg,rgba(20,40,90,.75),rgba(10,14,28,.0))
+    }
     .title{margin:0;font-size:16px;font-weight:950}
     .sub{margin:4px 0 0;font-size:12px;color:rgba(233,238,252,.72)}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);font-weight:950;font-size:13px;white-space:nowrap}
-    .btn.primary{background:linear-gradient(180deg,rgba(255,138,0,.95),rgba(255,138,0,.75));border-color:rgba(255,138,0,.35);color:#101019}
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      font-weight:950;
+      font-size:13px;
+      white-space:nowrap
+    }
+    .btn.primary{
+      background:linear-gradient(180deg,rgba(255,138,0,.95),rgba(255,138,0,.75));
+      border-color:rgba(255,138,0,.35);
+      color:#101019
+    }
     .items{padding:14px}
-    .card{border-radius:18px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03);padding:14px}
+    .card{
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      padding:14px
+    }
     .row{display:grid;gap:10px}
-    @media (min-width:760px){.row{grid-template-columns:1.1fr .9fr;align-items:start}}
+    @media (min-width:760px){
+      .row{grid-template-columns:1.1fr .9fr;align-items:start}
+    }
     .h{font-weight:950;margin:0 0 8px}
     .p{margin:0;color:rgba(233,238,252,.88);font-size:12px;line-height:1.7}
-    .qrWrap{margin-top:10px;border-radius:18px;overflow:hidden;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.10)}
+    .qrWrap{
+      margin-top:10px;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.10)
+    }
     img{display:block;width:100%;height:auto}
-    .note{margin-top:10px;padding:12px 14px;border-radius:18px;border:1px solid rgba(255,138,0,.22);background:rgba(255,138,0,.07);font-size:12px;line-height:1.7}
+    .note{
+      margin-top:10px;
+      padding:12px 14px;
+      border-radius:18px;
+      border:1px solid rgba(255,138,0,.22);
+      background:rgba(255,138,0,.07);
+      font-size:12px;
+      line-height:1.7
+    }
 
-    /* ✅ Refund */
+    /* Refund */
     .refund{margin-top:12px}
-    .refund .ttl{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,138,0,.25);background:rgba(255,138,0,.08);font-size:11px;font-weight:900;color:rgba(233,238,252,.92)}
-    .refund .muted{color:rgba(233,238,252,.72);font-size:11px;line-height:1.7;margin:6px 0 0}
-    .list{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:8px}
-    .li{padding:10px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03);font-size:12px;line-height:1.7;color:rgba(233,238,252,.90)}
+    .refund .ttl{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,138,0,.25);
+      background:rgba(255,138,0,.08);
+      font-size:11px;
+      font-weight:900;
+      color:rgba(233,238,252,.92)
+    }
+    .refund .muted{
+      color:rgba(233,238,252,.72);
+      font-size:11px;
+      line-height:1.7;
+      margin:6px 0 0
+    }
+    .list{
+      margin:10px 0 0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:8px
+    }
+    .li{
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
+      font-size:12px;
+      line-height:1.7;
+      color:rgba(233,238,252,.90)
+    }
     .grid2{display:grid;gap:10px}
-    @media (min-width:760px){.grid2{grid-template-columns:1fr 1fr}}
-    .table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:16px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.02)}
-    .table th,.table td{padding:10px 10px;font-size:12px;line-height:1.4;border-bottom:1px solid rgba(255,255,255,.08)}
-    .table th{font-weight:950;text-align:left;color:rgba(233,238,252,.92);background:rgba(255,255,255,.03)}
+    @media (min-width:760px){
+      .grid2{grid-template-columns:1fr 1fr}
+    }
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.02)
+    }
+    .table th,.table td{
+      padding:10px 10px;
+      font-size:12px;
+      line-height:1.4;
+      border-bottom:1px solid rgba(255,255,255,.08)
+    }
+    .table th{
+      font-weight:950;
+      text-align:left;
+      color:rgba(233,238,252,.92);
+      background:rgba(255,255,255,.03)
+    }
     .table tr:last-child td{border-bottom:none}
     .k{color:rgba(233,238,252,.72)}
     .strong{font-weight:950}
-    .calc{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:11px; color:rgba(233,238,252,.88)}
+    .calc{
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:11px;
+      color:rgba(233,238,252,.88)
+    }
     .divider{height:1px;background:rgba(36,52,90,.45);margin:14px 0}
 
-    .bottomBar{position:fixed;left:0;right:0;bottom:0;background:rgba(7,9,16,.78);border-top:1px solid rgba(36,52,90,.55);backdrop-filter:blur(10px);padding:10px 12px}
-    .bottomInner{max-width:980px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap}
+    .bottomBar{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      background:rgba(7,9,16,.78);
+      border-top:1px solid rgba(36,52,90,.55);
+      backdrop-filter:blur(10px);
+      padding:10px 12px
+    }
+    .bottomInner{
+      max-width:980px;
+      margin:0 auto;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap
+    }
     .bbtn{flex:1;min-width:120px}
   </style>
 </head>
@@ -68,10 +206,10 @@
             <div class="p">
               계좌번호 : <b>농협 767-02-298023</b><br/>
               예금주 : <b>전성권(계명태권도)</b><br/>
-              입금 후 카톡으로 “입금자명/아이이름” 보내주시면 확인이 빠릅니다.
+              입금 후 카톡으로 “입금자명 / 아이이름”을 보내주시면 확인이 빠릅니다.
             </div>
             <div class="note">
-              카드/울산페이 결제는 오른쪽 QR을 이용해주세요.
+              카드 / 울산페이 결제는 오른쪽 QR을 이용해주세요.
             </div>
           </div>
 
@@ -88,32 +226,38 @@
           결제 관련 문의는 홈에서 카톡 문의 버튼을 눌러주시면 가장 빠릅니다.
         </div>
 
-        <!-- ✅ 환불 규정 (결제 페이지 하단 삽입) -->
         <div class="divider"></div>
 
         <div class="card refund" id="refund">
           <div class="ttl">
             <div class="h" style="margin:0">📌 수련비 환불 규정</div>
-            <span class="badge">일할 계산 기준</span>
+            <span class="badge">30일 기준 일할 계산</span>
           </div>
+
           <div class="muted">
             계명태권도는 공정하고 투명한 운영을 위해 아래 환불 기준을 적용합니다.
-            <br/>※ 본 규정은 <b>수개월 이상 수련 후 개인 사정(이사/시간 변경 등)</b>으로 중단 시 주로 적용됩니다.
+            <br/>
+            ※ 본 규정은 수련 등록 후 개인 사정(이사, 시간 변경, 일정 조정 등)으로 중단하는 경우에 적용됩니다.
           </div>
 
           <ul class="list">
             <li class="li">
               <span class="strong">① 납부 기준</span><br/>
-              수련비는 <b>등록일 기준 1개월 단위 선납</b>입니다. (예: 3/11 등록 → 다음 결제일 4/11)
+              수련비는 <b>등록일 기준 1개월 단위 선납</b>입니다.
+              (예: 3/11 등록 → 다음 결제일 4/11)
             </li>
+
             <li class="li">
               <span class="strong">② 환불 기준</span><br/>
-              중도 퇴관 시 <b>사용일수 기준 일할 계산</b> 후 환불합니다.<br/>
+              중도 퇴관 시 <b>남은 기간에 대해 30일 기준 일할 계산</b>하여 환불합니다.<br/>
+              월별 실제 날짜(28일, 30일, 31일)와 관계없이 <b>모든 계산은 30일 기준</b>으로 적용됩니다.<br/>
               <div class="calc">환불금 = 납부 수련비 − (하루 기준 금액 × 사용일수)</div>
             </li>
+
             <li class="li">
               <span class="strong">③ 기준일</span><br/>
-              환불은 <b>수련 중단 의사를 도장에 전달한 날</b>을 기준으로 계산됩니다.
+              환불은 <b>수련 중단 의사를 도장에 전달한 날</b>을 기준으로 계산합니다.<br/>
+              별도 협의가 없는 경우, 해당 날짜부터 남은 기간을 산정합니다.
             </li>
           </ul>
 
@@ -140,20 +284,24 @@
                 </tr>
               </table>
               <div class="muted" style="margin-top:8px">
-                ※ 편의상 일 단위로 산정하며, 월은 30일 기준으로 계산합니다.
+                ※ 하루 기준 금액은 월 수련비를 30일 기준으로 나눈 금액입니다.<br/>
+                ※ 편의상 원 단위는 반올림 또는 절사하여 안내될 수 있습니다.
               </div>
             </div>
 
             <div class="li">
               <div class="strong" style="margin-bottom:8px">환불 예시</div>
               <div class="p" style="font-size:12px">
-                등록일: <b>3월 11일</b> / 주5일(165,000원)<br/>
-                6월 1일 중단 → 6월 11일까지 <b>10일</b> 남음<br/><br/>
+                등록일 : <b>3월 11일</b> / 주 5일 수련(165,000원)<br/>
+                수련 중단 전달일 : <b>4월 1일</b><br/>
+                다음 결제일 : <b>4월 11일</b><br/><br/>
+
+                남은 기간 : <b>10일</b><br/>
                 <span class="calc">10일 × 5,500원 = 55,000원</span><br/>
-                👉 환불금: <b>55,000원</b>
+                👉 환불금 : <b>55,000원</b>
               </div>
               <div class="muted" style="margin-top:8px">
-                ※ 실제 환불금은 사용일수에 따라 달라질 수 있습니다.
+                ※ 실제 환불금은 중단 전달일과 남은 기간에 따라 달라질 수 있습니다.
               </div>
             </div>
           </div>
@@ -163,20 +311,25 @@
           <ul class="list">
             <li class="li">
               <span class="strong">④ 환불 제외 항목</span><br/>
-              도복, 띠, 개인 장비, 심사비, 행사 참가비 등은 환불 대상에서 제외됩니다.
+              심사비, 행사 참가비, 개인 구매 물품 등 이미 집행되었거나 별도 비용이 발생한 항목은 환불 대상에서 제외될 수 있습니다.
             </li>
+
             <li class="li">
               <span class="strong">⑤ 환불 처리</span><br/>
-              환불 요청 후 <b>7일 이내</b> 계좌 환불 처리됩니다.
+              환불 요청 확인 후 <b>7일 이내</b> 계좌 환불 처리됩니다.
+            </li>
+
+            <li class="li">
+              <span class="strong">⑥ 동일 적용</span><br/>
+              본 환불 기준은 <b>모든 수련생에게 동일하게 적용</b>됩니다.
             </li>
           </ul>
 
           <div class="note" style="margin-top:12px">
-            환불 문의는 <b>카톡 문의</b>로 “아이이름/중단일/환불계좌”를 보내주시면 빠르게 안내드립니다.
+            환불 문의는 <b>카톡 문의</b>로
+            “아이이름 / 중단일 / 환불계좌”를 보내주시면 빠르게 안내드립니다.
           </div>
         </div>
-        <!-- /환불 규정 -->
-
       </div>
     </section>
   </div>
