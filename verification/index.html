@@ -207,7 +207,16 @@
   }
   .clearBtn:active{transform:translateY(1px)}
 
-  .cta{ display:flex; gap:10px; align-items:center; justify-content:stretch; }
+  .cta{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:stretch;
+    width:100%;
+  }
+  .cta .big{
+    flex:1 1 0;
+  }
   button.big{
     width:100%;
     padding:14px 16px;
@@ -221,6 +230,13 @@
     font-size:15px;
   }
   button.big:active{transform:translateY(1px)}
+  button.big.sample{
+    background: rgba(255,255,255,.08);
+    color:#fff;
+    border:1px solid rgba(255,255,255,.14);
+  }
+  button.big.sample:active{transform:translateY(1px)}
+
   .note{
     margin-top:10px;
     font-size:12px;
@@ -590,7 +606,6 @@
   }
   .rankHead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-bottom:10px}
   .rankTitle{font-weight:1000;letter-spacing:-.3px;font-size:16px}
-  /* 내부용 문구 숨김: rankSub는 화면에 안 나오게 */
   .rankSub{display:none !important;}
 
   .rankCard{
@@ -742,13 +757,15 @@
 
       <div class="cta">
         <button class="big" id="searchBtn" type="button">조회</button>
+        <button class="big sample" id="sampleBtn" type="button">샘플 조회</button>
       </div>
     </div>
 
     <div id="result"></div>
 
     <div class="note" id="privacyNote">
-      개인정보 보호를 위해 <b>이름 + 생년월일</b>이 모두 일치해야 조회됩니다.
+      개인정보 보호를 위해 <b>이름 + 생년월일</b>이 모두 일치해야 조회됩니다.<br/>
+      처음 방문하신 분은 <b>샘플 조회</b>로 화면 예시를 확인할 수 있습니다.
     </div>
 
   </div>
@@ -772,6 +789,12 @@ const GOALS = [
 // ✅ 기본으로 보여줄 목표(처음에는 도복 목표)
 const DEFAULT_GOAL_KEY = "uniform";
 
+/* ✅ 샘플 조회용 계정 */
+const SAMPLE_STUDENT = {
+  name: "김서준",
+  birth: "150101"
+};
+
 function getGoalByKey(key){
   return GOALS.find(g => g.key === key) || GOALS[0];
 }
@@ -787,9 +810,9 @@ const TIERS = [
 /* =========================================================
   ✅ 관리자 모드
 ========================================================= */
-const ADMIN_QUERY_KEY = "admin";              // ?admin=1
-const ADMIN_SESSION_KEY = "KMT_ADMIN_OK";     // sessionStorage
-const ADMIN_PASSCODE = "2772";                // ✅ 여기만 변경
+const ADMIN_QUERY_KEY = "admin";
+const ADMIN_SESSION_KEY = "KMT_ADMIN_OK";
+const ADMIN_PASSCODE = "2772";
 
 function getQueryParam(key){
   const u = new URL(location.href);
@@ -826,8 +849,8 @@ function updateAdminUI(){
 
   if(note){
     note.innerHTML = adminOn
-      ? `관리자 모드: <b>이름만</b>으로도 조회됩니다. (생년월일은 선택)`
-      : `개인정보 보호를 위해 <b>이름 + 생년월일</b>이 모두 일치해야 조회됩니다.`;
+      ? `관리자 모드: <b>이름만</b>으로도 조회됩니다. (생년월일은 선택)<br/>처음 방문하신 분은 <b>샘플 조회</b>로 화면 예시를 확인할 수 있습니다.`
+      : `개인정보 보호를 위해 <b>이름 + 생년월일</b>이 모두 일치해야 조회됩니다.<br/>처음 방문하신 분은 <b>샘플 조회</b>로 화면 예시를 확인할 수 있습니다.`;
   }
   if(birthInput){
     birthInput.placeholder = "";
@@ -838,9 +861,9 @@ function updateAdminUI(){
   ✅ Cache/Retry/Timeout
 ========================================================= */
 const CACHE_KEY = "KMT_STUDENTS_CACHE_V4";
-const CACHE_TTL_MS = 10 * 60 * 1000;     // 10분
-const FETCH_TIMEOUT_MS = 8000;           // 8초
-const RETRY_COUNT = 2;                   // 총 3회 시도
+const CACHE_TTL_MS = 10 * 60 * 1000;
+const FETCH_TIMEOUT_MS = 8000;
+const RETRY_COUNT = 2;
 
 const $ = (id)=>document.getElementById(id);
 const dataPill = $("dataPill");
@@ -993,7 +1016,7 @@ function buildTopRanking(){
     const name = clean(r[1]);
     const pts = toPointNumber(r[7]);
     if(!id || !name) continue;
-    if(pts <= 0) continue; // 0점도 포함하고 싶으면 이 줄 삭제
+    if(pts <= 0) continue;
     list.push({ id, name, pts });
   }
   list.sort((a,b)=> (b.pts - a.pts) || a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
@@ -1263,6 +1286,10 @@ function renderExam(name, dateStr){
   `;
 }
 
+function isSampleRow(name, birth){
+  return norm(name) === norm(SAMPLE_STUDENT.name) && normBirth(birth) === normBirth(SAMPLE_STUDENT.birth);
+}
+
 function renderCard(row){
   const id = clean(row[0]);
   const name = clean(row[1]);
@@ -1294,6 +1321,10 @@ function renderCard(row){
     ? `🎉 ${escapeHtml(goal.name)} 달성! (목표 ${prog.goal}P)`
     : `${escapeHtml(goal.name)}까지 <b>${prog.remain}P</b> 남았어요 (목표 ${prog.goal}P)`;
 
+  const sampleBadge = isSampleRow(name, birth)
+    ? `<div class="badge blue" style="margin-bottom:8px;display:inline-flex;">👀 샘플 조회 화면</div>`
+    : ``;
+
   return `
     <div class="card" data-hash-source="${escapeHtml(hashSource)}">
       <div class="hero">
@@ -1311,6 +1342,7 @@ function renderCard(row){
         </div>
 
         <div class="headline">
+          ${sampleBadge}
           <h2>${escapeHtml(name || "-")}</h2>
           <p class="sub">아이디: <b>${escapeHtml(id || "-")}</b> · 생년월일: <b>${escapeHtml(birth || "-")}</b></p>
 
@@ -1498,6 +1530,41 @@ async function runSearch(){
   }
 }
 
+async function runSampleSearch(){
+  $("qNameOrId").value = SAMPLE_STUDENT.name;
+  $("qBirth").value = SAMPLE_STUDENT.birth;
+
+  const clearNameBtn = $("clearName");
+  const clearBirthBtn = $("clearBirth");
+  if(clearNameBtn) clearNameBtn.style.display = "inline-flex";
+  if(clearBirthBtn) clearBirthBtn.style.display = "inline-flex";
+
+  await runSearch();
+
+  const hasSampleCard = !!resultEl.querySelector(".card");
+  const hasSampleList = !!resultEl.querySelector(".list");
+
+  if(hasSampleCard || hasSampleList){
+    const msg = document.createElement("div");
+    msg.className = "message";
+    msg.style.marginTop = "10px";
+    msg.innerHTML = `※ 현재 화면은 <b>샘플 조회 예시</b>입니다. 실제 수련생 정보와 무관한 안내용 예시입니다.`;
+
+    const card = resultEl.querySelector(".card");
+    const list = resultEl.querySelector(".list");
+
+    if(card){
+      card.insertAdjacentElement("beforebegin", msg);
+    }else if(list){
+      resultEl.insertAdjacentElement("afterbegin", msg);
+    }else if(resultEl.firstChild){
+      resultEl.insertBefore(msg, resultEl.firstChild);
+    }else{
+      resultEl.appendChild(msg);
+    }
+  }
+}
+
 function bindReSearchButton(){
   const btn = $("reSearchBtn");
   if(!btn) return;
@@ -1526,6 +1593,7 @@ function bindClear(inputId, btnId){
 
 /* ---------- events ---------- */
 $("searchBtn").addEventListener("click", runSearch);
+$("sampleBtn").addEventListener("click", runSampleSearch);
 document.addEventListener("keydown",(e)=>{ if(e.key === "Enter") runSearch(); });
 
 $("refreshBtn").addEventListener("click", async ()=>{
