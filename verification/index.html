@@ -3,99 +3,101 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>수련생 조회 | 계명태권도</title>
-<meta name="description" content="계명태권도 수련생 조회. 이름 + 생년월일로 안전하게 조회합니다." />
+<title>수련생 성장조회 | 계명태권도</title>
+<meta name="description" content="계명태권도 수련생 성장조회. 이름 + 생년월일로 안전하게 조회합니다." />
 <meta name="theme-color" content="#0b0f19" />
 
-<!-- OG -->
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="계명태권도" />
-<meta property="og:title" content="수련생 조회 | 계명태권도" />
-<meta property="og:description" content="이름 + 생년월일로 안전하게 조회합니다." />
+<meta property="og:title" content="수련생 성장조회 | 계명태권도" />
+<meta property="og:description" content="인성 · 도장생활 · 수련성장 · 사진 · 심사 정보를 한눈에 확인합니다." />
 <meta property="og:image" content="" />
 
 <style>
   :root{
     --bg:#0b0f19;
-    --card:#111827;
+    --bg2:#111827;
+    --card:rgba(255,255,255,.05);
     --line:rgba(255,255,255,.10);
-    --text:#ffffff;
+    --text:#fff;
     --muted:rgba(255,255,255,.72);
     --gold:#f6c945;
     --blue:#60a5fa;
     --green:#34d399;
+    --pink:#f472b6;
     --danger:#ff6363;
+    --shadow:0 18px 40px rgba(0,0,0,.34);
+    --radius:22px;
   }
   *{box-sizing:border-box}
+  html,body{height:100%}
   body{
-    margin:0; padding:18px 16px 28px;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
-    background: radial-gradient(900px 600px at 50% 0%, rgba(246,201,69,.12), transparent 55%),
-                radial-gradient(900px 600px at 10% 20%, rgba(59,130,246,.10), transparent 55%),
-                var(--bg);
+    margin:0;
+    padding:18px 16px 28px;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;
     color:var(--text);
+    background:
+      radial-gradient(1100px 680px at 50% 0%, rgba(246,201,69,.14), transparent 55%),
+      radial-gradient(900px 540px at 12% 18%, rgba(96,165,250,.12), transparent 55%),
+      linear-gradient(180deg,#090d16,#0b0f19 42%,#0b0f19);
   }
   a{color:inherit;text-decoration:none}
 
-  /* ✅ 상단 바(홈 바로가기) */
   .nav{
-    max-width:860px;
+    max-width:980px;
     margin:0 auto 10px;
     display:flex;
-    justify-content:space-between;
     align-items:center;
+    justify-content:space-between;
     gap:10px;
   }
   .nav .left{
     display:flex;align-items:center;gap:10px;min-width:0;
-  }
-  .brand{
-    font-weight:950;
-    letter-spacing:-.3px;
-    font-size:14px;
-    color:rgba(255,255,255,.92);
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
   }
   .homeBtn{
     display:inline-flex;align-items:center;gap:8px;
     padding:10px 12px;
     border-radius:14px;
     border:1px solid rgba(255,255,255,.12);
-    background: rgba(255,255,255,.06);
-    font-weight:950;
+    background:rgba(255,255,255,.06);
     font-size:13px;
+    font-weight:950;
   }
-  .homeBtn:active{transform:translateY(1px)}
+  .brand{
+    font-size:14px;
+    font-weight:950;
+    color:rgba(255,255,255,.92);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
 
   h1{
     text-align:center;
-    margin:6px 0 12px;
-    letter-spacing:-.6px;
+    margin:8px 0 14px;
     font-size:34px;
-    font-weight:950;
+    font-weight:1000;
+    letter-spacing:-.6px;
   }
 
-  .wrap{ max-width:860px; margin:0 auto; }
+  .wrap{max-width:980px;margin:0 auto}
 
-  /* 상태/버튼 바 */
   .topbar{
     display:flex;
-    justify-content:space-between;
     align-items:center;
+    justify-content:space-between;
     gap:10px;
     flex-wrap:wrap;
     margin-bottom:12px;
   }
   .status{
-    font-size:12px;
-    color:rgba(255,255,255,.80);
     display:flex;
     align-items:center;
     gap:8px;
-    min-height:20px;
     flex-wrap:wrap;
+    min-height:20px;
+    color:rgba(255,255,255,.8);
+    font-size:12px;
   }
   .pill{
     display:inline-flex;
@@ -108,69 +110,145 @@
     color:rgba(255,255,255,.88);
     font-weight:950;
   }
-  .pill.good{ border-color: rgba(246,201,69,.35); background: rgba(246,201,69,.10); }
-  .pill.bad{ border-color: rgba(255,99,99,.35); background: rgba(255,99,99,.10); }
-  .pill.blue{ border-color: rgba(96,165,250,.35); background: rgba(96,165,250,.12); }
-  .pill.green{ border-color: rgba(52,211,153,.35); background: rgba(52,211,153,.12); }
-
-  .actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  .pill.good{border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.12)}
+  .pill.bad{border-color:rgba(255,99,99,.35);background:rgba(255,99,99,.12)}
+  .pill.blue{border-color:rgba(96,165,250,.35);background:rgba(96,165,250,.12)}
+  .pill.gold{border-color:rgba(246,201,69,.35);background:rgba(246,201,69,.12)}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
   .miniBtn{
     padding:9px 10px;
     border-radius:12px;
     border:1px solid rgba(255,255,255,.12);
     background:rgba(255,255,255,.05);
-    color:rgba(255,255,255,.92);
-    font-weight:950;
+    color:#fff;
     font-size:12px;
+    font-weight:950;
     cursor:pointer;
   }
-  .miniBtn:active{transform:translateY(1px)}
   .miniBtn.gold{
-    border-color: rgba(246,201,69,.35);
-    background: rgba(246,201,69,.14);
+    border-color:rgba(246,201,69,.35);
+    background:rgba(246,201,69,.14);
+    color:#fff;
   }
 
-  /* ✅ 입력 UI */
+  .rankWrap{
+    margin:10px auto 12px;
+    padding:14px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:20px;
+    background:linear-gradient(180deg, rgba(17,24,39,.82), rgba(11,15,25,.9));
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .rankHead{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .rankTitle{font-size:16px;font-weight:1000;letter-spacing:-.3px}
+  .rankCard{
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:16px;
+    background:rgba(0,0,0,.18);
+    overflow:hidden;
+  }
+  .rankViewport{
+    position:relative;
+    overflow:hidden;
+    height:260px;
+  }
+  .rankList{
+    list-style:none;
+    margin:0;
+    padding:10px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    will-change:transform;
+  }
+  .rankItem{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:11px 12px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.04);
+  }
+  .rankLeft{display:flex;align-items:center;gap:10px;min-width:0}
+  .rankNo{
+    width:30px;height:30px;border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:1000;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+    flex:0 0 auto;
+  }
+  .rankName{font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rankMeta{font-size:12px;opacity:.75}
+  .rankPts{
+    white-space:nowrap;
+    font-weight:1000;
+    padding:7px 10px;
+    border-radius:999px;
+    border:1px solid rgba(246,201,69,.25);
+    background:rgba(246,201,69,.10);
+  }
+  .rankItem.top1{
+    border-color:rgba(246,201,69,.45);
+    background:linear-gradient(90deg, rgba(246,201,69,.20), rgba(255,255,255,.05));
+  }
+  .rankItem.top2{
+    border-color:rgba(192,192,192,.40);
+    background:linear-gradient(90deg, rgba(192,192,192,.16), rgba(255,255,255,.04));
+  }
+  .rankItem.top3{
+    border-color:rgba(205,127,50,.40);
+    background:linear-gradient(90deg, rgba(205,127,50,.16), rgba(255,255,255,.04));
+  }
+
   .form{
     display:grid;
-    grid-template-columns: 1fr;
+    grid-template-columns:1fr;
     gap:10px;
     margin:0 auto 12px;
   }
   @media (min-width:720px){
     .form{
-      grid-template-columns: 1.2fr 1fr auto;
+      grid-template-columns:1.2fr 1fr auto;
       align-items:end;
       gap:10px;
     }
   }
   .field{
-    background: rgba(255,255,255,.04);
+    background:rgba(255,255,255,.04);
     border:1px solid var(--line);
-    border-radius:14px;
+    border-radius:16px;
     padding:10px 12px;
   }
   .label{
-    font-size:12px;
-    color: rgba(255,255,255,.78);
-    font-weight:900;
-    margin-bottom:8px;
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:10px;
+    margin-bottom:8px;
+    font-size:12px;
+    font-weight:900;
+    color:rgba(255,255,255,.78);
   }
   .req{
     font-size:11px;
-    color: rgba(246,201,69,.90);
+    color:rgba(246,201,69,.92);
     border:1px solid rgba(246,201,69,.35);
-    background: rgba(246,201,69,.10);
+    background:rgba(246,201,69,.10);
     padding:3px 8px;
     border-radius:999px;
     font-weight:950;
     white-space:nowrap;
   }
-
   .inputWrap{
     position:relative;
     display:flex;
@@ -183,7 +261,7 @@
     border-radius:12px;
     border:1px solid rgba(255,255,255,.10);
     background:rgba(0,0,0,.18);
-    color:var(--text);
+    color:#fff;
     font-size:16px;
     outline:none;
   }
@@ -195,216 +273,113 @@
     position:absolute;
     right:10px;
     width:28px;height:28px;
-    border-radius:999px;
-    border:1px solid rgba(255,255,255,.14);
-    background: rgba(255,255,255,.08);
-    color:rgba(255,255,255,.92);
-    font-weight:950;
-    cursor:pointer;
     display:none;
     align-items:center;
     justify-content:center;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.08);
+    color:#fff;
+    font-weight:950;
+    cursor:pointer;
   }
-  .clearBtn:active{transform:translateY(1px)}
-
   .cta{
     display:flex;
-    gap:10px;
     align-items:center;
-    justify-content:stretch;
+    gap:10px;
     width:100%;
   }
-  .cta .big{
-    flex:1 1 0;
-  }
+  .cta .big{flex:1 1 0}
   button.big{
     width:100%;
+    min-width:120px;
     padding:14px 16px;
     border:0;
     border-radius:14px;
     background:var(--gold);
     color:#111;
-    font-weight:950;
-    cursor:pointer;
-    min-width:120px;
     font-size:15px;
+    font-weight:1000;
+    cursor:pointer;
   }
-  button.big:active{transform:translateY(1px)}
   button.big.sample{
-    background: rgba(255,255,255,.08);
+    background:rgba(255,255,255,.08);
     color:#fff;
     border:1px solid rgba(255,255,255,.14);
   }
-  button.big.sample:active{transform:translateY(1px)}
-
   .note{
     margin-top:10px;
-    font-size:12px;
-    color:rgba(255,255,255,.70);
-    line-height:1.5;
     text-align:center;
+    font-size:12px;
+    line-height:1.55;
+    color:rgba(255,255,255,.70);
   }
 
-  /* 결과 */
   #result{margin-top:10px}
   .message{
-    text-align:center;
     margin-top:14px;
+    text-align:center;
     color:var(--muted);
     line-height:1.5;
   }
 
-  /* ✅ 카드 */
   .card{
-    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
-    border:1px solid var(--line);
-    border-radius:20px;
-    padding:16px;
-    max-width:760px;
-    margin:14px auto 0;
-    box-shadow: 0 14px 30px rgba(0,0,0,.35);
-    overflow:hidden;
     position:relative;
+    overflow:hidden;
+    max-width:900px;
+    margin:14px auto 0;
+    padding:18px;
+    border-radius:24px;
+    border:1px solid rgba(255,255,255,.10);
+    background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+    box-shadow:var(--shadow);
   }
   .card::before{
     content:"";
-    position:absolute; inset:-2px;
-    background: radial-gradient(700px 260px at 20% 0%, rgba(246,201,69,.16), transparent 55%),
-                radial-gradient(700px 260px at 80% 0%, rgba(96,165,250,.14), transparent 55%);
-    opacity:.9;
+    position:absolute;inset:-2px;
+    background:
+      radial-gradient(760px 280px at 18% 0%, rgba(246,201,69,.16), transparent 55%),
+      radial-gradient(760px 280px at 82% 0%, rgba(96,165,250,.14), transparent 55%);
     pointer-events:none;
+    opacity:.95;
   }
-  .card > *{ position:relative; }
+  .card > *{position:relative}
 
-  /* ✅ 상단 */
   .hero{
-    display:flex;
+    display:grid;
+    grid-template-columns:1fr;
     gap:14px;
-    align-items:center;
-    flex-wrap:wrap;
+  }
+  @media (min-width:860px){
+    .hero{
+      grid-template-columns:130px 1fr 280px;
+      align-items:center;
+    }
   }
   .photo{
-    width:120px;height:120px;border-radius:18px;
-    background: rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.12);
+    width:120px;height:120px;
+    border-radius:20px;
     overflow:hidden;
-    flex:0 0 auto;
     display:flex;align-items:center;justify-content:center;
-    color:rgba(255,255,255,.55);
-    font-weight:950;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.06);
+    color:rgba(255,255,255,.56);
+    font-weight:1000;
   }
-  .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .headline{ min-width:220px; flex:1; }
+  .photo img{width:100%;height:100%;object-fit:cover;display:block}
   .headline h2{
     margin:0 0 6px;
-    font-size:24px;
-    font-weight:950;
-    letter-spacing:-.3px;
+    font-size:28px;
+    font-weight:1000;
+    letter-spacing:-.4px;
   }
   .sub{
     margin:0;
-    color:rgba(255,255,255,.78);
     font-size:13px;
-    line-height:1.35;
+    line-height:1.4;
+    color:rgba(255,255,255,.78);
   }
-
-  /* ✅ 포인트 결과 박스 */
-  .pointBox{
-    flex:0 0 auto;
-    min-width:240px;
-    border-radius:18px;
-    border:1px solid rgba(246,201,69,.35);
-    background: linear-gradient(180deg, rgba(246,201,69,.20), rgba(246,201,69,.08));
-    padding:12px 14px;
-    box-shadow: 0 10px 22px rgba(0,0,0,.25);
-  }
-  .pointTop{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-  }
-  .pointLabel{
-    font-size:12px;
-    font-weight:950;
-    color: rgba(255,255,255,.90);
-  }
-  .tierBadge{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    padding:6px 10px;
-    border-radius:999px;
-    border:1px solid rgba(255,255,255,.20);
-    background: rgba(0,0,0,.18);
-    font-size:12px;
-    font-weight:1000;
-    color: rgba(255,255,255,.92);
-    white-space:nowrap;
-  }
-  .tierBadge.bronze{ border-color: rgba(205,127,50,.35); background: rgba(205,127,50,.14); }
-  .tierBadge.silver{ border-color: rgba(192,192,192,.35); background: rgba(192,192,192,.14); }
-  .tierBadge.gold{ border-color: rgba(246,201,69,.55); background: rgba(246,201,69,.18); }
-  .tierBadge.dia{ border-color: rgba(96,165,250,.55); background: rgba(96,165,250,.18); }
-
-  .pointValue{
-    margin-top:8px;
-    font-size:34px;
-    font-weight:1000;
-    letter-spacing:-.6px;
-    color:#111;
-    background: rgba(255,255,255,.82);
-    display:inline-block;
-    padding:4px 10px;
-    border-radius:14px;
-  }
-  .pointUnit{
-    font-size:12px;
-    font-weight:950;
-    color: rgba(17,17,17,.86);
-    margin-left:6px;
-  }
-
-  /* ✅ 진행률 바 */
-  .progressWrap{
-    margin-top:10px;
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,.18);
-    background: rgba(0,0,0,.16);
-    padding:10px;
-  }
-  .progressTop{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    font-size:12px;
-    font-weight:950;
-    color: rgba(255,255,255,.88);
-  }
-  .bar{
-    margin-top:8px;
-    height:12px;
-    border-radius:999px;
-    border:1px solid rgba(255,255,255,.16);
-    background: rgba(255,255,255,.10);
-    overflow:hidden;
-  }
-  .bar > i{
-    display:block;
-    height:100%;
-    width:0%;
-    background: rgba(246,201,69,.92);
-    border-radius:999px;
-  }
-  .progressHint{
-    margin-top:8px;
-    font-size:12px;
-    color: rgba(255,255,255,.78);
-    line-height:1.35;
-  }
-
-  .badges{
+  .heroBadges{
     display:flex;
     gap:8px;
     flex-wrap:wrap;
@@ -416,57 +391,148 @@
     gap:8px;
     padding:8px 10px;
     border-radius:999px;
-    border:1px solid rgba(246,201,69,.35);
-    background: rgba(246,201,69,.10);
-    color: rgba(255,255,255,.92);
     font-size:12px;
     font-weight:950;
+    color:#fff;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.06);
   }
-  .badge.green{ border-color: rgba(52,211,153,.35); background: rgba(52,211,153,.12); }
-  .badge.blue{ border-color: rgba(96,165,250,.35); background: rgba(96,165,250,.12); }
-
+  .badge.green{border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.12)}
+  .badge.blue{border-color:rgba(96,165,250,.35);background:rgba(96,165,250,.12)}
+  .badge.gold{border-color:rgba(246,201,69,.35);background:rgba(246,201,69,.12)}
   .hashLine{
     margin-top:10px;
     padding:10px 12px;
     border-radius:14px;
     border:1px solid rgba(255,255,255,.10);
-    background: rgba(0,0,0,.18);
+    background:rgba(0,0,0,.18);
     font-size:12px;
-    color: rgba(255,255,255,.82);
+    color:rgba(255,255,255,.82);
     word-break:break-all;
   }
-  .hashLine b{ color: rgba(255,255,255,.95); }
+  .hashLine b{color:#fff}
 
-  .sectionTitle{
-    margin:14px 0 8px;
-    font-weight:950;
-    letter-spacing:-.2px;
-    color: rgba(255,255,255,.92);
-    font-size:13px;
+  .pointBox{
+    min-width:0;
+    border-radius:20px;
+    border:1px solid rgba(246,201,69,.35);
+    background:linear-gradient(180deg, rgba(246,201,69,.18), rgba(246,201,69,.08));
+    padding:14px;
+    box-shadow:0 10px 22px rgba(0,0,0,.25);
+  }
+  .pointTop{
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:10px;
   }
+  .pointLabel{
+    font-size:12px;
+    font-weight:1000;
+    color:rgba(255,255,255,.92);
+  }
+  .tierBadge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.20);
+    background:rgba(0,0,0,.18);
+    font-size:12px;
+    font-weight:1000;
+    color:#fff;
+    white-space:nowrap;
+  }
+  .tierBadge.bronze{border-color:rgba(205,127,50,.35);background:rgba(205,127,50,.14)}
+  .tierBadge.silver{border-color:rgba(192,192,192,.35);background:rgba(192,192,192,.14)}
+  .tierBadge.gold{border-color:rgba(246,201,69,.55);background:rgba(246,201,69,.18)}
+  .tierBadge.dia{border-color:rgba(96,165,250,.55);background:rgba(96,165,250,.18)}
+  .pointValue{
+    display:inline-block;
+    margin-top:10px;
+    padding:4px 10px;
+    border-radius:14px;
+    background:rgba(255,255,255,.82);
+    color:#111;
+    font-size:34px;
+    font-weight:1000;
+    letter-spacing:-.6px;
+  }
+  .pointUnit{
+    margin-left:6px;
+    font-size:12px;
+    font-weight:1000;
+    color:rgba(17,17,17,.86);
+  }
+  .progressWrap{
+    margin-top:10px;
+    padding:10px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.18);
+    background:rgba(0,0,0,.16);
+  }
+  .progressTop{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    font-size:12px;
+    font-weight:950;
+    color:rgba(255,255,255,.88);
+  }
+  .bar{
+    margin-top:8px;
+    height:12px;
+    border-radius:999px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.10);
+  }
+  .bar > i{
+    display:block;
+    height:100%;
+    width:0%;
+    border-radius:999px;
+    background:rgba(246,201,69,.92);
+  }
+  .progressHint{
+    margin-top:8px;
+    font-size:12px;
+    line-height:1.35;
+    color:rgba(255,255,255,.78);
+  }
+
+  .sectionTitle{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin:16px 0 9px;
+    font-size:14px;
+    font-weight:1000;
+    color:rgba(255,255,255,.94);
+    letter-spacing:-.2px;
+  }
   .sectionTitle .hint{
     font-size:12px;
-    color: rgba(255,255,255,.66);
     font-weight:900;
+    color:rgba(255,255,255,.66);
   }
 
   .grid2{
     display:grid;
-    grid-template-columns: 1fr;
+    grid-template-columns:1fr;
     gap:10px;
   }
-  @media (min-width:720px){
-    .grid2{ grid-template-columns: 1fr 1fr; }
+  @media (min-width:760px){
+    .grid2{grid-template-columns:1fr 1fr}
   }
   .panel{
-    border-radius:18px;
+    padding:14px;
+    border-radius:20px;
     border:1px solid rgba(255,255,255,.10);
-    background: rgba(17,24,39,.55);
-    padding:12px;
+    background:rgba(17,24,39,.55);
   }
   .row{
     display:flex;
@@ -474,15 +540,133 @@
     gap:12px;
     padding:10px 10px;
     border-radius:14px;
-    background: rgba(255,255,255,.03);
     border:1px solid rgba(255,255,255,.06);
+    background:rgba(255,255,255,.03);
     font-size:14px;
   }
-  .row + .row{ margin-top:8px; }
-  .rlabel{color:rgba(255,255,255,.70);font-weight:900}
-  .rval{color:#fff;font-weight:950;text-align:right; word-break:break-word;}
+  .row + .row{margin-top:8px}
+  .rlabel{color:rgba(255,255,255,.72);font-weight:900}
+  .rval{color:#fff;font-weight:1000;text-align:right;word-break:break-word}
 
-  /* ✅ 심사 D-Day */
+  .scoreGrid{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+  @media (min-width:760px){
+    .scoreGrid{grid-template-columns:1fr 1fr}
+  }
+  .scorePanel{
+    padding:14px;
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(17,24,39,.58);
+  }
+  .scoreHead{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .scoreHead b{
+    font-size:14px;
+    font-weight:1000;
+    letter-spacing:-.2px;
+  }
+  .avgBadge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:7px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.06);
+    font-size:12px;
+    font-weight:1000;
+  }
+  .scoreItem + .scoreItem{margin-top:10px}
+  .scoreTop{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    font-size:13px;
+  }
+  .scoreName{
+    font-weight:950;
+    color:rgba(255,255,255,.88);
+  }
+  .scoreVal{
+    font-weight:1000;
+    color:#fff;
+  }
+  .scoreBar{
+    margin-top:7px;
+    height:12px;
+    overflow:hidden;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.08);
+  }
+  .scoreBar i{
+    display:block;
+    height:100%;
+    width:0%;
+    border-radius:999px;
+  }
+  .scoreBar.gold i{background:linear-gradient(90deg, rgba(246,201,69,.95), rgba(250,204,21,.75))}
+  .scoreBar.blue i{background:linear-gradient(90deg, rgba(96,165,250,.95), rgba(59,130,246,.75))}
+  .scoreBar.green i{background:linear-gradient(90deg, rgba(52,211,153,.95), rgba(16,185,129,.75))}
+  .scoreLegend{
+    margin-top:10px;
+    font-size:12px;
+    line-height:1.45;
+    color:rgba(255,255,255,.70);
+  }
+
+  .commentBox{
+    padding:16px;
+    border-radius:20px;
+    border:1px solid rgba(96,165,250,.20);
+    background:linear-gradient(180deg, rgba(96,165,250,.10), rgba(255,255,255,.03));
+    font-size:14px;
+    line-height:1.65;
+    color:rgba(255,255,255,.92);
+  }
+  .commentBox b{color:#fff}
+
+  .thumbs{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+  }
+  @media (min-width:760px){
+    .thumbs{grid-template-columns:repeat(4,1fr)}
+  }
+  .thumbCard{
+    position:relative;
+    overflow:hidden;
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.04);
+    aspect-ratio:1/1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .thumbCard img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .thumbEmpty{
+    color:rgba(255,255,255,.42);
+    font-size:12px;
+    font-weight:1000;
+  }
+
   .examItem{
     display:flex;
     justify-content:space-between;
@@ -490,13 +674,13 @@
     gap:10px;
     padding:10px 10px;
     border-radius:14px;
-    background: rgba(255,255,255,.03);
     border:1px solid rgba(255,255,255,.06);
+    background:rgba(255,255,255,.03);
     margin-top:8px;
   }
-  .examLeft{ min-width:0; }
-  .examName{ font-weight:950; font-size:13px; letter-spacing:-.2px; }
-  .examDate{ margin-top:3px; font-size:12px; color: rgba(255,255,255,.72); }
+  .examLeft{min-width:0}
+  .examName{font-size:13px;font-weight:1000;letter-spacing:-.2px}
+  .examDate{margin-top:3px;font-size:12px;color:rgba(255,255,255,.72)}
   .dday{
     flex:0 0 auto;
     display:inline-flex;
@@ -505,15 +689,14 @@
     padding:7px 10px;
     border-radius:999px;
     border:1px solid rgba(96,165,250,.30);
-    background: rgba(96,165,250,.12);
-    font-weight:950;
+    background:rgba(96,165,250,.12);
     font-size:12px;
+    font-weight:1000;
     white-space:nowrap;
   }
-  .dday.good{ border-color: rgba(52,211,153,.35); background: rgba(52,211,153,.12); }
-  .dday.bad{ border-color: rgba(255,99,99,.35); background: rgba(255,99,99,.12); }
+  .dday.good{border-color:rgba(52,211,153,.35);background:rgba(52,211,153,.12)}
+  .dday.bad{border-color:rgba(255,99,99,.35);background:rgba(255,99,99,.12)}
 
-  /* ✅ 하단 버튼 */
   .bottomActions{
     margin-top:14px;
     display:flex;
@@ -530,18 +713,16 @@
     padding:12px 12px;
     border-radius:14px;
     border:1px solid rgba(255,255,255,.12);
-    background: rgba(255,255,255,.06);
-    font-weight:950;
+    background:rgba(255,255,255,.06);
+    font-weight:1000;
     cursor:pointer;
   }
   .actionBtn.gold{
-    border-color: rgba(246,201,69,.35);
-    background: rgba(246,201,69,.14);
-    color: rgba(255,255,255,.95);
+    border-color:rgba(246,201,69,.35);
+    background:rgba(246,201,69,.14);
+    color:#fff;
   }
-  .actionBtn:active{ transform: translateY(1px); }
 
-  /* ✅ 동명이인 리스트 */
   .list{
     max-width:760px;
     margin:14px auto 0;
@@ -549,38 +730,36 @@
     gap:10px;
   }
   .pick{
-    border-radius:18px;
-    border:1px solid rgba(255,255,255,.10);
-    background: rgba(255,255,255,.04);
-    padding:12px;
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:10px;
-    cursor:pointer;
-    transition: transform .10s ease, border-color .15s ease;
-  }
-  .pick:hover{ transform: translateY(-1px); border-color: rgba(246,201,69,.35); }
-  .pick:active{ transform: translateY(0); }
-  .pLeft{ display:flex; align-items:center; gap:12px; min-width:0; }
-  .thumb{
-    width:54px; height:54px;
-    border-radius:14px;
+    padding:12px;
+    border-radius:18px;
     border:1px solid rgba(255,255,255,.10);
-    background: rgba(255,255,255,.06);
-    overflow:hidden;
-    flex:0 0 auto;
-    display:flex;align-items:center;justify-content:center;
-    color:rgba(255,255,255,.55);
-    font-weight:950;
-    font-size:12px;
+    background:rgba(255,255,255,.04);
+    cursor:pointer;
+    transition:transform .10s ease,border-color .15s ease;
   }
-  .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .pInfo{ min-width:0; }
-  .pName{ font-weight:950; font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .pMeta{ font-size:12px; color: rgba(255,255,255,.72); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .pMeta b{ color: rgba(246,201,69,.95); font-weight:1000; }
-
+  .pick:hover{transform:translateY(-1px);border-color:rgba(246,201,69,.35)}
+  .pLeft{display:flex;align-items:center;gap:12px;min-width:0}
+  .thumb{
+    width:54px;height:54px;
+    border-radius:14px;
+    overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid rgba(255,255,255,.10);
+    background:rgba(255,255,255,.06);
+    color:rgba(255,255,255,.55);
+    font-size:12px;
+    font-weight:1000;
+    flex:0 0 auto;
+  }
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .pInfo{min-width:0}
+  .pName{font-size:15px;font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pMeta{margin-top:3px;font-size:12px;color:rgba(255,255,255,.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .pMeta b{color:rgba(246,201,69,.95)}
   .pRight{
     display:flex;
     flex-direction:column;
@@ -589,106 +768,7 @@
     flex:0 0 auto;
   }
 
-  /* ✅ "데이터: 준비(60명)" 뱃지 숨김 (기능은 유지) */
-  #dataPill{ display:none !important; }
-
-  /* ==============================
-     ✅ 랭킹 UI (TOP10)
-  ============================== */
-  .rankWrap{
-    margin: 10px auto 12px;
-    padding: 14px;
-    border: 1px solid rgba(255,255,255,.12);
-    border-radius: 18px;
-    background: linear-gradient(180deg, rgba(17,24,39,.78), rgba(11,15,25,.86));
-    box-shadow: 0 14px 30px rgba(0,0,0,.28);
-    overflow:hidden;
-  }
-  .rankHead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-bottom:10px}
-  .rankTitle{font-weight:1000;letter-spacing:-.3px;font-size:16px}
-  .rankSub{display:none !important;}
-
-  .rankCard{
-    border: 1px solid rgba(255,255,255,.10);
-    border-radius: 16px;
-    background: rgba(0,0,0,.18);
-    overflow:hidden;
-  }
-  .rankViewport{
-    position:relative;
-    overflow:hidden;
-    height: 260px;
-  }
-  .rankList{
-    list-style:none;
-    margin:0;
-    padding:10px;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    will-change: transform;
-  }
-  .rankItem{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    padding:11px 12px;
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,.10);
-    background: rgba(255,255,255,.04);
-  }
-  .rankLeft{display:flex;align-items:center;gap:10px;min-width:0}
-  .rankNo{
-    width:30px;height:30px;border-radius:10px;
-    display:flex;align-items:center;justify-content:center;
-    font-weight:1000;font-size:12px;
-    background: rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.12);
-    flex:0 0 auto;
-  }
-  .rankName{
-    font-weight:1000;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
-  .rankMeta{font-size:12px; opacity:.75}
-  .rankPts{
-    font-weight:1000;
-    padding:7px 10px;
-    border-radius:999px;
-    border:1px solid rgba(246,201,69,.25);
-    background: rgba(246,201,69,.10);
-    white-space:nowrap;
-  }
-
-  .rankItem.top1{
-    border-color: rgba(246,201,69,.45);
-    background: linear-gradient(90deg, rgba(246,201,69,.20), rgba(255,255,255,.05));
-    box-shadow: 0 10px 22px rgba(246,201,69,.10);
-    position:relative;
-    overflow:hidden;
-  }
-  .rankItem.top1::after{
-    content:"";
-    position:absolute; inset:-40%;
-    background: linear-gradient(120deg, transparent 40%, rgba(255,255,255,.28), transparent 60%);
-    transform: translateX(-60%) rotate(12deg);
-    animation: shine 2.6s ease-in-out infinite;
-    pointer-events:none;
-  }
-  @keyframes shine{
-    0%{ transform: translateX(-70%) rotate(12deg); opacity:.0; }
-    15%{ opacity:.6; }
-    55%{ opacity:.25; }
-    100%{ transform: translateX(70%) rotate(12deg); opacity:0; }
-  }
-  .rankItem.top2{
-    border-color: rgba(192,192,192,.40);
-    background: linear-gradient(90deg, rgba(192,192,192,.16), rgba(255,255,255,.04));
-  }
-  .rankItem.top3{
-    border-color: rgba(205,127,50,.40);
-    background: linear-gradient(90deg, rgba(205,127,50,.16), rgba(255,255,255,.04));
-  }
-
-  .rankViewport:hover > ul{ animation-play-state: paused !important; }
+  #dataPill{display:none !important}
 </style>
 </head>
 
@@ -696,12 +776,12 @@
 
   <div class="nav">
     <div class="left">
-      <a class="homeBtn" id="homeBtn" href="../index.html">🏠 홈 바로가기</a>
-      <div class="brand">계명태권도 · 수련생 조회</div>
+      <a class="homeBtn" href="../index.html">🏠 홈 바로가기</a>
+      <div class="brand">계명태권도 · 수련생 성장조회</div>
     </div>
   </div>
 
-  <h1>수련생 조회</h1>
+  <h1>수련생 성장조회</h1>
 
   <div class="wrap">
 
@@ -709,6 +789,7 @@
       <div class="status">
         <span class="pill" id="dataPill">데이터: 준비중</span>
         <span class="pill blue" id="timePill" style="display:none;"></span>
+        <span class="pill gold" id="mergePill" style="display:none;"></span>
         <span class="pill green" id="adminPill" style="display:none;">👑 관리자 모드</span>
         <span id="statusText"></span>
       </div>
@@ -718,13 +799,10 @@
       </div>
     </div>
 
-    <!-- ✅ 랭킹 TOP10 -->
     <section id="rankSection" class="rankWrap" aria-label="포인트 랭킹 TOP10" style="display:none;">
       <div class="rankHead">
         <div class="rankTitle">🏆 포인트 랭킹 TOP10</div>
-        <div class="rankSub">내부용(숨김)</div>
       </div>
-
       <div class="rankCard">
         <div class="rankViewport" id="rankViewport">
           <ul id="rankList" class="rankList"></ul>
@@ -767,39 +845,46 @@
       개인정보 보호를 위해 <b>이름 + 생년월일</b>이 모두 일치해야 조회됩니다.<br/>
       처음 방문하신 분은 <b>샘플 조회</b>로 화면 예시를 확인할 수 있습니다.
     </div>
-
   </div>
 
 <script>
 /* =========================================================
-  ✅ CHANGE ZONE
+   ✅ CHANGE ZONE
 ========================================================= */
-const RAW_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=0&single=true&output=csv";
+const RAW_CSV_MAIN =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=0&single=true&output=csv";
+
+const RAW_CSV_PERSONALITY =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=734226218&single=true&output=csv";
+
+const RAW_CSV_DOJO =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=1859105503&single=true&output=csv";
+
+const RAW_CSV_TRAINING =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=1000979469&single=true&output=csv";
 
 const GALLERY_BASE = "../gallery/";
 const GALLERY_QUERY_KEY = "id";
 
-/* ✅ 포인트 목표(3단계) */
-const GOALS = [
-  { key:"uniform",  name:"도복 목표",           points: 30000 },
-  { key:"black",    name:"유단자 도복",         points: 60000 },
-  { key:"master",   name:"고단자 도복+가검",    points: 90000 },
-];
+const GH = {
+  owner: "jeonseongkweon-cloud",
+  repo: "kmt-landing",
+  branch: "main",
+  path: "gallery/images/students"
+};
 
-// ✅ 기본으로 보여줄 목표(처음에는 도복 목표)
+const GOALS = [
+  { key:"uniform", name:"도복 목표", points:30000 },
+  { key:"black", name:"유단자 도복", points:60000 },
+  { key:"master", name:"고단자 도복+가검", points:90000 }
+];
 const DEFAULT_GOAL_KEY = "uniform";
 
-/* ✅ 샘플 조회용 계정 */
 const SAMPLE_STUDENT = {
   name: "김서준",
   birth: "150101"
 };
 
-function getGoalByKey(key){
-  return GOALS.find(g => g.key === key) || GOALS[0];
-}
-
-/* ✅ 등급(전총재님이 따로 조정 예정: 여기 그대로 둠) */
 const TIERS = [
   { key:"bronze", name:"브론즈", icon:"🥉", min:0,   max:399 },
   { key:"silver", name:"실버",   icon:"🥈", min:400, max:799 },
@@ -808,75 +893,38 @@ const TIERS = [
 ];
 
 /* =========================================================
-  ✅ 관리자 모드
+   ✅ 관리자 모드
 ========================================================= */
 const ADMIN_QUERY_KEY = "admin";
 const ADMIN_SESSION_KEY = "KMT_ADMIN_OK";
 const ADMIN_PASSCODE = "2772";
 
-function getQueryParam(key){
-  const u = new URL(location.href);
-  return u.searchParams.get(key);
-}
-function isAdmin(){
-  try{ return sessionStorage.getItem(ADMIN_SESSION_KEY) === "1"; }catch{ return false; }
-}
-function enableAdmin(){
-  try{ sessionStorage.setItem(ADMIN_SESSION_KEY, "1"); }catch{}
-}
-function maybeAskAdmin(){
-  const q = getQueryParam(ADMIN_QUERY_KEY);
-  if(!q) return;
-  if(isAdmin()) return;
-
-  const entered = prompt("관리자 코드 입력");
-  if(entered && entered.trim() === ADMIN_PASSCODE){
-    enableAdmin();
-    alert("관리자 모드가 활성화되었습니다.");
-  }else{
-    alert("관리자 코드가 올바르지 않습니다.");
-  }
-}
-function updateAdminUI(){
-  const adminOn = isAdmin();
-  const adminPill = document.getElementById("adminPill");
-  const badge = document.getElementById("birthReqBadge");
-  const note = document.getElementById("privacyNote");
-  const birthInput = document.getElementById("qBirth");
-
-  if(adminPill) adminPill.style.display = adminOn ? "inline-flex" : "none";
-  if(badge) badge.textContent = adminOn ? "선택" : "필수";
-
-  if(note){
-    note.innerHTML = adminOn
-      ? `관리자 모드: <b>이름만</b>으로도 조회됩니다. (생년월일은 선택)<br/>처음 방문하신 분은 <b>샘플 조회</b>로 화면 예시를 확인할 수 있습니다.`
-      : `개인정보 보호를 위해 <b>이름 + 생년월일</b>이 모두 일치해야 조회됩니다.<br/>처음 방문하신 분은 <b>샘플 조회</b>로 화면 예시를 확인할 수 있습니다.`;
-  }
-  if(birthInput){
-    birthInput.placeholder = "";
-  }
-}
-
 /* =========================================================
-  ✅ Cache/Retry/Timeout
+   ✅ Cache/Retry
 ========================================================= */
-const CACHE_KEY = "KMT_STUDENTS_CACHE_V4";
+const CACHE_KEY = "KMT_GROWTH_CACHE_V1";
 const CACHE_TTL_MS = 10 * 60 * 1000;
 const FETCH_TIMEOUT_MS = 8000;
 const RETRY_COUNT = 2;
 
+/* =========================================================
+   ✅ DOM
+========================================================= */
 const $ = (id)=>document.getElementById(id);
 const dataPill = $("dataPill");
 const timePill = $("timePill");
+const mergePill = $("mergePill");
 const statusText = $("statusText");
 const resultEl = $("result");
 
-let DATA_ROWS = null;
+let DB = null;
 let LOADING_PROMISE = null;
 let LAST_LOADED_AT = null;
 let LAST_SOURCE = null;
 
-/* ---------- utils ---------- */
+/* =========================================================
+   ✅ Utils
+========================================================= */
 function clean(v){
   return (v ?? "")
     .toString()
@@ -913,21 +961,28 @@ function fmtTime(dt){
     return `${y}-${m}-${d} ${hh}:${mm}`;
   }catch{ return ""; }
 }
-
-/* ✅ 포인트 숫자 안전 변환 */
 function toPointNumber(v){
   const s = clean(v);
-  if(!s) return 0;
   const digits = s.replace(/[^\d]/g,"");
-  if(!digits) return 0;
-  return Number(digits) || 0;
+  return digits ? (Number(digits)||0) : 0;
 }
 function pointDisplay(n){
-  const num = Number(n || 0);
-  return String(num);
+  return String(Number(n || 0));
 }
-
-/* ✅ 등급 계산 */
+function toScore(v){
+  const n = Number(String(v ?? "").replace(/[^\d.-]/g,""));
+  if(Number.isFinite(n)) return Math.max(0, Math.min(100, n));
+  return null;
+}
+function scoreText(v){
+  const n = toScore(v);
+  return n == null ? "-" : `${n}`;
+}
+function avgOf(list){
+  const nums = list.map(toScore).filter(v => v != null);
+  if(!nums.length) return null;
+  return Math.round(nums.reduce((a,b)=>a+b,0) / nums.length);
+}
 function tierOf(points){
   const p = Math.max(0, Number(points||0));
   for(const t of TIERS){
@@ -935,8 +990,9 @@ function tierOf(points){
   }
   return TIERS[0];
 }
-
-/* ✅ 목표 진행률 (3단계 목표용) */
+function getGoalByKey(key){
+  return GOALS.find(g => g.key === key) || GOALS[0];
+}
 function progressOf(points, goalPoints){
   const p = Math.max(0, Number(points||0));
   const goal = Math.max(1, Number(goalPoints||1));
@@ -945,7 +1001,6 @@ function progressOf(points, goalPoints){
   const done = p >= goal;
   return { goal, pct, remain, done, p };
 }
-
 function parseDateAny(v){
   const s = clean(v);
   if(!s) return null;
@@ -959,12 +1014,7 @@ function parseDateAny(v){
     return new Date(y, m-1, d);
   }
   const m = s.match(/^(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})$/);
-  if(m){
-    const y = Number(m[1]);
-    const mm = Number(m[2]);
-    const dd = Number(m[3]);
-    return new Date(y, mm-1, dd);
-  }
+  if(m) return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
   return null;
 }
 function fmtDateShort(dt){
@@ -984,21 +1034,390 @@ function ddayText(dt){
   if(diff > 0) return { label:`D-${diff}`, cls:"" };
   return { label:`D+${Math.abs(diff)}`, cls:"bad" };
 }
-
 async function sha256Hex(text){
   try{
     const enc = new TextEncoder().encode(text);
     const buf = await crypto.subtle.digest("SHA-256", enc);
-    const arr = Array.from(new Uint8Array(buf));
-    return arr.map(b=>b.toString(16).padStart(2,"0")).join("");
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
   }catch{ return ""; }
+}
+function splitCSVLine(line){
+  const out = [];
+  let cur = "";
+  let inQuotes = false;
+  for(let i=0;i<line.length;i++){
+    const ch = line[i];
+    if(ch === '"'){
+      if(inQuotes && line[i+1] === '"'){ cur += '"'; i++; }
+      else inQuotes = !inQuotes;
+    }else if(ch === "," && !inQuotes){
+      out.push(cur); cur = "";
+    }else{
+      cur += ch;
+    }
+  }
+  out.push(cur);
+  return out;
+}
+function parseCSV(text){
+  const lines = text.split("\n")
+    .map(l => l.replace(/\r/g,""))
+    .filter(l => l.trim() !== "");
+  return lines.map(splitCSVLine).map(cols => cols.map(clean));
+}
+function normalizeHeaderLabel(v){
+  return clean(v).replace(/\s+/g,"").toLowerCase();
+}
+function hasRealHeader(headerRow){
+  if(!Array.isArray(headerRow) || !headerRow.length) return false;
+  return headerRow.some(v => /[가-힣a-zA-Z]/.test(clean(v)));
+}
+function csvToSheet(rows){
+  const header = rows[0] || [];
+  const body = rows.slice(1).filter(r => r && r.length && clean(r[0]) !== "");
+  return { header, body };
+}
+function mapById(rows){
+  const m = new Map();
+  for(const r of rows){
+    const id = clean(r[0]).toUpperCase();
+    if(id) m.set(id, r);
+  }
+  return m;
+}
+function extractMetricsFromRow(header, row, startIdx, fallbackNames){
+  const out = [];
+  for(let i=startIdx;i<row.length;i++){
+    const rawName = clean(header[i]);
+    const name = rawName || fallbackNames[i - startIdx] || `항목${i - startIdx + 1}`;
+    const val = toScore(row[i]);
+    if(val == null) continue;
+    out.push({ name, value: val });
+  }
+  return out;
+}
+function galleryUrlForStudent(id){
+  const base = GALLERY_BASE || "../gallery/";
+  const key = encodeURIComponent(GALLERY_QUERY_KEY || "id");
+  const val = encodeURIComponent(clean(id));
+  const join = base.includes("?") ? "&" : "?";
+  return `${base}${join}${key}=${val}`;
+}
+function githubThumbUrl(id, idx){
+  const file = `${clean(id).toUpperCase()}_${String(idx).padStart(2,"0")}.jpg`;
+  return `https://raw.githubusercontent.com/${GH.owner}/${GH.repo}/${GH.branch}/${GH.path}/${file}`;
+}
+function renderThumbs(id, count=4){
+  let html = `<div class="thumbs">`;
+  for(let i=1;i<=count;i++){
+    const src = githubThumbUrl(id, i);
+    html += `
+      <a class="thumbCard" href="${escapeHtml(galleryUrlForStudent(id))}" title="사진 바로보기">
+        <img src="${escapeHtml(src)}" alt="학생 사진 ${i}" loading="lazy"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+        <div class="thumbEmpty" style="display:none;">NO IMAGE</div>
+      </a>
+    `;
+  }
+  html += `</div>`;
+  return html;
+}
+function renderExam(name, dateStr){
+  const dt = parseDateAny(dateStr);
+  const d = ddayText(dt);
+  const shownDate = dt ? fmtDateShort(dt) : "미정";
+  const cls = d.cls ? `dday ${d.cls}` : "dday";
+  const label = dt ? d.label : "미정";
+  return `
+    <div class="examItem">
+      <div class="examLeft">
+        <div class="examName">${escapeHtml(name)}</div>
+        <div class="examDate">다음 심사일: <b>${escapeHtml(shownDate)}</b></div>
+      </div>
+      <div class="${cls}">⏳ ${escapeHtml(label)}</div>
+    </div>
+  `;
+}
+function renderScorePanel(title, metrics, toneClass, toneIcon){
+  const avg = avgOf(metrics.map(x => x.value));
+  const items = metrics.length ? metrics.map(m => `
+    <div class="scoreItem">
+      <div class="scoreTop">
+        <span class="scoreName">${escapeHtml(m.name)}</span>
+        <span class="scoreVal">${m.value}점</span>
+      </div>
+      <div class="scoreBar ${escapeHtml(toneClass)}"><i style="width:${m.value}%"></i></div>
+    </div>
+  `).join("") : `<div class="scoreLegend">데이터가 아직 준비되지 않았습니다.</div>`;
+
+  return `
+    <div class="scorePanel">
+      <div class="scoreHead">
+        <b>${escapeHtml(toneIcon)} ${escapeHtml(title)}</b>
+        <span class="avgBadge">${avg == null ? "평균 - " : `평균 ${avg}점`}</span>
+      </div>
+      ${items}
+    </div>
+  `;
+}
+function rankMedal(rank){
+  if(rank === 1) return "👑🥇";
+  if(rank === 2) return "🥈";
+  if(rank === 3) return "🥉";
+  return "✨";
 }
 
 /* =========================================================
-  ✅ 랭킹 TOP10 (포인트 내림차순) + 롤링
+   ✅ Admin mode
 ========================================================= */
-const RANK_LIMIT = 10;
+function getQueryParam(key){
+  const u = new URL(location.href);
+  return u.searchParams.get(key);
+}
+function isAdmin(){
+  try{ return sessionStorage.getItem(ADMIN_SESSION_KEY) === "1"; }catch{ return false; }
+}
+function enableAdmin(){
+  try{ sessionStorage.setItem(ADMIN_SESSION_KEY, "1"); }catch{}
+}
+function maybeAskAdmin(){
+  const q = getQueryParam(ADMIN_QUERY_KEY);
+  if(!q) return;
+  if(isAdmin()) return;
+  const entered = prompt("관리자 코드 입력");
+  if(entered && entered.trim() === ADMIN_PASSCODE){
+    enableAdmin();
+    alert("관리자 모드가 활성화되었습니다.");
+  }else{
+    alert("관리자 코드가 올바르지 않습니다.");
+  }
+}
+function updateAdminUI(){
+  const adminOn = isAdmin();
+  $("adminPill").style.display = adminOn ? "inline-flex" : "none";
+  $("birthReqBadge").textContent = adminOn ? "선택" : "필수";
+  $("privacyNote").innerHTML = adminOn
+    ? `관리자 모드: <b>이름만</b>으로도 조회됩니다. (생년월일은 선택)<br/>처음 방문하신 분은 <b>샘플 조회</b>로 화면 예시를 확인할 수 있습니다.`
+    : `개인정보 보호를 위해 <b>이름 + 생년월일</b>이 모두 일치해야 조회됩니다.<br/>처음 방문하신 분은 <b>샘플 조회</b>로 화면 예시를 확인할 수 있습니다.`;
+}
 
+/* =========================================================
+   ✅ Cache
+========================================================= */
+function readCache(){
+  try{
+    const raw = localStorage.getItem(CACHE_KEY);
+    if(!raw) return null;
+    const obj = JSON.parse(raw);
+    if(!obj || !obj.savedAt || !obj.db) return null;
+    if(Date.now() - obj.savedAt > CACHE_TTL_MS) return null;
+    return obj;
+  }catch{ return null; }
+}
+function writeCache(db, savedAt){
+  try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: savedAt || Date.now(), db })); }catch{}
+}
+function clearCache(){
+  try{ localStorage.removeItem(CACHE_KEY); }catch{}
+}
+
+/* =========================================================
+   ✅ Fetch
+========================================================= */
+async function fetchWithTimeout(url, ms){
+  const ctrl = new AbortController();
+  const t = setTimeout(()=>ctrl.abort(), ms);
+  try{
+    const res = await fetch(url, { signal: ctrl.signal, cache: "no-store" });
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    return await res.text();
+  }finally{
+    clearTimeout(t);
+  }
+}
+async function fetchCSVText(url){
+  try{
+    return await fetchWithTimeout(url, FETCH_TIMEOUT_MS);
+  }catch(e1){
+    const proxied = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
+    return await fetchWithTimeout(proxied, FETCH_TIMEOUT_MS);
+  }
+}
+function setStatus(type, pillText, msg){
+  if(type === "good") dataPill.className = "pill good";
+  else if(type === "bad") dataPill.className = "pill bad";
+  else dataPill.className = "pill";
+  dataPill.textContent = "데이터: " + pillText;
+  statusText.textContent = msg || "";
+}
+function setTimePill(){
+  if(!LAST_LOADED_AT){
+    timePill.style.display = "none";
+    return;
+  }
+  timePill.style.display = "inline-flex";
+  const src = LAST_SOURCE === "cache" ? "캐시" : "최신";
+  timePill.textContent = `업데이트: ${fmtTime(LAST_LOADED_AT)} · ${src}`;
+}
+function setMergePill(mainCount, pCount, dCount, tCount){
+  mergePill.style.display = "inline-flex";
+  mergePill.textContent = `연결: 기본 ${mainCount} · 인성 ${pCount} · 생활 ${dCount} · 수련 ${tCount}`;
+}
+
+async function loadOnce({force=false}={}){
+  if(DB && !force) return DB;
+
+  if(!force){
+    const cached = readCache();
+    if(cached){
+      DB = cached.db;
+      LAST_LOADED_AT = new Date(cached.savedAt);
+      LAST_SOURCE = "cache";
+      setStatus("good", `준비(${DB.mainRows.length}명)`, "");
+      setTimePill();
+      setMergePill(DB.mainRows.length, DB.personalityRows.length, DB.dojoRows.length, DB.trainingRows.length);
+      return DB;
+    }
+  }
+
+  if(LOADING_PROMISE) return LOADING_PROMISE;
+
+  setStatus("loading", "불러오는 중", "");
+  timePill.style.display = "none";
+  mergePill.style.display = "none";
+
+  LOADING_PROMISE = (async ()=>{
+    let lastErr = null;
+
+    for(let i=0;i<=RETRY_COUNT;i++){
+      try{
+        const [mainText, pText, dText, tText] = await Promise.all([
+          fetchCSVText(RAW_CSV_MAIN),
+          fetchCSVText(RAW_CSV_PERSONALITY),
+          fetchCSVText(RAW_CSV_DOJO),
+          fetchCSVText(RAW_CSV_TRAINING)
+        ]);
+
+        const mainSheet = csvToSheet(parseCSV(mainText));
+        const pSheet = csvToSheet(parseCSV(pText));
+        const dSheet = csvToSheet(parseCSV(dText));
+        const tSheet = csvToSheet(parseCSV(tText));
+
+        DB = {
+          mainHeader: mainSheet.header,
+          mainRows: mainSheet.body,
+          personalityHeader: pSheet.header,
+          personalityRows: pSheet.body,
+          dojoHeader: dSheet.header,
+          dojoRows: dSheet.body,
+          trainingHeader: tSheet.header,
+          trainingRows: tSheet.body,
+          pMap: mapById(pSheet.body),
+          dMap: mapById(dSheet.body),
+          tMap: mapById(tSheet.body)
+        };
+
+        LAST_LOADED_AT = new Date();
+        LAST_SOURCE = "network";
+        writeCache(DB, Date.now());
+
+        setStatus("good", `준비(${DB.mainRows.length}명)`, "");
+        setTimePill();
+        setMergePill(DB.mainRows.length, DB.personalityRows.length, DB.dojoRows.length, DB.trainingRows.length);
+        return DB;
+      }catch(err){
+        lastErr = err;
+        setStatus("loading", "재시도", "");
+        await new Promise(r => setTimeout(r, 500 * (i+1)));
+      }
+    }
+    throw lastErr;
+  })();
+
+  try{ return await LOADING_PROMISE; }
+  finally{ LOADING_PROMISE = null; }
+}
+
+/* =========================================================
+   ✅ Merge row
+========================================================= */
+function mergedStudent(mainRow){
+  const id = clean(mainRow[0]).toUpperCase();
+  const pRow = DB.pMap.get(id) || [];
+  const dRow = DB.dMap.get(id) || [];
+  const tRow = DB.tMap.get(id) || [];
+
+  const personalityMetrics = extractMetricsFromRow(
+    DB.personalityHeader,
+    pRow,
+    2,
+    ["예의","질서","배려","책임감","협동심","집중력","도전정신","리더십"]
+  );
+  const dojoMetrics = extractMetricsFromRow(
+    DB.dojoHeader,
+    dRow,
+    2,
+    ["출석","정리정돈","친구관계","수업태도","지도집중","규칙준수"]
+  );
+  const trainingMetrics = extractMetricsFromRow(
+    DB.trainingHeader,
+    tRow,
+    2,
+    ["기본동작","품새","겨루기","체력","태권검도","DOUBLECROSS"]
+  );
+
+  return {
+    id,
+    name: clean(mainRow[1]),
+    birth: clean(mainRow[2]),
+    tkd: clean(mainRow[3]),
+    ipma: clean(mainRow[4]),
+    tkkd: clean(mainRow[5]),
+    photo: clean(mainRow[6]),
+    points: toPointNumber(mainRow[7]),
+    awards: clean(mainRow[8]),
+    cert: clean(mainRow[9]),
+    nextTkd: clean(mainRow[10]),
+    nextIpma: clean(mainRow[11]),
+    nextTkkd: clean(mainRow[12]),
+    totalDan: clean(mainRow[13]),
+    rankScore: clean(mainRow[14]),
+    personalityMetrics,
+    dojoMetrics,
+    trainingMetrics,
+    personalityAvg: avgOf(personalityMetrics.map(x => x.value)),
+    dojoAvg: avgOf(dojoMetrics.map(x => x.value)),
+    trainingAvg: avgOf(trainingMetrics.map(x => x.value)),
+    coachComment: clean(pRow[10]) || clean(pRow[pRow.length - 1]) || ""
+  };
+}
+
+/* =========================================================
+   ✅ Match/search
+========================================================= */
+function matchRows(qNameOrId, qBirth){
+  const q1 = norm(qNameOrId);
+  const qb = normBirth(qBirth);
+  const adminOn = isAdmin();
+
+  if(!q1) return [];
+  if(!adminOn && !qb) return [];
+
+  const out = [];
+  for(const r of DB.mainRows){
+    const name = norm(r[1]);
+    const birth = normBirth(r[2]);
+    const okName = (name && name === q1) || (name && name.includes(q1));
+    const okBirth = qb ? (birth && birth === qb) : true;
+    if(okName && okBirth) out.push(r);
+  }
+  out.sort((a,b)=> String(a[1]||"").localeCompare(String(b[1]||"")));
+  return out;
+}
+
+/* =========================================================
+   ✅ Ranking
+========================================================= */
 function hideRanking(){
   const sec = $("rankSection");
   if(sec) sec.style.display = "none";
@@ -1007,11 +1426,9 @@ function showRanking(){
   const sec = $("rankSection");
   if(sec) sec.style.display = "block";
 }
-
 function buildTopRanking(){
-  if(!Array.isArray(DATA_ROWS)) return [];
   const list = [];
-  for(const r of DATA_ROWS){
+  for(const r of DB.mainRows){
     const id = clean(r[0]);
     const name = clean(r[1]);
     const pts = toPointNumber(r[7]);
@@ -1020,16 +1437,8 @@ function buildTopRanking(){
     list.push({ id, name, pts });
   }
   list.sort((a,b)=> (b.pts - a.pts) || a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
-  return list.slice(0, RANK_LIMIT);
+  return list.slice(0, 10);
 }
-
-function rankMedal(rank){
-  if(rank === 1) return "👑🥇";
-  if(rank === 2) return "🥈";
-  if(rank === 3) return "🥉";
-  return "✨";
-}
-
 function renderRanking(){
   const section = $("rankSection");
   const ul = $("rankList");
@@ -1050,7 +1459,7 @@ function renderRanking(){
         <div class="rankLeft">
           <div class="rankNo">${rank}</div>
           <div style="min-width:0">
-            <div class="rankName">${rankMedal(rank)} ${escapeHtml(x.name)} <span class="rankMeta">(${escapeHtml(x.id.toUpperCase())})</span></div>
+            <div class="rankName">${rankMedal(rank)} ${escapeHtml(x.name)} <span class="rankMeta">(${escapeHtml(x.id)})</span></div>
           </div>
         </div>
         <div class="rankPts">${Number(x.pts).toLocaleString()}P</div>
@@ -1061,7 +1470,6 @@ function renderRanking(){
   showRanking();
   applyRankingTicker(vp, ul, 24);
 }
-
 function applyRankingTicker(viewportEl, ulEl, speedPxPerSec=24){
   if(viewportEl.getAttribute("data-ticker") === "1") return;
 
@@ -1091,237 +1499,30 @@ function applyRankingTicker(viewportEl, ulEl, speedPxPerSec=24){
   });
 }
 
-/* ---------- CSV parse ---------- */
-function splitCSVLine(line){
-  const out = [];
-  let cur = "";
-  let inQuotes = false;
-
-  for(let i=0;i<line.length;i++){
-    const ch = line[i];
-    if(ch === '"'){
-      if(inQuotes && line[i+1] === '"'){ cur += '"'; i++; }
-      else inQuotes = !inQuotes;
-    } else if(ch === "," && !inQuotes){
-      out.push(cur); cur = "";
-    } else {
-      cur += ch;
-    }
-  }
-  out.push(cur);
-  return out;
-}
-function parseCSV(text){
-  const lines = text
-    .split("\n")
-    .map(l => l.replace(/\r/g,""))
-    .filter(l => l.trim() !== "");
-
-  const rows = lines
-    .map(splitCSVLine)
-    .map(cols => cols.map(clean));
-
-  return rows;
-}
-
-/* ---------- cache ---------- */
-function readCache(){
-  try{
-    const raw = localStorage.getItem(CACHE_KEY);
-    if(!raw) return null;
-    const obj = JSON.parse(raw);
-    if(!obj || !obj.savedAt || !Array.isArray(obj.rows)) return null;
-    if(Date.now() - obj.savedAt > CACHE_TTL_MS) return null;
-    return obj;
-  }catch{ return null; }
-}
-function writeCache(rows, savedAt){
-  try{
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: savedAt || Date.now(), rows }));
-  }catch{}
-}
-function clearCache(){
-  try{ localStorage.removeItem(CACHE_KEY); }catch{}
-}
-
-/* ---------- fetch with timeout ---------- */
-async function fetchWithTimeout(url, ms){
-  const ctrl = new AbortController();
-  const t = setTimeout(()=>ctrl.abort(), ms);
-  try{
-    const res = await fetch(url, { signal: ctrl.signal, cache: "no-store" });
-    if(!res.ok) throw new Error("HTTP " + res.status);
-    return await res.text();
-  }finally{
-    clearTimeout(t);
-  }
-}
-async function fetchCSVText(){
-  try{
-    return await fetchWithTimeout(RAW_CSV, FETCH_TIMEOUT_MS);
-  }catch(e1){
-    const proxied = "https://api.allorigins.win/raw?url=" + encodeURIComponent(RAW_CSV);
-    return await fetchWithTimeout(proxied, FETCH_TIMEOUT_MS);
-  }
-}
-
-/* ---------- status UI ---------- */
-function setStatus(type, pillText, msg){
-  if(type === "good") dataPill.className = "pill good";
-  else if(type === "bad") dataPill.className = "pill bad";
-  else dataPill.className = "pill";
-  dataPill.textContent = "데이터: " + pillText;
-  statusText.textContent = msg || "";
-}
-function setTimePill(){
-  if(!LAST_LOADED_AT){
-    timePill.style.display = "none";
-    return;
-  }
-  timePill.style.display = "inline-flex";
-  const src = LAST_SOURCE === "cache" ? "캐시" : "최신";
-  timePill.textContent = `업데이트: ${fmtTime(LAST_LOADED_AT)} · ${src}`;
-}
-
-/* ---------- load once ---------- */
-async function loadOnce({force=false}={}){
-  if(DATA_ROWS && !force) return DATA_ROWS;
-
-  if(!force){
-    const cached = readCache();
-    if(cached){
-      DATA_ROWS = cached.rows;
-      LAST_LOADED_AT = new Date(cached.savedAt);
-      LAST_SOURCE = "cache";
-      setStatus("good", `준비(${DATA_ROWS.length}명)`, "");
-      setTimePill();
-      return DATA_ROWS;
-    }
-  }
-
-  if(LOADING_PROMISE) return LOADING_PROMISE;
-
-  setStatus("loading", "불러오는 중", "");
-  timePill.style.display = "none";
-
-  LOADING_PROMISE = (async ()=>{
-    let lastErr = null;
-
-    for(let i=0;i<=RETRY_COUNT;i++){
-      try{
-        const csvText = await fetchCSVText();
-        const rows = parseCSV(csvText);
-        const data = rows.slice(1).filter(r => r && r.length && clean(r[0]) !== "");
-
-        DATA_ROWS = data;
-        LAST_LOADED_AT = new Date();
-        LAST_SOURCE = "network";
-        writeCache(data, Date.now());
-
-        setStatus("good", `준비(${DATA_ROWS.length}명)`, "");
-        setTimePill();
-        return DATA_ROWS;
-      }catch(err){
-        lastErr = err;
-        setStatus("loading", "재시도", "");
-        await new Promise(r => setTimeout(r, 500 * (i+1)));
-      }
-    }
-    throw lastErr;
-  })();
-
-  try{ return await LOADING_PROMISE; }
-  finally{ LOADING_PROMISE = null; }
-}
-
 /* =========================================================
-  ✅ Matching logic
+   ✅ Render
 ========================================================= */
-function matchRows(qNameOrId, qBirth){
-  const q1 = norm(qNameOrId);
-  const qb = normBirth(qBirth);
-  const adminOn = isAdmin();
-
-  if(!q1) return [];
-  if(!adminOn && !qb) return [];
-
-  const out = [];
-  for(const r of DATA_ROWS){
-    const name = norm(r[1]);
-    const birth = normBirth(r[2]);
-
-    const okName = (name && name === q1) || (name && name.includes(q1));
-    const okBirth = qb ? (birth && birth === qb) : true;
-
-    if(okName && okBirth) out.push(r);
-  }
-
-  out.sort((a,b)=> String(a[1]||"").localeCompare(String(b[1]||"")));
-  return out;
-}
-
-/* ---------- UI render ---------- */
-function galleryUrlForStudent(id){
-  const base = GALLERY_BASE || "../gallery/";
-  const key = encodeURIComponent(GALLERY_QUERY_KEY || "id");
-  const val = encodeURIComponent(clean(id));
-  const join = base.includes("?") ? "&" : "?";
-  return `${base}${join}${key}=${val}`;
-}
-
-function renderExam(name, dateStr){
-  const dt = parseDateAny(dateStr);
-  const d = ddayText(dt);
-  const shownDate = dt ? fmtDateShort(dt) : "미정";
-  const cls = d.cls ? `dday ${d.cls}` : "dday";
-  const label = dt ? d.label : "미정";
-  return `
-    <div class="examItem">
-      <div class="examLeft">
-        <div class="examName">${escapeHtml(name)}</div>
-        <div class="examDate">다음 심사일: <b>${escapeHtml(shownDate)}</b></div>
-      </div>
-      <div class="${cls}">⏳ ${escapeHtml(label)}</div>
-    </div>
-  `;
-}
-
 function isSampleRow(name, birth){
   return norm(name) === norm(SAMPLE_STUDENT.name) && normBirth(birth) === normBirth(SAMPLE_STUDENT.birth);
 }
-
-function renderCard(row){
-  const id = clean(row[0]);
-  const name = clean(row[1]);
-  const birth = clean(row[2]);
-
-  const tkd = clean(row[3]);
-  const ipma = clean(row[4]);
-  const tkkd = clean(row[5]);
-  const photo = clean(row[6]);
-
-  const pointNum = toPointNumber(row[7]);
-  const pointStr = pointDisplay(pointNum);
-
-  const awards = clean(row[8]);
-  const cert = clean(row[9]);
-
-  const nextTkd = clean(row[10]);
-  const nextIpma = clean(row[11]);
-  const nextTkkd = clean(row[12]);
-
-  const tier = tierOf(pointNum);
-
+function growthSummary(student){
+  const parts = [];
+  if(student.personalityAvg != null) parts.push(`인성 ${student.personalityAvg}점`);
+  if(student.dojoAvg != null) parts.push(`도장생활 ${student.dojoAvg}점`);
+  if(student.trainingAvg != null) parts.push(`수련성장 ${student.trainingAvg}점`);
+  return parts.join(" · ");
+}
+function renderCard(mainRow){
+  const s = mergedStudent(mainRow);
+  const tier = tierOf(s.points);
   const goal = getGoalByKey(DEFAULT_GOAL_KEY);
-  const prog = progressOf(pointNum, goal.points);
-
-  const hashSource = `KMT|${id}|${name}|${normBirth(birth)}|${tkd}|${ipma}|${tkkd}|${pointStr}|${awards}|${cert}|${nextTkd}|${nextIpma}|${nextTkkd}`;
-
+  const prog = progressOf(s.points, goal.points);
+  const hashSource = `KMT|${s.id}|${s.name}|${normBirth(s.birth)}|${s.tkd}|${s.ipma}|${s.tkkd}|${s.points}|${s.awards}|${s.cert}|${s.nextTkd}|${s.nextIpma}|${s.nextTkkd}|${growthSummary(s)}`;
   const progressText = prog.done
     ? `🎉 ${escapeHtml(goal.name)} 달성! (목표 ${prog.goal}P)`
     : `${escapeHtml(goal.name)}까지 <b>${prog.remain}P</b> 남았어요 (목표 ${prog.goal}P)`;
 
-  const sampleBadge = isSampleRow(name, birth)
+  const sampleBadge = isSampleRow(s.name, s.birth)
     ? `<div class="badge blue" style="margin-bottom:8px;display:inline-flex;">👀 샘플 조회 화면</div>`
     : ``;
 
@@ -1330,25 +1531,22 @@ function renderCard(row){
       <div class="hero">
         <div class="photo">
           ${
-            photo
-              ? `<img src="${escapeHtml(photo)}"
-                      alt="사진"
-                      loading="lazy"
-                      decoding="async"
-                      referrerpolicy="no-referrer"
-                      onerror="this.onerror=null;this.style.display='none';this.parentElement.textContent='NO PHOTO';" />`
+            s.photo
+              ? `<img src="${escapeHtml(s.photo)}" alt="사진" loading="lazy" decoding="async" referrerpolicy="no-referrer"
+                   onerror="this.onerror=null;this.style.display='none';this.parentElement.textContent='NO PHOTO';" />`
               : `NO PHOTO`
           }
         </div>
 
         <div class="headline">
           ${sampleBadge}
-          <h2>${escapeHtml(name || "-")}</h2>
-          <p class="sub">아이디: <b>${escapeHtml(id || "-")}</b> · 생년월일: <b>${escapeHtml(birth || "-")}</b></p>
+          <h2>${escapeHtml(s.name || "-")}</h2>
+          <p class="sub">아이디: <b>${escapeHtml(s.id || "-")}</b> · 생년월일: <b>${escapeHtml(s.birth || "-")}</b></p>
 
-          <div class="badges">
-            <div class="badge green">✅ Verified Record</div>
+          <div class="heroBadges">
+            <div class="badge green">🌱 성장 리포트</div>
             <div class="badge blue">🔒 조회 인증 코드 생성</div>
+            <div class="badge gold">🥋 ${escapeHtml(growthSummary(s) || "성장 데이터 연결됨")}</div>
           </div>
 
           <div class="hashLine">
@@ -1357,13 +1555,13 @@ function renderCard(row){
           </div>
         </div>
 
-        <div class="pointBox" aria-label="point-result" data-pct="${prog.pct}">
+        <div class="pointBox" data-pct="${prog.pct}">
           <div class="pointTop">
             <div class="pointLabel">🏅 현재 포인트 · RESULT</div>
             <span class="tierBadge ${escapeHtml(tier.key)}">${escapeHtml(tier.icon)} ${escapeHtml(tier.name)}</span>
           </div>
 
-          <div class="pointValue">${escapeHtml(pointStr)}<span class="pointUnit">P</span></div>
+          <div class="pointValue">${escapeHtml(pointDisplay(s.points))}<span class="pointUnit">P</span></div>
 
           <div class="progressWrap">
             <div class="progressTop">
@@ -1377,39 +1575,73 @@ function renderCard(row){
       </div>
 
       <div class="sectionTitle">
-        <span>기본 정보</span>
-        <span class="hint">최소 정보만 표시</span>
+        <span>⭐ 인성 성장</span>
+        <span class="hint">예의 · 배려 · 책임감 중심</span>
+      </div>
+      ${renderScorePanel("인성 성장 지표", s.personalityMetrics, "gold", "🌟")}
+
+      <div class="sectionTitle">
+        <span>⭐ 도장 생활</span>
+        <span class="hint">출석 · 태도 · 규칙</span>
+      </div>
+      ${renderScorePanel("도장 생활 지표", s.dojoMetrics, "blue", "🏠")}
+
+      <div class="sectionTitle">
+        <span>⭐ 수련 성장</span>
+        <span class="hint">기본동작 · 품새 · 태권검도 · DOUBLE CROSS</span>
+      </div>
+      ${renderScorePanel("수련 성장 지표", s.trainingMetrics, "green", "🥋")}
+
+      <div class="sectionTitle">
+        <span>🧑‍🏫 지도자 코멘트</span>
+        <span class="hint">부모님 공유용</span>
+      </div>
+      <div class="commentBox">
+        ${
+          s.coachComment
+            ? `<b>${escapeHtml(s.name)}</b> ${escapeHtml(s.coachComment)}`
+            : `${escapeHtml(s.name)} 수련생의 성장 코멘트가 곧 추가될 예정입니다.`
+        }
       </div>
 
+      <div class="sectionTitle">
+        <span>📷 활동 사진</span>
+        <span class="hint">썸네일 클릭 시 갤러리로 이동</span>
+      </div>
+      ${renderThumbs(s.id, 4)}
+
+      <div class="sectionTitle">
+        <span>📌 기본 정보</span>
+        <span class="hint">최소 정보만 표시</span>
+      </div>
       <div class="grid2">
         <div class="panel">
-          <div class="row"><span class="rlabel">현재 포인트</span><span class="rval">${escapeHtml(pointStr)}P</span></div>
+          <div class="row"><span class="rlabel">현재 포인트</span><span class="rval">${escapeHtml(pointDisplay(s.points))}P</span></div>
           <div class="row"><span class="rlabel">등급</span><span class="rval">${escapeHtml(tier.icon)} ${escapeHtml(tier.name)}</span></div>
+          <div class="row"><span class="rlabel">단증합계</span><span class="rval">${escapeHtml(s.totalDan || "-")}</span></div>
+          <div class="row"><span class="rlabel">rank_score</span><span class="rval">${escapeHtml(s.rankScore || "-")}</span></div>
         </div>
         <div class="panel">
-          <div class="row"><span class="rlabel">보유 인증서</span><span class="rval">${escapeHtml(cert || "-")}</span></div>
-          <div class="row"><span class="rlabel">수상 기록</span><span class="rval">${escapeHtml(awards || "-")}</span></div>
+          <div class="row"><span class="rlabel">보유 인증서</span><span class="rval">${escapeHtml(s.cert || "-")}</span></div>
+          <div class="row"><span class="rlabel">수상 기록</span><span class="rval">${escapeHtml(s.awards || "-")}</span></div>
+          <div class="row"><span class="rlabel">태권도 단증</span><span class="rval">${escapeHtml(s.tkd || "-")}</span></div>
+          <div class="row"><span class="rlabel">경호무술 단증</span><span class="rval">${escapeHtml(s.ipma || "-")}</span></div>
+          <div class="row"><span class="rlabel">태권검도 단증</span><span class="rval">${escapeHtml(s.tkkd || "-")}</span></div>
         </div>
       </div>
 
       <div class="sectionTitle">
-        <span>단증 / 심사</span>
-        <span class="hint">태권도 · 경호무술 · 태권검도</span>
+        <span>📜 단증 / 심사</span>
+        <span class="hint">심사 정보는 맨 아래 배치</span>
       </div>
-
       <div class="panel">
-        <div class="row"><span class="rlabel">태권도 단증</span><span class="rval">${escapeHtml(tkd || "-")}</span></div>
-        ${renderExam("태권도", nextTkd)}
-
-        <div class="row" style="margin-top:10px;"><span class="rlabel">경호무술 단증</span><span class="rval">${escapeHtml(ipma || "-")}</span></div>
-        ${renderExam("경호무술", nextIpma)}
-
-        <div class="row" style="margin-top:10px;"><span class="rlabel">태권검도 단증</span><span class="rval">${escapeHtml(tkkd || "-")}</span></div>
-        ${renderExam("태권검도", nextTkkd)}
+        ${renderExam("태권도", s.nextTkd)}
+        ${renderExam("경호무술", s.nextIpma)}
+        ${renderExam("태권검도", s.nextTkkd)}
       </div>
 
       <div class="bottomActions">
-        <a class="actionBtn gold" href="${escapeHtml(galleryUrlForStudent(id))}">🖼️ 사진 바로보기(조회)</a>
+        <a class="actionBtn gold" href="${escapeHtml(galleryUrlForStudent(s.id))}">🖼️ 사진 바로보기</a>
         <button class="actionBtn" type="button" id="reSearchBtn">🔎 다른 수련생 조회</button>
       </div>
     </div>
@@ -1418,35 +1650,28 @@ function renderCard(row){
 
 function renderPickList(rows){
   const list = rows.map((r, idx)=>{
-    const id = clean(r[0]);
-    const name = clean(r[1]);
-    const birth = clean(r[2]);
-    const photo = clean(r[6]);
-
-    const pNum = toPointNumber(r[7]);
-    const pStr = pointDisplay(pNum);
-    const tier = tierOf(pNum);
-
+    const s = mergedStudent(r);
+    const tier = tierOf(s.points);
     return `
       <div class="pick" data-idx="${idx}">
         <div class="pLeft">
           <div class="thumb">
             ${
-              photo
-                ? `<img src="${escapeHtml(photo)}" alt="사진" loading="lazy" decoding="async" referrerpolicy="no-referrer"
-                        onerror="this.onerror=null;this.style.display='none';this.parentElement.textContent='NO';" />`
+              s.photo
+                ? `<img src="${escapeHtml(s.photo)}" alt="사진" loading="lazy" decoding="async" referrerpolicy="no-referrer"
+                     onerror="this.onerror=null;this.style.display='none';this.parentElement.textContent='NO';" />`
                 : `NO`
             }
           </div>
           <div class="pInfo">
-            <div class="pName">${escapeHtml(name || "-")}</div>
-            <div class="pMeta">생년월일: ${escapeHtml(birth || "-")} · 포인트: <b>${escapeHtml(pStr)}P</b></div>
+            <div class="pName">${escapeHtml(s.name || "-")}</div>
+            <div class="pMeta">생년월일: ${escapeHtml(s.birth || "-")} · 포인트: <b>${escapeHtml(pointDisplay(s.points))}P</b></div>
           </div>
         </div>
 
         <div class="pRight">
           <span class="tierBadge ${escapeHtml(tier.key)}">${escapeHtml(tier.icon)} ${escapeHtml(tier.name)}</span>
-          <span class="tierBadge" style="border-color:rgba(255,255,255,.18);background:rgba(0,0,0,.14);">선택</span>
+          <span class="tierBadge" style="border-color:rgba(255,255,255,.18);background:rgba(0,0,0,.14);">${escapeHtml(growthSummary(s) || "선택")}</span>
         </div>
       </div>
     `;
@@ -1464,15 +1689,12 @@ async function applyHashToCurrentCard(){
   const src = card.getAttribute("data-hash-source") || "";
   out.textContent = "생성중…";
   const hex = await sha256Hex(src);
-  if(hex){
-    const pretty = `${hex.slice(0,8)}-${hex.slice(8,16)}-${hex.slice(16,24)}-${hex.slice(24,32)}…`;
-    out.textContent = pretty;
-  }else{
-    out.textContent = "지원되지 않음";
-  }
+  out.textContent = hex ? `${hex.slice(0,8)}-${hex.slice(8,16)}-${hex.slice(16,24)}-${hex.slice(24,32)}…` : "지원되지 않음";
 }
 
-/* ---------- search ---------- */
+/* =========================================================
+   ✅ Search
+========================================================= */
 async function runSearch(){
   const q1 = $("qNameOrId").value;
   const qb = $("qBirth").value;
@@ -1513,7 +1735,6 @@ async function runSearch(){
   }
 
   resultEl.innerHTML = renderPickList(rows);
-
   const pickList = $("pickList");
   if(pickList){
     pickList.addEventListener("click", async (e)=>{
@@ -1533,11 +1754,8 @@ async function runSearch(){
 async function runSampleSearch(){
   $("qNameOrId").value = SAMPLE_STUDENT.name;
   $("qBirth").value = SAMPLE_STUDENT.birth;
-
-  const clearNameBtn = $("clearName");
-  const clearBirthBtn = $("clearBirth");
-  if(clearNameBtn) clearNameBtn.style.display = "inline-flex";
-  if(clearBirthBtn) clearBirthBtn.style.display = "inline-flex";
+  $("clearName").style.display = "inline-flex";
+  $("clearBirth").style.display = "inline-flex";
 
   await runSearch();
 
@@ -1553,15 +1771,8 @@ async function runSampleSearch(){
     const card = resultEl.querySelector(".card");
     const list = resultEl.querySelector(".list");
 
-    if(card){
-      card.insertAdjacentElement("beforebegin", msg);
-    }else if(list){
-      resultEl.insertAdjacentElement("afterbegin", msg);
-    }else if(resultEl.firstChild){
-      resultEl.insertBefore(msg, resultEl.firstChild);
-    }else{
-      resultEl.appendChild(msg);
-    }
+    if(card) card.insertAdjacentElement("beforebegin", msg);
+    else if(list) resultEl.insertAdjacentElement("afterbegin", msg);
   }
 }
 
@@ -1576,7 +1787,6 @@ function bindReSearchButton(){
   }, { once:true });
 }
 
-/* ---------- clear buttons ---------- */
 function bindClear(inputId, btnId){
   const input = $(inputId);
   const btn = $(btnId);
@@ -1591,7 +1801,9 @@ function bindClear(inputId, btnId){
   sync();
 }
 
-/* ---------- events ---------- */
+/* =========================================================
+   ✅ Events
+========================================================= */
 $("searchBtn").addEventListener("click", runSearch);
 $("sampleBtn").addEventListener("click", runSampleSearch);
 document.addEventListener("keydown",(e)=>{ if(e.key === "Enter") runSearch(); });
@@ -1600,7 +1812,7 @@ $("refreshBtn").addEventListener("click", async ()=>{
   resultEl.innerHTML = "";
   try{
     clearCache();
-    DATA_ROWS = null;
+    DB = null;
     LAST_LOADED_AT = null;
     LAST_SOURCE = null;
 
@@ -1621,10 +1833,11 @@ $("refreshBtn").addEventListener("click", async ()=>{
 
 $("clearCacheBtn").addEventListener("click", ()=>{
   clearCache();
-  DATA_ROWS = null;
+  DB = null;
   LAST_LOADED_AT = null;
   LAST_SOURCE = null;
   timePill.style.display = "none";
+  mergePill.style.display = "none";
   setStatus("loading", "캐시 삭제됨", "");
   hideRanking();
 });
