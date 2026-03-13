@@ -974,10 +974,6 @@ function toScore(v){
   if(Number.isFinite(n)) return Math.max(0, Math.min(100, n));
   return null;
 }
-function scoreText(v){
-  const n = toScore(v);
-  return n == null ? "-" : `${n}`;
-}
 function avgOf(list){
   const nums = list.map(toScore).filter(v => v != null);
   if(!nums.length) return null;
@@ -1065,13 +1061,6 @@ function parseCSV(text){
     .filter(l => l.trim() !== "");
   return lines.map(splitCSVLine).map(cols => cols.map(clean));
 }
-function normalizeHeaderLabel(v){
-  return clean(v).replace(/\s+/g,"").toLowerCase();
-}
-function hasRealHeader(headerRow){
-  if(!Array.isArray(headerRow) || !headerRow.length) return false;
-  return headerRow.some(v => /[가-힣a-zA-Z]/.test(clean(v)));
-}
 function csvToSheet(rows){
   const header = rows[0] || [];
   const body = rows.slice(1).filter(r => r && r.length && clean(r[0]) !== "");
@@ -1154,9 +1143,49 @@ function renderScorePanel(title, metrics, toneClass, toneIcon){
     <div class="scorePanel">
       <div class="scoreHead">
         <b>${escapeHtml(toneIcon)} ${escapeHtml(title)}</b>
-        <span class="avgBadge">${avg == null ? "평균 - " : `평균 ${avg}점`}</span>
+        <span class="avgBadge">${avg == null ? "평균 -" : `평균 ${avg}점`}</span>
       </div>
       ${items}
+    </div>
+  `;
+}
+
+function renderPoomsaeGoalPanel(target, rate){
+  const safeTarget = clean(target) || "미정";
+  const safeRate = rate == null ? null : Math.max(0, Math.min(100, Number(rate)));
+  const rateText = safeRate == null ? "-" : `${safeRate}%`;
+
+  let guide = "이번 달 목표 품새가 설정되면 월별 수련 방향을 한눈에 확인할 수 있습니다.";
+  if(safeRate != null){
+    if(safeRate >= 90) guide = "아주 훌륭합니다. 목표 품새 숙련도가 매우 높습니다.";
+    else if(safeRate >= 70) guide = "좋습니다. 완성도를 조금 더 다듬으면 더욱 안정적입니다.";
+    else if(safeRate >= 40) guide = "기초 흐름은 잡혀가고 있습니다. 반복 수련으로 정확도를 높여보세요.";
+    else guide = "이제 시작 단계입니다. 순서와 방향, 중심을 차근차근 익혀가면 됩니다.";
+  }
+
+  return `
+    <div class="scorePanel" style="border-color:rgba(246,201,69,.18);background:linear-gradient(180deg, rgba(246,201,69,.08), rgba(17,24,39,.58));">
+      <div class="scoreHead">
+        <b>🥋 이번달 목표 품새</b>
+        <span class="avgBadge">${escapeHtml(rateText)}</span>
+      </div>
+
+      <div class="row" style="margin-bottom:10px;">
+        <span class="rlabel">목표 품새</span>
+        <span class="rval">${escapeHtml(safeTarget)}</span>
+      </div>
+
+      <div class="scoreItem">
+        <div class="scoreTop">
+          <span class="scoreName">달성률</span>
+          <span class="scoreVal">${escapeHtml(rateText)}</span>
+        </div>
+        <div class="scoreBar gold"><i style="width:${safeRate == null ? 0 : safeRate}%"></i></div>
+      </div>
+
+      <div class="scoreLegend" style="margin-top:12px;">
+        ${escapeHtml(guide)}
+      </div>
     </div>
   `;
 }
@@ -1353,18 +1382,44 @@ function mergedStudent(mainRow){
     2,
     ["예의","질서","배려","책임감","협동심","집중력","도전정신","리더십"]
   );
+
   const dojoMetrics = extractMetricsFromRow(
     DB.dojoHeader,
     dRow,
     2,
     ["출석","정리정돈","친구관계","수업태도","지도집중","규칙준수"]
   );
-  const trainingMetrics = extractMetricsFromRow(
-    DB.trainingHeader,
-    tRow,
-    2,
-    ["기본동작","품새","겨루기","체력","태권검도","DOUBLECROSS"]
-  );
+
+  /* =========================================
+     TRAINING 새 구조 반영
+     C(2): 기본동작
+     D(3): 이번달 목표 품새
+     E(4): 달성률(%)
+     F(5): 겨루기
+     G(6): 체력
+     H(7): 호신술
+     I(8): 태권검도
+     J(9): DOUBLECROSS
+     K(10): 줄넘기
+  ========================================= */
+  const trainingMetrics = [];
+
+  const pushMetric = (name, raw) => {
+    const val = toScore(raw);
+    if(val == null) return;
+    trainingMetrics.push({ name, value: val });
+  };
+
+  pushMetric(clean(DB.trainingHeader[2]) || "기본동작", tRow[2]);
+  pushMetric(clean(DB.trainingHeader[5]) || "겨루기", tRow[5]);
+  pushMetric(clean(DB.trainingHeader[6]) || "체력", tRow[6]);
+  pushMetric(clean(DB.trainingHeader[7]) || "호신술", tRow[7]);
+  pushMetric(clean(DB.trainingHeader[8]) || "태권검도", tRow[8]);
+  pushMetric(clean(DB.trainingHeader[9]) || "DOUBLECROSS", tRow[9]);
+  pushMetric(clean(DB.trainingHeader[10]) || "줄넘기", tRow[10]);
+
+  const poomsaeTarget = clean(tRow[3]);
+  const poomsaeRate = toScore(tRow[4]);
 
   return {
     id,
@@ -1382,9 +1437,14 @@ function mergedStudent(mainRow){
     nextTkkd: clean(mainRow[12]),
     totalDan: clean(mainRow[13]),
     rankScore: clean(mainRow[14]),
+
     personalityMetrics,
     dojoMetrics,
     trainingMetrics,
+
+    poomsaeTarget,
+    poomsaeRate,
+
     personalityAvg: avgOf(personalityMetrics.map(x => x.value)),
     dojoAvg: avgOf(dojoMetrics.map(x => x.value)),
     trainingAvg: avgOf(trainingMetrics.map(x => x.value)),
@@ -1517,7 +1577,7 @@ function renderCard(mainRow){
   const tier = tierOf(s.points);
   const goal = getGoalByKey(DEFAULT_GOAL_KEY);
   const prog = progressOf(s.points, goal.points);
-  const hashSource = `KMT|${s.id}|${s.name}|${normBirth(s.birth)}|${s.tkd}|${s.ipma}|${s.tkkd}|${s.points}|${s.awards}|${s.cert}|${s.nextTkd}|${s.nextIpma}|${s.nextTkkd}|${growthSummary(s)}`;
+  const hashSource = `KMT|${s.id}|${s.name}|${normBirth(s.birth)}|${s.tkd}|${s.ipma}|${s.tkkd}|${s.points}|${s.awards}|${s.cert}|${s.nextTkd}|${s.nextIpma}|${s.nextTkkd}|${growthSummary(s)}|${s.poomsaeTarget}|${s.poomsaeRate}`;
   const progressText = prog.done
     ? `🎉 ${escapeHtml(goal.name)} 달성! (목표 ${prog.goal}P)`
     : `${escapeHtml(goal.name)}까지 <b>${prog.remain}P</b> 남았어요 (목표 ${prog.goal}P)`;
@@ -1588,9 +1648,12 @@ function renderCard(mainRow){
 
       <div class="sectionTitle">
         <span>⭐ 수련 성장</span>
-        <span class="hint">기본동작 · 품새 · 태권검도 · DOUBLE CROSS</span>
+        <span class="hint">기본동작 · 겨루기 · 체력 · 호신술 · 태권검도 · DOUBLE CROSS</span>
       </div>
-      ${renderScorePanel("수련 성장 지표", s.trainingMetrics, "green", "🥋")}
+      <div class="scoreGrid">
+        ${renderPoomsaeGoalPanel(s.poomsaeTarget, s.poomsaeRate)}
+        ${renderScorePanel("수련 성장 지표", s.trainingMetrics, "green", "🥋")}
+      </div>
 
       <div class="sectionTitle">
         <span>🧑‍🏫 지도자 코멘트</span>
@@ -1620,6 +1683,8 @@ function renderCard(mainRow){
           <div class="row"><span class="rlabel">등급</span><span class="rval">${escapeHtml(tier.icon)} ${escapeHtml(tier.name)}</span></div>
           <div class="row"><span class="rlabel">단증합계</span><span class="rval">${escapeHtml(s.totalDan || "-")}</span></div>
           <div class="row"><span class="rlabel">rank_score</span><span class="rval">${escapeHtml(s.rankScore || "-")}</span></div>
+          <div class="row"><span class="rlabel">이번달 목표 품새</span><span class="rval">${escapeHtml(s.poomsaeTarget || "-")}</span></div>
+          <div class="row"><span class="rlabel">품새 달성률</span><span class="rval">${s.poomsaeRate == null ? "-" : `${escapeHtml(String(s.poomsaeRate))}%`}</span></div>
         </div>
         <div class="panel">
           <div class="row"><span class="rlabel">보유 인증서</span><span class="rval">${escapeHtml(s.cert || "-")}</span></div>
