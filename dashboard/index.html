@@ -19,8 +19,8 @@
       --shadow: 0 20px 60px rgba(0,0,0,.45);
       --r:18px;
       --r2:26px;
-      --topbarH:74px;
-      --gap:12px;
+      --topbarH:68px;
+      --gap:10px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
@@ -39,17 +39,17 @@
     }
 
     .stage{
-      min-height:100%;
-      width:100%;
+      min-height:100vh;
+      width:100vw;
       display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:14px;
+      align-items:stretch;
+      justify-content:stretch;
+      padding:8px;
     }
 
     .frame{
-      width:min(96vw, calc(96vh * (4/3)));
-      height:min(96vh, calc(96vw * (3/4)));
+      width:100%;
+      height:100%;
       border:1px solid var(--line);
       border-radius: var(--r2);
       box-shadow: var(--shadow);
@@ -66,7 +66,7 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      padding:12px 18px;
+      padding:10px 14px;
       border-bottom:1px solid var(--line);
       background: linear-gradient(180deg, rgba(17,24,39,.9), rgba(15,23,42,.55));
       gap:10px;
@@ -145,9 +145,9 @@
 
     .content{
       height: calc(100% - var(--topbarH));
-      padding:14px;
+      padding:10px;
       display:grid;
-      grid-template-rows: 1fr 1fr 0.70fr;
+      grid-template-rows: 1fr 1fr 0.72fr;
       gap:var(--gap);
       min-height:0;
       overflow:hidden;
@@ -467,7 +467,7 @@
           <section class="card">
             <div class="hd">
               <div class="title">🏆 랭킹 TOP 10 (사진 포함)</div>
-              <div class="subTiny hint" id="rankHint">시트 연동</div><!-- ✅ 숨김 -->
+              <div class="subTiny hint" id="rankHint">시트 연동</div>
             </div>
             <div class="ticker">
               <div class="list" id="rankList"></div>
@@ -477,7 +477,7 @@
           <section class="card">
             <div class="hd">
               <div class="title">🥋 단/급 TOP 10</div>
-              <div class="subTiny hint">시트 N/O 기반</div><!-- ✅ 숨김 -->
+              <div class="subTiny hint">시트 N/O 기반</div>
             </div>
             <div class="ticker">
               <div class="list" id="danList"></div>
@@ -490,11 +490,10 @@
           <section class="card">
             <div class="hd">
               <div class="title small">🎉 이번 달 신규 등록</div>
-              <div class="subTiny hint">샘플(원하면 시트 연동 가능)</div><!-- ✅ 숨김 -->
+              <div class="subTiny hint">샘플(원하면 시트 연동 가능)</div>
             </div>
 
             <div class="note">
-              <!-- ✅ FIX: newNames를 bigmsg 안으로 넣음 -->
               <div class="bigmsg">
                 <div class="t">
                   <div class="left">3월 등록</div>
@@ -512,7 +511,7 @@
           <section class="card">
             <div class="hd">
               <div class="title">🌟 어제의 MVP (칭찬 8)</div>
-              <div class="subTiny hint">사진은 시트에서 자동 매칭</div><!-- ✅ 숨김 -->
+              <div class="subTiny hint">사진은 시트에서 자동 매칭</div>
             </div>
             <div class="note">
               <div class="awardsWrap">
