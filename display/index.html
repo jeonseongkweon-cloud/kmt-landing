@@ -13,6 +13,49 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
+  <script>
+    /* =========================================================
+       [문구 수정은 여기서만]
+       ========================================================= */
+
+    const BOARD_TEXT = {
+      topTitle: "아이들이 즐거운 계명태권도!",
+
+      /* 숫자가 클수록 더 천천히 흐르게 할 예정 */
+      marqueeSeconds: 44,
+
+      set1: {
+        left: [
+          { text: "지금은", cls: "word-main" },
+          { text: "1,2부 연결수련 시간", cls: "word-point" },
+          { text: "입니다", cls: "word-main" },
+          { text: "🙂", cls: "dot-face" },
+          { text: "✦", cls: "spark" }
+        ],
+        right: [
+          { text: "아이들의 집중을 위해", cls: "word-main" },
+          { text: "조용히 호출해 주세요", cls: "word-point" },
+          { text: "✦", cls: "spark" }
+        ]
+      },
+
+      set2: {
+        left: [
+          { text: "계명태권도는", cls: "word-main" },
+          { text: "홈페이지를", cls: "word-point" },
+          { text: "운영중입니다", cls: "word-main" },
+          { text: "🙂", cls: "dot-face" },
+          { text: "✦", cls: "spark" }
+        ],
+        right: [
+          { text: "인터넷 주소창에", cls: "word-main" },
+          { text: "계명태권도.com을 입력해주세요~", cls: "word-point" },
+          { text: "✦", cls: "spark" }
+        ]
+      }
+    };
+  </script>
+
   <style>
     :root{
       --bg1:#050816;
@@ -36,6 +79,9 @@
       --msgSize: clamp(48px, 8vw, 138px);
 
       --topGap: clamp(6px, 1vh, 12px);
+
+      /* JS에서 덮어씀 */
+      --marqueeSpeed: 44s;
     }
 
     *{
@@ -148,6 +194,7 @@
       gap:16px;
       padding:0 clamp(18px, 2.5vw, 30px);
       overflow:hidden;
+
       background:
         linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
       border:1px solid rgba(255,255,255,.14);
@@ -245,9 +292,6 @@
     }
 
     .marquee-track{
-      position:absolute;
-      left:0;
-      top:50%;
       display:flex;
       align-items:center;
       gap:clamp(36px, 4vw, 64px);
@@ -255,15 +299,31 @@
       min-width:max-content;
       white-space:nowrap;
       will-change:transform;
-      transform:translate3d(0,-50%,0);
+      animation:marqueeMove var(--marqueeSpeed) linear infinite;
+      transform:translate3d(0,0,0);
+
+      /* 흔들림 완화 */
       backface-visibility:hidden;
+      perspective:1000px;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      contain:layout paint style;
+    }
+
+    .marquee-stage.fast .marquee-track{
+      animation-duration:28s;
+    }
+
+    @keyframes marqueeMove{
+      from{ transform:translate3d(0,0,0); }
+      to{ transform:translate3d(-50%,0,0); }
     }
 
     .message-set{
       display:flex;
       align-items:center;
       gap:clamp(26px, 2.8vw, 44px);
-      padding-right:clamp(54px, 6vw, 100px);
+      padding-right:clamp(72px, 7vw, 120px);
       flex:0 0 auto;
     }
 
@@ -276,10 +336,13 @@
       line-height:1;
       letter-spacing:-0.05em;
       white-space:nowrap;
-      text-rendering:geometricPrecision;
+
+      /* 떨림 완화 */
+      text-rendering:optimizeLegibility;
       -webkit-font-smoothing:antialiased;
       backface-visibility:hidden;
       transform:translateZ(0);
+      will-change:transform;
     }
 
     .word-main{
@@ -340,11 +403,13 @@
       bottom:12px;
       transform:translateX(-50%);
       z-index:5;
+
       padding:10px 16px;
       border-radius:999px;
       background:rgba(10,18,40,.72);
       border:1px solid rgba(255,255,255,.14);
       box-shadow:0 8px 20px rgba(0,0,0,.25);
+
       color:rgba(255,255,255,.88);
       font-size:14px;
       font-weight:700;
@@ -352,6 +417,7 @@
       white-space:nowrap;
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
+
       animation:hintFade 8s ease forwards;
       pointer-events:none;
     }
@@ -438,57 +504,6 @@
   </style>
 </head>
 <body>
-  <script>
-    /* =========================================================
-       [여기만 수정하면 됨]  ← 문구 수정 전용 영역
-       ========================================================= */
-
-    const BOARD_CONFIG = {
-      topTitle: "계명태권도.com",
-
-      /* 초당 이동 픽셀 수 : 숫자가 작을수록 천천히 */
-      speedPxPerSec: 95,
-
-      /* 한 바퀴 끝난 뒤 다시 시작 전 대기시간(ms) */
-      restartDelay: 1200,
-
-      /* 세트 사이 구분점 */
-      divider: "•",
-
-      /* 문구 세트 */
-      sets: [
-        {
-          left: [
-            { text: "지금은", cls: "word-main" },
-            { text: "1,2부 연결수련 시간", cls: "word-point" },
-            { text: "입니다", cls: "word-main" },
-            { text: "🙂", cls: "dot-face" },
-            { text: "✦", cls: "spark" }
-          ],
-          right: [
-            { text: "아이들의 집중을 위해", cls: "word-main" },
-            { text: "조용히 호출해 주세요", cls: "word-point" },
-            { text: "✦", cls: "spark" }
-          ]
-        },
-        {
-          left: [
-            { text: "계명태권도는", cls: "word-main" },
-            { text: "홈페이지를", cls: "word-point" },
-            { text: "운영중입니다", cls: "word-main" },
-            { text: "🙂", cls: "dot-face" },
-            { text: "✦", cls: "spark" }
-          ],
-          right: [
-            { text: "인터넷 주소창에", cls: "word-main" },
-            { text: "계명태권도.com을 입력해주세요~", cls: "word-point" },
-            { text: "✦", cls: "spark" }
-          ]
-        }
-      ]
-    };
-  </script>
-
   <div class="bg"></div>
 
   <div class="screen">
@@ -513,21 +528,20 @@
   <script>
     let wakeLock = null;
     let wakeLockTimer = null;
-    let marqueeRaf = null;
-    let marqueeStartTime = null;
-    let cycleDistance = 0;
-    let cycleDuration = 0;
-    let resetWaiting = false;
-    let resetStartTime = 0;
 
     const params = new URLSearchParams(location.search);
     const marqueeStage = document.getElementById('marqueeStage');
     const marqueeTrack = document.getElementById('marqueeTrack');
     const fullscreenHint = document.getElementById('fullscreenHint');
     const siteName = document.getElementById('siteName');
+    const root = document.documentElement;
 
     if(params.get('tight') === '1'){
       document.body.classList.add('tight');
+    }
+
+    if(params.get('fast') === '1'){
+      marqueeStage.classList.add('fast');
     }
 
     function setBodyHeight(){
@@ -595,128 +609,73 @@
       }, 25000);
     }
 
-    function createPiece(piece){
+    function makePiece(piece){
       const span = document.createElement('span');
       span.className = piece.cls || 'word-main';
       span.textContent = piece.text;
       return span;
     }
 
-    function createMessage(pieces, ariaLabel){
+    function makeMessage(pieces, label){
       const div = document.createElement('div');
       div.className = 'message';
-      if(ariaLabel) div.setAttribute('aria-label', ariaLabel);
-
-      pieces.forEach(piece => {
-        div.appendChild(createPiece(piece));
-      });
-
+      if(label) div.setAttribute('aria-label', label);
+      pieces.forEach(piece => div.appendChild(makePiece(piece)));
       return div;
     }
 
-    function buildBoard(){
-      siteName.textContent = BOARD_CONFIG.topTitle || '계명태권도.com';
+    function makeSet(setObj, hidden = false, index = 0){
+      const wrap = document.createElement('div');
+      wrap.className = 'message-set';
+      if(hidden) wrap.setAttribute('aria-hidden', 'true');
+
+      const left = makeMessage(setObj.left, hidden ? '' : `현재 문구 ${index * 2 + 1}`);
+      const divider = document.createElement('div');
+      divider.className = 'divider';
+      divider.textContent = '•';
+      const right = makeMessage(setObj.right, hidden ? '' : `현재 문구 ${index * 2 + 2}`);
+
+      wrap.appendChild(left);
+      wrap.appendChild(divider);
+      wrap.appendChild(right);
+
+      return wrap;
+    }
+
+    function buildMarquee(){
+      siteName.textContent = BOARD_TEXT.topTitle || '계명태권도.com';
+      root.style.setProperty('--marqueeSpeed', `${BOARD_TEXT.marqueeSeconds || 44}s`);
+
       marqueeTrack.innerHTML = '';
 
-      BOARD_CONFIG.sets.forEach((setObj, index) => {
-        const set = document.createElement('div');
-        set.className = 'message-set';
+      const originalSets = [BOARD_TEXT.set1, BOARD_TEXT.set2];
 
-        const leftMsg = createMessage(setObj.left, `현재 문구 ${index * 2 + 1}`);
-        const divider = document.createElement('div');
-        divider.className = 'divider';
-        divider.textContent = BOARD_CONFIG.divider || '•';
-        const rightMsg = createMessage(setObj.right, `현재 문구 ${index * 2 + 2}`);
-
-        set.appendChild(leftMsg);
-        set.appendChild(divider);
-        set.appendChild(rightMsg);
-
-        marqueeTrack.appendChild(set);
+      originalSets.forEach((setObj, idx) => {
+        marqueeTrack.appendChild(makeSet(setObj, false, idx));
       });
-    }
 
-    function measureAndReset(){
-      cancelAnimationFrame(marqueeRaf);
-      marqueeRaf = null;
-
-      const stageWidth = marqueeStage.clientWidth;
-      const trackWidth = marqueeTrack.scrollWidth;
-
-      cycleDistance = trackWidth + stageWidth;
-      cycleDuration = (cycleDistance / Math.max(30, BOARD_CONFIG.speedPxPerSec)) * 1000;
-
-      marqueeTrack.style.transform = `translate3d(${stageWidth}px, -50%, 0)`;
-
-      marqueeStartTime = null;
-      resetWaiting = false;
-      resetStartTime = 0;
-
-      marqueeRaf = requestAnimationFrame(animateMarquee);
-    }
-
-    function animateMarquee(timestamp){
-      if(!marqueeStartTime) marqueeStartTime = timestamp;
-
-      if(resetWaiting){
-        if(timestamp - resetStartTime >= BOARD_CONFIG.restartDelay){
-          const stageWidth = marqueeStage.clientWidth;
-          marqueeTrack.style.transform = `translate3d(${stageWidth}px, -50%, 0)`;
-          marqueeStartTime = timestamp;
-          resetWaiting = false;
-        }
-        marqueeRaf = requestAnimationFrame(animateMarquee);
-        return;
-      }
-
-      const elapsed = timestamp - marqueeStartTime;
-      const progress = Math.min(elapsed / cycleDuration, 1);
-
-      const stageWidth = marqueeStage.clientWidth;
-      const x = stageWidth - (cycleDistance * progress);
-
-      marqueeTrack.style.transform = `translate3d(${x}px, -50%, 0)`;
-
-      if(progress >= 1){
-        resetWaiting = true;
-        resetStartTime = timestamp;
-      }
-
-      marqueeRaf = requestAnimationFrame(animateMarquee);
+      originalSets.forEach((setObj, idx) => {
+        marqueeTrack.appendChild(makeSet(setObj, true, idx));
+      });
     }
 
     document.addEventListener('visibilitychange', async () => {
       if(document.visibilityState === 'visible'){
         await requestWakeLock();
         setBodyHeight();
-        measureAndReset();
       }
     });
 
     window.addEventListener('load', async () => {
-      buildBoard();
+      buildMarquee();
       setBodyHeight();
       await requestWakeLock();
       startWakeLockKeeper();
       window.scrollTo(0, 1);
-
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          measureAndReset();
-        });
-      });
     });
 
-    window.addEventListener('resize', () => {
-      setBodyHeight();
-      measureAndReset();
-    });
-
-    window.addEventListener('orientationchange', () => {
-      setBodyHeight();
-      setTimeout(measureAndReset, 250);
-    });
-
+    window.addEventListener('resize', setBodyHeight);
+    window.addEventListener('orientationchange', setBodyHeight);
     window.addEventListener('focus', requestWakeLock);
 
     document.body.addEventListener('click', activateDisplayMode, { passive:true });
