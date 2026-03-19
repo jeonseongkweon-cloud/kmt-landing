@@ -37,7 +37,9 @@
       --msgSize: clamp(48px, 8vw, 138px);
 
       --topGap: clamp(6px, 1vh, 12px);
-      --marqueeSpeed: 20s;
+
+      /* 기존 20s -> 34s 로 연장 */
+      --marqueeSpeed: 34s;
     }
 
     *{
@@ -260,7 +262,7 @@
     }
 
     .marquee-stage.fast .marquee-track{
-      animation-duration:14s;
+      animation-duration:20s;
     }
 
     @keyframes marqueeMove{
@@ -464,6 +466,7 @@
       <div class="panel">
         <div class="marquee-stage" id="marqueeStage">
           <div class="marquee-track" id="marqueeTrack">
+
             <!-- 1세트 -->
             <div class="message-set">
               <div class="message" aria-label="현재 문구 1">
@@ -484,6 +487,44 @@
             </div>
 
             <!-- 2세트 -->
+            <div class="message-set">
+              <div class="message">
+                <span class="word-main">계명태권도는</span>
+                <span class="word-point">홈페이지를</span>
+                <span class="word-main">운영중입니다</span>
+                <span class="dot-face">🙂</span>
+                <span class="spark">✦</span>
+              </div>
+
+              <div class="divider">•</div>
+
+              <div class="message">
+                <span class="word-main">인터넷 주소창에</span>
+                <span class="word-point">계명태권도.com을 입력해주세요~</span>
+                <span class="spark">✦</span>
+              </div>
+            </div>
+
+            <!-- 복제 1세트 -->
+            <div class="message-set" aria-hidden="true">
+              <div class="message">
+                <span class="word-main">지금은</span>
+                <span class="word-point">1,2부 연결수련 시간</span>
+                <span class="word-main">입니다</span>
+                <span class="dot-face">🙂</span>
+                <span class="spark">✦</span>
+              </div>
+
+              <div class="divider">•</div>
+
+              <div class="message">
+                <span class="word-main">아이들의 집중을 위해</span>
+                <span class="word-point">조용히 호출해 주세요</span>
+                <span class="spark">✦</span>
+              </div>
+            </div>
+
+            <!-- 복제 2세트 -->
             <div class="message-set" aria-hidden="true">
               <div class="message">
                 <span class="word-main">계명태권도는</span>
@@ -501,6 +542,7 @@
                 <span class="spark">✦</span>
               </div>
             </div>
+
           </div>
         </div>
       </div>
