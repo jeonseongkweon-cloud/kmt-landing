@@ -23,17 +23,21 @@
       --blue:#63baff;
       --white:#ffffff;
 
-      --safeTop: calc(env(safe-area-inset-top, 0px) + 10px);
+      /* 상단/하단 여백 적당히 조절 */
+      --safeTop: calc(env(safe-area-inset-top, 0px) + 6px);
       --safeRight: calc(env(safe-area-inset-right, 0px) + 10px);
-      --safeBottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+      --safeBottom: calc(env(safe-area-inset-bottom, 0px) + 6px);
       --safeLeft: calc(env(safe-area-inset-left, 0px) + 10px);
 
-      --panelWidth:min(96vw, 1700px);
-      --panelHeight:min(56vh, 380px);
+      --panelWidth:min(98vw, 1800px);
+      --panelHeight:min(58vh, 400px);
 
-      --topHeight: clamp(62px, 11vh, 100px);
-      --radius: 34px;
-      --msgSize: clamp(54px, 8.6vw, 150px);
+      --topHeight: clamp(58px, 10vh, 92px);
+      --radius: 28px;
+      --msgSize: clamp(48px, 8vw, 138px);
+
+      --topGap: clamp(6px, 1vh, 12px);
+      --marqueeSpeed: 20s;
     }
 
     *{
@@ -66,7 +70,6 @@
       touch-action:manipulation;
     }
 
-    /* 배경 */
     .bg{
       position:absolute;
       inset:0;
@@ -108,7 +111,6 @@
       to{ transform:translate3d(8%,0,0); }
     }
 
-    /* 전체 레이아웃 */
     .screen{
       position:relative;
       z-index:2;
@@ -121,7 +123,7 @@
       grid-template-rows:auto 1fr;
       align-items:start;
       justify-items:center;
-      gap:clamp(12px, 2vh, 20px);
+      gap:var(--topGap);
 
       padding:
         var(--safeTop)
@@ -130,12 +132,12 @@
         var(--safeLeft);
     }
 
-    /* 상단 바 */
     .topbar{
       width:var(--panelWidth);
       display:flex;
       align-items:center;
       justify-content:center;
+      margin-bottom:clamp(2px, .6vh, 8px);
     }
 
     .top-chip{
@@ -145,7 +147,7 @@
       display:flex;
       align-items:center;
       justify-content:flex-start;
-      gap:18px;
+      gap:16px;
       padding:0 clamp(18px, 2.5vw, 30px);
       overflow:hidden;
 
@@ -158,8 +160,8 @@
     }
 
     .led{
-      width:clamp(18px, 2.2vw, 28px);
-      height:clamp(18px, 2.2vw, 28px);
+      width:clamp(16px, 2vw, 26px);
+      height:clamp(16px, 2vw, 26px);
       border-radius:50%;
       flex:0 0 auto;
       background:#ffd94f;
@@ -171,7 +173,7 @@
 
     @keyframes pulse{
       0%,100%{ transform:scale(1); opacity:1; }
-      50%{ transform:scale(.9); opacity:.8; }
+      50%{ transform:scale(.92); opacity:.82; }
     }
 
     .site-name{
@@ -182,14 +184,13 @@
       color:var(--gold2);
       letter-spacing:-0.03em;
       white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
+      overflow:visible;
+      text-overflow:clip;
       text-shadow:
         0 0 8px rgba(255,215,106,.18),
         0 0 16px rgba(255,215,106,.10);
     }
 
-    /* 메인 패널 */
     .panel-wrap{
       width:100%;
       height:100%;
@@ -235,7 +236,6 @@
       pointer-events:none;
     }
 
-    /* 전광판 흐름 */
     .marquee-stage{
       position:absolute;
       inset:0;
@@ -243,18 +243,20 @@
       align-items:center;
       overflow:hidden;
       padding:0 18px;
-      mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
-      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
     }
 
     .marquee-track{
       display:flex;
       align-items:center;
-      gap:clamp(28px, 3vw, 54px);
+      gap:clamp(36px, 4vw, 64px);
       width:max-content;
+      min-width:max-content;
       white-space:nowrap;
       will-change:transform;
-      animation:marqueeMove 18s linear infinite;
+      animation:marqueeMove var(--marqueeSpeed) linear infinite;
+      transform:translate3d(0,0,0);
     }
 
     .marquee-stage.fast .marquee-track{
@@ -269,8 +271,9 @@
     .message-set{
       display:flex;
       align-items:center;
-      gap:clamp(22px, 2.5vw, 40px);
-      padding-right:clamp(40px, 5vw, 80px);
+      gap:clamp(26px, 2.8vw, 44px);
+      padding-right:clamp(54px, 6vw, 100px);
+      flex:0 0 auto;
     }
 
     .message{
@@ -282,9 +285,10 @@
       line-height:1;
       letter-spacing:-0.05em;
       white-space:nowrap;
-      text-rendering:auto;
+      text-rendering:geometricPrecision;
       -webkit-font-smoothing:antialiased;
       backface-visibility:hidden;
+      transform:translateZ(0);
     }
 
     .word-main{
@@ -331,6 +335,7 @@
       color:rgba(183,228,255,.9);
       text-shadow:0 0 12px rgba(93,184,255,.12);
       transform:translateY(-2px);
+      flex:0 0 auto;
     }
 
     @keyframes sparkle{
@@ -338,7 +343,6 @@
       50%{ opacity:.84; transform:scale(.92); }
     }
 
-    /* 전체화면 힌트 */
     .fullscreen-hint{
       position:fixed;
       left:50%;
@@ -369,25 +373,29 @@
       100%{ opacity:0; visibility:hidden; }
     }
 
-    /* 꽉찬 모드 */
     body.tight .screen{
-      gap:8px;
+      gap:4px;
       padding:
-        calc(env(safe-area-inset-top, 0px) + 6px)
+        calc(env(safe-area-inset-top, 0px) + 4px)
         0
-        calc(env(safe-area-inset-bottom, 0px) + 6px)
+        calc(env(safe-area-inset-bottom, 0px) + 4px)
         0;
     }
 
     body.tight .topbar{
-      width:min(98vw, 1800px);
-      padding:0 8px;
+      width:min(99vw, 1850px);
+      padding:0 6px;
+      margin-bottom:2px;
+    }
+
+    body.tight .top-chip{
+      min-height:clamp(50px, 8vh, 78px);
     }
 
     body.tight .panel{
       width:100vw;
       width:100dvw;
-      height:calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 86px);
+      height:calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 72px);
       border-radius:0;
       border:none;
       box-shadow:none;
@@ -399,23 +407,23 @@
     }
 
     body.tight .site-name{
-      font-size:clamp(24px, 4.1vw, 58px);
+      font-size:clamp(22px, 4vw, 54px);
     }
 
     body.tight .message{
-      font-size:clamp(50px, 8vw, 148px);
+      font-size:clamp(44px, 7.6vw, 140px);
     }
 
-    /* 작은 높이 */
     @media (max-height: 620px){
       :root{
-        --panelHeight:min(52vh, 260px);
+        --panelHeight:min(54vh, 260px);
         --msgSize:clamp(34px, 6.2vw, 86px);
-        --topHeight:52px;
+        --topHeight:50px;
+        --topGap:4px;
       }
 
       .site-name{
-        font-size:clamp(20px, 3.2vw, 34px);
+        font-size:clamp(20px, 3.2vw, 32px);
       }
 
       .fullscreen-hint{
@@ -424,16 +432,15 @@
       }
     }
 
-    /* 세로/작은 화면 */
     @media (max-width: 900px){
       :root{
-        --panelWidth:min(97vw, 1700px);
-        --panelHeight:min(50vh, 340px);
+        --panelWidth:min(98vw, 1700px);
+        --panelHeight:min(52vh, 340px);
         --msgSize:clamp(38px, 8vw, 92px);
       }
 
       .site-name{
-        font-size:clamp(22px, 4.6vw, 40px);
+        font-size:clamp(21px, 4.4vw, 38px);
       }
 
       .marquee-stage{
@@ -456,7 +463,7 @@
     <div class="panel-wrap">
       <div class="panel">
         <div class="marquee-stage" id="marqueeStage">
-          <div class="marquee-track">
+          <div class="marquee-track" id="marqueeTrack">
             <!-- 1세트 -->
             <div class="message-set">
               <div class="message" aria-label="현재 문구 1">
@@ -476,7 +483,7 @@
               </div>
             </div>
 
-            <!-- 2세트(무한 반복용 복제) -->
+            <!-- 2세트 -->
             <div class="message-set" aria-hidden="true">
               <div class="message">
                 <span class="word-main">지금은</span>
@@ -500,10 +507,12 @@
     </div>
   </div>
 
-  <div class="fullscreen-hint" id="fullscreenHint">화면을 한 번 터치하면 전체화면을 시도합니다</div>
+  <div class="fullscreen-hint" id="fullscreenHint">화면을 한 번 터치하면 전체화면과 화면꺼짐 방지를 시도합니다</div>
 
   <script>
     let wakeLock = null;
+    let wakeLockTimer = null;
+
     const params = new URLSearchParams(location.search);
     const marqueeStage = document.getElementById('marqueeStage');
     const fullscreenHint = document.getElementById('fullscreenHint');
@@ -516,51 +525,113 @@
       marqueeStage.classList.add('fast');
     }
 
+    function setBodyHeight(){
+      document.body.style.minHeight = window.innerHeight + 'px';
+    }
+
     async function requestWakeLock(){
       try{
         if('wakeLock' in navigator){
+          if(wakeLock) return;
           wakeLock = await navigator.wakeLock.request('screen');
-          wakeLock.addEventListener('release', () => {});
+
+          wakeLock.addEventListener('release', async () => {
+            wakeLock = null;
+            if(document.visibilityState === 'visible'){
+              try{
+                wakeLock = await navigator.wakeLock.request('screen');
+              }catch(e){}
+            }
+          });
         }
       }catch(err){}
+    }
+
+    async function refreshWakeLock(){
+      try{
+        if(wakeLock){
+          await wakeLock.release();
+          wakeLock = null;
+        }
+      }catch(err){}
+      await requestWakeLock();
     }
 
     async function requestFullscreen(){
       try{
         const el = document.documentElement;
+
         if(!document.fullscreenElement && el.requestFullscreen){
           await el.requestFullscreen();
         }
       }catch(err){}
     }
 
-    async function activateDisplayMode(){
-      await requestWakeLock();
-      await requestFullscreen();
+    function hideHint(){
       if(fullscreenHint){
         fullscreenHint.style.display = 'none';
       }
+    }
+
+    async function activateDisplayMode(){
+      await requestFullscreen();
+      await requestWakeLock();
+      hideHint();
       window.scrollTo(0, 1);
+      setBodyHeight();
+    }
+
+    function startWakeLockKeeper(){
+      if(wakeLockTimer) clearInterval(wakeLockTimer);
+
+      wakeLockTimer = setInterval(async () => {
+        if(document.visibilityState === 'visible'){
+          await requestWakeLock();
+        }
+      }, 25000);
     }
 
     document.addEventListener('visibilitychange', async () => {
       if(document.visibilityState === 'visible'){
         await requestWakeLock();
+        setBodyHeight();
       }
     });
 
     window.addEventListener('load', async () => {
+      setBodyHeight();
       await requestWakeLock();
+      startWakeLockKeeper();
       window.scrollTo(0, 1);
-      document.body.style.minHeight = window.innerHeight + 'px';
     });
 
-    window.addEventListener('resize', () => {
-      document.body.style.minHeight = window.innerHeight + 'px';
-    });
+    window.addEventListener('resize', setBodyHeight);
+    window.addEventListener('orientationchange', setBodyHeight);
+    window.addEventListener('focus', requestWakeLock);
 
     document.body.addEventListener('click', activateDisplayMode, { passive:true });
     document.body.addEventListener('touchstart', activateDisplayMode, { passive:true });
+
+    document.body.addEventListener('touchend', async () => {
+      await requestWakeLock();
+    }, { passive:true });
+
+    document.body.addEventListener('mousemove', async () => {
+      await requestWakeLock();
+    }, { passive:true });
+
+    document.body.addEventListener('keydown', async () => {
+      await requestWakeLock();
+    });
+
+    setInterval(() => {
+      window.scrollTo(0, 1);
+    }, 15000);
+
+    /* 문서가 오래 켜져 있을 때도 가끔 재시도 */
+    setInterval(async () => {
+      await refreshWakeLock();
+    }, 180000);
   </script>
 </body>
 </html>
