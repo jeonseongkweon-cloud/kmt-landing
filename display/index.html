@@ -1,1 +1,365 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>계명태권도 | 전광판 안내</title>
+  <meta name="description" content="계명태권도 전광판 안내 페이지" />
+  <meta name="theme-color" content="#05070d" />
 
+  <style>
+    :root{
+      --bg1:#03050a;
+      --bg2:#07111f;
+      --gold:#ffd54a;
+      --gold2:#ffef9a;
+      --white:#f8fbff;
+      --blue:#57b8ff;
+      --blue2:#8fd3ff;
+      --line:rgba(255,255,255,.12);
+      --shadowGold:0 0 10px rgba(255,213,74,.45), 0 0 22px rgba(255,213,74,.22);
+      --shadowBlue:0 0 10px rgba(87,184,255,.38), 0 0 20px rgba(87,184,255,.18);
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      background:#000;
+      font-family:"Malgun Gothic","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+
+    body{
+      position:relative;
+      color:var(--white);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(87,184,255,.14), transparent 28%),
+        radial-gradient(circle at 80% 30%, rgba(255,213,74,.12), transparent 24%),
+        radial-gradient(circle at 50% 80%, rgba(87,184,255,.08), transparent 28%),
+        linear-gradient(135deg, var(--bg1), var(--bg2) 58%, #03060d);
+    }
+
+    /* 은은한 배경 빛 */
+    body::before{
+      content:"";
+      position:absolute; inset:-20%;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(255,255,255,.02) 0 2px,
+          transparent 2px 16px
+        ),
+        repeating-linear-gradient(
+          180deg,
+          rgba(255,255,255,.018) 0 2px,
+          transparent 2px 16px
+        );
+      opacity:.18;
+      animation:bgShift 16s linear infinite;
+      pointer-events:none;
+    }
+
+    @keyframes bgShift{
+      0%{transform:translateX(0)}
+      100%{transform:translateX(-40px)}
+    }
+
+    .wrap{
+      position:relative;
+      width:100vw;
+      height:100vh;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      padding:2.2vh 2vw;
+      overflow:hidden;
+    }
+
+    /* 상단 헤더 */
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      min-height:12vh;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      padding:.7vh 1.2vw;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      box-shadow:0 10px 30px rgba(0,0,0,.24);
+      backdrop-filter:blur(8px);
+    }
+
+    .brand-badge{
+      width:1.2em;
+      height:1.2em;
+      border-radius:50%;
+      background:radial-gradient(circle at 35% 35%, var(--gold2), var(--gold) 55%, #ffb300 100%);
+      box-shadow:var(--shadowGold);
+      animation:pulseDot 1.8s ease-in-out infinite;
+      flex:0 0 auto;
+    }
+
+    @keyframes pulseDot{
+      0%,100%{transform:scale(1); opacity:1}
+      50%{transform:scale(1.15); opacity:.8}
+    }
+
+    .brand-text{
+      font-size:clamp(18px, 2.2vw, 34px);
+      font-weight:800;
+      letter-spacing:.06em;
+      color:var(--gold2);
+      text-shadow:var(--shadowGold);
+      white-space:nowrap;
+    }
+
+    .status{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:.7vh 1.2vw;
+      border:1px solid rgba(87,184,255,.18);
+      border-radius:18px;
+      background:rgba(87,184,255,.06);
+      box-shadow:0 8px 24px rgba(0,0,0,.2);
+      backdrop-filter:blur(8px);
+      white-space:nowrap;
+    }
+
+    .status .lamp{
+      width:12px; height:12px; border-radius:50%;
+      background:#62ff9b;
+      box-shadow:0 0 10px rgba(98,255,155,.8),0 0 20px rgba(98,255,155,.35);
+      animation:blink 1.1s steps(2,end) infinite;
+    }
+
+    @keyframes blink{
+      0%,100%{opacity:1}
+      50%{opacity:.35}
+    }
+
+    .status span{
+      font-size:clamp(15px, 1.45vw, 24px);
+      font-weight:700;
+      color:#dff3ff;
+      text-shadow:var(--shadowBlue);
+    }
+
+    /* 중앙 전광판 */
+    .board{
+      position:relative;
+      flex:1;
+      margin:1.5vh 0;
+      border-radius:28px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015)),
+        radial-gradient(circle at 50% 50%, rgba(255,213,74,.05), transparent 42%),
+        #05070d;
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.03),
+        inset 0 0 80px rgba(87,184,255,.05),
+        0 18px 60px rgba(0,0,0,.38);
+    }
+
+    /* LED 점 느낌 */
+    .board::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle, rgba(255,255,255,.18) 0 1px, transparent 1.6px);
+      background-size:14px 14px;
+      opacity:.12;
+      pointer-events:none;
+    }
+
+    .board::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), transparent 20%, transparent 80%, rgba(255,255,255,.04));
+      pointer-events:none;
+    }
+
+    .marquee-shell{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      overflow:hidden;
+      padding:0 2vw;
+    }
+
+    .marquee{
+      display:inline-flex;
+      align-items:center;
+      gap:6vw;
+      white-space:nowrap;
+      will-change:transform;
+      animation:marqueeMove 18s linear infinite;
+      min-width:max-content;
+      padding-left:100%;
+    }
+
+    @keyframes marqueeMove{
+      0%{transform:translateX(0)}
+      100%{transform:translateX(-50%)}
+    }
+
+    .msg{
+      display:inline-flex;
+      align-items:center;
+      gap:2vw;
+      font-size:clamp(40px, 5.5vw, 92px);
+      font-weight:900;
+      letter-spacing:.02em;
+      line-height:1.1;
+      color:var(--gold2);
+      text-shadow:
+        0 0 8px rgba(255,239,154,.45),
+        0 0 16px rgba(255,213,74,.32),
+        0 0 30px rgba(255,213,74,.18);
+      animation:textGlow 1.6s ease-in-out infinite alternate;
+    }
+
+    .msg .accent{
+      color:#ffffff;
+      text-shadow:
+        0 0 8px rgba(255,255,255,.42),
+        0 0 18px rgba(87,184,255,.22),
+        0 0 28px rgba(87,184,255,.16);
+    }
+
+    .separator{
+      font-size:clamp(30px,4vw,64px);
+      color:var(--blue2);
+      text-shadow:var(--shadowBlue);
+      opacity:.9;
+    }
+
+    @keyframes textGlow{
+      0%{
+        filter:brightness(.96);
+      }
+      100%{
+        filter:brightness(1.12);
+      }
+    }
+
+    /* 하단 안내 */
+    .footer{
+      min-height:12vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 1vw;
+    }
+
+    .subnote{
+      width:100%;
+      text-align:center;
+      font-size:clamp(15px, 1.5vw, 26px);
+      font-weight:700;
+      color:#d8eaff;
+      padding:1.1vh 1vw;
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      box-shadow:0 10px 24px rgba(0,0,0,.22);
+      backdrop-filter:blur(8px);
+      text-shadow:0 0 10px rgba(87,184,255,.12);
+    }
+
+    /* 세로모드에서도 깨지지 않게 */
+    @media (orientation:portrait){
+      .topbar{min-height:10vh}
+      .footer{min-height:10vh}
+      .msg{
+        font-size:clamp(34px, 7vw, 66px);
+      }
+      .brand-text{
+        font-size:clamp(16px, 3.8vw, 28px);
+      }
+      .status span{
+        font-size:clamp(13px, 2.8vw, 20px);
+      }
+      .subnote{
+        font-size:clamp(13px, 2.8vw, 18px);
+      }
+    }
+
+    /* 아주 오래된 기기에서 부드럽게 */
+    @media (prefers-reduced-motion:reduce){
+      body::before,
+      .brand-badge,
+      .status .lamp,
+      .marquee,
+      .msg{
+        animation:none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!--
+    ============================
+    문구 수정은 아래 3곳만 바꾸면 됩니다
+    1) brand-text
+    2) msg 안의 문구
+    3) subnote
+    ============================
+  -->
+
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-badge"></div>
+        <div class="brand-text">계명태권도 전광판 안내</div>
+      </div>
+
+      <div class="status">
+        <div class="lamp"></div>
+        <span>NOW DISPLAYING</span>
+      </div>
+    </div>
+
+    <section class="board" aria-label="전광판 안내 문구">
+      <div class="marquee-shell">
+        <div class="marquee">
+          <div class="msg">
+            <span>지금은 유치부 수련 시간입니다 🙂</span>
+            <span class="separator">✦</span>
+            <span class="accent">아이들의 집중을 위해 잠시만 기다려 주세요</span>
+            <span class="separator">✦</span>
+          </div>
+
+          <div class="msg" aria-hidden="true">
+            <span>지금은 유치부 수련 시간입니다 🙂</span>
+            <span class="separator">✦</span>
+            <span class="accent">아이들의 집중을 위해 잠시만 기다려 주세요</span>
+            <span class="separator">✦</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div class="subnote">
+        아이들이 즐겁게 성장하는 공간 · 계명태권도
+      </div>
+    </div>
+  </div>
+</body>
+</html>
