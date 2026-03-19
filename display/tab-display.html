@@ -1,1 +1,512 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+  />
+  <title>계명태권도 TAB SIGN</title>
 
+  <meta name="theme-color" content="#060b18" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <script>
+    /* =========================================================
+       [문구 수정은 여기만]
+       ========================================================= */
+    const TAB_SIGN_CONFIG = {
+      topMini: "WELCOME TO",
+      topTitle: "계명태권도",
+      neonText: "KIDS CUP",
+      marqueeSeconds: 52,
+
+      set1: {
+        left: [
+          { text: "지금은", cls: "word-main" },
+          { text: "1,2부 연결수련 시간", cls: "word-point" },
+          { text: "입니다", cls: "word-main" },
+          { text: "🙂", cls: "dot-face" },
+          { text: "✦", cls: "spark" }
+        ],
+        right: [
+          { text: "아이들의 집중을 위해", cls: "word-main" },
+          { text: "조용히 호출해 주세요", cls: "word-point" },
+          { text: "✦", cls: "spark" }
+        ]
+      },
+
+      set2: {
+        left: [
+          { text: "계명태권도는", cls: "word-main" },
+          { text: "홈페이지를", cls: "word-point" },
+          { text: "운영중입니다", cls: "word-main" },
+          { text: "🙂", cls: "dot-face" },
+          { text: "✦", cls: "spark" }
+        ],
+        right: [
+          { text: "인터넷 주소창에", cls: "word-main" },
+          { text: "계명태권도.com을 입력해주세요~", cls: "word-point" },
+          { text: "✦", cls: "spark" }
+        ]
+      }
+    };
+  </script>
+
+  <style>
+    :root{
+      --bg1:#060b18;
+      --bg2:#091a36;
+      --bg3:#0c254c;
+      --gold:#ffd76a;
+      --gold2:#fff2bf;
+      --blue:#77c9ff;
+      --blue2:#9fe2ff;
+      --white:#ffffff;
+
+      --safeTop: calc(env(safe-area-inset-top, 0px) + 10px);
+      --safeRight: calc(env(safe-area-inset-right, 0px) + 18px);
+      --safeBottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+      --safeLeft: calc(env(safe-area-inset-left, 0px) + 18px);
+
+      --radius: 34px;
+      --marqueeSpeed: 52s;
+    }
+
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+    }
+
+    html, body{
+      width:100%;
+      height:100%;
+      margin:0;
+      overflow:hidden;
+      background:#060b18;
+      font-family:
+        "Pretendard Variable",
+        "Pretendard",
+        "Noto Sans KR",
+        "Apple SD Gothic Neo",
+        "Malgun Gothic",
+        sans-serif;
+    }
+
+    body{
+      position:relative;
+      min-height:100svh;
+      min-height:100dvh;
+      color:#fff;
+      user-select:none;
+      -webkit-user-select:none;
+      touch-action:manipulation;
+    }
+
+    .bg{
+      position:absolute;
+      inset:0;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 18% 16%, rgba(119,201,255,.18), transparent 24%),
+        radial-gradient(circle at 82% 18%, rgba(255,215,106,.12), transparent 16%),
+        radial-gradient(circle at 50% 80%, rgba(90,170,255,.18), transparent 28%),
+        linear-gradient(145deg, var(--bg1) 0%, var(--bg2) 48%, var(--bg3) 100%);
+    }
+
+    .bg::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(90deg, transparent 0%, rgba(255,255,255,.03) 50%, transparent 100%);
+      animation:bgSweep 12s linear infinite;
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .bg::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background-image: radial-gradient(rgba(255,255,255,.10) .8px, transparent .8px);
+      background-size:24px 24px;
+      opacity:.08;
+      pointer-events:none;
+    }
+
+    @keyframes bgSweep{
+      from{ transform:translateX(-10%); }
+      to{ transform:translateX(10%); }
+    }
+
+    .screen{
+      position:relative;
+      z-index:2;
+      width:100%;
+      height:100%;
+      min-height:100svh;
+      min-height:100dvh;
+      padding:var(--safeTop) var(--safeRight) var(--safeBottom) var(--safeLeft);
+
+      display:grid;
+      grid-template-rows:auto auto 1fr auto;
+      gap:18px;
+    }
+
+    .hero{
+      position:relative;
+      border-radius:30px;
+      padding:24px 30px 18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:
+        0 10px 30px rgba(0,0,0,.28),
+        inset 0 0 0 1px rgba(255,255,255,.04);
+      overflow:hidden;
+    }
+
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(119,201,255,.12), transparent 24%),
+        radial-gradient(circle at 80% 70%, rgba(255,215,106,.10), transparent 20%);
+      pointer-events:none;
+    }
+
+    .hero-mini{
+      position:relative;
+      z-index:1;
+      font-size:clamp(18px, 2vw, 28px);
+      font-weight:800;
+      letter-spacing:.20em;
+      color:rgba(183,228,255,.95);
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
+
+    .hero-title{
+      position:relative;
+      z-index:1;
+      font-size:clamp(44px, 6vw, 88px);
+      font-weight:950;
+      line-height:1.02;
+      letter-spacing:-0.04em;
+      color:var(--gold2);
+      text-shadow:
+        0 0 12px rgba(255,215,106,.15),
+        0 0 24px rgba(255,215,106,.08);
+    }
+
+    .neon-wrap{
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:110px;
+      border-radius:26px;
+      overflow:hidden;
+      background:
+        linear-gradient(180deg, rgba(8,16,38,.92), rgba(8,14,30,.86));
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:
+        inset 0 0 28px rgba(0,0,0,.42),
+        0 10px 24px rgba(0,0,0,.26);
+    }
+
+    .neon-wrap::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(119,201,255,.10), transparent 32%);
+      pointer-events:none;
+    }
+
+    .neon-text{
+      position:relative;
+      z-index:1;
+      font-size:clamp(38px, 5vw, 84px);
+      font-weight:950;
+      letter-spacing:.06em;
+      color:#bfefff;
+      text-shadow:
+        0 0 6px rgba(159,226,255,.90),
+        0 0 16px rgba(119,201,255,.80),
+        0 0 30px rgba(119,201,255,.55),
+        0 0 60px rgba(119,201,255,.32);
+      animation:neonPulse 2.8s ease-in-out infinite;
+    }
+
+    @keyframes neonPulse{
+      0%,100%{ opacity:1; transform:scale(1); }
+      50%{ opacity:.92; transform:scale(.995); }
+    }
+
+    .panel{
+      position:relative;
+      overflow:hidden;
+      border-radius:var(--radius);
+      border:1px solid rgba(255,255,255,.12);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03)),
+        linear-gradient(135deg, rgba(19,35,72,.95), rgba(8,15,35,.98));
+      box-shadow:
+        0 12px 28px rgba(0,0,0,.34),
+        inset 0 0 0 1px rgba(255,255,255,.03);
+      min-height:0;
+    }
+
+    .panel::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 25% 18%, rgba(255,255,255,.07), transparent 18%),
+        radial-gradient(circle at 80% 74%, rgba(93,184,255,.08), transparent 24%);
+      pointer-events:none;
+    }
+
+    .panel::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background-image: radial-gradient(rgba(255,255,255,.14) .8px, transparent .8px);
+      background-size:26px 26px;
+      opacity:.07;
+      pointer-events:none;
+    }
+
+    .marquee-stage{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      overflow:hidden;
+      padding:0 28px;
+      mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+    }
+
+    .marquee-track{
+      display:flex;
+      align-items:center;
+      gap:clamp(42px, 4vw, 72px);
+      width:max-content;
+      min-width:max-content;
+      white-space:nowrap;
+      will-change:transform;
+      animation:marqueeMove var(--marqueeSpeed) linear infinite;
+      transform:translate3d(0,0,0);
+      backface-visibility:hidden;
+      perspective:1000px;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+      contain:layout paint style;
+    }
+
+    @keyframes marqueeMove{
+      from{ transform:translate3d(0,0,0); }
+      to{ transform:translate3d(-50%,0,0); }
+    }
+
+    .message-set{
+      display:flex;
+      align-items:center;
+      gap:clamp(30px, 3vw, 50px);
+      padding-right:clamp(80px, 8vw, 130px);
+      flex:0 0 auto;
+    }
+
+    .message{
+      display:flex;
+      align-items:center;
+      gap:.22em;
+      font-size:clamp(60px, 7.2vw, 132px);
+      font-weight:950;
+      line-height:1;
+      letter-spacing:-0.05em;
+      white-space:nowrap;
+      text-rendering:optimizeLegibility;
+      -webkit-font-smoothing:antialiased;
+      backface-visibility:hidden;
+      transform:translateZ(0);
+      will-change:transform;
+    }
+
+    .word-main{
+      color:#fffef9;
+      text-shadow:
+        0 0 6px rgba(255,255,255,.14),
+        0 0 12px rgba(255,255,255,.08);
+    }
+
+    .word-point{
+      color:var(--gold2);
+      text-shadow:
+        0 0 8px rgba(255,215,106,.20),
+        0 0 16px rgba(255,215,106,.12);
+    }
+
+    .spark{
+      font-size:.68em;
+      color:#b7e4ff;
+      text-shadow:
+        0 0 6px rgba(93,184,255,.18),
+        0 0 12px rgba(93,184,255,.10);
+      animation:sparkle 1.8s ease-in-out infinite;
+    }
+
+    .dot-face{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:.9em;
+      height:.9em;
+      border-radius:50%;
+      background:radial-gradient(circle at 30% 30%, #fff8d2 0%, #ffe27f 55%, #ffc94a 100%);
+      box-shadow:
+        0 0 10px rgba(255,215,106,.20),
+        0 0 18px rgba(255,215,106,.12);
+      font-size:.42em;
+      line-height:1;
+    }
+
+    .divider{
+      font-size:clamp(52px, 5vw, 86px);
+      font-weight:900;
+      color:rgba(183,228,255,.92);
+      text-shadow:0 0 14px rgba(93,184,255,.14);
+      transform:translateY(-2px);
+      flex:0 0 auto;
+    }
+
+    @keyframes sparkle{
+      0%,100%{ opacity:1; transform:scale(1); }
+      50%{ opacity:.84; transform:scale(.92); }
+    }
+
+    .bottom-note{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:48px;
+      font-size:clamp(18px, 2vw, 28px);
+      font-weight:800;
+      color:rgba(255,255,255,.82);
+      letter-spacing:.04em;
+      text-shadow:0 0 8px rgba(255,255,255,.08);
+    }
+
+    @media (max-width: 900px){
+      .screen{
+        grid-template-rows:auto auto 1fr auto;
+        gap:12px;
+      }
+
+      .hero{
+        padding:18px 18px 14px;
+      }
+
+      .neon-wrap{
+        min-height:84px;
+      }
+
+      .marquee-stage{
+        padding:0 14px;
+      }
+
+      .message{
+        font-size:clamp(40px, 8vw, 84px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+
+  <div class="screen">
+    <section class="hero">
+      <div class="hero-mini" id="heroMini">WELCOME TO</div>
+      <div class="hero-title" id="heroTitle">계명태권도</div>
+    </section>
+
+    <section class="neon-wrap">
+      <div class="neon-text" id="neonText">KIDS CUP</div>
+    </section>
+
+    <section class="panel">
+      <div class="marquee-stage">
+        <div class="marquee-track" id="marqueeTrack"></div>
+      </div>
+    </section>
+
+    <div class="bottom-note">KEIMYUNG TAEKWONDO DISPLAY BOARD</div>
+  </div>
+
+  <script>
+    const root = document.documentElement;
+    const marqueeTrack = document.getElementById('marqueeTrack');
+    const heroMini = document.getElementById('heroMini');
+    const heroTitle = document.getElementById('heroTitle');
+    const neonText = document.getElementById('neonText');
+
+    function makePiece(piece){
+      const span = document.createElement('span');
+      span.className = piece.cls || 'word-main';
+      span.textContent = piece.text;
+      return span;
+    }
+
+    function makeMessage(pieces, label){
+      const div = document.createElement('div');
+      div.className = 'message';
+      if(label) div.setAttribute('aria-label', label);
+      pieces.forEach(piece => div.appendChild(makePiece(piece)));
+      return div;
+    }
+
+    function makeSet(setObj, hidden = false, index = 0){
+      const wrap = document.createElement('div');
+      wrap.className = 'message-set';
+      if(hidden) wrap.setAttribute('aria-hidden', 'true');
+
+      const left = makeMessage(setObj.left, hidden ? '' : `현재 문구 ${index * 2 + 1}`);
+      const divider = document.createElement('div');
+      divider.className = 'divider';
+      divider.textContent = '•';
+      const right = makeMessage(setObj.right, hidden ? '' : `현재 문구 ${index * 2 + 2}`);
+
+      wrap.appendChild(left);
+      wrap.appendChild(divider);
+      wrap.appendChild(right);
+      return wrap;
+    }
+
+    function buildScreen(){
+      heroMini.textContent = TAB_SIGN_CONFIG.topMini || 'WELCOME TO';
+      heroTitle.textContent = TAB_SIGN_CONFIG.topTitle || '계명태권도';
+      neonText.textContent = TAB_SIGN_CONFIG.neonText || 'KIDS CUP';
+      root.style.setProperty('--marqueeSpeed', `${TAB_SIGN_CONFIG.marqueeSeconds || 52}s`);
+
+      marqueeTrack.innerHTML = '';
+
+      const originalSets = [TAB_SIGN_CONFIG.set1, TAB_SIGN_CONFIG.set2];
+
+      originalSets.forEach((setObj, idx) => {
+        marqueeTrack.appendChild(makeSet(setObj, false, idx));
+      });
+
+      originalSets.forEach((setObj, idx) => {
+        marqueeTrack.appendChild(makeSet(setObj, true, idx));
+      });
+    }
+
+    buildScreen();
+  </script>
+</body>
+</html>
