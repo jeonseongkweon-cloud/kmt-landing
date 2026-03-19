@@ -19,21 +19,21 @@
       --bg2:#09142c;
       --bg3:#0b1c3f;
       --gold:#ffd76a;
-      --gold2:#ffefb0;
-      --blue:#5db8ff;
+      --gold2:#fff0b5;
+      --blue:#63baff;
       --white:#ffffff;
 
-      --panelWidth:min(94vw, 1700px);
-      --panelHeight:min(46vh, 320px);
-      --radius:34px;
+      --safeTop: calc(env(safe-area-inset-top, 0px) + 10px);
+      --safeRight: calc(env(safe-area-inset-right, 0px) + 10px);
+      --safeBottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+      --safeLeft: calc(env(safe-area-inset-left, 0px) + 10px);
 
-      /* 기존보다 살짝 안정적으로 */
-      --textSize:clamp(42px, 7.2vw, 118px);
+      --panelWidth:min(96vw, 1700px);
+      --panelHeight:min(56vh, 380px);
 
-      --safeTop: calc(env(safe-area-inset-top, 0px) + 14px);
-      --safeRight: calc(env(safe-area-inset-right, 0px) + 14px);
-      --safeBottom: calc(env(safe-area-inset-bottom, 0px) + 14px);
-      --safeLeft: calc(env(safe-area-inset-left, 0px) + 14px);
+      --topHeight: clamp(62px, 11vh, 100px);
+      --radius: 34px;
+      --msgSize: clamp(54px, 8.6vw, 150px);
     }
 
     *{
@@ -41,7 +41,7 @@
       -webkit-tap-highlight-color:transparent;
     }
 
-    html,body{
+    html, body{
       width:100%;
       height:100%;
       margin:0;
@@ -72,9 +72,9 @@
       inset:0;
       overflow:hidden;
       background:
-        radial-gradient(circle at 18% 20%, rgba(76,154,255,.22), transparent 26%),
-        radial-gradient(circle at 82% 24%, rgba(255,215,106,.12), transparent 20%),
-        radial-gradient(circle at 50% 88%, rgba(69,124,255,.14), transparent 25%),
+        radial-gradient(circle at 20% 20%, rgba(90,166,255,.22), transparent 25%),
+        radial-gradient(circle at 80% 22%, rgba(255,215,106,.14), transparent 18%),
+        radial-gradient(circle at 50% 85%, rgba(71,126,255,.16), transparent 24%),
         linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 48%, var(--bg3) 100%);
     }
 
@@ -89,7 +89,6 @@
           transparent 50%,
           rgba(255,255,255,.015) 75%,
           transparent 100%);
-      transform:translate3d(0,0,0);
       animation:bgSweep 16s linear infinite;
       pointer-events:none;
     }
@@ -98,8 +97,7 @@
       content:"";
       position:absolute;
       inset:0;
-      background-image:
-        radial-gradient(rgba(255,255,255,.10) 0.8px, transparent 0.8px);
+      background-image: radial-gradient(rgba(255,255,255,.10) .8px, transparent .8px);
       background-size:22px 22px;
       opacity:.10;
       pointer-events:none;
@@ -110,7 +108,7 @@
       to{ transform:translate3d(8%,0,0); }
     }
 
-    /* 전체 래퍼 */
+    /* 전체 레이아웃 */
     .screen{
       position:relative;
       z-index:2;
@@ -121,16 +119,15 @@
 
       display:grid;
       grid-template-rows:auto 1fr;
-      justify-items:center;
       align-items:start;
+      justify-items:center;
+      gap:clamp(12px, 2vh, 20px);
 
       padding:
         var(--safeTop)
         var(--safeRight)
         var(--safeBottom)
         var(--safeLeft);
-
-      gap:clamp(10px, 1.8vh, 18px);
     }
 
     /* 상단 바 */
@@ -138,88 +135,68 @@
       width:var(--panelWidth);
       display:flex;
       align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      min-height:0;
-    }
-
-    .chip{
-      min-height:54px;
-      padding:10px 20px;
-      border-radius:999px;
-      display:flex;
-      align-items:center;
-      gap:14px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:
-        0 0 0 1px rgba(255,255,255,.04) inset,
-        0 8px 24px rgba(0,0,0,.28);
-      backdrop-filter:none;
-      -webkit-backdrop-filter:none;
-    }
-
-    .chip.left{
-      flex:1 1 auto;
-      justify-content:flex-start;
-      min-width:0;
-    }
-
-    .chip.right{
-      flex:0 0 auto;
-      min-width:140px;
       justify-content:center;
     }
 
-    .led{
-      width:22px;
-      height:22px;
-      border-radius:50%;
-      flex:0 0 22px;
-      box-shadow:0 0 14px currentColor;
-      animation:pulse 2.2s ease-in-out infinite;
-    }
-
-    .led.gold{ color:#ffd94f; background:#ffd94f; }
-    .led.green{ color:#35f0b4; background:#35f0b4; }
-
-    .chip-text{
-      font-weight:900;
-      letter-spacing:.04em;
-      white-space:nowrap;
-      font-size:clamp(18px, 2.3vw, 32px);
-      line-height:1;
-    }
-
-    .chip.left .chip-text{
-      color:var(--gold);
-      text-shadow:
-        0 0 6px rgba(255,215,106,.18),
-        0 0 12px rgba(255,215,106,.10);
+    .top-chip{
+      width:100%;
+      min-height:var(--topHeight);
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:18px;
+      padding:0 clamp(18px, 2.5vw, 30px);
       overflow:hidden;
-      text-overflow:ellipsis;
+
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.04) inset,
+        0 10px 28px rgba(0,0,0,.28);
     }
 
-    .chip.right .chip-text{
-      color:#d9f7ff;
-      text-shadow:0 0 8px rgba(93,184,255,.18);
+    .led{
+      width:clamp(18px, 2.2vw, 28px);
+      height:clamp(18px, 2.2vw, 28px);
+      border-radius:50%;
+      flex:0 0 auto;
+      background:#ffd94f;
+      box-shadow:
+        0 0 16px rgba(255,217,79,.85),
+        0 0 36px rgba(255,217,79,.35);
+      animation:pulse 2.2s ease-in-out infinite;
     }
 
     @keyframes pulse{
       0%,100%{ transform:scale(1); opacity:1; }
-      50%{ transform:scale(.88); opacity:.78; }
+      50%{ transform:scale(.9); opacity:.8; }
+    }
+
+    .site-name{
+      min-width:0;
+      font-size:clamp(28px, 4vw, 60px);
+      font-weight:950;
+      line-height:1;
+      color:var(--gold2);
+      letter-spacing:-0.03em;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      text-shadow:
+        0 0 8px rgba(255,215,106,.18),
+        0 0 16px rgba(255,215,106,.10);
     }
 
     /* 메인 패널 */
     .panel-wrap{
       width:100%;
-      min-width:0;
-      min-height:0;
       height:100%;
+      min-height:0;
       display:flex;
-      justify-content:center;
       align-items:center;
+      justify-content:center;
     }
 
     .panel{
@@ -227,15 +204,15 @@
       width:var(--panelWidth);
       height:var(--panelHeight);
       max-height:100%;
-      border-radius:var(--radius);
       overflow:hidden;
+      border-radius:var(--radius);
       border:1px solid rgba(255,255,255,.12);
       background:
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.025)),
-        linear-gradient(135deg, rgba(24,38,72,.92), rgba(8,15,35,.96));
+        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03)),
+        linear-gradient(135deg, rgba(25,40,78,.93), rgba(8,15,35,.97));
       box-shadow:
         0 12px 28px rgba(0,0,0,.34),
-        inset 0 0 0 1px rgba(255,255,255,.035);
+        inset 0 0 0 1px rgba(255,255,255,.03);
     }
 
     .panel::before{
@@ -243,8 +220,8 @@
       position:absolute;
       inset:0;
       background:
-        radial-gradient(circle at 20% 20%, rgba(255,255,255,.06), transparent 18%),
-        radial-gradient(circle at 80% 75%, rgba(93,184,255,.06), transparent 24%);
+        radial-gradient(circle at 25% 20%, rgba(255,255,255,.07), transparent 18%),
+        radial-gradient(circle at 75% 75%, rgba(93,184,255,.07), transparent 24%);
       pointer-events:none;
     }
 
@@ -252,66 +229,76 @@
       content:"";
       position:absolute;
       inset:0;
-      background-image:
-        radial-gradient(rgba(255,255,255,.14) 0.7px, transparent 0.7px);
+      background-image: radial-gradient(rgba(255,255,255,.14) .7px, transparent .7px);
       background-size:24px 24px;
       opacity:.08;
       pointer-events:none;
     }
 
-    /* 메시지 영역 */
-    .message-stage{
+    /* 전광판 흐름 */
+    .marquee-stage{
       position:absolute;
       inset:0;
       display:flex;
       align-items:center;
-      justify-content:center;
-      padding:0 clamp(16px, 4.2vw, 72px);
       overflow:hidden;
+      padding:0 18px;
+      mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+    }
+
+    .marquee-track{
+      display:flex;
+      align-items:center;
+      gap:clamp(28px, 3vw, 54px);
+      width:max-content;
+      white-space:nowrap;
+      will-change:transform;
+      animation:marqueeMove 18s linear infinite;
+    }
+
+    .marquee-stage.fast .marquee-track{
+      animation-duration:14s;
+    }
+
+    @keyframes marqueeMove{
+      from{ transform:translate3d(0,0,0); }
+      to{ transform:translate3d(-50%,0,0); }
+    }
+
+    .message-set{
+      display:flex;
+      align-items:center;
+      gap:clamp(22px, 2.5vw, 40px);
+      padding-right:clamp(40px, 5vw, 80px);
     }
 
     .message{
       display:flex;
       align-items:center;
-      justify-content:center;
-      gap:.26em;
-      max-width:100%;
-      font-size:var(--textSize);
+      gap:.22em;
+      font-size:var(--msgSize);
       font-weight:950;
-      line-height:1.02;
-      letter-spacing:-0.045em;
+      line-height:1;
+      letter-spacing:-0.05em;
       white-space:nowrap;
-      opacity:1;
-
-      /* 흔들림 줄이는 핵심 */
-      will-change:opacity;
-      transform:none;
-      backface-visibility:hidden;
-      -webkit-font-smoothing:antialiased;
       text-rendering:auto;
-
-      animation:messageSwap 12s ease-in-out infinite;
-    }
-
-    .word-main,
-    .word-point,
-    .spark,
-    .dot-face{
-      flex:0 0 auto;
+      -webkit-font-smoothing:antialiased;
+      backface-visibility:hidden;
     }
 
     .word-main{
       color:#fffef9;
       text-shadow:
-        0 0 5px rgba(255,255,255,.16),
-        0 0 10px rgba(255,214,106,.08);
+        0 0 5px rgba(255,255,255,.14),
+        0 0 10px rgba(255,255,255,.08);
     }
 
     .word-point{
       color:var(--gold2);
       text-shadow:
-        0 0 5px rgba(255,215,106,.18),
-        0 0 10px rgba(255,215,106,.10);
+        0 0 6px rgba(255,215,106,.18),
+        0 0 12px rgba(255,215,106,.10);
     }
 
     .spark{
@@ -327,8 +314,8 @@
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      width:.92em;
-      height:.92em;
+      width:.9em;
+      height:.9em;
       border-radius:50%;
       background:radial-gradient(circle at 30% 30%, #fff8d2 0%, #ffe27f 55%, #ffc94a 100%);
       box-shadow:
@@ -336,142 +323,121 @@
         0 0 14px rgba(255,215,106,.10);
       font-size:.42em;
       line-height:1;
-      transform:none;
+    }
+
+    .divider{
+      font-size:clamp(40px, 5vw, 78px);
+      font-weight:900;
+      color:rgba(183,228,255,.9);
+      text-shadow:0 0 12px rgba(93,184,255,.12);
+      transform:translateY(-2px);
     }
 
     @keyframes sparkle{
       0%,100%{ opacity:1; transform:scale(1); }
-      50%{ opacity:.85; transform:scale(.92); }
+      50%{ opacity:.84; transform:scale(.92); }
     }
 
-    /* 문구 교체: 이동 없이 페이드만 */
-    .message.m2{
-      position:absolute;
-      opacity:0;
-      animation:messageSwap2 12s ease-in-out infinite;
-    }
-
-    @keyframes messageSwap{
-      0%, 42%   { opacity:1; }
-      46%, 96%  { opacity:0; }
-      100%      { opacity:1; }
-    }
-
-    @keyframes messageSwap2{
-      0%, 42%   { opacity:0; }
-      46%, 96%  { opacity:1; }
-      100%      { opacity:0; }
-    }
-
-    /* 상태 */
-    .status{
+    /* 전체화면 힌트 */
+    .fullscreen-hint{
       position:fixed;
-      right:12px;
-      bottom:10px;
-      z-index:4;
-      font-size:12px;
-      color:rgba(255,255,255,.5);
-      letter-spacing:.04em;
+      left:50%;
+      bottom:12px;
+      transform:translateX(-50%);
+      z-index:5;
+
+      padding:10px 16px;
+      border-radius:999px;
+      background:rgba(10,18,40,.72);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:0 8px 20px rgba(0,0,0,.25);
+
+      color:rgba(255,255,255,.88);
+      font-size:14px;
+      font-weight:700;
+      letter-spacing:.01em;
+      white-space:nowrap;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+
+      animation:hintFade 8s ease forwards;
       pointer-events:none;
     }
 
-    /* 완전 꽉차게 쓰고 싶을 때 */
+    @keyframes hintFade{
+      0%,70%{ opacity:1; }
+      100%{ opacity:0; visibility:hidden; }
+    }
+
+    /* 꽉찬 모드 */
     body.tight .screen{
-      grid-template-rows:auto 1fr;
-      padding:
-        calc(env(safe-area-inset-top, 0px) + 8px)
-        0
-        calc(env(safe-area-inset-bottom, 0px) + 8px)
-        0;
       gap:8px;
+      padding:
+        calc(env(safe-area-inset-top, 0px) + 6px)
+        0
+        calc(env(safe-area-inset-bottom, 0px) + 6px)
+        0;
     }
 
     body.tight .topbar{
-      width:min(96vw, 1800px);
-      padding:0 10px;
-    }
-
-    body.tight .panel-wrap{
-      width:100%;
-      height:100%;
-      min-height:0;
+      width:min(98vw, 1800px);
+      padding:0 8px;
     }
 
     body.tight .panel{
       width:100vw;
       width:100dvw;
-      height:calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 80px);
-      height:calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 80px);
-      min-height:220px;
+      height:calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 86px);
       border-radius:0;
       border:none;
       box-shadow:none;
     }
 
-    body.tight .message-stage{
-      padding:0 clamp(14px, 3.5vw, 56px);
+    body.tight .panel-wrap{
+      width:100%;
+      height:100%;
+    }
+
+    body.tight .site-name{
+      font-size:clamp(24px, 4.1vw, 58px);
     }
 
     body.tight .message{
-      font-size:clamp(42px, 8vw, 138px);
+      font-size:clamp(50px, 8vw, 148px);
     }
 
-    /* 아주 낮은 화면 */
+    /* 작은 높이 */
     @media (max-height: 620px){
       :root{
-        --panelHeight:min(44vh, 260px);
-        --textSize:clamp(34px, 6.3vw, 86px);
+        --panelHeight:min(52vh, 260px);
+        --msgSize:clamp(34px, 6.2vw, 86px);
+        --topHeight:52px;
       }
 
-      .screen{
-        gap:10px;
-        padding-top:calc(env(safe-area-inset-top, 0px) + 10px);
-        padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 10px);
+      .site-name{
+        font-size:clamp(20px, 3.2vw, 34px);
       }
 
-      .topbar{
-        gap:10px;
-      }
-
-      .chip{
-        min-height:46px;
-        padding:8px 14px;
-      }
-
-      .led{
-        width:16px;
-        height:16px;
-        flex-basis:16px;
-      }
-
-      .chip-text{
-        font-size:clamp(14px, 2vw, 24px);
+      .fullscreen-hint{
+        font-size:12px;
+        padding:8px 12px;
       }
     }
 
-    /* 세로 화면 대응 */
+    /* 세로/작은 화면 */
     @media (max-width: 900px){
       :root{
-        --panelWidth:min(96vw, 1700px);
-        --textSize:clamp(30px, 6.9vw, 74px);
+        --panelWidth:min(97vw, 1700px);
+        --panelHeight:min(50vh, 340px);
+        --msgSize:clamp(38px, 8vw, 92px);
       }
 
-      .topbar{
-        gap:10px;
+      .site-name{
+        font-size:clamp(22px, 4.6vw, 40px);
       }
 
-      .chip{
-        min-height:46px;
-        padding:8px 14px;
-      }
-
-      .chip.right{
-        min-width:100px;
-      }
-
-      .message{
-        letter-spacing:-0.05em;
-        gap:.22em;
+      .marquee-stage{
+        padding:0 12px;
       }
     }
   </style>
@@ -481,57 +447,100 @@
 
   <div class="screen">
     <div class="topbar">
-      <div class="chip left">
-        <span class="led gold"></span>
-        <span class="chip-text">계명태권도 전광판 안내</span>
-      </div>
-      <div class="chip right">
-        <span class="led green"></span>
-        <span class="chip-text">NOW</span>
+      <div class="top-chip">
+        <span class="led" aria-hidden="true"></span>
+        <span class="site-name">계명태권도.com</span>
       </div>
     </div>
 
     <div class="panel-wrap">
       <div class="panel">
-        <div class="message-stage">
-          <div class="message m1" aria-label="현재 문구 1">
-            <span class="word-main">지금은</span>
-            <span class="word-point">유치부 수련 시간</span>
-            <span class="word-main">입니다</span>
-            <span class="dot-face">🙂</span>
-            <span class="spark">✦</span>
-          </div>
+        <div class="marquee-stage" id="marqueeStage">
+          <div class="marquee-track">
+            <!-- 1세트 -->
+            <div class="message-set">
+              <div class="message" aria-label="현재 문구 1">
+                <span class="word-main">지금은</span>
+                <span class="word-point">유치부 수련 시간</span>
+                <span class="word-main">입니다</span>
+                <span class="dot-face">🙂</span>
+                <span class="spark">✦</span>
+              </div>
 
-          <div class="message m2" aria-label="현재 문구 2">
-            <span class="word-main">아이들의 집중을 위해</span>
-            <span class="word-point">잠시만 기다려 주세요</span>
-            <span class="spark">✦</span>
+              <div class="divider">•</div>
+
+              <div class="message" aria-label="현재 문구 2">
+                <span class="word-main">아이들의 집중을 위해</span>
+                <span class="word-point">잠시만 기다려 주세요</span>
+                <span class="spark">✦</span>
+              </div>
+            </div>
+
+            <!-- 2세트(무한 반복용 복제) -->
+            <div class="message-set" aria-hidden="true">
+              <div class="message">
+                <span class="word-main">지금은</span>
+                <span class="word-point">유치부 수련 시간</span>
+                <span class="word-main">입니다</span>
+                <span class="dot-face">🙂</span>
+                <span class="spark">✦</span>
+              </div>
+
+              <div class="divider">•</div>
+
+              <div class="message">
+                <span class="word-main">아이들의 집중을 위해</span>
+                <span class="word-point">잠시만 기다려 주세요</span>
+                <span class="spark">✦</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="status" id="statusText">display ready</div>
+  <div class="fullscreen-hint" id="fullscreenHint">화면을 한 번 터치하면 전체화면을 시도합니다</div>
 
   <script>
-    const statusText = document.getElementById('statusText');
     let wakeLock = null;
+    const params = new URLSearchParams(location.search);
+    const marqueeStage = document.getElementById('marqueeStage');
+    const fullscreenHint = document.getElementById('fullscreenHint');
+
+    if(params.get('tight') === '1'){
+      document.body.classList.add('tight');
+    }
+
+    if(params.get('fast') === '1'){
+      marqueeStage.classList.add('fast');
+    }
 
     async function requestWakeLock(){
       try{
         if('wakeLock' in navigator){
           wakeLock = await navigator.wakeLock.request('screen');
-          statusText.textContent = 'wake lock on';
-          wakeLock.addEventListener('release', () => {
-            statusText.textContent = 'wake lock released';
-          });
-        }else{
-          statusText.textContent = 'wake lock unsupported';
+          wakeLock.addEventListener('release', () => {});
         }
-      }catch(err){
-        statusText.textContent = 'wake lock fail';
+      }catch(err){}
+    }
+
+    async function requestFullscreen(){
+      try{
+        const el = document.documentElement;
+        if(!document.fullscreenElement && el.requestFullscreen){
+          await el.requestFullscreen();
+        }
+      }catch(err){}
+    }
+
+    async function activateDisplayMode(){
+      await requestWakeLock();
+      await requestFullscreen();
+      if(fullscreenHint){
+        fullscreenHint.style.display = 'none';
       }
+      window.scrollTo(0, 1);
     }
 
     document.addEventListener('visibilitychange', async () => {
@@ -543,28 +552,15 @@
     window.addEventListener('load', async () => {
       await requestWakeLock();
       window.scrollTo(0, 1);
-      fitScreenHeight();
-    });
-
-    document.body.addEventListener('click', async () => {
-      await requestWakeLock();
-    });
-
-    /* 주소 파라미터로 꽉찬 모드 가능
-       예: /display/?tight=1
-    */
-    const params = new URLSearchParams(location.search);
-    if(params.get('tight') === '1'){
-      document.body.classList.add('tight');
-      statusText.style.display = 'none';
-    }
-
-    function fitScreenHeight(){
       document.body.style.minHeight = window.innerHeight + 'px';
-    }
+    });
 
-    window.addEventListener('resize', fitScreenHeight);
-    fitScreenHeight();
+    window.addEventListener('resize', () => {
+      document.body.style.minHeight = window.innerHeight + 'px';
+    });
+
+    document.body.addEventListener('click', activateDisplayMode, { passive:true });
+    document.body.addEventListener('touchstart', activateDisplayMode, { passive:true });
   </script>
 </body>
 </html>
