@@ -2,26 +2,33 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+  />
   <title>계명태권도 | 전광판 안내</title>
   <meta name="description" content="계명태권도 전광판 안내 페이지" />
   <meta name="theme-color" content="#05070d" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="format-detection" content="telephone=no" />
 
   <style>
     :root{
-      --bg1:#03050a;
+      --bg1:#02040a;
       --bg2:#07111f;
       --gold:#ffd54a;
-      --gold2:#ffef9a;
+      --gold2:#fff0a8;
       --white:#f8fbff;
       --blue:#57b8ff;
-      --blue2:#8fd3ff;
+      --blue2:#9cddff;
       --line:rgba(255,255,255,.12);
       --shadowGold:0 0 10px rgba(255,213,74,.45), 0 0 22px rgba(255,213,74,.22);
       --shadowBlue:0 0 10px rgba(87,184,255,.38), 0 0 20px rgba(87,184,255,.18);
     }
 
-    *{box-sizing:border-box}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html,body{
       margin:0;
       width:100%;
@@ -41,9 +48,10 @@
         radial-gradient(circle at 80% 30%, rgba(255,213,74,.12), transparent 24%),
         radial-gradient(circle at 50% 80%, rgba(87,184,255,.08), transparent 28%),
         linear-gradient(135deg, var(--bg1), var(--bg2) 58%, #03060d);
+      touch-action:manipulation;
+      overscroll-behavior:none;
     }
 
-    /* 은은한 배경 빛 */
     body::before{
       content:"";
       position:absolute; inset:-20%;
@@ -72,6 +80,7 @@
       position:relative;
       width:100vw;
       height:100vh;
+      height:100dvh;
       display:flex;
       flex-direction:column;
       justify-content:space-between;
@@ -79,13 +88,13 @@
       overflow:hidden;
     }
 
-    /* 상단 헤더 */
     .topbar{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:12px;
       min-height:12vh;
+      flex-wrap:wrap;
     }
 
     .brand{
@@ -98,6 +107,7 @@
       background:rgba(255,255,255,.04);
       box-shadow:0 10px 30px rgba(0,0,0,.24);
       backdrop-filter:blur(8px);
+      min-width:0;
     }
 
     .brand-badge{
@@ -122,6 +132,8 @@
       color:var(--gold2);
       text-shadow:var(--shadowGold);
       white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     .status{
@@ -156,7 +168,6 @@
       text-shadow:var(--shadowBlue);
     }
 
-    /* 중앙 전광판 */
     .board{
       position:relative;
       flex:1;
@@ -174,7 +185,6 @@
         0 18px 60px rgba(0,0,0,.38);
     }
 
-    /* LED 점 느낌 */
     .board::before{
       content:"";
       position:absolute; inset:0;
@@ -250,15 +260,10 @@
     }
 
     @keyframes textGlow{
-      0%{
-        filter:brightness(.96);
-      }
-      100%{
-        filter:brightness(1.12);
-      }
+      0%{filter:brightness(.96)}
+      100%{filter:brightness(1.12)}
     }
 
-    /* 하단 안내 */
     .footer{
       min-height:12vh;
       display:flex;
@@ -282,25 +287,124 @@
       text-shadow:0 0 10px rgba(87,184,255,.12);
     }
 
-    /* 세로모드에서도 깨지지 않게 */
+    /* 전체화면 시작 오버레이 */
+    .fs-overlay{
+      position:fixed;
+      inset:0;
+      z-index:9999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:
+        radial-gradient(circle at 50% 40%, rgba(87,184,255,.16), transparent 30%),
+        radial-gradient(circle at 50% 60%, rgba(255,213,74,.10), transparent 34%),
+        rgba(0,0,0,.66);
+      backdrop-filter:blur(10px);
+    }
+
+    .fs-card{
+      width:min(92vw, 760px);
+      padding:28px 24px;
+      border-radius:26px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(5,10,18,.86);
+      box-shadow:0 24px 80px rgba(0,0,0,.45);
+      text-align:center;
+    }
+
+    .fs-title{
+      margin:0 0 10px;
+      font-size:clamp(24px, 4vw, 42px);
+      font-weight:900;
+      color:var(--gold2);
+      text-shadow:var(--shadowGold);
+    }
+
+    .fs-desc{
+      margin:0 0 20px;
+      font-size:clamp(14px, 2vw, 20px);
+      line-height:1.6;
+      color:#dbe9f7;
+    }
+
+    .fs-actions{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      border-radius:16px;
+      padding:14px 22px;
+      font-size:clamp(15px, 1.8vw, 20px);
+      font-weight:800;
+      transition:transform .15s ease, opacity .15s ease, box-shadow .15s ease;
+    }
+
+    .btn:active{transform:scale(.98)}
+
+    .btn-primary{
+      background:linear-gradient(135deg, #ffe88a, #ffd54a 55%, #ffbe2e);
+      color:#111;
+      box-shadow:0 12px 30px rgba(255,213,74,.28);
+    }
+
+    .btn-secondary{
+      background:rgba(255,255,255,.08);
+      color:#eaf4ff;
+      border:1px solid rgba(255,255,255,.14);
+    }
+
+    .fs-note{
+      margin-top:14px;
+      font-size:clamp(12px, 1.6vw, 16px);
+      color:#b9cde0;
+      opacity:.92;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
+    .fullscreen-active .topbar,
+    .fullscreen-active .footer{
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .25s ease;
+    }
+
+    .fullscreen-active .wrap{
+      padding:0;
+    }
+
+    .fullscreen-active .board{
+      margin:0;
+      border-radius:0;
+      border:none;
+      box-shadow:none;
+    }
+
+    .fullscreen-active .marquee-shell{
+      padding:0 1.5vw;
+    }
+
+    .fullscreen-active .msg{
+      font-size:clamp(48px, 6vw, 110px);
+    }
+
     @media (orientation:portrait){
       .topbar{min-height:10vh}
       .footer{min-height:10vh}
-      .msg{
-        font-size:clamp(34px, 7vw, 66px);
-      }
-      .brand-text{
-        font-size:clamp(16px, 3.8vw, 28px);
-      }
-      .status span{
-        font-size:clamp(13px, 2.8vw, 20px);
-      }
-      .subnote{
-        font-size:clamp(13px, 2.8vw, 18px);
-      }
+      .msg{font-size:clamp(34px, 7vw, 66px)}
+      .brand-text{font-size:clamp(16px, 3.8vw, 28px)}
+      .status span{font-size:clamp(13px, 2.8vw, 20px)}
+      .subnote{font-size:clamp(13px, 2.8vw, 18px)}
     }
 
-    /* 아주 오래된 기기에서 부드럽게 */
     @media (prefers-reduced-motion:reduce){
       body::before,
       .brand-badge,
@@ -322,7 +426,24 @@
     ============================
   -->
 
-  <div class="wrap">
+  <div id="fsOverlay" class="fs-overlay">
+    <div class="fs-card">
+      <h1 class="fs-title">전체화면 전광판 시작</h1>
+      <p class="fs-desc">
+        버튼을 한 번 누르면 가능한 범위에서 전체화면으로 전환합니다.<br>
+        노트8에서는 가로로 돌려 사용하면 가장 보기 좋습니다.
+      </p>
+      <div class="fs-actions">
+        <button id="enterFsBtn" class="btn btn-primary" type="button">전체화면 시작</button>
+        <button id="closeOverlayBtn" class="btn btn-secondary" type="button">그냥 보기</button>
+      </div>
+      <div class="fs-note">
+        브라우저 종류에 따라 주소창은 일부 남을 수 있습니다.
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" id="app">
     <div class="topbar">
       <div class="brand">
         <div class="brand-badge"></div>
@@ -361,5 +482,97 @@
       </div>
     </div>
   </div>
+
+  <script>
+    const fsOverlay = document.getElementById('fsOverlay');
+    const enterFsBtn = document.getElementById('enterFsBtn');
+    const closeOverlayBtn = document.getElementById('closeOverlayBtn');
+    const docEl = document.documentElement;
+    const bodyEl = document.body;
+
+    async function enterFullscreen() {
+      try {
+        if (!document.fullscreenElement) {
+          if (docEl.requestFullscreen) {
+            await docEl.requestFullscreen({ navigationUI: "hide" });
+          } else if (docEl.webkitRequestFullscreen) {
+            docEl.webkitRequestFullscreen();
+          } else if (docEl.msRequestFullscreen) {
+            docEl.msRequestFullscreen();
+          }
+        }
+      } catch (e) {
+        console.log('Fullscreen request failed:', e);
+      } finally {
+        activateDisplayMode();
+      }
+    }
+
+    function activateDisplayMode() {
+      fsOverlay.classList.add('hidden');
+      bodyEl.classList.add('fullscreen-active');
+      window.scrollTo(0, 1);
+    }
+
+    function exitDisplayMode() {
+      bodyEl.classList.remove('fullscreen-active');
+      fsOverlay.classList.remove('hidden');
+    }
+
+    enterFsBtn.addEventListener('click', async () => {
+      await enterFullscreen();
+    });
+
+    closeOverlayBtn.addEventListener('click', () => {
+      activateDisplayMode();
+    });
+
+    document.addEventListener('fullscreenchange', () => {
+      if (document.fullscreenElement) {
+        bodyEl.classList.add('fullscreen-active');
+        fsOverlay.classList.add('hidden');
+      } else {
+        bodyEl.classList.remove('fullscreen-active');
+      }
+    });
+
+    document.addEventListener('webkitfullscreenchange', () => {
+      if (document.webkitFullscreenElement) {
+        bodyEl.classList.add('fullscreen-active');
+        fsOverlay.classList.add('hidden');
+      } else {
+        bodyEl.classList.remove('fullscreen-active');
+      }
+    });
+
+    // 더블탭으로 오버레이 다시 열기
+    let lastTap = 0;
+    document.addEventListener('touchend', (e) => {
+      const now = Date.now();
+      if (now - lastTap < 300) {
+        if (fsOverlay.classList.contains('hidden')) {
+          if (document.fullscreenElement && document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+          }
+          exitDisplayMode();
+        }
+      }
+      lastTap = now;
+    }, { passive: true });
+
+    // 화면 회전/리사이즈 시 주소창 최소화 유도
+    window.addEventListener('resize', () => {
+      setTimeout(() => window.scrollTo(0, 1), 50);
+    });
+
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => window.scrollTo(0, 1), 100);
+    });
+
+    // 초기 스크롤 살짝 내려 주소창 줄이기 유도
+    window.addEventListener('load', () => {
+      setTimeout(() => window.scrollTo(0, 1), 120);
+    });
+  </script>
 </body>
 </html>
