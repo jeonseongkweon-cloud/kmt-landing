@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>계명태권도 LIVE BOARD</title>
   <meta name="theme-color" content="#0b0f19" />
+  <link rel="stylesheet" href="dashboard-v070.css" />
 
   <style>
     :root{
@@ -439,14 +440,15 @@
 </head>
 
 <body>
-  <div class="stage">
+  <section class="live-login" id="loginScreen"><div><img src="../assets/icons/192로고.png" alt=""><p>CLASS v0.7.0</p><h1>LIVE BOARD</h1><span>원생정보 보호를 위해 승인된 Google 관리자 로그인이 필요합니다.</span><button id="loginButton">Google 관리자 로그인</button><a href="../">홈페이지로 돌아가기</a><em id="loginMessage"></em></div></section>
+  <div class="stage" id="liveBoard" hidden>
     <div class="frame" id="frame">
       <div class="topbar">
         <div class="brand">
           <div class="logo">KM</div>
           <div class="brandText">
             <h1>계명태권도 LIVE BOARD</h1>
-            <p>구글시트 연동 · 사진/랭킹 자동 반영</p>
+            <p><span class="board-version">CLASS v0.7.0</span> · Supabase 실시간 연동</p>
           </div>
         </div>
 
@@ -456,6 +458,7 @@
         </div>
 
         <div class="btns">
+          <a class="btn toplink" href="../class/">CLASS</a>
           <button class="btn" onclick="toggleFull()">전체화면</button>
           <button class="btn" onclick="location.reload()">새로고침</button>
         </div>
@@ -466,8 +469,8 @@
         <div class="grid2">
           <section class="card">
             <div class="hd">
-              <div class="title">🏆 랭킹 TOP 10 (사진 포함)</div>
-              <div class="subTiny hint" id="rankHint">시트 연동</div><!-- ✅ 숨김 -->
+              <div class="title">🏆 성장포인트 TOP 10</div>
+              <div class="subTiny hint" id="rankHint">Supabase</div><!-- ✅ 숨김 -->
             </div>
             <div class="ticker">
               <div class="list" id="rankList"></div>
@@ -476,8 +479,8 @@
 
           <section class="card">
             <div class="hd">
-              <div class="title">🥋 단/급 TOP 10</div>
-              <div class="subTiny hint">시트 N/O 기반</div><!-- ✅ 숨김 -->
+              <div class="title">🗓️ 월간 출석왕 TOP 10</div>
+              <div class="subTiny hint">Supabase</div><!-- ✅ 숨김 -->
             </div>
             <div class="ticker">
               <div class="list" id="danList"></div>
@@ -489,21 +492,19 @@
         <div class="mid">
           <section class="card">
             <div class="hd">
-              <div class="title small">🎉 이번 달 신규 등록</div>
-              <div class="subTiny hint">샘플(원하면 시트 연동 가능)</div><!-- ✅ 숨김 -->
+              <div class="title small">⭐ 월간 STAR왕</div>
+              <div class="subTiny hint">Supabase</div><!-- ✅ 숨김 -->
             </div>
 
             <div class="note">
               <!-- ✅ FIX: newNames를 bigmsg 안으로 넣음 -->
               <div class="bigmsg">
                 <div class="t">
-                  <div class="left">신규 등록</div>
+                  <div class="left">이번 달 STAR TOP</div>
                 </div>
 
                 <div class="body" id="newNames">
-                  이승우 / 이수형 / 윤이현 / 민서준 / 김관우 / 송정현 / 김서호<br>
-                  오윤후 / 이준범 / 김도영/ 김도훈 / 곽나연 /  이유하 / 이주형<br>
-                  황윤우 / 황성운 / 이주안 / 박윤하 / 이유쥰 / 강민준 / 박이도
+                  STAR 기록을 불러오는 중입니다.
                 </div>
               </div>
             </div>
@@ -511,8 +512,8 @@
 
           <section class="card">
             <div class="hd">
-              <div class="title">🌟 어제의 MVP (칭찬 8)</div>
-              <div class="subTiny hint">사진은 시트에서 자동 매칭</div><!-- ✅ 숨김 -->
+              <div class="title">🌟 오늘의 챔피언</div>
+              <div class="subTiny hint">CLASS STAR 연동</div><!-- ✅ 숨김 -->
             </div>
             <div class="note">
               <div class="awardsWrap">
@@ -531,8 +532,8 @@
             </div>
             <div class="note">
               <div class="kvs">
-                <div class="kv"><div class="k">오늘 주요 수련</div><div class="v">기본기 · 발차기 집중</div></div>
-                <div class="kv"><div class="k">오늘의 미션</div><div class="v">인사 크게 하기 <small>· 약속 실천</small></div></div>
+                <div class="kv"><div class="k">현재 수업</div><div class="v" id="todayPlan">수업계획 대기</div></div>
+                <div class="kv"><div class="k">오늘의 미션</div><div class="v" id="todayMission">미션 대기</div></div>
                 <div class="kv"><div class="k">이번 달 행사</div><div class="v">토요일 심사 연습 <small>· 9:30~11"30</small></div></div>
                 <div class="kv"><div class="k">D-day</div><div class="v">심사까지 D-08 <small>· 열매맺기</small></div></div>
               </div>
@@ -544,7 +545,7 @@
     </div>
   </div>
 
-  <script>
+  <script type="application/x-kmt-legacy-disabled">
     const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTndQfKXAUuJaAZTbFYFhWbNhlhFmg2tNyaaRJRRLxYGCgUawZUeytRZ-aH9nusJ1SAUHtYYozgO6a0/pub?gid=0&single=true&output=csv";
 
     const HALL_OF_FAME = [
@@ -793,5 +794,7 @@
       alert("구글시트 연동 오류: " + err.message);
     });
   </script>
+  <script src="dashboard-config.js"></script>
+  <script type="module" src="dashboard-v070.js"></script>
 </body>
 </html>

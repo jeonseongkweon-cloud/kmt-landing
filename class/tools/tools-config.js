@@ -1,1 +1,1 @@
-window.KMT_TOOLS_CONFIG=Object.freeze({version:"0.6.0",supabaseUrl:"https://ojxarsfaewehwjidwgac.supabase.co",supabasePublishableKey:"sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",allowedAdminEmail:"jeonseongkweon@gmail.com",timezone:"Asia/Seoul"});
+window.KMT_TOOLS_CONFIG=Object.freeze({version:"0.7.0",supabaseUrl:"https://ojxarsfaewehwjidwgac.supabase.co",supabasePublishableKey:"sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",allowedAdminEmail:"jeonseongkweon@gmail.com",timezone:"Asia/Seoul"});
