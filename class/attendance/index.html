@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#061321">
+  <meta name="robots" content="noindex,nofollow">
+  <title>오늘 수업 | 계명태권도 CLASS</title>
+  <link rel="icon" href="../../assets/icons/kmt_favicon_48.png">
+  <link rel="stylesheet" href="attendance.css">
+</head>
+<body>
+  <section class="login-screen" id="loginScreen">
+    <div class="login-card"><img src="../../assets/icons/192로고.png" alt="계명태권도 로고"><p>CLASS v0.4.0</p><h1>오늘 수업 시작</h1><span>승인된 Google 관리자 계정으로 로그인해 주세요.</span><button id="loginButton">Google 관리자 로그인</button><a href="../">CLASS로 돌아가기</a><em id="loginMessage"></em></div>
+  </section>
+
+  <div id="attendanceApp" hidden>
+    <header class="topbar">
+      <div class="brand"><img src="../../assets/icons/192로고.png" alt=""><div><strong>계명태권도 CLASS</strong><span>v0.4.0 · 출석 시스템</span></div></div>
+      <div class="clock"><strong id="todayLabel"></strong><span id="clockLabel"></span></div>
+      <nav><a href="../admin/">원생관리</a><a href="../">CLASS</a><button id="logoutButton">로그아웃</button></nav>
+    </header>
+
+    <main>
+      <section id="periodScreen" class="period-screen">
+        <div class="section-title"><p>TODAY CLASS</p><h1>수업부를 선택해 주세요</h1><span>수업을 시작하면 오늘 날짜의 출석판이 열립니다.</span></div>
+        <div class="period-grid" id="periodGrid"></div>
+      </section>
+
+      <section id="classScreen" hidden>
+        <div class="class-head">
+          <div><button class="back-button" id="backButton">‹ 수업부 선택</button><p id="sessionDate"></p><h1 id="sessionTitle">오늘 수업</h1></div>
+          <div class="class-actions"><button id="viewToggle">출석 학생만 보기</button><button id="trialButton">+ 체험생</button><button id="closeSessionButton">수업 종료</button></div>
+        </div>
+
+        <section class="stats" aria-label="오늘 출석현황">
+          <article><span>전체</span><strong id="statTotal">0</strong></article>
+          <article class="present"><span>출석</span><strong id="statPresent">0</strong></article>
+          <article class="late"><span>지각</span><strong id="statLate">0</strong></article>
+          <article class="absent"><span>결석</span><strong id="statAbsent">0</strong></article>
+          <article class="trial"><span>체험</span><strong id="statTrial">0</strong></article>
+          <article><span>미처리</span><strong id="statWaiting">0</strong></article>
+        </section>
+
+        <div class="notice-line"><strong id="sessionStatus">수업 준비</strong><span id="saveStatus">Supabase 자동저장</span></div>
+        <section class="student-grid" id="studentGrid"></section>
+        <div class="empty" id="emptyMessage" hidden>표시할 학생이 없습니다.</div>
+
+        <section class="trial-list" id="trialSection" hidden><h2>오늘의 체험생</h2><div id="trialList"></div></section>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="trialDialog"><form id="trialForm"><h2>체험생 출석</h2><label>이름<input id="trialName" required maxlength="30" placeholder="체험생 이름"></label><label>메모<input id="trialNote" maxlength="100" placeholder="선택사항"></label><div><button type="button" id="trialCancel">취소</button><button type="submit">체험 출석</button></div><p id="trialMessage"></p></form></dialog>
+  <div class="toast" id="toast"></div>
+  <script src="attendance-config.js"></script>
+  <script type="module" src="attendance.js"></script>
+</body>
+</html>

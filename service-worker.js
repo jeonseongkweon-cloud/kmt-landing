@@ -4,7 +4,7 @@
      2) https://...github.io/kmt-landing/ (BASE="/kmt-landing/")
 */
 
-const CACHE_NAME = "kmt-cache-v5";
+const CACHE_NAME = "kmt-cache-v6";
 
 /**
  * ✅ BASE 자동 판별
@@ -41,7 +41,12 @@ const CORE_ASSETS = [
   BASE + "class/admin/index.html",
   BASE + "class/admin/admin.css",
   BASE + "class/admin/admin-config.js",
-  BASE + "class/admin/admin.js"
+  BASE + "class/admin/admin.js",
+  BASE + "class/attendance/",
+  BASE + "class/attendance/index.html",
+  BASE + "class/attendance/attendance.css",
+  BASE + "class/attendance/attendance-config.js",
+  BASE + "class/attendance/attendance.js"
 ];
 
 /** 유틸: 요청이 HTML 문서인지 */

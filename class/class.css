@@ -83,6 +83,7 @@ a { color: inherit; }
 
 .top-actions { display: flex; gap: 9px; align-items: center; }
 .admin-link { border-color: rgba(246, 196, 81, 0.42); color: var(--gold); }
+.start-link { border-color: rgba(71, 209, 140, 0.48); color: var(--success); }
 
 .hero {
   display: grid;

@@ -8,8 +8,8 @@
   const homeLink = document.querySelector("[data-home-link]");
 
   if (appName) appName.textContent = config.appName || "계명태권도 CLASS SYSTEM";
-  if (version) version.textContent = `CLASS v${config.version || "0.3.0"}`;
-  if (stage) stage.textContent = config.stage || "WORK 3차 · 원생관리 관리자";
+  if (version) version.textContent = `CLASS v${config.version || "0.4.0"}`;
+  if (stage) stage.textContent = config.stage || "WORK 4차 · CLASS 출석 시스템";
   if (homeLink) homeLink.href = config.homeUrl || "../";
 
   document.documentElement.dataset.classReady = "true";
