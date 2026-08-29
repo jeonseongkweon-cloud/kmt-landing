@@ -1,6 +1,8 @@
-window.KMT_ADMIN_CONFIG = Object.freeze({
+window.KMT_STAR_CONFIG = Object.freeze({
   version: "0.5.0",
   supabaseUrl: "https://ojxarsfaewehwjidwgac.supabase.co",
   supabasePublishableKey: "sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",
-  allowedAdminEmail: "jeonseongkweon@gmail.com"
+  allowedAdminEmail: "jeonseongkweon@gmail.com",
+  timezone: "Asia/Seoul",
+  perfectStar: 12
 });
