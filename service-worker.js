@@ -4,7 +4,7 @@
      2) https://...github.io/kmt-landing/ (BASE="/kmt-landing/")
 */
 
-const CACHE_NAME = "kmt-cache-v10";
+const CACHE_NAME = "kmt-cache-v11";
 
 /**
  * ✅ BASE 자동 판별
