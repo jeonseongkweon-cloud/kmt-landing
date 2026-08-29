@@ -9,7 +9,7 @@
 
   if (appName) appName.textContent = config.appName || "계명태권도 CLASS SYSTEM";
   if (version) version.textContent = `CLASS v${config.version || "0.4.0"}`;
-  if (stage) stage.textContent = config.stage || "WORK 7차 · 홈페이지·LIVE BOARD·SPARK 연결";
+  if (stage) stage.textContent = config.stage || "WORK 8차 · 문자 발송대기 시스템";
   if (homeLink) homeLink.href = config.homeUrl || "../";
 
   document.documentElement.dataset.classReady = "true";

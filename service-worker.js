@@ -4,7 +4,7 @@
      2) https://...github.io/kmt-landing/ (BASE="/kmt-landing/")
 */
 
-const CACHE_NAME = "kmt-cache-v9";
+const CACHE_NAME = "kmt-cache-v10";
 
 /**
  * ✅ BASE 자동 판별
@@ -49,6 +49,11 @@ const CORE_ASSETS = [
   BASE + "class/attendance/attendance-v050.css",
   BASE + "class/attendance/attendance-config.js",
   BASE + "class/attendance/attendance.js",
+  BASE + "class/sms/",
+  BASE + "class/sms/index.html",
+  BASE + "class/sms/sms.css",
+  BASE + "class/sms/sms-config.js",
+  BASE + "class/sms/sms.js",
   BASE + "class/star/",
   BASE + "class/star/index.html",
   BASE + "class/star/star.css",

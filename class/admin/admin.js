@@ -45,7 +45,7 @@ async function validateSession(){
 async function loadData(){
   $("dataStatus").textContent="Supabase에서 불러오는 중...";
   const [studentResult, periodResult] = await Promise.all([
-    db.from("students").select(`id,student_code,name,gender,birth_date,birth_date_review_required,photo_url,student_phone,school_name,address,guardians(id,position,name,phone,is_primary),enrollments(id,class_period_id,class_label_raw,time_raw,training_days,joined_on,member_number,status,status_changed_on,monthly_fee,fee_due_day,class_periods(id,code,name)),certificates(id,discipline,rank_text,next_exam_on),student_points(id,point_type,balance)`).order("student_code"),
+    db.from("students").select(`id,student_code,name,gender,birth_date,birth_date_review_required,photo_url,student_phone,school_name,address,guardians(id,position,name,phone,is_primary,sms_enabled),enrollments(id,class_period_id,class_label_raw,time_raw,training_days,joined_on,member_number,status,status_changed_on,monthly_fee,fee_due_day,class_periods(id,code,name)),certificates(id,discipline,rank_text,next_exam_on),student_points(id,point_type,balance)`).order("student_code"),
     db.from("class_periods").select("id,code,name,start_time,end_time,sort_order").eq("is_active",true).order("sort_order")
   ]);
   if(studentResult.error){
@@ -119,6 +119,7 @@ function openStudent(s=null){
   setValue("enrollmentStatus",e.status||"재원"); setValue("classPeriod",e.class_period_id); setValue("classLabelRaw",e.class_label_raw); setValue("joinedOn",e.joined_on);
   setValue("trainingDays",(e.training_days||[]).join(",")); setValue("memberNumber",e.member_number); setValue("monthlyFee",e.monthly_fee); setValue("feeDueDay",e.fee_due_day);
   setValue("guardian1Name",g1.name); setValue("guardian1Phone",g1.phone); setValue("guardian2Name",g2.name); setValue("guardian2Phone",g2.phone);
+  $("guardian1Sms").checked=s?Boolean(g1.sms_enabled):true; $("guardian2Sms").checked=s?Boolean(g2.sms_enabled):false;
   setValue("certTkd",s?cert(s,"태권도").rank_text:""); setValue("certIpma",s?cert(s,"경호무술").rank_text:""); setValue("certTkkd",s?cert(s,"태권검도_검도").rank_text:""); setValue("growthPoints",s?points(s).balance:0);
   $("saveMessage").textContent=""; $("studentDialog").showModal();
 }
@@ -138,7 +139,7 @@ async function saveStudent(event){
     const period=state.periods.find(p=>p.id===$("classPeriod").value);
     const enrollmentPayload={student_id:studentId,class_period_id:$("classPeriod").value||null,class_label_raw:period?.name||clean($("classLabelRaw").value)||null,training_days:clean($("trainingDays").value).split(",").map(v=>v.trim()).filter(Boolean),joined_on:clean($("joinedOn").value)||null,member_number:clean($("memberNumber").value)||null,status:$("enrollmentStatus").value,status_changed_on:new Date().toISOString().slice(0,10),monthly_fee:numberOrNull($("monthlyFee").value),fee_due_day:numberOrNull($("feeDueDay").value)};
     let result=await db.from("enrollments").upsert(enrollmentPayload,{onConflict:"student_id"}); if(result.error)throw result.error;
-    const guardians=[{student_id:studentId,position:1,name:clean($("guardian1Name").value)||null,phone:clean($("guardian1Phone").value)||null,is_primary:true},{student_id:studentId,position:2,name:clean($("guardian2Name").value)||null,phone:clean($("guardian2Phone").value)||null,is_primary:false}];
+    const guardians=[{student_id:studentId,position:1,name:clean($("guardian1Name").value)||null,phone:clean($("guardian1Phone").value)||null,is_primary:true,sms_enabled:$("guardian1Sms").checked},{student_id:studentId,position:2,name:clean($("guardian2Name").value)||null,phone:clean($("guardian2Phone").value)||null,is_primary:false,sms_enabled:$("guardian2Sms").checked}];
     result=await db.from("guardians").upsert(guardians,{onConflict:"student_id,position"}); if(result.error)throw result.error;
     const certs=[['태권도','certTkd'],['경호무술','certIpma'],['태권검도_검도','certTkkd']].map(([discipline,id])=>({student_id:studentId,discipline,rank_text:clean($(id).value)||null}));
     result=await db.from("certificates").upsert(certs,{onConflict:"student_id,discipline"}); if(result.error)throw result.error;

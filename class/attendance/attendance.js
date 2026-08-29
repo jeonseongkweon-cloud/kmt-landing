@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const cfg=window.KMT_ATTENDANCE_CONFIG;
 const db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
 const $=id=>document.getElementById(id);
-const state={periods:[],students:[],session:null,records:[],period:null,attendedOnly:false};
+const state={periods:[],students:[],session:null,records:[],smsRows:[],period:null,attendedOnly:false};
 const statusText={present:"출석",late:"지각",absent:"결석",cancelled:"미처리"};
 
 function clean(v){return v==null?"":String(v).trim()}
@@ -11,6 +11,8 @@ function escapeHtml(v){return clean(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"
 function localDate(){return new Intl.DateTimeFormat("en-CA",{timeZone:cfg.timezone,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())}
 function localTime(value=new Date()){return new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(value))}
 function recordFor(id){return state.records.find(r=>r.student_id===id)}
+function smsFor(attendanceId){return state.smsRows.filter(r=>r.attendance_id===attendanceId)}
+function smsLabel(rows){if(!rows.length)return "문자 대상 없음";if(rows.some(r=>r.status==="failed"))return "문자 실패";if(rows.every(r=>r.status==="sent"))return "문자 완료";if(rows.some(r=>r.status==="sending"))return "문자 발송중";return "문자 대기"}
 function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("show"),1800)}
 function setSaving(text){$("saveStatus").textContent=text}
 
@@ -61,14 +63,14 @@ async function openPeriod(period){
 
 async function loadAttendance(){
   const {data,error}=await db.from("attendance").select("*").eq("session_id",state.session.id).order("checked_at");
-  if(error){toast(error.message);return}state.records=data||[];renderStudents();renderTrials();updateStats();
+  if(error){toast(error.message);return}state.records=data||[];const ids=state.records.map(r=>r.id);if(ids.length){const q=await db.from("sms_outbox").select("attendance_id,status").in("attendance_id",ids);state.smsRows=q.data||[]}else state.smsRows=[];renderStudents();renderTrials();updateStats();
 }
 
 function visibleStudents(){const list=studentsForPeriod(state.period);return state.attendedOnly?list.filter(s=>["present","late"].includes(recordFor(s.id)?.status)):list}
 function renderStudents(){
   const grid=$("studentGrid");grid.innerHTML="";const list=visibleStudents();$("emptyMessage").hidden=list.length>0;
   list.forEach(s=>{const r=recordFor(s.id),status=r?.status==="cancelled"?"":(r?.status||"");const card=document.createElement("article");card.className="student-card";card.dataset.status=status||"waiting";const photo=clean(s.photo_url);card.innerHTML=`<button class="student-main" data-action="present">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="">`:`<div class="photo photo-fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<strong>${escapeHtml(s.name)}</strong><span>${escapeHtml(s.student_code)}</span><span class="status-pill">${status?statusText[status]:"눌러서 출석"}${r&&status?` · ${localTime(r.checked_at)}`:""}</span></button><div class="quick-actions"><button class="p" data-action="present">출석</button><button class="l" data-action="late">지각</button><button class="a" data-action="absent">결석</button><button data-action="cancelled">취소</button></div>`;
-    card.querySelectorAll("[data-action]").forEach(btn=>btn.onclick=()=>markStudent(s,btn.dataset.action));grid.appendChild(card)});
+    if(r&&["present","late"].includes(status)){const sms=document.createElement("small");sms.className="sms-state";sms.textContent=smsLabel(smsFor(r.id));card.querySelector(".student-main").appendChild(sms)}card.querySelectorAll("[data-action]").forEach(btn=>btn.onclick=()=>markStudent(s,btn.dataset.action));grid.appendChild(card)});
 }
 
 async function markStudent(student,status){
@@ -76,7 +78,7 @@ async function markStudent(student,status){
   setSaving(`${student.name} 저장 중...`);const old=recordFor(student.id);const payload={session_id:state.session.id,student_id:student.id,attendance_date:localDate(),status,checked_at:new Date().toISOString(),points_awarded:["present","late"].includes(status)?1:0};
   let result;if(old)result=await db.from("attendance").update(payload).eq("id",old.id).select().single();else result=await db.from("attendance").insert(payload).select().single();
   if(result.error){toast(result.error.message);setSaving("저장 오류");return}
-  const i=state.records.findIndex(r=>r.id===result.data.id);if(i>=0)state.records[i]=result.data;else state.records.push(result.data);renderStudents();updateStats();setSaving("저장 완료");toast(`${student.name} · ${statusText[status]}`);setTimeout(()=>setSaving("Supabase 자동저장"),900);
+  const i=state.records.findIndex(r=>r.id===result.data.id);if(i>=0)state.records[i]=result.data;else state.records.push(result.data);await loadAttendance();setSaving("저장 완료");toast(`${student.name} · ${statusText[status]}`);setTimeout(()=>setSaving("Supabase 자동저장"),900);
 }
 
 function updateStats(){
