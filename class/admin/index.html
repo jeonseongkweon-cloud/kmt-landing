@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071425">
+  <meta name="robots" content="noindex,nofollow">
+  <title>원생관리 | 계명태권도 CLASS</title>
+  <link rel="icon" href="../../assets/icons/kmt_favicon_48.png">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <section class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <img src="../../assets/icons/192로고.png" alt="계명태권도 로고">
+      <p class="version">CLASS v0.3.0</p>
+      <h1>원생관리 관리자</h1>
+      <p>등록된 Google 관리자 계정만 원생정보에 접근할 수 있습니다.</p>
+      <button class="google-button" id="googleLogin" type="button">Google 계정으로 관리자 로그인</button>
+      <a href="../">CLASS 화면으로 돌아가기</a>
+      <p class="login-message" id="loginMessage" role="status"></p>
+    </div>
+  </section>
+
+  <div class="app" id="adminApp" hidden>
+    <header class="app-header">
+      <div class="header-brand">
+        <img src="../../assets/icons/192로고.png" alt="">
+        <div><strong>계명태권도 원생관리</strong><span>CLASS v0.3.0 · 관리자 전용</span></div>
+      </div>
+      <div class="header-actions">
+        <span class="admin-email" id="adminEmail"></span>
+        <a class="ghost-button" href="../">CLASS</a>
+        <button class="ghost-button" id="logoutButton" type="button">로그아웃</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="summary-grid" aria-label="원생 현황">
+        <article><span>전체 원생</span><strong id="totalCount">0</strong></article>
+        <article><span>재원</span><strong id="activeCount">0</strong></article>
+        <article class="warning"><span>생년월일 확인</span><strong id="birthReviewCount">0</strong></article>
+        <article class="warning"><span>수업부 미확정</span><strong id="classReviewCount">0</strong></article>
+      </section>
+
+      <section class="toolbar">
+        <label class="search-box"><span class="sr-only">검색</span><input id="searchInput" type="search" placeholder="이름 또는 KM번호 검색"></label>
+        <select id="statusFilter" aria-label="상태 필터"><option value="all">전체 상태</option><option value="재원">재원</option><option value="휴원">휴원</option><option value="퇴원">퇴원</option></select>
+        <select id="classFilter" aria-label="수업부 필터"><option value="all">전체 수업부</option></select>
+        <label class="review-toggle"><input id="reviewOnly" type="checkbox"> 확인 필요만</label>
+        <button class="primary-button" id="addStudentButton" type="button">+ 원생 추가</button>
+      </section>
+
+      <section class="content-panel">
+        <div class="list-head"><strong id="resultCount">0명</strong><span id="dataStatus">불러오는 중...</span></div>
+        <div class="student-list" id="studentList"></div>
+        <div class="empty-state" id="emptyState" hidden>조건에 맞는 원생이 없습니다.</div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="studentDialog">
+    <form method="dialog" id="studentForm">
+      <header class="dialog-header"><div><span id="dialogCode">신규</span><h2 id="dialogTitle">원생 추가</h2></div><button class="icon-button" id="closeDialog" type="button" aria-label="닫기">×</button></header>
+      <div class="form-body">
+        <input type="hidden" id="studentUuid">
+        <div class="form-section"><h3>기본정보</h3><div class="form-grid">
+          <label>KM번호<input id="studentCode" required pattern="KM[0-9]{3,}"></label>
+          <label>이름<input id="studentName" required></label>
+          <label>성별<select id="studentGender"><option value="">미입력</option><option value="남">남</option><option value="여">여</option></select></label>
+          <label>생년월일<input id="studentBirth" type="date"></label>
+          <label class="check-label"><input id="birthReview" type="checkbox"> 생년월일 확인 필요</label>
+          <label>학교명<input id="schoolName"></label>
+          <label>학생 연락처<input id="studentPhone"></label>
+          <label class="wide">주소<input id="studentAddress"></label>
+        </div></div>
+
+        <div class="form-section"><h3>수업·등록정보</h3><div class="form-grid">
+          <label>상태<select id="enrollmentStatus"><option value="재원">재원</option><option value="휴원">휴원</option><option value="퇴원">퇴원</option></select></label>
+          <label>수업부<select id="classPeriod"><option value="">미확정</option></select></label>
+          <label>원본 수업부<input id="classLabelRaw"></label>
+          <label>등록일<input id="joinedOn" type="date"></label>
+          <label>수강요일<input id="trainingDays" placeholder="월,화,수,목,금"></label>
+          <label>회원번호<input id="memberNumber"></label>
+          <label>월회비<input id="monthlyFee" type="number" min="0"></label>
+          <label>납입일<input id="feeDueDay" type="number" min="1" max="31"></label>
+        </div></div>
+
+        <div class="form-section"><h3>보호자</h3><div class="form-grid">
+          <label>보호자1 이름<input id="guardian1Name"></label><label>보호자1 연락처<input id="guardian1Phone"></label>
+          <label>보호자2 이름<input id="guardian2Name"></label><label>보호자2 연락처<input id="guardian2Phone"></label>
+        </div></div>
+
+        <div class="form-section"><h3>단증·포인트</h3><div class="form-grid">
+          <label>태권도 단증<input id="certTkd"></label><label>경호무술 단증<input id="certIpma"></label>
+          <label>태권검도·검도 단증<input id="certTkkd"></label><label>계명 성장포인트<input id="growthPoints" type="number" min="0"></label>
+        </div></div>
+      </div>
+      <footer class="dialog-footer"><span id="saveMessage" role="status"></span><button class="ghost-button" value="cancel" type="button" id="cancelEdit">취소</button><button class="primary-button" type="submit" id="saveStudent">저장</button></footer>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="admin-config.js"></script>
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

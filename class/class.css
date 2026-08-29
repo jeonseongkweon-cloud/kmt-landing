@@ -81,6 +81,9 @@ a { color: inherit; }
   text-decoration: none;
 }
 
+.top-actions { display: flex; gap: 9px; align-items: center; }
+.admin-link { border-color: rgba(246, 196, 81, 0.42); color: var(--gold); }
+
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.6fr) minmax(280px, 0.7fr);
@@ -201,6 +204,7 @@ h1 {
   .topbar { align-items: flex-start; }
   .brand img { width: 48px; height: 48px; border-radius: 13px; }
   .home-link { padding: 10px 12px; font-size: 13px; }
+  .top-actions { gap: 6px; }
   .hero { grid-template-columns: 1fr; }
   .intro { min-height: 380px; padding: 34px 26px; }
   .status { min-height: 310px; }
