@@ -17,7 +17,7 @@
 
   <div id="attendanceApp" hidden>
     <header class="topbar">
-      <div class="brand"><img src="../../assets/icons/192로고.png" alt=""><div><strong>계명태권도 CLASS</strong><span>v0.9.0 · 출석·문자대기</span></div></div>
+      <div class="brand"><img src="../../assets/icons/192로고.png" alt=""><div><strong>계명태권도 CLASS</strong><span>v0.9.1 · 쌍둥이 식별 패치</span></div></div>
       <div class="clock"><strong id="todayLabel"></strong><span id="clockLabel"></span></div>
       <nav><a href="../sms/">문자대기</a><a href="../../dashboard/">LIVE</a><a href="../tools/">수업운영</a><a href="../star/">STAR</a><a href="../admin/">원생관리</a><a href="../">CLASS</a><button id="logoutButton">로그아웃</button></nav>
     </header>
@@ -55,6 +55,6 @@
   <dialog id="trialDialog"><form id="trialForm"><h2>체험생 출석</h2><label>이름<input id="trialName" required maxlength="30" placeholder="체험생 이름"></label><label>메모<input id="trialNote" maxlength="100" placeholder="선택사항"></label><div><button type="button" id="trialCancel">취소</button><button type="submit">체험 출석</button></div><p id="trialMessage"></p></form></dialog>
   <div class="toast" id="toast"></div>
   <script src="attendance-config.js"></script>
-  <script type="module" src="attendance.js"></script>
+  <script type="module" src="attendance.js?v=091"></script>
 </body>
 </html>

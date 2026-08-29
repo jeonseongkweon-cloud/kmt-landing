@@ -15,6 +15,12 @@ function smsFor(attendanceId){return state.smsRows.filter(r=>r.attendance_id===a
 function smsLabel(rows){if(!rows.length)return "문자 대상 없음";if(rows.some(r=>r.status==="failed"))return "문자 실패";if(rows.every(r=>r.status==="sent"))return "문자 완료";if(rows.some(r=>r.status==="sending"))return "문자 발송중";return "문자 대기"}
 function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>el.classList.remove("show"),1800)}
 function setSaving(text){$("saveStatus").textContent=text}
+function phoneDigits(v){return clean(v).replace(/\D/g,"")}
+function sharedPhoneStudents(student){
+  const phones=new Set((student.guardians||[]).filter(g=>g.sms_enabled).map(g=>phoneDigits(g.phone)).filter(p=>p.length>=10));
+  if(!phones.size)return [];
+  return state.students.filter(s=>s.id!==student.id&&(s.guardians||[]).some(g=>g.sms_enabled&&phones.has(phoneDigits(g.phone))));
+}
 
 function startClock(){const tick=()=>{const d=new Date();$("todayLabel").textContent=new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,year:"numeric",month:"long",day:"numeric",weekday:"short"}).format(d);$("clockLabel").textContent=localTime(d)};tick();setInterval(tick,15000)}
 
@@ -36,7 +42,7 @@ async function boot(){
 async function loadPeriods(){
   const [pRes,sRes]=await Promise.all([
     db.from("class_periods").select("id,code,name,start_time,end_time,sort_order").eq("is_active",true).order("sort_order"),
-    db.from("students").select("id,student_code,name,photo_url,enrollments(class_period_id,class_label_raw,status)").order("student_code")
+    db.from("students").select("id,student_code,name,photo_url,guardians(phone,sms_enabled),enrollments(class_period_id,class_label_raw,status)").order("student_code")
   ]);
   if(pRes.error||sRes.error){toast(`자료 조회 실패: ${(pRes.error||sRes.error).message}`);return}
   state.periods=pRes.data||[];state.students=(sRes.data||[]).filter(s=>(s.enrollments?.[0]?.status||s.enrollments?.status)==="재원");renderPeriods();
@@ -75,6 +81,13 @@ function renderStudents(){
 
 async function markStudent(student,status){
   if(state.session.status==="closed"){toast("종료된 수업입니다. 먼저 수업을 다시 열어주세요.");return}
+  if(["present","late"].includes(status)){
+    const shared=sharedPhoneStudents(student);
+    if(shared.length){
+      const others=shared.map(s=>`${s.name}(${s.student_code})`).join(", ");
+      if(!confirm(`보호자 번호가 ${others} 학생과 같습니다.\n\n${student.name} (${student.student_code}) 학생을 ${statusText[status]} 처리할까요?`))return;
+    }
+  }
   setSaving(`${student.name} 저장 중...`);const old=recordFor(student.id);const payload={session_id:state.session.id,student_id:student.id,attendance_date:localDate(),status,checked_at:new Date().toISOString(),points_awarded:["present","late"].includes(status)?1:0};
   let result;if(old)result=await db.from("attendance").update(payload).eq("id",old.id).select().single();else result=await db.from("attendance").insert(payload).select().single();
   if(result.error){toast(result.error.message);setSaving("저장 오류");return}
