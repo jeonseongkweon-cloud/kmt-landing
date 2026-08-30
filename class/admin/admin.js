@@ -97,7 +97,7 @@ function renderList(){
     const row=document.createElement("article"); row.className="student-row"; row.tabIndex=0;
     row.innerHTML=`${photo?`<img class="avatar" src="${escapeHtml(photo)}" alt="">`:`<div class="avatar avatar-fallback">${escapeHtml(s.name.slice(0,2))}</div>`}
       <div><span class="code">${escapeHtml(s.student_code)}</span><span class="sub">${escapeHtml(s.gender||"-")} · ${escapeHtml(s.birth_date||"생년월일 미확정")}</span></div>
-      <div><span class="name">${escapeHtml(s.name)}</span><span class="sub">${escapeHtml(s.school_name||"학교 미입력")}</span></div>
+      <div><span class="name">${escapeHtml(s.name)}</span><span class="sub">${escapeHtml((e.training_days||[]).length ? e.training_days.join(",") : "요일 미등록")}</span></div>
       <div class="hide-small"><strong>${escapeHtml(p?.name || e.class_label_raw || "수업부 미확정")}</strong><span class="sub">${escapeHtml((e.training_days||[]).join(","))}</span></div>
       <div class="hide-mid"><span class="badge ${spark.id?`spark ${spark.link_status}`:''}">${spark.id?`🔥 ${spark.link_status==='verified'?'SPARK 연결':'SPARK 확인중'}`:escapeHtml(e.status||"재원")}</span></div>
       <div class="hide-mid">${review?'<span class="badge warn">확인 필요</span>':''}</div><div class="edit-mark">›</div>`;
