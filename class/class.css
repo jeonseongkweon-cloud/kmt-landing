@@ -34,10 +34,10 @@ a { color: inherit; }
 }
 
 .topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+  display: grid;
+  grid-template-columns: minmax(245px, 1fr) auto;
+  align-items: start;
+  gap: 18px;
   padding-bottom: 24px;
 }
 
@@ -81,7 +81,25 @@ a { color: inherit; }
   text-decoration: none;
 }
 
-.top-actions { display: flex; gap: 9px; align-items: center; }
+.top-actions {
+  display: grid;
+  grid-template-columns: repeat(8, max-content);
+  gap: 8px;
+  align-items: center;
+  justify-content: end;
+  max-width: 100%;
+}
+.top-actions .home-link {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  padding: 10px 13px;
+  font-size: 13px;
+}
+.mobile-menu { display: none; }
+
 .admin-link { border-color: rgba(246, 196, 81, 0.42); color: var(--gold); }
 .start-link { border-color: rgba(71, 209, 140, 0.48); color: var(--success); }
 .spark-link { border-color: rgba(255, 132, 45, 0.62); color: #ffb15d; background: rgba(255, 105, 30, 0.12); }
@@ -206,17 +224,144 @@ h1 {
 
 .notice strong { color: var(--white); }
 
+
+.mobile-menu {
+  position: relative;
+}
+.mobile-menu summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  padding: 11px 15px;
+  border: 1px solid rgba(71, 209, 140, 0.48);
+  border-radius: 13px;
+  color: var(--success);
+  background: rgba(255,255,255,.06);
+  font-weight: 950;
+}
+.mobile-menu summary::-webkit-details-marker { display: none; }
+.mobile-menu[open] summary {
+  background: rgba(71,209,140,.12);
+}
+.mega-panel {
+  position: absolute;
+  top: calc(100% + 9px);
+  right: 0;
+  z-index: 100;
+  width: min(620px, calc(100vw - 24px));
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(9, 24, 43, .98);
+  box-shadow: 0 24px 70px rgba(0,0,0,.48);
+}
+.mega-panel section + section {
+  margin-top: 13px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+}
+.mega-panel h3 {
+  margin: 0 0 8px;
+  color: var(--gold);
+  font-size: 13px;
+}
+.mega-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 7px;
+}
+.mega-links a {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(255,255,255,.045);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 850;
+}
+.mega-links a:active { transform: scale(.98); }
+
 @media (max-width: 820px) {
-  .shell { width: min(100% - 24px, 680px); padding-top: 16px; }
-  .topbar { align-items: flex-start; }
-  .brand img { width: 48px; height: 48px; border-radius: 13px; }
-  .home-link { padding: 10px 12px; font-size: 13px; }
-  .top-actions { gap: 6px; }
+  html, body { overflow-x: hidden; }
+  .shell { width: min(100% - 24px, 680px); padding-top: 14px; }
+  .topbar {
+    grid-template-columns: minmax(0,1fr) auto;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand { gap: 9px; }
+  .brand img { width: 46px; height: 46px; border-radius: 12px; }
+  .brand strong { font-size: 17px; }
+  .brand span { font-size: 10px; max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .top-actions { display: none; }
+  .mobile-menu { display: block; }
   .hero { grid-template-columns: 1fr; }
-  .intro { min-height: 380px; padding: 34px 26px; }
-  .status { min-height: 310px; }
+  .intro { min-height: 360px; padding: 30px 23px; }
+  .status { min-height: 290px; }
+  .spark-hero { width: 100%; margin-top: 14px; }
+  .mega-panel { position: fixed; top: 74px; left: 12px; right: 12px; width: auto; max-height: calc(100vh - 88px); overflow: auto; }
+}
+@media (max-width: 430px) {
+  .brand span { display: none; }
+  .mobile-menu summary { padding: 10px 12px; font-size: 12px; }
+  .mega-links { grid-template-columns: 1fr; }
+  h1 { font-size: clamp(38px, 12vw, 58px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; }
+}
+
+
+/* v2.5.1 HEADER ALIGNMENT HOTFIX */
+@media (min-width: 821px) {
+  .topbar {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    align-items: start !important;
+  }
+  .brand {
+    width: max-content;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .brand > div {
+    min-width: 0;
+    width: auto;
+  }
+  .brand strong {
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow-wrap: normal;
+    font-size: 22px;
+    line-height: 1.12;
+  }
+  .brand span {
+    max-width: none;
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow-wrap: normal;
+  }
+  .top-actions {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+    justify-content: stretch !important;
+    gap: 8px !important;
+  }
+  .top-actions .home-link {
+    min-width: 0;
+    width: 100%;
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+}
+@media (min-width: 821px) and (max-width: 1180px) {
+  .top-actions {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  }
 }

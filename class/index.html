@@ -7,13 +7,13 @@
   <meta name="description" content="계명태권도 CLASS SYSTEM 개발기반">
   <title>계명태권도 CLASS SYSTEM</title>
   <link rel="icon" href="../assets/icons/kmt_favicon_48.png">
-  <link rel="stylesheet" href="class.css">
+  <link rel="stylesheet" href="class.css?v=251">
 </head>
 <body>
 <section id="classGate" style="position:fixed;inset:0;z-index:9999;background:#071425;display:grid;place-items:center;color:white;font-family:system-ui,sans-serif">
 <div style="width:min(420px,88vw);padding:32px;border:1px solid #30415e;border-radius:22px;background:#13213a;text-align:center">
 <img src="../assets/icons/192로고.png" alt="" style="width:64px;border-radius:14px">
-<p style="color:#e7c65a">CLASS v1.8.1</p><h1>계명태권도 CLASS</h1>
+<p style="color:#e7c65a">CLASS v2.5.0</p><h1>계명태권도 CLASS</h1>
 <p id="gateMessage">전성권 관장 계정은 처음 한 번만 확인합니다.</p>
 <button id="gateLogin" style="width:100%;padding:14px;border:0;border-radius:12px;font-weight:800;cursor:pointer">Google 관장 확인</button>
 </div></section>
@@ -23,10 +23,10 @@
         <img src="../assets/icons/192로고.png" alt="계명태권도 로고">
         <div>
           <strong data-app-name>계명태권도 CLASS SYSTEM</strong>
-          <span data-stage>NEXT-03 · 계명아 VOICE COMMAND SYSTEM</span>
+          <span data-stage>CLASS v2.5 · RESPONSIVE MEGA MENU</span>
         </div>
       </div>
-      <div class="top-actions">
+      <div class="top-actions" aria-label="CLASS 주요 메뉴">
         <a class="home-link spark-link" href="spark/">🔥 SPARK</a>
         <a class="home-link start-link" href="growth/">🚀 성장센터</a>
         <a class="home-link start-link" href="live/">📺 CLASS LIVE</a>
@@ -43,11 +43,47 @@
         <a class="home-link admin-link" href="staff/">지도자관리</a>
         <a class="home-link" data-home-link href="../">홈페이지로</a>
       </div>
+
+      <details class="mobile-menu">
+        <summary>☰ CLASS 메뉴</summary>
+        <div class="mega-panel">
+          <section>
+            <h3>🥋 수업</h3>
+            <div class="mega-links">
+              <a href="voice/">🎙 계명아</a>
+              <a href="attendance/">✅ 출석</a>
+              <a href="star/">⭐ STAR</a>
+              <a href="tools/">🧰 수업운영</a>
+              <a href="game/">🎮 게임센터</a>
+              <a href="ceremony/">🏆 시상식·도구</a>
+            </div>
+          </section>
+          <section>
+            <h3>🚀 성장 · LIVE</h3>
+            <div class="mega-links">
+              <a href="spark/">🔥 SPARK</a>
+              <a href="growth/">🚀 성장센터</a>
+              <a href="live/">📺 CLASS LIVE</a>
+              <a href="../dashboard/">📊 LIVE BOARD</a>
+              <a href="report/">💌 성장리포트</a>
+            </div>
+          </section>
+          <section>
+            <h3>⚙️ 관리</h3>
+            <div class="mega-links">
+              <a href="sms/">💬 문자대기</a>
+              <a href="admin/">👥 원생관리</a>
+              <a href="staff/">🥋 지도자관리</a>
+              <a href="../">🏠 홈페이지</a>
+            </div>
+          </section>
+        </div>
+      </details>
     </header>
 
     <section class="hero" aria-labelledby="class-title">
       <article class="panel intro">
-        <p class="eyebrow" data-version>CLASS v1.8.1</p>
+        <p class="eyebrow" data-version>CLASS v2.5.0</p>
         <h1 id="class-title">수업을 더 편하게,<br>성장을 더 즐겁게.</h1>
         <p>출석·STAR·수업운영을 그대로 유지하면서 GLOBAL SPARK로 바로 이동할 수 있습니다.</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="spark-hero" href="spark/"><span>🔥</span><strong>GLOBAL SPARK</strong><small>SPARK 바로가기 →</small></a><a class="spark-hero" href="growth/"><span>🚀</span><strong>성장센터</strong><small>LEVEL · XP · D-DAY →</small></a></div>
@@ -66,11 +102,11 @@
       </aside>
     </section>
 
-    <p class="notice"><strong>현재 버전: CLASS v1.8.1</strong> · NEXT-03 “계명아” 음성리모컨으로 출석·STAR·MVP·수업 시작/종료를 빠르게 처리하고, 중요 명령은 재확인합니다.</p>
+    <p class="notice"><strong>현재 버전: CLASS v2.5.0</strong> · NEXT-03 “계명아” 음성리모컨으로 출석·STAR·MVP·수업 시작/종료를 빠르게 처리하고, 중요 명령은 재확인합니다.</p>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=181"></script>
-  <script src="class.js?v=181"></script>
+<script src="config.js?v=250"></script>
+  <script src="class.js?v=250"></script>
 </body>
 </html>
