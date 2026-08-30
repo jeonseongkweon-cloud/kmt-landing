@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
+const SINGLE_OWNER_EMAIL="class-admin@ipma.kr";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_ATTENDANCE_CONFIG;

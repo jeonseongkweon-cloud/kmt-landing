@@ -1,6 +1,6 @@
 import{createClient}from"https://esm.sh/@supabase/supabase-js@2";const cfg=window.KMT_SPARK_TOGETHER_CONFIG,db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}}),$=id=>document.getElementById(id),state={students:[],selected:null};
 
-const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
+const SINGLE_OWNER_EMAIL="class-admin@ipma.kr";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 const labels={exercise:"운동하기",challenge:"새로운 도전",learning:"학습하기",habit:"좋은 생활습관",service:"봉사하기",public_good:"공익활동",greeting:"부모님께 먼저 인사",organizing:"신발·물건 정리",housework:"집안일 돕기",massage:"부모님 안마",gratitude:"감사 표현",help_first:"말씀 전 먼저 돕기",family_exercise:"가족과 운동",praise_friend:"친구 칭찬",approach_friend:"혼자 있는 친구에게 말 걸기",help_friend:"친구 돕기",friend_exercise:"친구와 운동",joint_mission:"친구와 공동미션",friend_service:"친구와 봉사",spark_intro:"친구에게 SPARK 소개",spark_together:"친구와 SPARK 함께하기"};
 const options={personal:["exercise","challenge","learning","habit","service","public_good"],family:["greeting","organizing","housework","massage","gratitude","help_first","family_exercise"],friend:["praise_friend","approach_friend","help_friend","friend_exercise","joint_mission","friend_service","spark_intro","spark_together"]};

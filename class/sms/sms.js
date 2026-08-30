@@ -1,6 +1,6 @@
 import{createClient}from"https://esm.sh/@supabase/supabase-js@2";const cfg=window.KMT_SMS_CONFIG,db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}}),$=id=>document.getElementById(id),state={rows:[],settings:null,channel:null};
 
-const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
+const SINGLE_OWNER_EMAIL="class-admin@ipma.kr";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 const clean=v=>v==null?"":String(v).trim(),esc=v=>clean(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c])),labels={pending:"대기",sending:"발송중",sent:"완료",failed:"실패",cancelled:"취소"};function toast(m){$("toast").textContent=m;$("toast").classList.add("show");clearTimeout(window.__smsToast);window.__smsToast=setTimeout(()=>$("toast").classList.remove("show"),1800)}function fmt(v){return new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}).format(new Date(v))}function mask(v){const n=clean(v);return n.length>7?`${n.slice(0,3)}-****-${n.slice(-4)}`:"번호 확인"}
 async function login(){location.replace("../");}async function boot(){const{data:{session}}=await db.auth.getSession();if(!session){location.replace("../");return}$("loginScreen").hidden=true;$("app").hidden=false;await load();subscribe()}

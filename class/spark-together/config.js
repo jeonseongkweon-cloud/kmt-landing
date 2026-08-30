@@ -1,1 +1,1 @@
-window.KMT_SPARK_TOGETHER_CONFIG=Object.freeze({version:"1.3.0",supabaseUrl:"https://ojxarsfaewehwjidwgac.supabase.co",supabasePublishableKey:"sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",allowedAdminEmail:"jeonseongkweon@gmail.com"});
+window.KMT_SPARK_TOGETHER_CONFIG=Object.freeze({version:"1.3.0",supabaseUrl:"https://ojxarsfaewehwjidwgac.supabase.co",supabasePublishableKey:"sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",allowedAdminEmail:"class-admin@ipma.kr"});
