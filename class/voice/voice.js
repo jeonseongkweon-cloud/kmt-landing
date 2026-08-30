@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="191";
+const VOICE_BUILD="192";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -215,6 +215,60 @@ async function logCommand({transcript,normalized,commandType,payload,status,resu
 async function loadHistory(){const{data}=await db.from("kmt_voice_command_log").select("created_at,command_type,transcript,status,result_text").order("created_at",{ascending:false}).limit(12);if(data){state.history=data;renderHistory()}}
 function renderHistory(){$("historyList").innerHTML=state.history.length?state.history.map(h=>`<div class="history-item"><small>${new Date(h.created_at).toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"})}</small><div><strong>${esc(h.transcript)}</strong><small>${esc(h.result_text||"")}</small></div><span>${h.status==="executed"?"✅":h.status==="cancelled"?"↩️":"⚠️"}</span></div>`).join(""):'<div class="empty">아직 실행한 명령이 없습니다.</div>'}
 
+
+function playWelcomeLight(studentName){
+  // 출석 DB 저장과 완전히 분리된 수업용 WELCOME LIGHT.
+  try{
+    const old=document.getElementById("welcomeLightEffect");
+    if(old)old.remove();
+
+    const layer=document.createElement("div");
+    layer.id="welcomeLightEffect";
+    layer.className="welcome-light-effect";
+    layer.innerHTML=`
+      <div class="welcome-light-rays"></div>
+      <div class="welcome-light-ring"></div>
+      <div class="welcome-light-main">
+        <div class="welcome-light-icon">✓</div>
+        <div class="welcome-light-name">${esc(studentName)}</div>
+        <div class="welcome-light-title">WELCOME!</div>
+        <div class="welcome-light-sub">오늘도 멋지게 시작!</div>
+      </div>
+    `;
+    document.body.appendChild(layer);
+
+    // 밝고 짧은 입장 차임. 외부 음원 없음.
+    try{
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      if(AudioCtx){
+        const ctx=window.__kmtWelcomeAudioCtx||(window.__kmtWelcomeAudioCtx=new AudioCtx());
+        if(ctx.state==="suspended")ctx.resume().catch(()=>{});
+        const now=ctx.currentTime;
+        [523.25,659.25,783.99,1046.50].forEach((freq,index)=>{
+          const osc=ctx.createOscillator();
+          const gain=ctx.createGain();
+          osc.type=index===3?"triangle":"sine";
+          osc.frequency.setValueAtTime(freq,now+index*0.055);
+          gain.gain.setValueAtTime(0.0001,now+index*0.055);
+          gain.gain.exponentialRampToValueAtTime(index===3?0.10:0.075,now+index*0.055+0.012);
+          gain.gain.exponentialRampToValueAtTime(0.0001,now+index*0.055+0.30);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now+index*0.055);
+          osc.stop(now+index*0.055+0.32);
+        });
+      }
+    }catch(soundError){
+      console.warn("[WELCOME LIGHT sound]",soundError);
+    }
+
+    window.setTimeout(()=>layer.classList.add("welcome-light-effect-out"),1450);
+    window.setTimeout(()=>layer.remove(),2000);
+  }catch(effectError){
+    console.warn("[WELCOME LIGHT]",effectError);
+  }
+}
+
 async function saveAttendance(student,status,period){
   if(!await hasPermission("attendance"))throw new Error("출석 처리 권한이 없습니다.");const session=await getSession(period,{create:true,open:true});
   const{data:old,error:e1}=await db.from("attendance").select("id").eq("session_id",session.id).eq("student_id",student.id).maybeSingle();if(e1)throw e1;
@@ -345,7 +399,8 @@ async function runCommand(raw,{confidence=1,source="text"}={}){
     }
 
     const status=/지각/.test(normalized)?"late":/결석/.test(normalized)?"absent":/출석/.test(normalized)?"present":null;
-    if(status){const student=await resolveStudent(normalized,period);if(!student)throw new Error("출석 처리할 학생을 확인할 수 없습니다.");await saveAttendance(student,status,period);const label={present:"출석",late:"지각",absent:"결석"}[status],msg=`${student.name} ${label} 완료`;result("ok",msg,`${period?.name||"현재 수업"}에 저장했습니다.`);say(msg);await logCommand({transcript:raw,normalized,commandType:"attendance",payload:{student_id:student.id,status,period_id:period?.id},status:"executed",resultText:msg,confidence,source});await syncSessionInfo();return}
+    if(status){const student=await resolveStudent(normalized,period);if(!student)throw new Error("출석 처리할 학생을 확인할 수 없습니다.");await saveAttendance(student,status,period);
+      playWelcomeLight(student.name);const label={present:"출석",late:"지각",absent:"결석"}[status],msg=`${student.name} ${label} 완료`;result("ok",msg,`${period?.name||"현재 수업"}에 저장했습니다.`);say(msg);await logCommand({transcript:raw,normalized,commandType:"attendance",payload:{student_id:student.id,status,period_id:period?.id},status:"executed",resultText:msg,confidence,source});await syncSessionInfo();return}
 
     result("warn","아직 이해하지 못한 명령입니다.","‘명령 예시’를 눌러 사용할 수 있는 말을 확인해 주세요.");await logCommand({transcript:raw,normalized,commandType:"unknown",status:"rejected",resultText:"지원하지 않는 명령",confidence,source});
   }catch(e){const msg=e?.message||String(e);result("error","명령을 실행하지 못했습니다.",msg);toast(msg);await logCommand({transcript:raw,normalized,commandType:"error",status:"failed",resultText:msg,confidence,source})}
