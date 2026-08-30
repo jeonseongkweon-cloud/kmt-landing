@@ -72,18 +72,18 @@ function normalize(t){
 
   // 수업 시작/종료 자연어
   x=x.replace(/^(?:이제\s*)?(수업\s*)?(시작하자|시작해|시작할게|시작합니다)$/,"수업 시작");
-  x=x.replace(/^([1-5]부)\s*(시작하자|시작해|시작할게|시작합니다)$/,"$1 수업 시작");
+  x=x.replace(/^([1-4]부)\s*(시작하자|시작해|시작할게|시작합니다)$/,"$1 수업 시작");
   x=x.replace(/^(?:이제\s*)?(수업\s*)?(끝내자|끝내|끝이야|마치자|마쳐|마칩니다|종료하자)$/,"수업 종료");
   x=x.replace(/^(오늘\s*)?(여기까지|이제 그만|그만하자)$/,"수업 종료");
-  x=x.replace(/^([1-5]부)\s*(끝내자|끝내|마치자|마쳐|종료하자)$/,"$1 수업 종료");
+  x=x.replace(/^([1-4]부)\s*(끝내자|끝내|마치자|마쳐|종료하자)$/,"$1 수업 종료");
 
   x=x.replace(/^(.+?)\s*(늦었어|늦었어요|지각했어|지각했어요)$/,"$1 지각");
   x=x.replace(/^(.+?)\s*(안와|안 와|안왔어|안 왔어|결석이야)$/,"$1 결석");
   x=x.replace(/^(.+?)\s*(별\s*하나|별\s*한개|별\s*한 개|별\s*1개|별\s*줘|별\s*주세요|별\s*추가)$/,"$1 별");
-  const bu={"일":"1","이":"2","삼":"3","사":"4","오":"5"};
-  x=x.replace(/^([일이삼사오])\s*부\b/,(_,n)=>bu[n]+"부");
-  x=x.replace(/^([1-5])부\s*(모두|전부|전체|다)\s*출석$/,"$1부 전원 출석");
-  x=x.replace(/^([1-5])부\s*아이들\s*(모두|전부|전체|다)\s*출석$/,"$1부 전원 출석");
+  const bu={"일":"1","이":"2","삼":"3","사":"4"};
+  x=x.replace(/^([일이삼사])\s*부\b/,(_,n)=>bu[n]+"부");
+  x=x.replace(/^([1-4])부\s*(모두|전부|전체|다)\s*출석$/,"$1부 전원 출석");
+  x=x.replace(/^([1-4])부\s*아이들\s*(모두|전부|전체|다)\s*출석$/,"$1부 전원 출석");
   // 끝에 붙는 짧은 조사/말버릇은 정규 명령 뒤에서만 제거
   x=x.replace(/(출석|지각|결석|별)\s*(이야|이요|요|해|해줘|해주세요)$/,"$1");
   return x.trim();
@@ -158,7 +158,14 @@ function setupRecognition(){
   $("speechSupport").textContent="한국어 음성인식 준비 완료";
 }
 
-function findPeriod(text){const t=text.replace(/\s/g,"");return state.periods.find(p=>t.includes(clean(p.name).replace(/\s/g,""))||t.includes(clean(p.code).replace(/\s/g,"")))||state.period}
+function findPeriod(text){
+  const t=text.replace(/\s/g,"");
+  const found=state.periods.find(p=>t.includes(clean(p.name).replace(/\s/g,""))||t.includes(clean(p.code).replace(/\s/g,"")));
+  if(found)return found;
+  // 사용자가 특정 "N부"를 명시했는데 DB에 없으면 현재 수업부로 잘못 실행하지 않는다.
+  if(/[1-9]부/.test(t))return null;
+  return state.period;
+}
 
 function extractStudentTextForAction(text){
   let x=normalize(text);

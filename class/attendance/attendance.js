@@ -50,7 +50,7 @@ async function loadPeriods(){
 
 function enrollment(s){return Array.isArray(s.enrollments)?(s.enrollments[0]||{}):(s.enrollments||{})}
 function studentsForPeriod(period){
-  if(period.code==="OTHER")return state.students.filter(s=>!enrollment(s).class_period_id);
+  if(period.code==="OTHER")return state.students.filter(s=>enrollment(s).class_period_id===period.id);
   return state.students.filter(s=>enrollment(s).class_period_id===period.id);
 }
 function renderPeriods(){
