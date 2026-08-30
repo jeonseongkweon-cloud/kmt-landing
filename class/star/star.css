@@ -52,3 +52,46 @@
 @keyframes leaderPop{0%{opacity:0;transform:scale(.72)}70%{transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
 @media(max-width:1000px){.info-board{grid-template-columns:1fr 1fr}.personal-panel{grid-column:span 2}}
 @media(max-width:760px){.voice-feedback{display:grid;gap:4px}.voice-feedback span,.voice-feedback strong{white-space:normal}.info-board{grid-template-columns:1fr}.personal-panel{grid-column:auto}}
+
+/* v2.9.0 STAR VISUAL-ONLY PATCH — classroom vitality / champion aura / director badge */
+#starScreen{position:relative;isolation:isolate}
+#starScreen::before,#starScreen::after{content:"✦";position:fixed;z-index:-1;color:rgba(255,229,135,.16);font-size:18px;pointer-events:none;animation:ambientSpark 14s ease-in-out infinite}
+#starScreen::before{left:7vw;top:24vh;box-shadow:18vw 9vh 0 rgba(111,198,255,.10),42vw 55vh 0 rgba(255,229,135,.10),76vw 18vh 0 rgba(255,255,255,.08)}
+#starScreen::after{right:10vw;bottom:16vh;animation-delay:-7s;box-shadow:-20vw -7vh 0 rgba(255,229,135,.09),-56vw -22vh 0 rgba(111,198,255,.08)}
+
+.student.current-leader{overflow:visible;border-color:rgba(255,220,99,.95);box-shadow:0 0 0 2px rgba(246,196,81,.20),0 0 32px rgba(246,196,81,.30),inset 0 0 24px rgba(246,196,81,.05);animation:championAura 3.4s ease-in-out infinite}
+.student.current-leader::before{content:"";position:absolute;inset:-2px;border-radius:23px;padding:2px;background:linear-gradient(110deg,transparent 12%,rgba(255,246,193,.78) 38%,transparent 56%);background-size:240% 100%;pointer-events:none;opacity:.65;animation:championBorderSweep 4.2s linear infinite;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor}
+.student.current-leader::after{content:"✦";position:absolute;right:11px;top:43px;color:#fff1a8;text-shadow:-54px 18px 8px rgba(255,241,168,.55),-22px 92px 7px rgba(255,241,168,.38);animation:leaderTwinkle 3.8s ease-in-out infinite;pointer-events:none}
+.leader-badge{animation:crownBreathe 3.2s ease-in-out infinite}
+.student.leader-changed{animation:leaderChanged 1.35s cubic-bezier(.2,.8,.2,1),championAura 3.4s 1.35s ease-in-out infinite}
+
+.mission-panel{position:relative;overflow:hidden;box-shadow:inset 0 0 24px rgba(66,214,139,.025);animation:missionPulse 4.6s ease-in-out infinite}
+.mission-panel::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 25%,rgba(160,255,207,.08) 45%,transparent 62%);transform:translateX(-120%);animation:missionSheen 7s ease-in-out infinite}
+.mission-panel .info-head strong{animation:missionTitle 3.8s ease-in-out infinite}
+.mission-panel .info-head strong::first-letter{transform-origin:center}
+.mission-panel .info-line:last-child{color:#d9ffe9;text-shadow:0 0 12px rgba(66,214,139,.22)}
+
+.rotating-info{position:relative;min-height:46px;display:block;overflow:hidden}
+.rotating-info .info-line{position:absolute;inset:8px 0 auto 0;opacity:0;transform:translateY(10px);transition:opacity .65s ease,transform .65s ease;pointer-events:none}
+.rotating-info .info-line.is-visible{opacity:1;transform:translateY(0);pointer-events:auto}
+.notice-panel,.personal-panel{transition:box-shadow .7s ease,border-color .7s ease}
+.notice-panel:hover,.personal-panel:hover{box-shadow:0 0 22px rgba(255,255,255,.05)}
+
+.director-made{position:relative;display:flex;align-items:center;justify-content:center;gap:11px;width:min(780px,92%);margin:15px auto 4px;padding:10px 18px;border:1px solid rgba(246,196,81,.25);border-radius:16px;background:linear-gradient(90deg,rgba(9,27,48,.70),rgba(30,35,42,.78),rgba(9,27,48,.70));text-align:center;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.16)}
+.director-made::after{content:"";position:absolute;inset:-40% auto -40% -35%;width:24%;transform:skewX(-18deg);background:linear-gradient(90deg,transparent,rgba(255,244,190,.16),transparent);animation:directorSheen 13s ease-in-out infinite;pointer-events:none}
+.director-made div:not(.director-spark){display:grid;gap:2px}.director-made strong{font-size:15px;color:#ffe69a;text-shadow:0 0 13px rgba(246,196,81,.18);animation:directorGlow 13s ease-in-out infinite}.director-made span{font-size:12px;font-weight:900;color:#f5f8fc}.director-made small{font-size:11px;color:#9fb5ca}.director-spark{font-size:20px;animation:directorSpark 13s ease-in-out infinite}
+
+@keyframes ambientSpark{0%,100%{opacity:.18;transform:translate3d(0,0,0) scale(.9)}45%{opacity:.55;transform:translate3d(10px,-13px,0) scale(1.08)}70%{opacity:.25;transform:translate3d(-5px,-22px,0) scale(.95)}}
+@keyframes championAura{0%,100%{box-shadow:0 0 0 2px rgba(246,196,81,.15),0 0 23px rgba(246,196,81,.20),inset 0 0 18px rgba(246,196,81,.03)}50%{box-shadow:0 0 0 2px rgba(255,224,116,.30),0 0 43px rgba(246,196,81,.40),inset 0 0 28px rgba(246,196,81,.08)}}
+@keyframes championBorderSweep{0%{background-position:210% 0}100%{background-position:-120% 0}}
+@keyframes leaderTwinkle{0%,22%,100%{opacity:.18;transform:scale(.75) rotate(0)}35%{opacity:.9;transform:scale(1.15) rotate(18deg)}48%{opacity:.28;transform:scale(.85) rotate(30deg)}}
+@keyframes crownBreathe{0%,100%{transform:translateY(0);box-shadow:0 4px 18px rgba(0,0,0,.3)}50%{transform:translateY(-2px);box-shadow:0 4px 22px rgba(246,196,81,.25)}}
+@keyframes missionPulse{0%,100%{border-color:rgba(66,214,139,.22)}50%{border-color:rgba(105,239,167,.38);box-shadow:inset 0 0 24px rgba(66,214,139,.045),0 0 18px rgba(66,214,139,.045)}}
+@keyframes missionSheen{0%,68%{transform:translateX(-120%)}82%,100%{transform:translateX(150%)}}
+@keyframes missionTitle{0%,100%{text-shadow:none}50%{text-shadow:0 0 13px rgba(66,214,139,.30)}}
+@keyframes directorSheen{0%,72%{left:-35%}88%,100%{left:125%}}
+@keyframes directorGlow{0%,72%,100%{text-shadow:0 0 10px rgba(246,196,81,.12)}82%{text-shadow:0 0 19px rgba(246,196,81,.45)}}
+@keyframes directorSpark{0%,72%,100%{opacity:.45;transform:scale(.8) rotate(0)}82%{opacity:1;transform:scale(1.18) rotate(20deg)}}
+
+@media(prefers-reduced-motion:reduce){#starScreen::before,#starScreen::after,.student.current-leader,.student.current-leader::before,.student.current-leader::after,.leader-badge,.mission-panel,.mission-panel::after,.mission-panel .info-head strong,.director-made::after,.director-made strong,.director-spark{animation:none!important}.rotating-info .info-line{transition:none}}
+@media(max-width:760px){.director-made{width:100%;padding:9px 10px}.director-made strong{font-size:13px}.director-made small{font-size:10px}}
