@@ -6,7 +6,8 @@ const db = createClient(cfg.supabaseUrl, cfg.supabasePublishableKey, {
 });
 
 const $ = (id) => document.getElementById(id);
-const state = { students: [], periods: [], filtered: [], editing: null };
+const state = { students: [], periods: [], filtered: [], editing: null, photoFile: null, photoPreviewUrl: "", photoDelete: false };
+const PHOTO_BUCKET = "kmt-student-photos";
 const loginScreen = $("loginScreen");
 const adminApp = $("adminApp");
 
@@ -21,6 +22,50 @@ function cert(s,type){ return (s.certificates || []).find(c=>c.discipline===type
 function points(s){ return first(s.student_points) || {}; }
 function sparkLink(s){ return first(s.spark_member_links) || {}; }
 function isClassReview(s){ const e=enrollment(s); return !e.class_period_id || clean(e.class_label_raw)==="30"; }
+function revokePhotoPreview(){ if(state.photoPreviewUrl){ URL.revokeObjectURL(state.photoPreviewUrl); state.photoPreviewUrl=""; } }
+function setPhotoPreview(url,name=""){
+  const img=$("studentPhotoPreview"),fallback=$("studentPhotoFallback");
+  if(url){ img.src=url; img.hidden=false; fallback.hidden=true; }
+  else{ img.removeAttribute("src"); img.hidden=true; fallback.hidden=false; fallback.textContent=clean(name).slice(0,2)||"사진"; }
+}
+function resetPhotoEditor(s){
+  revokePhotoPreview(); state.photoFile=null; state.photoDelete=false; $("studentPhotoInput").value="";
+  const has=Boolean(clean(s?.photo_url)); setPhotoPreview(has?s.photo_url:"",s?.name);
+  $("studentPhotoStatus").textContent=has?"현재 등록된 사진":"사진 미등록";
+  $("chooseStudentPhoto").textContent=has?"사진 변경":"사진 등록";
+  $("deleteStudentPhoto").hidden=!has;
+}
+async function optimizeStudentPhoto(file){
+  if(!file || !["image/jpeg","image/png","image/webp"].includes(file.type)) throw new Error("JPG, JPEG, PNG, WEBP 사진만 등록할 수 있습니다.");
+  if(file.size>20*1024*1024) throw new Error("사진 원본은 20MB 이하만 선택해 주세요.");
+  const bitmap=await createImageBitmap(file),side=Math.min(bitmap.width,bitmap.height);
+  const sx=(bitmap.width-side)/2,sy=(bitmap.height-side)/2,size=Math.min(800,side);
+  const canvas=document.createElement("canvas"); canvas.width=size; canvas.height=size;
+  canvas.getContext("2d").drawImage(bitmap,sx,sy,side,side,0,0,size,size); bitmap.close?.();
+  const blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error("사진 최적화에 실패했습니다.")),"image/webp",.82));
+  return blob;
+}
+function storagePathFromPhotoUrl(url){
+  const marker=`/storage/v1/object/public/${PHOTO_BUCKET}/`;
+  const i=clean(url).indexOf(marker); return i<0?"":decodeURIComponent(clean(url).slice(i+marker.length).split("?")[0]);
+}
+async function uploadPendingPhoto(studentId,studentCode){
+  if(!state.photoFile)return null;
+  const blob=await optimizeStudentPhoto(state.photoFile);
+  const safeCode=clean(studentCode).toUpperCase().replace(/[^A-Z0-9_-]/g,"")||studentId;
+  const path=`${safeCode}/${Date.now()}.webp`;
+  const {error}=await db.storage.from(PHOTO_BUCKET).upload(path,blob,{contentType:"image/webp",upsert:false,cacheControl:"3600"});
+  if(error)throw new Error(`사진 업로드 실패: ${error.message}`);
+  const {data}=db.storage.from(PHOTO_BUCKET).getPublicUrl(path);
+  if(!data?.publicUrl){ await db.storage.from(PHOTO_BUCKET).remove([path]); throw new Error("사진 URL 생성에 실패했습니다."); }
+  return {url:data.publicUrl,path};
+}
+async function removeManagedPhoto(url){
+  const path=storagePathFromPhotoUrl(url); if(!path)return;
+  const {error}=await db.storage.from(PHOTO_BUCKET).remove([path]);
+  if(error)console.warn("기존 사진 Storage 정리 실패:",error.message);
+}
+
 
 async function signIn(){
   $("loginMessage").textContent="Google 로그인 화면을 여는 중입니다...";
@@ -124,7 +169,7 @@ function openStudent(s=null){
   setValue("sparkUserId",spark.spark_user_id);setValue("sparkDisplayName",spark.spark_display_name);setValue("sparkLinkStatus",spark.link_status||"pending");setValue("sparkConfirmCode","");
   $("sparkLinkMessage").textContent=spark.id?`연결됨 · ${spark.spark_user_id}`:"아직 연결되지 않음";
   $("saveSparkLink").disabled=!s;$("unlinkSpark").hidden=!spark.id;
-  $("saveMessage").textContent=""; $("studentDialog").showModal();
+  resetPhotoEditor(s); $("saveMessage").textContent=""; $("studentDialog").showModal();
 }
 
 async function saveSparkLink(){
@@ -150,11 +195,26 @@ function nextStudentCode(){
   return `KM${String(max+1).padStart(3,"0")}`;
 }
 
+
+$("chooseStudentPhoto").addEventListener("click",()=>$("studentPhotoInput").click());
+$("studentPhotoInput").addEventListener("change",()=>{
+  const file=$("studentPhotoInput").files?.[0]; if(!file)return;
+  if(!["image/jpeg","image/png","image/webp"].includes(file.type)){ $("studentPhotoInput").value=""; return toast("JPG, JPEG, PNG, WEBP 사진만 선택해 주세요."); }
+  revokePhotoPreview(); state.photoFile=file; state.photoDelete=false; state.photoPreviewUrl=URL.createObjectURL(file);
+  setPhotoPreview(state.photoPreviewUrl,clean($("studentName").value)); $("studentPhotoStatus").textContent="새 사진 미리보기 · 저장 전"; $("chooseStudentPhoto").textContent="사진 다시 선택"; $("deleteStudentPhoto").hidden=false;
+});
+$("deleteStudentPhoto").addEventListener("click",()=>{
+  if(!confirm("이 학생의 사진을 삭제하시겠습니까?"))return;
+  revokePhotoPreview(); state.photoFile=null; state.photoDelete=true; $("studentPhotoInput").value="";
+  setPhotoPreview("",clean($("studentName").value)); $("studentPhotoStatus").textContent="사진 삭제 예정 · 저장 전"; $("chooseStudentPhoto").textContent="사진 등록"; $("deleteStudentPhoto").hidden=true;
+});
+
 async function saveStudent(event){
   event.preventDefault(); $("saveStudent").disabled=true; $("saveMessage").textContent="저장 중...";
+  let uploaded=null, oldPhoto=clean(state.editing?.photo_url), studentId=clean($("studentUuid").value);
   try{
     const studentPayload={ student_code:clean($("studentCode").value).toUpperCase(), name:clean($("studentName").value), gender:clean($("studentGender").value)||null, birth_date:clean($("studentBirth").value)||null, birth_date_review_required:$("birthReview").checked, school_name:clean($("schoolName").value)||null, student_phone:clean($("studentPhone").value)||null, address:clean($("studentAddress").value)||null };
-    let studentId=clean($("studentUuid").value);
+    // 신규 학생은 UUID를 먼저 만든 뒤 사진 경로에 사용한다. 기존 사진은 이 시점에 절대 삭제하지 않는다.
     if(studentId){ const {error}=await db.from("students").update(studentPayload).eq("id",studentId); if(error)throw error; }
     else{ const {data,error}=await db.from("students").insert(studentPayload).select("id").single(); if(error)throw error; studentId=data.id; }
     const period=state.periods.find(p=>p.id===$("classPeriod").value);
@@ -165,19 +225,39 @@ async function saveStudent(event){
     const certs=[['태권도','certTkd'],['경호무술','certIpma'],['태권검도_검도','certTkkd']].map(([discipline,id])=>({student_id:studentId,discipline,rank_text:clean($(id).value)||null}));
     result=await db.from("certificates").upsert(certs,{onConflict:"student_id,discipline"}); if(result.error)throw result.error;
     result=await db.from("student_points").upsert({student_id:studentId,point_type:"growth",balance:numberOrNull($("growthPoints").value)||0},{onConflict:"student_id,point_type"}); if(result.error)throw result.error;
-    $("studentDialog").close(); toast("원생정보를 저장했습니다."); await loadData();
-  }catch(error){ $("saveMessage").textContent=error.message || "저장하지 못했습니다."; }
-  finally{ $("saveStudent").disabled=false; }
+
+    // 사진은 기본정보 저장이 성공한 뒤 처리한다. 새 파일 업로드 성공 후에만 photo_url을 변경한다.
+    let finalPhoto=oldPhoto;
+    if(state.photoFile){
+      $("saveMessage").textContent="기본정보 저장 완료 · 사진 업로드 중...";
+      uploaded=await uploadPendingPhoto(studentId,studentPayload.student_code);
+      const {error}=await db.from("students").update({photo_url:uploaded.url}).eq("id",studentId);
+      if(error){ await db.storage.from(PHOTO_BUCKET).remove([uploaded.path]); throw new Error(`사진 URL 저장 실패: ${error.message}`); }
+      finalPhoto=uploaded.url;
+      if(oldPhoto && oldPhoto!==finalPhoto)await removeManagedPhoto(oldPhoto);
+    }else if(state.photoDelete && oldPhoto){
+      const {error}=await db.from("students").update({photo_url:null}).eq("id",studentId);
+      if(error)throw new Error(`사진 삭제 반영 실패: ${error.message}`);
+      finalPhoto=""; await removeManagedPhoto(oldPhoto);
+    }
+    revokePhotoPreview(); $("studentDialog").close();
+    toast(state.photoFile?"원생정보와 사진을 저장했습니다.":state.photoDelete?"원생정보 저장 및 사진 삭제 완료":"원생정보를 저장했습니다.");
+    await loadData(); // 목록 사진 즉시 갱신
+  }catch(error){
+    $("saveMessage").textContent=error.message || "저장하지 못했습니다.";
+    // 기본정보가 이미 저장된 뒤 사진만 실패할 수 있으므로 이를 명확히 안내한다.
+    if(String(error?.message||"").includes("사진")) $("saveMessage").textContent=`기본정보는 저장되었을 수 있습니다. ${error.message}`;
+  }finally{ $("saveStudent").disabled=false; }
 }
 
 $("googleLogin").addEventListener("click",signIn);
 $("logoutButton").addEventListener("click",async()=>{await db.auth.signOut();location.reload();});
 $("addStudentButton").addEventListener("click",()=>openStudent());
 $("studentForm").addEventListener("submit",saveStudent);
-$("cancelEdit").addEventListener("click",()=>$("studentDialog").close());
+$("cancelEdit").addEventListener("click",()=>{revokePhotoPreview();$("studentDialog").close();});
 $("saveSparkLink").addEventListener("click",saveSparkLink);
 $("unlinkSpark").addEventListener("click",unlinkSpark);
-$("closeDialog").addEventListener("click",()=>$("studentDialog").close());
+$("closeDialog").addEventListener("click",()=>{revokePhotoPreview();$("studentDialog").close();});
 [$("searchInput"),$("statusFilter"),$("classFilter"),$("reviewOnly")].forEach(el=>el.addEventListener(el.type==="search"?"input":"change",applyFilters));
 db.auth.onAuthStateChange((_event,session)=>{ if(session && adminApp.hidden) setTimeout(validateSession,0); });
 validateSession();
