@@ -8,7 +8,7 @@ async function load(){
  const [s,m]=await Promise.all([db.from("kmt_team_scores").select("team_name,points").eq("score_date",today()),db.from("kmt_class_missions").select("*").eq("mission_date",today()).order("created_at")]);
  if(s.error)throw s.error;if(m.error)throw m.error;
  const total=n=>(s.data||[]).filter(x=>x.team_name===n).reduce((a,x)=>a+Number(x.points||0),0);
- $("redScore").textContent=total("홍팀");$("blueScore").textContent=total("청팀");
+ $("redScore").textContent=total("계명팀");$("blueScore").textContent=total("최고팀");
  $("missions").innerHTML=(m.data||[]).length?(m.data||[]).map(x=>{const pct=Math.min(100,Math.round(x.current_value/x.target_value*100));return `<article class="mission"><div><h3>${x.is_completed?"✅ ":""}${esc(x.title)}</h3><p>${x.current_value} / ${x.target_value}${x.reward_text?` · 보상: ${esc(x.reward_text)}`:""}</p><div class="progress"><i style="width:${pct}%"></i></div></div><button data-mid="${x.id}" data-cur="${x.current_value}" data-target="${x.target_value}">+1</button></article>`}).join(""):'<p>오늘 미션을 추가해 보세요.</p>';
  document.querySelectorAll("[data-mid]").forEach(b=>b.onclick=()=>missionPlus(b));
 }
@@ -18,6 +18,6 @@ document.querySelectorAll("[data-team]").forEach(b=>b.onclick=()=>addScore(b.dat
 $("resetBtn").onclick=async()=>{if(!confirm("오늘 팀 점수를 초기화할까요?"))return;const r=await db.from("kmt_team_scores").delete().eq("score_date",today());if(r.error)alert(r.error.message);else load()};
 $("newMission").onclick=()=>$("missionDlg").showModal();
 $("missionSave").onclick=async e=>{e.preventDefault();const payload={title:$("missionTitle").value.trim(),target_value:Number($("missionTarget").value||1),reward_text:$("missionReward").value.trim()||null,mission_date:today()};const r=await db.from("kmt_class_missions").insert(payload);if(r.error)return alert(r.error.message);$("missionDlg").close();$("missionForm").reset();load()};
-document.querySelectorAll("[data-fx]").forEach(b=>b.onclick=()=>{const f=b.dataset.fx;if(f==="applause")mega("👏","모두 박수!","최고예요!");if(f==="fireworks")mega("🎆","FIREWORKS!","멋진 순간!");if(f==="win-red")mega("🏆","홍팀 승리!","RED TEAM WIN!");if(f==="win-blue")mega("🏆","청팀 승리!","BLUE TEAM WIN!")});
+document.querySelectorAll("[data-fx]").forEach(b=>b.onclick=()=>{const f=b.dataset.fx;if(f==="applause")mega("👏","모두 박수!","최고예요!");if(f==="fireworks")mega("🎆","FIREWORKS!","멋진 순간!");if(f==="win-red")mega("🏆","계명팀 승리!","RED TEAM WIN!");if(f==="win-blue")mega("🏆","최고팀 승리!","BLUE TEAM WIN!")});
 load();
 })();

@@ -5,14 +5,14 @@
 <header><a class="brand" href="../"><img src="../../assets/icons/192로고.png"><div><strong>계명태권도 CLASS</strong><small>v2.3.0 · GAME CENTER</small></div></a>
 <nav><a href="../live/">📺 LIVE</a><a href="../voice/">🎙 계명아</a><a href="../growth/">🚀 성장</a></nav></header>
 <main>
-<section class="hero"><div><small>CLASS BATTLE</small><h1>홍팀 VS 청팀</h1><p>버튼 한 번으로 점수! 수업을 더 신나게.</p></div><button id="resetBtn">오늘 점수 초기화</button></section>
+<section class="hero"><div><small>CLASS BATTLE</small><h1>계명팀 VS 최고팀</h1><p>버튼 한 번으로 점수! 수업을 더 신나게.</p></div><button id="resetBtn">오늘 점수 초기화</button></section>
 <section class="teams">
- <article class="team red"><h2>🔴 홍팀</h2><strong id="redScore">0</strong><div><button data-team="홍팀" data-p="1">+1</button><button data-team="홍팀" data-p="3">+3</button><button data-team="홍팀" data-p="5">+5</button></div></article>
+ <article class="team red"><h2>🔴 계명팀</h2><strong id="redScore">0</strong><div><button data-team="계명팀" data-p="1">+1</button><button data-team="계명팀" data-p="3">+3</button><button data-team="계명팀" data-p="5">+5</button></div></article>
  <div class="vs">VS</div>
- <article class="team blue"><h2>🔵 청팀</h2><strong id="blueScore">0</strong><div><button data-team="청팀" data-p="1">+1</button><button data-team="청팀" data-p="3">+3</button><button data-team="청팀" data-p="5">+5</button></div></article>
+ <article class="team blue"><h2>🔵 최고팀</h2><strong id="blueScore">0</strong><div><button data-team="최고팀" data-p="1">+1</button><button data-team="최고팀" data-p="3">+3</button><button data-team="최고팀" data-p="5">+5</button></div></article>
 </section>
 <section class="mission-box"><div class="section-title"><div><small>TODAY MISSION</small><h2>수업 미션</h2></div><button id="newMission">+ 미션</button></div><div id="missions"></div></section>
-<section class="quick"><h2>⚡ 즉석 효과</h2><div><button data-fx="applause">👏 박수</button><button data-fx="fireworks">🎆 폭죽</button><button data-fx="win-red">🔴 홍팀 승리</button><button data-fx="win-blue">🔵 청팀 승리</button></div></section>
+<section class="quick"><h2>⚡ 즉석 효과</h2><div><button data-fx="applause">👏 박수</button><button data-fx="fireworks">🎆 폭죽</button><button data-fx="win-red">🔴 계명팀 승리</button><button data-fx="win-blue">🔵 최고팀 승리</button></div></section>
 </main>
 <dialog id="missionDlg"><form id="missionForm" method="dialog"><h3>오늘의 미션</h3><label>미션명<input id="missionTitle" required placeholder="예: 발차기 100회"></label><label>목표<input id="missionTarget" type="number" min="1" value="10"></label><label>보상<input id="missionReward" placeholder="예: 모두 STAR +1"></label><div><button value="cancel">취소</button><button id="missionSave">저장</button></div></form></dialog>
 <div id="mega" class="mega hidden"><div id="megaIcon">🏆</div><strong id="megaTitle">WIN!</strong><span id="megaSub"></span></div>
