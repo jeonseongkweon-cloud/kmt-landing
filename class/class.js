@@ -16,19 +16,41 @@
 })();
 
 (async function(){
- const gate=document.getElementById("classGate"),btn=document.getElementById("gateLogin"),msg=document.getElementById("gateMessage");
- const db=window.supabase.createClient("https://ojxarsfaewehwjidwgac.supabase.co","sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
- const owner="jeonseongkweon@gmail.com";
- const {data:{session}}=await db.auth.getSession();
- if(session && String(session.user?.email||"").toLowerCase()===owner){
-   gate.style.display="none"; history.replaceState({},document.title,location.pathname);
- } else {
-   if(session) await db.auth.signOut();
-   gate.style.display="grid";
+ const gate=document.getElementById("classGate"),form=document.getElementById("gateForm"),btn=document.getElementById("gateLogin"),idInput=document.getElementById("gateId"),passwordInput=document.getElementById("gatePassword"),msg=document.getElementById("gateMessage");
+ const db=window.supabase.createClient("https://ojxarsfaewehwjidwgac.supabase.co","sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",{auth:{persistSession:true,detectSessionInUrl:false,autoRefreshToken:true}});
+ const expectedId=String(config.adminLoginId||"admin").trim().toLowerCase();
+ const authEmail=String(config.adminAuthEmail||"").trim().toLowerCase();
+
+ function openClass(){
+   gate.style.display="none";
+   history.replaceState({},document.title,"./");
  }
- btn.onclick=async()=>{
-   msg.textContent="관장 계정을 확인하는 중...";
-   const {error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}/class/`}});
-   if(error) msg.textContent=error.message;
- };
+ async function currentClassSession(){
+   const {data:{session},error}=await db.auth.getSession();
+   if(error) return null;
+   return session&&String(session.user?.email||"").toLowerCase()===authEmail?session:null;
+ }
+
+ const {data:{session}}=await db.auth.getSession();
+ if(session&&String(session.user?.email||"").toLowerCase()!==authEmail){
+   await db.auth.signOut({scope:"local"});
+ }
+ if(await currentClassSession()) openClass();
+ else { gate.style.display="grid"; passwordInput.focus(); }
+
+ form.addEventListener("submit",async(event)=>{
+   event.preventDefault();
+   const loginId=String(idInput.value||"").trim().toLowerCase();
+   const password=passwordInput.value;
+   if(loginId!==expectedId){ msg.textContent="관리자 아이디 또는 비밀번호를 확인해 주세요."; return; }
+   btn.disabled=true; idInput.disabled=true; passwordInput.disabled=true;
+   msg.textContent="CLASS 관리자 로그인을 확인하는 중입니다...";
+   const {data,error}=await db.auth.signInWithPassword({email:authEmail,password});
+   if(error||!data.session){
+     msg.textContent="관리자 아이디 또는 비밀번호를 확인해 주세요.";
+     passwordInput.value=""; btn.disabled=false; idInput.disabled=false; passwordInput.disabled=false; passwordInput.focus();
+     return;
+   }
+   openClass();
+ });
 })();

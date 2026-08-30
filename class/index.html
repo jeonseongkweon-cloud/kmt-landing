@@ -14,8 +14,14 @@
 <div style="width:min(420px,88vw);padding:32px;border:1px solid #30415e;border-radius:22px;background:#13213a;text-align:center">
 <img src="../assets/icons/192로고.png" alt="" style="width:64px;border-radius:14px">
 <p style="color:#e7c65a">CLASS v2.5.0</p><h1>계명태권도 CLASS</h1>
-<p id="gateMessage">전성권 관장 계정은 처음 한 번만 확인합니다.</p>
-<button id="gateLogin" style="width:100%;padding:14px;border:0;border-radius:12px;font-weight:800;cursor:pointer">Google 관장 확인</button>
+<form id="gateForm" style="display:grid;gap:10px;text-align:left">
+<label for="gateId" style="font-size:13px;color:#c8d3e6">관리자 아이디</label>
+<input id="gateId" name="username" type="text" value="admin" autocomplete="username" autocapitalize="none" spellcheck="false" required style="box-sizing:border-box;width:100%;padding:14px;border:1px solid #415575;border-radius:12px;background:#081426;color:white;font-size:16px">
+<label for="gatePassword" style="font-size:13px;color:#c8d3e6">비밀번호</label>
+<input id="gatePassword" name="password" type="password" autocomplete="current-password" required style="box-sizing:border-box;width:100%;padding:14px;border:1px solid #415575;border-radius:12px;background:#081426;color:white;font-size:16px">
+<button id="gateLogin" type="submit" style="width:100%;padding:14px;border:0;border-radius:12px;font-weight:800;cursor:pointer">CLASS 관리자 로그인</button>
+</form>
+<p id="gateMessage" role="status" aria-live="polite">Google 계정 선택 없이 CLASS 전용 아이디로 로그인합니다.</p>
 </div></section>
   <main class="shell">
     <header class="topbar">
@@ -106,7 +112,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=250"></script>
-  <script src="class.js?v=250"></script>
+<script src="config.js?v=251"></script>
+  <script src="class.js?v=251"></script>
 </body>
 </html>
