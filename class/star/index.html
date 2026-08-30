@@ -1,10 +1,32 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07111e"><meta name="robots" content="noindex,nofollow"><title>STAR | 계명태권도 CLASS</title><link rel="icon" href="../../assets/icons/kmt_favicon_48.png"><link rel="stylesheet" href="star.css?v=110"><link rel="stylesheet" href="../effects/effect-manager.css?v=100"></head><body>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07111e"><meta name="robots" content="noindex,nofollow"><title>STAR | 계명태권도 CLASS</title><link rel="icon" href="../../assets/icons/kmt_favicon_48.png"><link rel="stylesheet" href="star.css?v=270"><link rel="stylesheet" href="../effects/effect-manager.css?v=100"></head><body>
 <section id="loginScreen" hidden class="login"><div><img src="../../assets/icons/192로고.png" alt=""><p>CLASS v0.9.0</p><h1>STAR 수업판</h1><span>승인된 Google 관리자 계정으로 로그인해 주세요.</span><button id="loginButton">Google 관리자 로그인</button><a href="../">CLASS로 돌아가기</a><em id="loginMessage"></em></div></section>
-<div id="app"><header><div class="brand"><img src="../../assets/icons/192로고.png" alt=""><div><strong>계명태권도 CLASS</strong><span>v1.1.0 · ADVANCED REWARD</span></div></div><div class="clock"><strong id="dateLabel"></strong><span id="clockLabel"></span></div><nav><a href="../spark/">🔥 SPARK</a><a href="../sms/">문자대기</a><a href="../../dashboard/">LIVE</a><a href="../tools/">수업운영</a><a href="../attendance/">출석</a><a href="../admin/">원생관리</a><button id="logoutButton">로그아웃</button></nav></header>
+<div id="app"><header><div class="brand"><img src="../../assets/icons/192로고.png" alt=""><div><strong>계명태권도 CLASS</strong><span>v2.7.0 · LIVE CLASSROOM</span></div></div><div class="clock"><strong id="dateLabel"></strong><span id="clockLabel"></span></div><nav><a href="../spark/">🔥 SPARK</a><a href="../sms/">문자대기</a><a href="../../dashboard/">LIVE</a><a href="../tools/">수업운영</a><a href="../attendance/">출석</a><a href="../admin/">원생관리</a><button id="logoutButton">로그아웃</button></nav></header>
 <main><section id="periodScreen" class="period"><div class="title"><p>CLASS STAR</p><h1>수업부를 선택해 주세요</h1><span>오늘 출석한 학생만 STAR 수업판에 표시됩니다.</span></div><div id="periodGrid" class="period-grid"></div></section>
-<section id="starScreen" hidden><div class="class-head"><div><button id="backButton" class="subtle">‹ 수업부 선택</button><p id="sessionDate"></p><h1 id="sessionTitle"></h1></div><div class="summary"><span>오늘 지급</span><strong id="totalStars">0</strong><button id="championButton">🏆 챔피언 선정</button></div></div><div id="categoryBar" class="categories"></div><div class="notice"><strong id="categoryName">카테고리를 선택하세요</strong><span id="saveStatus">Supabase 자동저장</span></div><section id="studentGrid" class="student-grid"></section><div id="emptyMessage" class="empty" hidden>먼저 출석 화면에서 학생을 출석 처리해 주세요.</div></section></main></div>
+<section id="starScreen" hidden><div class="class-head"><div><button id="backButton" class="subtle">‹ 수업부 선택</button><p id="sessionDate"></p><h1 id="sessionTitle"></h1></div><div class="summary"><span>오늘 지급</span><strong id="totalStars">0</strong><button id="championButton">🏆 챔피언 선정</button></div></div><div id="categoryBar" class="categories"></div><div class="notice">
+  <strong id="categoryName">카테고리를 선택하세요</strong>
+  <div class="live-status">
+    <button id="voiceStartButton" class="voice-start" type="button">🎤 계명아 음성수업 시작</button>
+    <span id="voiceStatus" class="voice-status off">🔴 음성 꺼짐</span>
+    <span id="saveStatus">Supabase 자동저장</span>
+  </div>
+</div><section id="studentGrid" class="student-grid"></section>
+<div id="emptyMessage" class="empty" hidden>먼저 출석 화면에서 학생을 출석 처리해 주세요.</div>
+<section class="class-ticker" aria-label="실시간 수업 전광판">
+  <button id="noticeManageButton" class="ticker-manage" type="button" title="공지 관리">⚙ 공지</button>
+  <div class="ticker-window"><div id="tickerTrack" class="ticker-track"><span>🥋 계명태권도 CLASS · 오늘도 힘차게 수련합니다!</span></div></div>
+</section>
+</section></main></div>
 <dialog id="detailDialog"><div class="dialog-body"><button class="close" data-close="detailDialog">×</button><div id="detailContent"></div></div></dialog>
 <dialog id="praiseDialog"><form id="praiseForm" class="dialog-body"><button type="button" class="close" data-close="praiseDialog">×</button><h2 id="praiseTitle">칭찬 기록</h2><input type="hidden" id="praiseStudentId"><div id="praisePresets" class="presets"></div><label>직접 입력<textarea id="praiseMessage" maxlength="200" required></textarea></label><button type="submit" class="primary">👏 칭찬 저장</button></form></dialog>
+<dialog id="noticeDialog"><div class="dialog-body wide"><button class="close" data-close="noticeDialog">×</button>
+<h2>수업 전광판 관리</h2><p class="muted">STAR 화면을 떠나지 않고 오늘의 수련중점·공지·전달사항을 관리합니다.</p>
+<form id="noticeForm" class="notice-form">
+  <label>종류<select id="noticeType"><option value="focus">🥋 오늘의 수련중점</option><option value="notice">📢 수업공지</option><option value="personal">🔔 개인 전달사항</option><option value="item">🎒 준비물 안내</option><option value="event">📅 행사/일정</option><option value="praise">⭐ 칭찬 문구</option></select></label>
+  <label>내용<input id="noticeText" maxlength="180" placeholder="예: 바른 인사 · 정확한 자세 · 힘찬 기합" required></label>
+  <button class="primary compact" type="submit">전광판에 추가</button>
+</form>
+<div id="noticeList" class="notice-list"></div>
+</div></dialog>
 <dialog id="championDialog"><div class="dialog-body wide"><button class="close" data-close="championDialog">×</button><h2>오늘의 챔피언</h2><p class="muted">STAR 결과를 참고하여 여러 학생을 서로 다른 왕으로 선정할 수 있습니다.</p><div id="championSuggestions"></div><h3>저장된 챔피언</h3><div id="championList"></div></div></dialog>
 <div id="starBurst" class="burst" hidden><div><span id="burstIcon">⭐</span><h2 id="burstName"></h2><p id="burstCategory"></p><strong>STAR +1</strong><em id="burstTotal"></em></div></div><div id="toast" class="toast"></div>
-<script src="star-config.js"></script><script type="module" src="star.js?v=1811"></script><script src="../effects/effect-manager.js?v=100"></script></body></html>
+<script src="star-config.js"></script><script type="module" src="star.js?v=270"></script><script src="../effects/effect-manager.js?v=100"></script></body></html>
