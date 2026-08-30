@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="185";
+const VOICE_BUILD="186";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -43,6 +43,24 @@ function normalize(t){
       break;
     }
   }
+
+  // v1.8.6 STAR / 칭찬 자연어
+  // 카테고리 이름을 말하면 해당 STAR로, 단순 칭찬이면 STAR 종류 선택창으로 연결.
+  x=x.replace(/^(.+?)(?:아|야)?\s*(칭찬해줘|칭찬해|칭찬하자|별 하나 더|별 하나 줘)$/,"$1 별");
+  x=x.replace(/^(.+?)(?:아|야)?\s*(.+?)\s*(잘했어|잘했네|최고야|멋지다|좋았어|아주 좋아)$/,"$1 $2 별");
+
+  // 오늘의 MVP / 챔피언 자연어
+  x=x.replace(/^(?:오늘\s*)?(.+?)(?:아|야)?\s*(최고야|최고다|제일 잘했어|챔피언이야|MVP야|엠브이피야)$/i,"$1 MVP");
+  x=x.replace(/^(?:오늘\s*)?(?:MVP|엠브이피|챔피언)\s*(.+)$/i,"$1 MVP");
+  x=x.replace(/^(.+)\s*(?:오늘\s*)?(?:MVP|엠브이피|챔피언)(?:으로|로)?\s*(해줘|선정해|정해줘)?$/i,"$1 MVP");
+
+  // 수업 시작/종료 자연어
+  x=x.replace(/^(?:이제\s*)?(수업\s*)?(시작하자|시작해|시작할게|시작합니다)$/,"수업 시작");
+  x=x.replace(/^([1-5]부)\s*(시작하자|시작해|시작할게|시작합니다)$/,"$1 수업 시작");
+  x=x.replace(/^(?:이제\s*)?(수업\s*)?(끝내자|끝내|끝이야|마치자|마쳐|마칩니다|종료하자)$/,"수업 종료");
+  x=x.replace(/^(오늘\s*)?(여기까지|이제 그만|그만하자)$/,"수업 종료");
+  x=x.replace(/^([1-5]부)\s*(끝내자|끝내|마치자|마쳐|종료하자)$/,"$1 수업 종료");
+
   x=x.replace(/^(.+?)\s*(늦었어|늦었어요|지각했어|지각했어요)$/,"$1 지각");
   x=x.replace(/^(.+?)\s*(안와|안 와|안왔어|안 왔어|결석이야)$/,"$1 결석");
   x=x.replace(/^(.+?)\s*(별\s*하나|별\s*한개|별\s*한 개|별\s*1개|별\s*줘|별\s*주세요|별\s*추가)$/,"$1 별");
@@ -110,7 +128,7 @@ function setupRecognition(){
     const score=a=>{
       const n=normalize(a.transcript), compact=n.replace(/\s/g,"");
       let sc=Number(a.confidence||0);
-      if(/출석|지각|결석|별|STAR|스타|MVP|엠브이피|챔피언|수업|전원|SPARK|스파크/.test(n))sc+=2;
+      if(/출석|지각|결석|별|STAR|스타|칭찬|잘했어|최고|MVP|엠브이피|챔피언|수업|시작|종료|마치|전원|SPARK|스파크/.test(n))sc+=2;
       if(state.students.some(st=>compact.includes(clean(st.name).replace(/\s/g,""))))sc+=3;
       if(state.periods.some(pd=>compact.includes(clean(pd.name).replace(/\s/g,""))||compact.includes(clean(pd.code).replace(/\s/g,""))))sc+=1;
       return sc;
@@ -132,7 +150,7 @@ function studentMatches(text,period=null){
   if(exact.length)return exact;
   // 명령어를 제거해 "민규 출석" -> "민규"로 검색
   let q=t;
-  ["출석","지각","결석","별","스타","STAR","왔어","왔어요","왔습니다","도착","도착했어","늦었어","안왔어","안와"].forEach(w=>q=q.replaceAll(w,""));
+  ["출석","지각","결석","별","스타","STAR","MVP","엠브이피","챔피언","칭찬","칭찬해줘","칭찬해","왔어","왔어요","왔습니다","도착","도착했어","늦었어","안왔어","안와"].forEach(w=>q=q.replaceAll(w,""));
   q=q.replace(/^(계명아파트|계명아|개명아|계명야)/,"").trim();
   if(!q)return [];
   const partial=all.filter(s=>{const n=clean(s.name).replace(/\s/g,"");return n.includes(q)||q.includes(n)});
