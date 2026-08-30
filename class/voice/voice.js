@@ -1,33 +1,11 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="1813";
+const VOICE_BUILD="188";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
-
-// v1.8.13: 정상 작동 중인 CLASS와 같은 브라우저 세션의 JWT를 직접 사용한다.
-// 계명아에서 Supabase auth.getSession() / auth lock을 전혀 사용하지 않아
-// "지도자 확인 중" 무한대기를 차단한다.
-function readStoredAccessToken(){
-  const exactKey="sb-ojxarsfaewehwjidwgac-auth-token";
-  const keys=[exactKey,...Object.keys(localStorage).filter(k=>/^sb-.*-auth-token$/.test(k)&&k!==exactKey)];
-  for(const key of keys){
-    try{
-      const raw=localStorage.getItem(key);
-      if(!raw)continue;
-      const parsed=JSON.parse(raw);
-      const token=parsed?.access_token||parsed?.currentSession?.access_token||parsed?.session?.access_token;
-      if(token)return token;
-    }catch(_){}
-  }
-  return "";
-}
-const ACCESS_TOKEN=readStoredAccessToken();
-const db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{
-  auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},
-  global:ACCESS_TOKEN?{headers:{Authorization:`Bearer ${ACCESS_TOKEN}`}}:{}
-});
+const db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
 const $=id=>document.getElementById(id);
 const state={staff:null,periods:[],students:[],categories:[],period:null,session:null,recognition:null,listening:false,history:[]};
 const clean=v=>v==null?"":String(v).trim();
@@ -97,32 +75,20 @@ function normalize(t){
 
 async function login(){const{error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}${location.pathname}`}});if(error)$("loginMessage").textContent=error.message}
 async function hasPermission(permission){
-  if(!ACCESS_TOKEN)throw new Error("CLASS 로그인 세션이 없습니다. CLASS 첫 화면에서 로그인해 주세요.");
-  return true;
+  const{data:{session}}=await db.auth.getSession();
+  if(session && isSingleOwner(session)) return true;
+  const{data,error}=await db.rpc("kmt_has_permission",{p_permission:permission});
+  if(error)throw error;
+  return Boolean(data);
 }
 async function boot(){
-  $("app").hidden=false;
-  setupRecognition();
-
-  if(!ACCESS_TOKEN){
-    $("staffLabel").textContent="CLASS 로그인 필요";
-    $("recognitionState").textContent="대기";
-    result("error","CLASS 로그인 세션이 없습니다.","상단 CLASS 버튼으로 이동해 한 번 로그인한 뒤 다시 계명아를 열어 주세요.");
-    return;
-  }
-
+  const{data:{session}}=await db.auth.getSession();
   state.staff={email:SINGLE_OWNER_EMAIL,display_name:"전성권 관장",role:"owner",is_active:true};
-  $("staffLabel").textContent="전성권 관장 · 자료 연결 중";
-
+  $("app").hidden=false;
+  $("staffLabel").textContent="전성권 관장 · 관장";
   await loadBase();
-
-  if(state.periods.length){
-    $("staffLabel").textContent="전성권 관장 · 준비 완료";
-  }else{
-    $("staffLabel").textContent="전성권 관장 · 자료 확인 필요";
-  }
-
-  try{await loadHistory()}catch(e){console.warn("[VOICE history]",e)}
+  setupRecognition();
+  await loadHistory();
 }
 async function loadBase(){
   const[p,s,c]=await Promise.all([
@@ -304,9 +270,9 @@ async function runCommand(raw,{confidence=1,source="text"}={}){
 }
 
 const loginButton=$("loginButton"); if(loginButton) loginButton.onclick=login;
-const logoutButton=$("logoutButton"); if(logoutButton) logoutButton.onclick=()=>location.replace("../");
+const logoutButton=$("logoutButton"); if(logoutButton) logoutButton.onclick=async()=>{await db.auth.signOut();location.reload()};
 $("micButton").onclick=()=>{if(!state.recognition)return;try{state.listening?state.recognition.stop():state.recognition.start()}catch{}};
 $("runButton").onclick=()=>runCommand($("commandInput").value,{source:"text"});$("commandInput").onkeydown=e=>{if(e.key==="Enter")runCommand($("commandInput").value,{source:"text"})};
 $("refreshButton").onclick=async()=>{await loadBase();await loadHistory();toast("새로고침 완료")};$("helpButton").onclick=()=>$("helpDialog").showModal();
 document.querySelectorAll("[data-quick]").forEach(b=>b.onclick=()=>{let t=b.dataset.quick;if(t==="오늘 MVP")t=`오늘 ${state.period?.name||""} MVP`;if(t==="수업 종료")t=`${state.period?.name||""} 수업 종료`;$("commandInput").value=t;runCommand(t,{source:"text"})});
-boot().catch(e=>{console.error("[VOICE boot]",e);result("error","계명아 시작 오류",e?.message||String(e));$("staffLabel").textContent="계명아 시작 오류";});
+db.auth.onAuthStateChange(()=>{});boot();
