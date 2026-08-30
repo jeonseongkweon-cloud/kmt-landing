@@ -1,0 +1,24 @@
+<!doctype html><html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#071426"><title>수업 시상식 · 도구 | 계명태권도 CLASS</title>
+<link rel="stylesheet" href="ceremony.css?v=240"></head><body>
+<header><a class="brand" href="../"><img src="../../assets/icons/192로고.png"><div><strong>계명태권도 CLASS</strong><small>v2.4.0 · CEREMONY & TOOLS</small></div></a>
+<nav><a href="../voice/">🎙 계명아</a><a href="../live/">📺 LIVE</a><a href="../game/">🎮 게임</a></nav></header>
+<main>
+<section class="hero"><div><small>CLASS FINALE</small><h1>수업 종료 시상식</h1><p>오늘의 기록으로 챔피언과 특별상을 한 번에 보여줍니다.</p></div><button id="ceremonyBtn">🏆 시상식 시작</button></section>
+
+<section class="panel"><div class="title"><div><small>AWARDS</small><h2>오늘의 특별상</h2></div><button id="refreshAwards">새로고침</button></div><div id="awards" class="awards"><div class="empty">오늘 기록을 불러오는 중...</div></div></section>
+
+<section class="panel"><div class="title"><div><small>QUICK CLASS TOOLS</small><h2>수업 도구</h2></div></div>
+<div class="tools">
+ <article><h3>⏱ 타이머</h3><div id="timer" class="timer">05:00</div><div><button data-min="1">1분</button><button data-min="3">3분</button><button data-min="5">5분</button><button id="timerStop">정지</button></div></article>
+ <article><h3>⭕❌ OX 랜덤</h3><div id="ox" class="random">?</div><button id="oxBtn">OX 뽑기</button></article>
+ <article><h3>🎲 랜덤 학생</h3><div id="randomStudent" class="random name">누가 나올까?</div><button id="studentBtn">학생 뽑기</button></article>
+ <article><h3>✨ 즉석 연출</h3><div class="fxBtns"><button data-fx="perfect">🌟 PERFECT</button><button data-fx="applause">👏 박수</button><button data-fx="fire">🎆 폭죽</button><button data-fx="focus">🥋 집중!</button></div></article>
+</div></section>
+
+<section class="panel"><div class="title"><div><small>EVENT D-DAY</small><h2>다가오는 도장 일정</h2></div></div><div id="events" class="events"></div></section>
+</main>
+<div id="mega" class="mega hidden"><div id="megaIcon">🏆</div><strong id="megaTitle"></strong><span id="megaSub"></span></div>
+<div id="ceremony" class="ceremony hidden"><div class="stage"><small>KMT CLASS AWARDS</small><div id="awardIcon" class="awardIcon">🏆</div><h1 id="awardTitle"></h1><h2 id="awardName"></h2><p id="awardSub"></p><div class="stageBtns"><button id="nextAward">다음 상 ▶</button><button id="closeCeremony">시상식 종료</button></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js?v=240"></script><script src="ceremony.js?v=240"></script></body></html>
