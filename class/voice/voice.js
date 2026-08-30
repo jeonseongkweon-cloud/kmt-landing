@@ -16,13 +16,36 @@ function enrollment(s){return Array.isArray(s.enrollments)?(s.enrollments[0]||{}
 function rosterFor(period){return state.students.filter(s=>enrollment(s).class_period_id===period?.id)}
 function normalize(t){return clean(t).replace(/[,.!?~]/g," ").replace(/\s+/g," ").replace(/^계명아\s*/i,"").trim()}
 
-async function login(){const{error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}${location.pathname}`}});if(error)$("loginMessage").textContent=error.message}
+const LOGIN_GUARD_KEY="kmt_voice_oauth_attempt";
+function callbackUrl(){return new URL("/class/voice/",location.origin).href}
+async function startGoogleLogin(){
+  sessionStorage.setItem(LOGIN_GUARD_KEY,"1");
+  const{error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:callbackUrl()}});
+  if(error){sessionStorage.removeItem(LOGIN_GUARD_KEY);$("loginMessage").textContent=error.message;$("loginScreen").hidden=false}
+}
 async function hasPermission(permission){const{data,error}=await db.rpc("kmt_has_permission",{p_permission:permission});if(error)throw error;return Boolean(data)}
 async function boot(){
-  const{data:{session}}=await db.auth.getSession();
-  if(!session){$("loginScreen").hidden=false;$("app").hidden=true;return}
-  const{data:profile,error}=await db.rpc("kmt_get_my_staff_profile");
-  if(error||!profile?.is_active){$("loginMessage").textContent="승인된 지도자 계정이 아닙니다.";return}
+  const{data:{session},error:sessionError}=await db.auth.getSession();
+  if(sessionError){$("loginMessage").textContent=sessionError.message;$("loginScreen").hidden=false;$("app").hidden=true;return}
+  if(!session){
+    $("app").hidden=true;
+    const returnedFromOAuth=location.search.includes("code=")||location.hash.includes("access_token=");
+    const alreadyTried=sessionStorage.getItem(LOGIN_GUARD_KEY)==="1";
+    if(!returnedFromOAuth&&!alreadyTried){
+      $("loginScreen").hidden=true;
+      await startGoogleLogin();
+      return;
+    }
+    sessionStorage.removeItem(LOGIN_GUARD_KEY);
+    $("loginScreen").hidden=false;
+    $("loginMessage").textContent="로그인 연결이 완료되지 않았습니다. 아래 버튼을 한 번만 눌러 다시 연결해 주세요.";
+    return;
+  }
+  sessionStorage.removeItem(LOGIN_GUARD_KEY);
+  if(location.search||location.hash)history.replaceState({},document.title,location.pathname);
+  const{data:profileRows,error}=await db.rpc("kmt_get_my_staff_profile");
+  const profile=Array.isArray(profileRows)?profileRows[0]:profileRows;
+  if(error||!profile?.is_active){$("loginScreen").hidden=false;$("app").hidden=true;$("loginMessage").textContent="승인된 지도자 계정이 아닙니다.";return}
   state.staff=profile;$("loginScreen").hidden=true;$("app").hidden=false;$("staffLabel").textContent=`${profile.display_name||profile.email} · ${roleLabel(profile.role)}`;
   await loadBase();setupRecognition();await loadHistory();
 }
@@ -127,7 +150,7 @@ async function runCommand(raw,{confidence=1,source="text"}={}){
   }catch(e){const msg=e?.message||String(e);result("error","명령을 실행하지 못했습니다.",msg);toast(msg);await logCommand({transcript:raw,normalized,commandType:"error",status:"failed",resultText:msg,confidence,source})}
 }
 
-$("loginButton").onclick=login;$("logoutButton").onclick=async()=>{await db.auth.signOut();location.reload()};
+$("loginButton").onclick=startGoogleLogin;$("logoutButton").onclick=async()=>{await db.auth.signOut();location.reload()};
 $("micButton").onclick=()=>{if(!state.recognition)return;try{state.listening?state.recognition.stop():state.recognition.start()}catch{}};
 $("runButton").onclick=()=>runCommand($("commandInput").value,{source:"text"});$("commandInput").onkeydown=e=>{if(e.key==="Enter")runCommand($("commandInput").value,{source:"text"})};
 $("refreshButton").onclick=async()=>{await loadBase();await loadHistory();toast("새로고침 완료")};$("helpButton").onclick=()=>$("helpDialog").showModal();
