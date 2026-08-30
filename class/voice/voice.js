@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="190";
+const VOICE_BUILD="191";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -14,7 +14,23 @@ const localDate=()=>new Intl.DateTimeFormat("en-CA",{timeZone:cfg.timezone,year:
 const timeText=()=>new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date());
 const roleLabel=r=>({owner:"관장",master:"수석사범",instructor:"사범",assistant:"보조지도자"}[r]||r||"지도자");
 function toast(m){$("toast").textContent=m;$("toast").classList.add("show");clearTimeout(window.__voiceToast);window.__voiceToast=setTimeout(()=>$("toast").classList.remove("show"),1800)}
-function say(m){try{if(!("speechSynthesis" in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(m);u.lang="ko-KR";u.rate=1.05;window.speechSynthesis.speak(u)}catch{}}
+function say(m){
+  try{
+    if(!("speechSynthesis" in window))return;
+    const synth=window.speechSynthesis;
+    synth.cancel();
+    const u=new SpeechSynthesisUtterance(m);
+    u.lang="ko-KR";
+    u.rate=1.14;
+    u.pitch=1.28;
+    u.volume=1;
+    const voices=synth.getVoices()||[];
+    const korean=voices.filter(v=>/^ko(-|_)/i.test(v.lang||""));
+    const preferred=korean.find(v=>/female|여성|sunhi|yuna|jiwoo|seoyeon|heami|youngmi|kyuri|google.*한국|korean/i.test(`${v.name||""} ${v.voiceURI||""}`))||korean[0];
+    if(preferred)u.voice=preferred;
+    synth.speak(u);
+  }catch(e){console.warn("[KIDS VOICE]",e)}
+}
 function result(kind,title,detail=""){const box=$("resultBox");box.className=`result-box ${kind}`;$("resultText").textContent=title;$("resultDetail").textContent=detail}
 function enrollment(s){return Array.isArray(s.enrollments)?(s.enrollments[0]||{}):(s.enrollments||{})}
 function rosterFor(period){return state.students.filter(s=>enrollment(s).class_period_id===period?.id)}
@@ -316,7 +332,7 @@ async function runCommand(raw,{confidence=1,source="text"}={}){
       }
 
       await saveStar(student,category,period);
-      const msg=quick?`${student.name} 별 하나 추가`:`${student.name} ${category.name} 하나`;
+      const msg=quick?`와아! ${student.name}! 별 하나 추가!`:`${student.name} ${category.name} 하나`;
       result("ok",msg,quick?"STAR +1 저장 완료":"STAR가 저장되었습니다.");
       if(quick)playQuickStarEffect(student.name);
       say(msg);
