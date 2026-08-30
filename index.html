@@ -37,7 +37,6 @@
    - 설치 강제/유도는 만들지 않음
   ====================================================== -->
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="class/home-menu.css">
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="apple-touch-icon" href="https://static.wixstatic.com/media/abf917_793b392a568b442f93c36eb61b84d56b~mv2.png" />
@@ -211,16 +210,16 @@
     .brandText .t2{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .brandText .t3{font-size:12px;color:#5073a7;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-    /* ✅ heroBar 버튼 정리: 2줄 + 우선순위 5개만 진하게 */
+    /* 첫 방문자가 가장 많이 찾는 세 가지 행동만 유지 */
     .ctaRow{
       width:min(520px, 100%);
       display:grid;
       gap:8px;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       align-content:start;
     }
     @media (min-width:720px){
-      .ctaRow{ grid-template-columns: repeat(5, 1fr); }
+      .ctaRow{ grid-template-columns: repeat(3, 1fr); }
     }
 
     .btn{
@@ -248,8 +247,8 @@
     }
     .sectionTitle h2{margin:0;font-size:15px;color:#213a60}
     .sectionTitle .mini{font-size:12px;color:var(--muted)}
-    .grid{display:grid;grid-template-columns: repeat(3, 1fr);gap:10px;}
-    @media (min-width:640px){ .grid{grid-template-columns: repeat(4, 1fr);} }
+    .grid{display:grid;grid-template-columns: repeat(2, 1fr);gap:12px;}
+    @media (min-width:640px){ .grid{grid-template-columns: repeat(3, 1fr);} }
 
     .tile{
       background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(245,249,255,.96));
@@ -427,7 +426,7 @@
       z-index:999;
       box-shadow: 0 -10px 30px rgba(52,86,140,.08);
     }
-    .bottomInner{max-width:1040px;margin:0 auto;display:flex;gap:10px;flex-wrap:wrap}
+    .bottomInner{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
     .bbtn{
       flex:1;
       display:flex;align-items:center;justify-content:center;gap:8px;
@@ -436,8 +435,19 @@
       background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(244,249,255,.98));
       color:#244164;
       font-weight:950;font-size:13px;
-      min-width:120px;
+      min-width:0;
       box-shadow: 0 8px 18px rgba(78,141,247,.06);
+    }
+    @media(max-width:520px){
+      .wrap{padding-top:12px;padding-bottom:100px}
+      .hero{border-radius:20px}
+      .heroSlide{aspect-ratio:4/4.7}
+      .heroBar{padding:14px 12px}
+      .ctaRow{width:100%}
+      .btn{font-size:12px;padding:10px 6px}
+      .bottomBar{padding:8px 6px calc(8px + env(safe-area-inset-bottom))}
+      .bottomInner{gap:5px}
+      .bbtn{padding:10px 3px;font-size:11px;flex-direction:column;gap:2px;border-radius:12px}
     }
     .bbtn.primary{
       background: linear-gradient(180deg, rgba(255,170,53,.98), rgba(255,144,0,.92));
@@ -746,6 +756,7 @@
     }
   </style>
 
+  <script src="assets/site-nav.js" defer></script>
 </head>
 
 <body>
@@ -766,33 +777,14 @@
           </div>
         </div>
 
-        <!-- ✅ 2줄 + 우선순위 5개만 진하게 -->
+        <!-- 핵심 행동 3개 -->
         <div class="ctaRow">
-          <!-- 우선순위 5 (Primary) -->
-          <a class="btn primary" id="callTop" href="#">📞 전화</a>
-          <a class="btn primary" id="kakaoTop" href="#" target="_blank" rel="noopener">🟡 카톡</a>
-          <a class="btn primary" id="verifyTop" href="verification/">🔎 조회</a>
-          <a class="btn primary" id="growthTop" href="growth/">⭐ 포인트</a>
-          <a class="btn primary" id="galleryTop" href="gallery/">🖼️ 갤러리</a>
-
-          <!-- Secondary (연하게) -->
-          <a class="btn" id="noticeTop" href="notice/">📢 공지</a>
-          <a class="btn" id="payTop" href="pay/">💳 결제</a>
-          <a class="btn" id="bandTop" href="#" target="_blank" rel="noopener">🟢 밴드</a>
+          <a class="btn primary" id="kakaoTop" href="#" target="_blank" rel="noopener">🟡 상담하기</a>
+          <a class="btn" id="verifyTop" href="verification/">🔎 우리아이 조회</a>
+          <a class="btn" href="program/">🥋 프로그램</a>
         </div>
       </div>
     </div>
-
-    <nav class="classMega" aria-label="계명태권도 통합 시스템 메뉴">
-      <a class="classMegaBrand" href="class/"><b>계명태권도 CLASS</b><span>v1.1.0 · SPARK 회원 연결</span></a>
-      <div class="classMegaGroups">
-        <details><summary>CLASS</summary><div><a href="class/attendance/">출석</a><a href="class/sms/">문자 발송대기</a><a href="class/star/">STAR·칭찬</a><a href="class/tools/">미션·수업계획</a><a href="class/tools/">팀점수·게임</a><a href="class/tools/">음악·영상·타이머</a><a href="class/star/">오늘의 챔피언</a></div></details>
-        <details><summary>성장관리</summary><div><a href="class/admin/">원생관리</a><a href="class/attendance/">출석기록</a><a href="verification/">급수·띠·단증</a><a href="exam/">승급·승단</a><a href="growth/">계명 성장포인트</a></div></details>
-        <details><summary>🔥 SPARK</summary><div><a href="class/spark/">SPARK 바로가기</a><a href="class/spark/#intro">SPARK 소개</a><a href="class/spark/#today">오늘의 SPARK</a><a href="class/spark/#my">내 SPARK</a><a href="class/spark/#missions">SPARK 미션</a><a href="class/spark/#levels">SPARK 레벨</a><a href="class/spark/#xp">SPARK XP</a><a href="class/spark/#ranking">SPARK 랭킹</a></div></details>
-        <details><summary>LIVE BOARD</summary><div><a href="dashboard/">현재 랭킹</a><a href="dashboard/">오늘의 챔피언</a><a href="dashboard/">월간 출석왕</a><a href="dashboard/">월간 STAR왕</a></div></details>
-      </div>
-      <a class="classMegaLive" href="dashboard/">LIVE BOARD</a>
-    </nav>
 
     <!-- =====================================================
       ✅ NEW: 홈 화면에 추가(바로가기) 안내 (설치 유도 X)
@@ -812,28 +804,10 @@
       </div>
     </section>
 
-    <!-- ✅ 공지사항(최근 5) -->
-    <section class="noticeBox" id="notice">
-      <div class="noticeHead">
-        <div class="left">
-          <b>📌 공지사항(최근 5)</b>
-          <div class="sub">공개 공지는 홈페이지에, 회원 전용 안내는 밴드에서 운영합니다.</div>
-        </div>
-        <div class="actions">
-          <a class="moreBtn" id="noticeHomeBtn" href="notice/">공지 전체보기</a>
-          <a class="moreBtn" id="noticeBandBtn" href="#" target="_blank" rel="noopener">학부모 밴드</a>
-          <a class="moreBtn" href="#contact">문의하기</a>
-        </div>
-      </div>
-      <div class="noticeViewport" id="noticeViewport">
-        <ul class="noticeList" id="noticeList"></ul>
-      </div>
-    </section>
-
-    <!-- ✅ 첫 화면: 최근 공지 3개 -->
+    <!-- 계명태권도 소식: 중복 공지 영역을 하나로 통합 -->
     <section class="recentNotice" id="recentNotice">
       <div class="recentNoticeHead">
-        <b>최근 공지 (3)</b>
+        <b>계명태권도 소식</b>
         <a class="moreBtn" href="notice/">전체 보기</a>
       </div>
       <div class="recentNoticeGrid" id="recentNoticeGrid"></div>
@@ -841,29 +815,17 @@
 
     <!-- 핵심 바로가기 -->
     <div class="sectionTitle">
-      <h2>핵심 바로가기</h2>
-      <div class="mini">신규 학부모가 가장 많이 확인하는 정보</div>
+      <h2>한눈에 보는 계명태권도</h2>
+      <div class="mini">아이의 수련과 성장을 쉽게 확인하세요</div>
     </div>
 
     <div class="grid">
-      <a class="tile" href="schedule/"><div class="ico">🗓️</div><div class="label">수련시간표</div><div class="sub">반/시간</div></a>
-      <a class="tile" href="program/"><div class="ico">🥋</div><div class="label">프로그램 소개</div><div class="sub">연령별</div></a>
-      <a class="tile" href="plan/"><div class="ico">📘</div><div class="label">수련계획표</div><div class="sub">월간</div></a>
-      <a class="tile" href="exam/"><div class="ico">🏅</div><div class="label">승급·승단심사안내</div><div class="sub">절차</div></a>
-
-      <a class="tile" href="coach/"><div class="ico">👤</div><div class="label">지도자 소개</div><div class="sub">관장 프로필</div></a>
-
-      <a class="tile" href="verification/"><div class="ico">🔎</div><div class="label">수련생 조회</div><div class="sub">이름으로 확인</div></a>
-      <a class="tile" href="growth/"><div class="ico">⭐</div><div class="label">성장 포인트 조회</div><div class="sub">이름으로 확인</div></a>
-
-      <a class="tile" href="gallery/"><div class="ico">🖼️</div><div class="label">갤러리&영상</div><div class="sub">분위기</div></a>
-      <a class="tile" href="#faq"><div class="ico">❓</div><div class="label">Q&A 모음</div><div class="sub">바로 보기</div></a>
-
-      <a class="tile" href="pay/"><div class="ico">💳</div><div class="label">결제 안내</div><div class="sub">계좌/QR</div></a>
-      <a class="tile" href="#contact"><div class="ico">✅</div><div class="label">카톡 문의</div><div class="sub">바로 상담</div></a>
-      <a class="tile" id="bandTile" href="#" target="_blank" rel="noopener"><div class="ico">🟢</div><div class="label">밴드 바로가기</div><div class="sub">공지/소통</div></a>
-      <a class="tile" id="ytTile" href="#" target="_blank" rel="noopener"><div class="ico">▶️</div><div class="label">유튜브 채널</div><div class="sub">영상 더보기</div></a>
       <a class="tile" href="first/"><div class="ico">📌</div><div class="label">처음오신 분</div><div class="sub">안내</div></a>
+      <a class="tile" href="program/"><div class="ico">🥋</div><div class="label">교육 프로그램</div><div class="sub">연령별 수련</div></a>
+      <a class="tile" href="schedule/"><div class="ico">🗓️</div><div class="label">수련시간표</div><div class="sub">반·시간 확인</div></a>
+      <a class="tile" href="growth/"><div class="ico">⭐</div><div class="label">우리아이 성장</div><div class="sub">성장 포인트</div></a>
+      <a class="tile" href="gallery/"><div class="ico">🖼️</div><div class="label">갤러리·영상</div><div class="sub">도장 이야기</div></a>
+      <a class="tile" href="notice/"><div class="ico">📢</div><div class="label">공지사항</div><div class="sub">최근 소식</div></a>
     </div>
 
     <!-- 신규 학부모 안내 -->
@@ -980,17 +942,10 @@
   <div class="bottomBar">
     <div class="bottomInner">
       <a class="bbtn" href="#top">🏠 홈</a>
-      <a class="bbtn" id="callBottom" href="#">📞 전화</a>
       <a class="bbtn primary" id="kakaoBottom" href="#" target="_blank" rel="noopener">🟡 카톡</a>
-      <a class="bbtn" id="bandBottom" href="#" target="_blank" rel="noopener">🟢 밴드</a>
-
       <a class="bbtn" id="verifyBottom" href="verification/">🔎 조회</a>
-      <a class="bbtn" id="growthBottom" href="growth/">⭐ 포인트</a>
-
-      <a class="bbtn" id="galleryBottom" href="gallery/">🖼️ 갤러리</a>
       <a class="bbtn" href="notice/">📢 공지</a>
-      <a class="bbtn" id="ytBottom" href="#" target="_blank" rel="noopener">▶️ 유튜브</a>
-      <a class="bbtn" href="pay/">💳 결제</a>
+      <button class="bbtn" id="openAllBottom" type="button">☰ 전체</button>
     </div>
   </div>
 
@@ -1058,21 +1013,11 @@
       $("logo").style.backgroundImage = `url('${KMT.logoImage}')`;
     }
 
+    const setHref = (ids, href)=>ids.forEach(id=>{ const el=$(id); if(el) el.href=href; });
     const tel = `tel:${String(KMT.phone).replaceAll("-","")}`;
-    $("callTop").href = tel;
-    $("callBtn").href = tel;
-    $("callBottom").href = tel;
-
-    $("kakaoTop").href = KMT.kakaoUrl;
-    $("kakaoBtn").href = KMT.kakaoUrl;
-    $("kakaoBottom").href = KMT.kakaoUrl;
-
-    $("bandTop").href = KMT.bandUrl;
-    $("bandBtn").href = KMT.bandUrl;
-    $("bandBottom").href = KMT.bandUrl;
-    $("bandTile").href = KMT.bandUrl;
-
-    $("noticeBandBtn").href = KMT.bandUrl;
+    setHref(["callTop","callBtn","callBottom"], tel);
+    setHref(["kakaoTop","kakaoBtn","kakaoBottom"], KMT.kakaoUrl);
+    setHref(["bandTop","bandBtn","bandBottom","bandTile","noticeBandBtn"], KMT.bandUrl);
 
     const v = KMT.verificationPageUrl || "verification/";
     ["verifyTop","verifyBtn","verifyBottom"].forEach(id=>{
@@ -1160,6 +1105,7 @@
     (function renderNoticeTicker(){
       const list = $("noticeList");
       const vp = $("noticeViewport");
+      if(!list) return;
 
       if(vp && typeof KMT.noticeViewportPx === "number"){
         vp.style.setProperty("--noticeH", `${KMT.noticeViewportPx}px`);
@@ -1186,6 +1132,11 @@
         list.innerHTML = list.innerHTML + list.innerHTML;
       }
     })();
+
+    $("openAllBottom")?.addEventListener("click", ()=>{
+      document.querySelector('.kmt-all-trigger')?.click();
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
 
     (function renderRecent3(){
       const box = $("recentNoticeGrid");

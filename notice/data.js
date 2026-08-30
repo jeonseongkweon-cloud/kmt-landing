@@ -1,4 +1,3 @@
-<script>
 window.notices = [
 
   {
@@ -140,4 +139,3 @@ window.notices = [
   }
 
 ];
-</script>
