@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="186";
+const VOICE_BUILD="187";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -143,6 +143,17 @@ function setupRecognition(){
 }
 
 function findPeriod(text){const t=text.replace(/\s/g,"");return state.periods.find(p=>t.includes(clean(p.name).replace(/\s/g,""))||t.includes(clean(p.code).replace(/\s/g,"")))||state.period}
+
+function extractStudentTextForAction(text){
+  let x=normalize(text);
+  // Remove action words and known STAR/MVP tail words, leaving the spoken name as cleanly as possible.
+  x=x.replace(/\b(출석|지각|결석|별|스타|STAR|MVP|엠브이피|챔피언)\b/gi," ");
+  // Remove common praise/category result phrases while keeping possible category nouns out of the name search.
+  const cats=(state.starCategories||[]).map(c=>clean(c.name)).filter(Boolean).sort((a,b)=>b.length-a.length);
+  for(const c of cats)x=x.replaceAll(c," ");
+  x=x.replace(/\b(칭찬해줘|칭찬해|칭찬하자|잘했어|잘했네|최고야|멋지다|좋았어|아주 좋아|오늘)\b/g," ");
+  return x.replace(/\s+/g," ").trim();
+}
 function studentMatches(text,period=null){
   const t=clean(text).replace(/\s/g,""),all=state.students||[];
   // 전체 재원생에서 성명 완전 포함 검색
@@ -191,7 +202,7 @@ async function runCommand(raw,{confidence=1,source="text"}={}){
   if(source==="voice"&&confidence>0&&confidence<.6){const ok=await confirmCommand(`음성 인식 신뢰도가 ${Math.round(confidence*100)}%입니다. “${raw}” 명령을 계속할까요?`);if(!ok){await logCommand({transcript:raw,normalized,commandType:"low_confidence",status:"cancelled",resultText:"낮은 신뢰도로 실행 취소",confidence,source});result("warn","실행하지 않았습니다.","다시 또렷하게 말해 주세요.");return}}
   const period=findPeriod(normalized);
   try{
-    if(/(가족.*(돕기|도움)|가족돕기).*?(SPARK|스파크).*?(완료|기록)/i.test(normalized)){const student=await resolveStudent(normalized,period);if(!student)throw new Error("SPARK를 기록할 학생을 확인할 수 없습니다.");const ok=await confirmCommand(`${student.name} 학생의 가족돕기 SPARK를 완료 기록할까요?`);if(!ok){await logCommand({transcript:raw,normalized,commandType:"spark_family_help",payload:{student_id:student.id},status:"cancelled",resultText:"사용자 취소",confidence,source});return}await saveFamilySpark(student);const msg=`${student.name} 가족돕기 SPARK 기록 완료`;result("ok",msg,"SPARK 함께하기 기록에 저장했습니다.");say(msg);await logCommand({transcript:raw,normalized,commandType:"spark_family_help",payload:{student_id:student.id},status:"executed",resultText:msg,confidence,source});return}
+    if(/(가족.*(돕기|도움)|가족돕기).*?(SPARK|스파크).*?(완료|기록)/i.test(normalized)){const studentText=extractStudentTextForAction(text);const student=await resolveStudent(studentText||text,period);if(!student)throw new Error("SPARK를 기록할 학생을 확인할 수 없습니다.");const ok=await confirmCommand(`${student.name} 학생의 가족돕기 SPARK를 완료 기록할까요?`);if(!ok){await logCommand({transcript:raw,normalized,commandType:"spark_family_help",payload:{student_id:student.id},status:"cancelled",resultText:"사용자 취소",confidence,source});return}await saveFamilySpark(student);const msg=`${student.name} 가족돕기 SPARK 기록 완료`;result("ok",msg,"SPARK 함께하기 기록에 저장했습니다.");say(msg);await logCommand({transcript:raw,normalized,commandType:"spark_family_help",payload:{student_id:student.id},status:"executed",resultText:msg,confidence,source});return}
     if(/이번\s*주\s*미션.*(보여|열어)/.test(normalized)){await logCommand({transcript:raw,normalized,commandType:"show_mission",status:"executed",resultText:"수업운영 화면 열기",confidence,source});location.href="../tools/";return}
     if(/SPARK.*(열어|보여)|스파크.*(열어|보여)/i.test(normalized)){await logCommand({transcript:raw,normalized,commandType:"open_spark",status:"executed",resultText:"SPARK 화면 열기",confidence,source});location.href="../spark/";return}
 
