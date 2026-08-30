@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="192";
+const VOICE_BUILD="193";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -216,6 +216,29 @@ async function loadHistory(){const{data}=await db.from("kmt_voice_command_log").
 function renderHistory(){$("historyList").innerHTML=state.history.length?state.history.map(h=>`<div class="history-item"><small>${new Date(h.created_at).toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"})}</small><div><strong>${esc(h.transcript)}</strong><small>${esc(h.result_text||"")}</small></div><span>${h.status==="executed"?"✅":h.status==="cancelled"?"↩️":"⚠️"}</span></div>`).join(""):'<div class="empty">아직 실행한 명령이 없습니다.</div>'}
 
 
+const KMT_SOUND={
+  enabled:localStorage.getItem("kmtClassSound")!=="off",
+  volume:Math.max(0,Math.min(1,Number(localStorage.getItem("kmtClassSoundVolume")||"0.85"))),
+  ctx:null,
+  getContext(){try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return null;this.ctx=this.ctx||new A();if(this.ctx.state==="suspended")this.ctx.resume().catch(()=>{});return this.ctx}catch(e){console.warn("[SOUND ctx]",e);return null}},
+  setEnabled(v){this.enabled=!!v;localStorage.setItem("kmtClassSound",this.enabled?"on":"off");syncSoundUI();return this.enabled},
+  toggle(){return this.setEnabled(!this.enabled)},
+  setVolume(v){this.volume=Math.max(0,Math.min(1,Number(v)));localStorage.setItem("kmtClassSoundVolume",String(this.volume));syncSoundUI()},
+  tone(freq,start,duration,gainValue,type="sine"){if(!this.enabled)return;const ctx=this.getContext();if(!ctx)return;try{const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+start;o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0002,gainValue*this.volume),t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g);g.connect(ctx.destination);o.start(t);o.stop(t+duration+.03)}catch(e){console.warn("[SOUND tone]",e)}},
+  play(name){if(!this.enabled)return;const map={
+    star:[
+      [[659.25,0,.25,.105,"sine"],[783.99,.065,.27,.11,"sine"],[987.77,.13,.32,.12,"triangle"]],
+      [[587.33,0,.22,.09,"sine"],[739.99,.07,.24,.10,"triangle"],[880,.14,.31,.115,"sine"]],
+      [[698.46,0,.20,.085,"triangle"],[880,.055,.23,.10,"sine"],[1046.5,.12,.33,.12,"sine"]]
+    ],
+    welcome:[[[523.25,0,.22,.065,"sine"],[659.25,.05,.24,.075,"sine"],[783.99,.10,.26,.085,"triangle"],[1046.5,.16,.34,.10,"sine"]]],
+    success:[[[783.99,0,.16,.08,"sine"],[1046.5,.08,.25,.10,"triangle"]]],
+    champion:[[[523.25,0,.25,.07,"triangle"],[659.25,.08,.28,.085,"triangle"],[783.99,.16,.31,.10,"sine"],[1046.5,.25,.45,.12,"sine"]]]
+  };try{const groups=map[name];if(!groups)return;groups[Math.floor(Math.random()*groups.length)].forEach(x=>this.tone(...x))}catch(e){console.warn("[SOUND play]",e)}}
+};
+function syncSoundUI(){try{const b=document.getElementById("soundToggleBtn"),r=document.getElementById("soundVolumeRange"),t=document.getElementById("soundStatusText");if(b){b.textContent=KMT_SOUND.enabled?"🔊 SOUND ON":"🔇 SOUND OFF";b.setAttribute("aria-pressed",KMT_SOUND.enabled?"true":"false")}if(r)r.value=String(Math.round(KMT_SOUND.volume*100));if(t)t.textContent=KMT_SOUND.enabled?`효과음 ${Math.round(KMT_SOUND.volume*100)}%`:"효과음 꺼짐"}catch(e){console.warn("[SOUND UI]",e)}}
+function initSoundControls(){try{const b=document.getElementById("soundToggleBtn"),r=document.getElementById("soundVolumeRange");if(b&&!b.dataset.bound){b.dataset.bound="1";b.addEventListener("click",()=>{const on=KMT_SOUND.toggle();if(on)KMT_SOUND.play("success")})}if(r&&!r.dataset.bound){r.dataset.bound="1";r.addEventListener("input",e=>KMT_SOUND.setVolume(Number(e.target.value)/100));r.addEventListener("change",()=>KMT_SOUND.play("success"))}syncSoundUI()}catch(e){console.warn("[SOUND init]",e)}}
+
 function playWelcomeLight(studentName){
   // 출석 DB 저장과 완전히 분리된 수업용 WELCOME LIGHT.
   try{
@@ -237,30 +260,7 @@ function playWelcomeLight(studentName){
     `;
     document.body.appendChild(layer);
 
-    // 밝고 짧은 입장 차임. 외부 음원 없음.
-    try{
-      const AudioCtx=window.AudioContext||window.webkitAudioContext;
-      if(AudioCtx){
-        const ctx=window.__kmtWelcomeAudioCtx||(window.__kmtWelcomeAudioCtx=new AudioCtx());
-        if(ctx.state==="suspended")ctx.resume().catch(()=>{});
-        const now=ctx.currentTime;
-        [523.25,659.25,783.99,1046.50].forEach((freq,index)=>{
-          const osc=ctx.createOscillator();
-          const gain=ctx.createGain();
-          osc.type=index===3?"triangle":"sine";
-          osc.frequency.setValueAtTime(freq,now+index*0.055);
-          gain.gain.setValueAtTime(0.0001,now+index*0.055);
-          gain.gain.exponentialRampToValueAtTime(index===3?0.10:0.075,now+index*0.055+0.012);
-          gain.gain.exponentialRampToValueAtTime(0.0001,now+index*0.055+0.30);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(now+index*0.055);
-          osc.stop(now+index*0.055+0.32);
-        });
-      }
-    }catch(soundError){
-      console.warn("[WELCOME LIGHT sound]",soundError);
-    }
+    KMT_SOUND.play("welcome");
 
     window.setTimeout(()=>layer.classList.add("welcome-light-effect-out"),1450);
     window.setTimeout(()=>layer.remove(),2000);
@@ -310,29 +310,7 @@ function playQuickStarEffect(studentName){
       particleBox.appendChild(p);
     }
 
-    try{
-      const AudioCtx=window.AudioContext||window.webkitAudioContext;
-      if(AudioCtx){
-        const ctx=window.__kmtStarAudioCtx||(window.__kmtStarAudioCtx=new AudioCtx());
-        if(ctx.state==="suspended")ctx.resume().catch(()=>{});
-        const now=ctx.currentTime;
-        [659.25,783.99,987.77].forEach((freq,index)=>{
-          const osc=ctx.createOscillator();
-          const gain=ctx.createGain();
-          osc.type="sine";
-          osc.frequency.setValueAtTime(freq,now+index*0.07);
-          gain.gain.setValueAtTime(0.0001,now+index*0.07);
-          gain.gain.exponentialRampToValueAtTime(0.12,now+index*0.07+0.015);
-          gain.gain.exponentialRampToValueAtTime(0.0001,now+index*0.07+0.28);
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-          osc.start(now+index*0.07);
-          osc.stop(now+index*0.07+0.3);
-        });
-      }
-    }catch(soundError){
-      console.warn("[STAR EFFECT sound]",soundError);
-    }
+    KMT_SOUND.play("star");
 
     window.setTimeout(()=>layer.classList.add("quick-star-effect-out"),1350);
     window.setTimeout(()=>layer.remove(),1900);
@@ -412,4 +390,4 @@ $("micButton").onclick=()=>{if(!state.recognition)return;try{state.listening?sta
 $("runButton").onclick=()=>runCommand($("commandInput").value,{source:"text"});$("commandInput").onkeydown=e=>{if(e.key==="Enter")runCommand($("commandInput").value,{source:"text"})};
 $("refreshButton").onclick=async()=>{await loadBase();await loadHistory();toast("새로고침 완료")};$("helpButton").onclick=()=>$("helpDialog").showModal();
 document.querySelectorAll("[data-quick]").forEach(b=>b.onclick=()=>{let t=b.dataset.quick;if(t==="오늘 MVP")t=`오늘 ${state.period?.name||""} MVP`;if(t==="수업 종료")t=`${state.period?.name||""} 수업 종료`;$("commandInput").value=t;runCommand(t,{source:"text"})});
-db.auth.onAuthStateChange(()=>{});boot();
+db.auth.onAuthStateChange(()=>{});initSoundControls();boot();
