@@ -4,7 +4,7 @@
      2) https://...github.io/kmt-landing/ (BASE="/kmt-landing/")
 */
 
-const CACHE_NAME = "kmt-cache-v12";
+const CACHE_NAME = "kmt-cache-v13-class-auth-single-session";
 
 /**
  * ✅ BASE 자동 판별

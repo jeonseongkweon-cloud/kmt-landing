@@ -2,7 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const cfg = window.KMT_ADMIN_CONFIG;
 const db = createClient(cfg.supabaseUrl, cfg.supabasePublishableKey, {
-  auth: { persistSession: true, detectSessionInUrl: true, flowType: "pkce" }
+  auth: { persistSession: true, detectSessionInUrl: false, autoRefreshToken: true }
 });
 
 const $ = (id) => document.getElementById(id);
@@ -68,17 +68,12 @@ async function removeManagedPhoto(url){
 
 
 async function signIn(){
-  $("loginMessage").textContent="Google 로그인 화면을 여는 중입니다...";
-  const redirectTo = `${location.origin}${location.pathname}`;
-  const { error } = await db.auth.signInWithOAuth({ provider:"google", options:{ redirectTo, queryParams:{ prompt:"select_account" } } });
-  if(error) $("loginMessage").textContent=error.message;
+  location.replace("../");
 }
 
 async function validateSession(){
  const {data:{session}}=await db.auth.getSession();
  if(!session){location.replace("../");return;}
- const email=clean(session.user.email).toLowerCase();
- if(email!=="jeonseongkweon@gmail.com"){await db.auth.signOut();location.replace("../");return;}
  loginScreen.hidden=true; adminApp.hidden=false;
  $("adminEmail").textContent="전성권 관장";
  await loadData();

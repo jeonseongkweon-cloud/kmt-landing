@@ -89,16 +89,14 @@ function normalize(t){
   return x.trim();
 }
 
-async function login(){const{error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}${location.pathname}`}});if(error)$("loginMessage").textContent=error.message}
+async function login(){location.replace("../")}
 async function hasPermission(permission){
   const{data:{session}}=await db.auth.getSession();
-  if(session && isSingleOwner(session)) return true;
-  const{data,error}=await db.rpc("kmt_has_permission",{p_permission:permission});
-  if(error)throw error;
-  return Boolean(data);
+  return Boolean(session && isSingleOwner(session));
 }
 async function boot(){
   const{data:{session}}=await db.auth.getSession();
+  if(!session||!isSingleOwner(session)){location.replace("../");return}
   state.staff={email:SINGLE_OWNER_EMAIL,display_name:"전성권 관장",role:"owner",is_active:true};
   $("app").hidden=false;
   $("staffLabel").textContent="전성권 관장 · 관장";
