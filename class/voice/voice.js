@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="182";
+const VOICE_BUILD="183";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -105,11 +105,27 @@ function setupRecognition(){
 }
 
 function findPeriod(text){const t=text.replace(/\s/g,"");return state.periods.find(p=>t.includes(clean(p.name).replace(/\s/g,""))||t.includes(clean(p.code).replace(/\s/g,"")))||state.period}
-function studentMatches(text,period=null){const t=text.replace(/\s/g,"");const pool=period?rosterFor(period):state.students;return pool.filter(s=>t.includes(clean(s.name).replace(/\s/g,"")))}
+function studentMatches(text,period=null){
+  const t=clean(text).replace(/\s/g,""),all=state.students||[];
+  // 전체 재원생에서 성명 완전 포함 검색
+  const exact=all.filter(s=>t.includes(clean(s.name).replace(/\s/g,"")));
+  if(exact.length)return exact;
+  // 명령어를 제거해 "민규 출석" -> "민규"로 검색
+  let q=t;
+  ["출석","지각","결석","별","스타","STAR","왔어","왔어요","왔습니다","도착","도착했어","늦었어","안왔어","안와"].forEach(w=>q=q.replaceAll(w,""));
+  q=q.replace(/^(계명아파트|계명아|개명아|계명야)/,"").trim();
+  if(!q)return [];
+  const partial=all.filter(s=>{const n=clean(s.name).replace(/\s/g,"");return n.includes(q)||q.includes(n)});
+  if(partial.length)return partial;
+  // 이름 한 글자 STT 오인식: 유일한 최단 후보일 때만 허용
+  const dist=(a,b)=>{const d=Array.from({length:a.length+1},()=>Array(b.length+1).fill(0));for(let i=0;i<=a.length;i++)d[i][0]=i;for(let j=0;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]};
+  const ranked=all.map(st=>({st,d:dist(clean(st.name).replace(/\s/g,""),q)})).sort((a,b)=>a.d-b.d);
+  return ranked.length&&ranked[0].d<=1&&(!ranked[1]||ranked[1].d>ranked[0].d)?[ranked[0].st]:[];
+}
 function categoryMatches(text){const t=text.replace(/\s/g,"");return state.categories.filter(c=>t.includes(clean(c.name).replace(/별$/,""))||t.includes(clean(c.code).toLowerCase()))}
 function choose(title,items,label){return new Promise(resolve=>{const d=$("choiceDialog"),list=$("choiceList");$("choiceTitle").textContent=title;list.innerHTML="";items.forEach(item=>{const b=document.createElement("button");b.type="button";b.innerHTML=label(item);b.onclick=()=>{d.close();resolve(item)};list.appendChild(b)});d.onclose=()=>resolve(null);d.showModal()})}
 function confirmCommand(message){return new Promise(resolve=>{const d=$("confirmDialog");$("confirmMessage").textContent=message;d.onclose=()=>resolve(d.returnValue==="confirm");d.showModal()})}
-async function resolveStudent(text,period){const matches=studentMatches(text,period);if(matches.length===1)return matches[0];if(matches.length>1)return choose("동명이인입니다. 학생을 선택해 주세요.",matches,s=>`${esc(s.name)} <small>${esc(s.student_code)}</small>`);return null}
+async function resolveStudent(text,period){const matches=studentMatches(text,null);if(matches.length===1)return matches[0];if(matches.length>1)return choose("같거나 비슷한 이름이 있습니다. 학생을 선택해 주세요.",matches,s=>`${esc(s.name)} <small>${esc(s.student_code)}</small>`);return null}
 async function resolveCategory(text){const matches=categoryMatches(text);if(matches.length===1)return matches[0];if(matches.length>1)return choose("STAR 종류를 선택해 주세요.",matches,c=>`${c.icon||"⭐"} ${esc(c.name)}`);return choose("어떤 STAR를 줄까요?",state.categories,c=>`${c.icon||"⭐"} ${esc(c.name)}`)}
 
 async function logCommand({transcript,normalized,commandType,payload,status,resultText,confidence,source}){
