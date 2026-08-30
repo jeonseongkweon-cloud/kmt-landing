@@ -32,13 +32,7 @@ async function signIn(){
 async function validateSession(){
   const { data:{ session } } = await db.auth.getSession();
   if(!session){ loginScreen.hidden=false; adminApp.hidden=true; return; }
-  const email=clean(session.user.email).toLowerCase();
-  if(email !== cfg.allowedAdminEmail.toLowerCase()){
-    await db.auth.signOut();
-    $("loginMessage").textContent="등록되지 않은 관리자 계정입니다.";
-    return;
-  }
-  $("adminEmail").textContent=email;
+  const email=clean(session.user.email).toLowerCase();const {data:staffProfile,error:staffError}=await db.rpc("kmt_get_my_staff_profile");const {data:staffAllowed,error:permError}=await db.rpc("kmt_has_permission",{p_permission:"student_manage"});if(staffError||permError||!staffProfile?.is_active||!staffAllowed){$("loginMessage").textContent="원생관리 권한이 없습니다.";return;}$("adminEmail").textContent=`${staffProfile.display_name||email} · ${staffProfile.role}`;
   loginScreen.hidden=true; adminApp.hidden=false;
   await loadData();
 }

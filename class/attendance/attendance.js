@@ -33,9 +33,7 @@ async function login(){
 async function boot(){
   const {data:{session}}=await db.auth.getSession();
   if(!session){$("loginScreen").hidden=false;$("attendanceApp").hidden=true;return}
-  if(clean(session.user.email).toLowerCase()!==cfg.allowedAdminEmail.toLowerCase()){
-    await db.auth.signOut();$("loginMessage").textContent="등록되지 않은 관리자 계정입니다.";return;
-  }
+  const {data:staffProfile,error:staffError}=await db.rpc("kmt_get_my_staff_profile");const {data:staffAllowed,error:permError}=await db.rpc("kmt_has_permission",{p_permission:"attendance"});if(staffError||permError||!staffProfile?.is_active||!staffAllowed){$("loginMessage").textContent="이 화면을 사용할 지도자 권한이 없습니다.";return}
   $("loginScreen").hidden=true;$("attendanceApp").hidden=false;startClock();await loadPeriods();
 }
 
