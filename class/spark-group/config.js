@@ -1,0 +1,1 @@
+window.KMT_SPARK_GROUP_CONFIG=Object.freeze({version:"1.4.0",supabaseUrl:"https://ojxarsfaewehwjidwgac.supabase.co",supabasePublishableKey:"sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",allowedAdminEmail:"jeonseongkweon@gmail.com"});
