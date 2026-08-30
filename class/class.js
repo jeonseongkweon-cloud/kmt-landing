@@ -16,10 +16,11 @@
 })();
 
 (async function(){
+ const authConfig=window.KMT_CLASS_CONFIG||{};
  const gate=document.getElementById("classGate"),form=document.getElementById("gateForm"),btn=document.getElementById("gateLogin"),idInput=document.getElementById("gateId"),passwordInput=document.getElementById("gatePassword"),msg=document.getElementById("gateMessage");
  const db=window.supabase.createClient("https://ojxarsfaewehwjidwgac.supabase.co","sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",{auth:{persistSession:true,detectSessionInUrl:false,autoRefreshToken:true}});
- const expectedId=String(config.adminLoginId||"admin").trim().toLowerCase();
- const authEmail=String(config.adminAuthEmail||"").trim().toLowerCase();
+ const expectedId=String(authConfig.adminLoginId||"admin").trim().toLowerCase();
+ const authEmail=String(authConfig.adminAuthEmail||"").trim().toLowerCase();
 
  function openClass(){
    gate.style.display="none";
