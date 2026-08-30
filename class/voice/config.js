@@ -1,5 +1,5 @@
 window.KMT_VOICE_CONFIG = Object.freeze({
-  version: "1.8.3",
+  version: "1.8.4",
   supabaseUrl:"https://ojxarsfaewehwjidwgac.supabase.co",
   supabasePublishableKey:"sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",
   timezone:"Asia/Seoul",

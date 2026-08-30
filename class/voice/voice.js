@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="183";
+const VOICE_BUILD="184";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -25,6 +25,11 @@ function normalize(t){
   // 수업 중 자연스럽게 말하는 표현을 기존 명령어로 변환.
   x=x.replace(/^(.+?)\s*(왔어|왔어요|왔습니다|왔다|도착|도착했어|도착했어요)$/,"$1 출석");
   x=x.replace(/^(.+?)\s*(출석해|출석해줘|출석 해줘|출석해주세요|출석 처리|출석처리)$/,"$1 출석");
+
+  // v1.8.4 도장 실전 말투: 아이에게 자연스럽게 건네는 말도 출석으로 이해
+  x=x.replace(/^(.+?)(?:아|야)?\s*(어서\s*와|어서\s*와라|어서\s*오렴|어서\s*왔니|어서\s*왔구나|어서\s*왔네)$/,"$1 출석");
+  x=x.replace(/^(.+?)(?:아|야)?\s*(왔구나|왔네|왔니|잘\s*왔어|잘\s*왔네|반가워|들어와|들어오렴)$/,"$1 출석");
+  x=x.replace(/^(.+?)(?:아|야)?\s*(오늘도\s*왔네|오늘도\s*왔구나|오늘\s*왔네)$/,"$1 출석");
   x=x.replace(/^(.+?)\s*(늦었어|늦었어요|지각했어|지각했어요)$/,"$1 지각");
   x=x.replace(/^(.+?)\s*(안와|안 와|안왔어|안 왔어|결석이야)$/,"$1 결석");
   x=x.replace(/^(.+?)\s*(별\s*하나|별\s*한개|별\s*한 개|별\s*1개|별\s*줘|별\s*주세요|별\s*추가)$/,"$1 별");
@@ -32,6 +37,8 @@ function normalize(t){
   x=x.replace(/^([일이삼사오])\s*부\b/,(_,n)=>bu[n]+"부");
   x=x.replace(/^([1-5])부\s*(모두|전부|전체|다)\s*출석$/,"$1부 전원 출석");
   x=x.replace(/^([1-5])부\s*아이들\s*(모두|전부|전체|다)\s*출석$/,"$1부 전원 출석");
+  // 끝에 붙는 짧은 조사/말버릇은 정규 명령 뒤에서만 제거
+  x=x.replace(/(출석|지각|결석|별)\s*(이야|이요|요|해|해줘|해주세요)$/,"$1");
   return x.trim();
 }
 
