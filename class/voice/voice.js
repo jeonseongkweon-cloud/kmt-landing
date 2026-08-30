@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="176";
+const VOICE_BUILD="182";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -18,7 +18,22 @@ function say(m){try{if(!("speechSynthesis" in window))return;window.speechSynthe
 function result(kind,title,detail=""){const box=$("resultBox");box.className=`result-box ${kind}`;$("resultText").textContent=title;$("resultDetail").textContent=detail}
 function enrollment(s){return Array.isArray(s.enrollments)?(s.enrollments[0]||{}):(s.enrollments||{})}
 function rosterFor(period){return state.students.filter(s=>enrollment(s).class_period_id===period?.id)}
-function normalize(t){return clean(t).replace(/[,.!?~]/g," ").replace(/\s+/g," ").replace(/^계명아\s*/i,"").trim()}
+function normalize(t){
+  let x=clean(t).replace(/[,.!?~·]/g," ").replace(/\s+/g," ").trim();
+  // 호출어는 선택사항. Chrome의 대표적인 "계명아" 오인식도 호출어로 인정.
+  x=x.replace(/^(계명아파트|계명 아파트|계명아아|계명 아|계명야|계명 야|개명아|개명 아|개명야|계명이야|계명아)\s*/i,"").trim();
+  // 수업 중 자연스럽게 말하는 표현을 기존 명령어로 변환.
+  x=x.replace(/^(.+?)\s*(왔어|왔어요|왔습니다|왔다|도착|도착했어|도착했어요)$/,"$1 출석");
+  x=x.replace(/^(.+?)\s*(출석해|출석해줘|출석 해줘|출석해주세요|출석 처리|출석처리)$/,"$1 출석");
+  x=x.replace(/^(.+?)\s*(늦었어|늦었어요|지각했어|지각했어요)$/,"$1 지각");
+  x=x.replace(/^(.+?)\s*(안와|안 와|안왔어|안 왔어|결석이야)$/,"$1 결석");
+  x=x.replace(/^(.+?)\s*(별\s*하나|별\s*한개|별\s*한 개|별\s*1개|별\s*줘|별\s*주세요|별\s*추가)$/,"$1 별");
+  const bu={"일":"1","이":"2","삼":"3","사":"4","오":"5"};
+  x=x.replace(/^([일이삼사오])\s*부\b/,(_,n)=>bu[n]+"부");
+  x=x.replace(/^([1-5])부\s*(모두|전부|전체|다)\s*출석$/,"$1부 전원 출석");
+  x=x.replace(/^([1-5])부\s*아이들\s*(모두|전부|전체|다)\s*출석$/,"$1부 전원 출석");
+  return x.trim();
+}
 
 async function login(){const{error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}${location.pathname}`}});if(error)$("loginMessage").textContent=error.message}
 async function hasPermission(permission){
@@ -70,7 +85,22 @@ function setupRecognition(){
   r.onstart=()=>{state.listening=true;$("micButton").classList.add("listening");$("recognitionState").textContent="듣는 중…"};
   r.onend=()=>{state.listening=false;$("micButton").classList.remove("listening");$("recognitionState").textContent="대기"};
   r.onerror=e=>{result("error","음성인식 오류",e.error||"다시 시도해 주세요.")};
-  r.onresult=async e=>{const alt=e.results[0][0],text=alt.transcript,confidence=Number(alt.confidence||0);$("heardBox").hidden=false;$("heardText").textContent=text;$("confidenceText").textContent=confidence?`인식 신뢰도 ${Math.round(confidence*100)}%`:"";$("commandInput").value=text;await runCommand(text,{confidence,source:"voice"})};
+  r.onresult=async e=>{
+    const alts=Array.from(e.results[0]||[]);
+    const score=a=>{
+      const n=normalize(a.transcript), compact=n.replace(/\s/g,"");
+      let sc=Number(a.confidence||0);
+      if(/출석|지각|결석|별|STAR|스타|MVP|엠브이피|챔피언|수업|전원|SPARK|스파크/.test(n))sc+=2;
+      if(state.students.some(st=>compact.includes(clean(st.name).replace(/\s/g,""))))sc+=3;
+      if(state.periods.some(pd=>compact.includes(clean(pd.name).replace(/\s/g,""))||compact.includes(clean(pd.code).replace(/\s/g,""))))sc+=1;
+      return sc;
+    };
+    const alt=alts.sort((a,b)=>score(b)-score(a))[0]||e.results[0][0];
+    const text=alt.transcript,confidence=Number(alt.confidence||0);
+    $("heardBox").hidden=false;$("heardText").textContent=text;
+    $("confidenceText").textContent=confidence?`인식 신뢰도 ${Math.round(confidence*100)}%`:"";
+    $("commandInput").value=text;await runCommand(text,{confidence,source:"voice"});
+  };
   $("speechSupport").textContent="한국어 음성인식 준비 완료";
 }
 
