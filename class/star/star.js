@@ -154,11 +154,20 @@ function renderTicker(){
 function renderInfoList(id,items,fallback){
   const el=$(id);if(!el)return;
   if(el.__rotateTimer){clearInterval(el.__rotateTimer);el.__rotateTimer=null}
+  el.classList.remove("rotating-info","single-info");
   el.innerHTML=items.length?items.map((n,i)=>`<div class="info-line ${i===0?"is-visible":""}">${escapeHtml(n.message)}</div>`).join(""):`<div class="info-empty is-visible">${escapeHtml(fallback)}</div>`;
-  if(!["noticeInfo","personalInfo"].includes(id)||items.length<2)return;
+  if(!["noticeInfo","personalInfo"].includes(id))return;
+  if(items.length<2){el.classList.add("single-info");return}
   let index=0;const lines=[...el.querySelectorAll(".info-line")];
   el.classList.add("rotating-info");
-  el.__rotateTimer=setInterval(()=>{lines[index]?.classList.remove("is-visible");index=(index+1)%lines.length;lines[index]?.classList.add("is-visible")},8000)
+  el.__rotateTimer=setInterval(()=>{
+    const current=lines[index];
+    const nextIndex=(index+1)%lines.length;
+    const next=lines[nextIndex];
+    current?.classList.remove("is-visible");
+    next?.classList.add("is-visible");
+    index=nextIndex;
+  },7000)
 }
 function renderNoticeList(){
   const el=$("noticeList");if(!el)return;el.innerHTML=state.notices.length?state.notices.map(n=>`<div class="notice-row"><small>${NOTICE_ICONS[n.notice_type]||"📢"} ${escapeHtml(noticeLabel(n.notice_type))}</small><span>${escapeHtml(n.message)}</span><button data-notice-delete="${n.id}">삭제</button></div>`).join(""):'<p class="muted">등록된 공지가 없습니다.</p>';
