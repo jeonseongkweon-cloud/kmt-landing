@@ -84,6 +84,12 @@ a { color: inherit; }
 .top-actions { display: flex; gap: 9px; align-items: center; }
 .admin-link { border-color: rgba(246, 196, 81, 0.42); color: var(--gold); }
 .start-link { border-color: rgba(71, 209, 140, 0.48); color: var(--success); }
+.spark-link { border-color: rgba(255, 132, 45, 0.62); color: #ffb15d; background: rgba(255, 105, 30, 0.12); }
+.spark-hero { display:flex; align-items:center; gap:14px; width:fit-content; margin-top:30px; padding:16px 20px; border:1px solid rgba(255,132,45,.55); border-radius:18px; color:#fff; background:linear-gradient(135deg,#ff5a1f,#f6a623); text-decoration:none; box-shadow:0 16px 38px rgba(255,90,31,.22); }
+.spark-hero span { font-size:30px; }
+.spark-hero strong,.spark-hero small { display:block; }
+.spark-hero strong { font-size:20px; }
+.spark-hero small { margin-left:8px; font-weight:900; }
 
 .hero {
   display: grid;
