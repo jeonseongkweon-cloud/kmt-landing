@@ -79,3 +79,6 @@
 .kmt-mega-confetti{position:absolute;left:50%;top:50%}.kmt-mega-confetti i{position:absolute;font-style:normal;font-size:clamp(18px,2.4vw,34px);color:#ffe566;opacity:0;animation:kmtMegaParticle 1.1s cubic-bezier(.12,.78,.22,1) var(--d) both}.kmt-mega-effect.out{animation:kmtMegaOut .45s ease-in both}
 @keyframes kmtMegaIn{from{opacity:0}to{opacity:1}}@keyframes kmtMegaOut{to{opacity:0}}@keyframes kmtMegaPop{0%{opacity:0;transform:scale(.3)}62%{opacity:1;transform:scale(1.12)}100%{transform:scale(1)}}@keyframes kmtMegaRays{0%{opacity:0;transform:translate(-50%,-50%) scale(.45) rotate(-15deg)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.2) rotate(12deg)}}@keyframes kmtMegaParticle{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}12%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1.15) rotate(var(--r))}}
 @media(max-width:700px){.effect-control-panel{left:8px;bottom:58px;padding:6px;gap:5px}.effect-control-panel button{padding:8px 9px;font-size:12px}}
+
+/* v2.6.0 ceremony sequence */
+.kmt-mega-effect .kmt-mega-title{max-width:92vw;text-align:center}.kmt-mega-effect .kmt-mega-subtitle{max-width:92vw;text-align:center}

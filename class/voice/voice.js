@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="200";
+const VOICE_BUILD="260";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -66,7 +66,7 @@ function normalize(t){
   x=x.replace(/^(.+?)(?:아|야)?\s*(.+?)\s*(잘했어|잘했네|최고야|멋지다|좋았어|아주 좋아)$/,"$1 $2 별");
 
   // 오늘의 MVP / 챔피언 자연어
-  x=x.replace(/^(?:오늘\s*)?(.+?)(?:아|야)?\s*(최고야|최고다|제일 잘했어|챔피언이야|MVP야|엠브이피야)$/i,"$1 MVP");
+  x=x.replace(/^(?:오늘\s*)?(.+?)(?:아|야)?\s*(최고다|제일 잘했어|챔피언이야|MVP야|엠브이피야)$/i,"$1 MVP");
   x=x.replace(/^(?:오늘\s*)?(?:MVP|엠브이피|챔피언)\s*(.+)$/i,"$1 MVP");
   x=x.replace(/^(.+)\s*(?:오늘\s*)?(?:MVP|엠브이피|챔피언)(?:으로|로)?\s*(해줘|선정해|정해줘)?$/i,"$1 MVP");
 
@@ -366,6 +366,69 @@ function showBestEffect(name=""){showEffectOverlay({icon:"🌟",title:name?`${na
 function showTeamWinEffect(team="우리팀"){showEffectOverlay({icon:"🏅",title:`${team} 승리!`,subtitle:"TEAM WIN!",theme:"blue",duration:2200});KMT_SOUND.play("champion")}
 function initEffectControlPanel(){try{const p=document.getElementById("effectControlPanel");if(!p||p.dataset.bound)return;p.dataset.bound="1";p.querySelectorAll("[data-effect]").forEach(b=>b.addEventListener("click",()=>{const e=b.dataset.effect;if(e==="applause")showApplauseEffect();if(e==="fireworks")showFireworksEffect();if(e==="best")showBestEffect();if(e==="champion")runCommand("오늘의 챔피언",{source:"text"})}))}catch(e){console.warn("[EFFECT PANEL]",e)}}
 
+
+/* v2.6.0 VOICE COMPLETE INTEGRATION */
+let voiceTimerId=null,voiceTimerLeft=0;
+
+function voiceMega(icon,title,subtitle="",duration=2100,theme="gold"){
+  showEffectOverlay({icon,title,subtitle,theme,duration});
+}
+function timerText(sec){const m=Math.floor(sec/60),s=sec%60;return `${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`}
+function startVoiceTimer(minutes){
+  clearInterval(voiceTimerId); voiceTimerLeft=Math.max(1,Number(minutes))*60;
+  result("ok",`${minutes}분 타이머 시작`,timerText(voiceTimerLeft)); say(`${minutes}분 타이머 시작!`);
+  const tick=()=>{voiceTimerLeft--; if(voiceTimerLeft<=0){clearInterval(voiceTimerId);voiceTimerId=null;result("ok","TIME!","타이머가 끝났습니다.");voiceMega("⏰","TIME!","시간 종료!",2500,"fire");say("시간 끝!")}else result("ok","타이머 진행 중",timerText(voiceTimerLeft))};
+  voiceTimerId=setInterval(tick,1000);
+}
+function stopVoiceTimer(){clearInterval(voiceTimerId);voiceTimerId=null;result("warn","타이머 정지",timerText(Math.max(0,voiceTimerLeft)));say("타이머 정지")}
+async function addTeamScore(team,points){
+  const r=await db.from("kmt_team_scores").insert({score_date:localDate(),team_name:team,points:Number(points),note:"계명아 음성명령"});
+  if(r.error)throw r.error;
+}
+async function drawAttendedStudent(period){
+  const session=state.session||await getSession(period,{create:false}); if(!session)throw new Error("오늘 시작된 수업이 없습니다.");
+  const r=await db.from("attendance").select("student_id,status").eq("session_id",session.id).in("status",["present","late"]); if(r.error)throw r.error;
+  const ids=new Set((r.data||[]).map(x=>x.student_id)), pool=rosterFor(period).filter(x=>ids.has(x.id));
+  if(!pool.length)throw new Error("출석한 학생이 없습니다.");
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+async function awardAdvancedBadges(studentId,sessionId){
+  const r=await db.rpc("kmt_award_advanced_star_badges",{p_student_id:studentId,p_session_id:sessionId});
+  if(r.error){console.warn("[ADVANCED BADGE]",r.error.message);return []}
+  return r.data||[];
+}
+async function buildCeremonyAwards(period){
+  const session=state.session||await getSession(period,{create:false}); if(!session)throw new Error("오늘 시작된 수업이 없습니다.");
+  const r=await db.rpc("kmt_session_award_summary",{p_session_id:session.id}); if(r.error)throw r.error;
+  const awards=(r.data||[]).map(x=>({icon:x.icon||"🏆",title:x.title,name:x.student_name,sub:`${x.score} ${x.award_type==="category"?"STAR":"점"}`,student_id:x.student_id,category_id:x.category_id,award_type:x.award_type}));
+  // 학생 수상은 champions에도 자동 확정
+  for(const a of awards.filter(x=>x.student_id)){
+    const cr=await db.from("champions").upsert({session_id:session.id,student_id:a.student_id,title:a.title,category_id:a.category_id||null},{onConflict:"session_id,title"});
+    if(cr.error)console.warn("[AUTO CHAMPION]",cr.error.message);
+  }
+  // 팀 우승
+  const tr=await db.from("kmt_team_scores").select("team_name,points").eq("score_date",localDate()); 
+  if(!tr.error){
+    const sums=new Map(); for(const x of(tr.data||[])sums.set(x.team_name,(sums.get(x.team_name)||0)+Number(x.points||0));
+    if(sums.size){let team="",max=-Infinity;for(const [k,n] of sums){if(n>max){team=k;max=n}} awards.push({icon:"🏅",title:"팀 우승",name:team,sub:`${max}점`,award_type:"team"});}
+  }
+  // 성공한 미션
+  const mr=await db.from("kmt_class_missions").select("title,reward_text").eq("mission_date",localDate()).eq("is_completed",true).limit(3);
+  if(!mr.error)for(const m of(mr.data||[]))awards.push({icon:"🎯",title:"MISSION CLEAR",name:m.title,sub:m.reward_text||"미션 성공!",award_type:"mission"});
+  return {session,awards};
+}
+async function runCeremonySequence(period,{autoClose=false}={}){
+  const {awards}=await buildCeremonyAwards(period);
+  if(!awards.length){voiceMega("🏆","오늘의 기록을 기다려요!","STAR와 출석 기록이 생기면 시상합니다.");return}
+  result("ok","수업 종료 시상식 시작",`${awards.length}개 시상`);
+  for(let i=0;i<awards.length;i++){
+    const a=awards[i]; voiceMega(a.icon,a.title,`${a.name}${a.sub?` · ${a.sub}`:""}`,2400,i===0?"champion":"gold");
+    say(`${a.title}, ${a.name}!`);
+    await new Promise(r=>setTimeout(r,2550));
+  }
+  voiceMega("👏","오늘도 최고였어요!","모두 박수!",2600,"blue"); say("오늘도 모두 최고였어요. 박수!");
+}
+
 async function runCommand(raw,{confidence=1,source="text"}={}){
   const normalized=normalize(raw);if(!normalized)return;
   result("warn","명령을 확인하고 있습니다…",normalized);
@@ -376,6 +439,28 @@ async function runCommand(raw,{confidence=1,source="text"}={}){
     if(/이번\s*주\s*미션.*(보여|열어)/.test(normalized)){await logCommand({transcript:raw,normalized,commandType:"show_mission",status:"executed",resultText:"수업운영 화면 열기",confidence,source});location.href="../tools/";return}
     if(/SPARK.*(열어|보여)|스파크.*(열어|보여)/i.test(normalized)){await logCommand({transcript:raw,normalized,commandType:"open_spark",status:"executed",resultText:"SPARK 화면 열기",confidence,source});location.href="../spark/";return}
 
+
+    // 게임센터 팀 점수
+    {
+      const m=normalized.match(/^(계명팀|최고팀)\s*(\d+)\s*점(?:\s*(추가|올려|줘|주세요))?$/);
+      if(m){const team=m[1],points=Number(m[2]);if(points<1||points>100)throw new Error("팀 점수는 1~100점 사이로 말해 주세요.");await addTeamScore(team,points);const msg=`${team} ${points}점 추가`;result("ok",msg,"게임센터 점수에 저장했습니다.");say(msg);showTeamWinEffect(team);await logCommand({transcript:raw,normalized,commandType:"team_score",payload:{team,points},status:"executed",resultText:msg,confidence,source});return}
+    }
+    // 타이머
+    {
+      const m=normalized.match(/^(\d+)\s*분\s*(타이머|시작)?$/);
+      if(m){const min=Number(m[1]);if(min<1||min>60)throw new Error("타이머는 1~60분으로 말해 주세요.");startVoiceTimer(min);await logCommand({transcript:raw,normalized,commandType:"timer_start",payload:{minutes:min},status:"executed",resultText:`${min}분 타이머`,confidence,source});return}
+      if(/타이머\s*(정지|멈춰|스톱|중지)/.test(normalized)){stopVoiceTimer();return}
+    }
+    // OX / 학생 랜덤
+    if(/^(OX|오엑스)\s*(시작|뽑기|해줘)?$/i.test(normalized)){const ox=Math.random()<.5?"⭕ O":"❌ X";voiceMega(ox.startsWith("⭕")?"⭕":"❌","OX 결정!",ox,2200,"blue");result("ok",ox,"OX 랜덤 결과");say(ox);return}
+    if(/학생\s*(뽑아|뽑아줘|랜덤|선택)|누가\s*(할까|나올까)/.test(normalized)){if(!period)throw new Error("수업부를 확인할 수 없습니다.");const s=await drawAttendedStudent(period);voiceMega("🎲",s.name,"오늘의 랜덤 도전자!",2300,"purple");result("ok",`${s.name} 당첨!`,"오늘 출석 학생 중 랜덤 선택");say(`${s.name}, 도전!`);return}
+    // 수업 종료 전/후 시상식
+    if(/시상식\s*(시작|해줘|열어)|오늘\s*시상/.test(normalized)){if(!period)throw new Error("수업부를 확인할 수 없습니다.");await runCeremonySequence(period);return}
+    // 화면 이동
+    if(/(CLASS\s*LIVE|클래스\s*라이브|라이브)\s*(열어|보여|가자)/i.test(normalized)){location.href="../live/";return}
+    if(/게임센터\s*(열어|보여|가자)/.test(normalized)){location.href="../game/";return}
+    if(/시상식\s*화면\s*(열어|보여|가자)/.test(normalized)){location.href="../ceremony/";return}
+
     if(/전원\s*출석/.test(normalized)){
       if(!period)throw new Error("수업부를 확인할 수 없습니다.");const count=rosterFor(period).length;const ok=await confirmCommand(`${period.name} ${count}명을 전원 출석 처리합니다. 실행할까요?`);if(!ok){await logCommand({transcript:raw,normalized,commandType:"bulk_attendance",payload:{period_id:period.id},status:"cancelled",resultText:"사용자 취소",confidence,source});return}
       const done=await bulkPresent(period);const msg=`${period.name} ${done}명 전원 출석 완료`;result("ok",msg,"LIVE 화면에도 자동 반영됩니다.");say(msg);await logCommand({transcript:raw,normalized,commandType:"bulk_attendance",payload:{period_id:period.id,count:done},status:"executed",resultText:msg,confidence,source});await syncSessionInfo();return;
@@ -385,7 +470,7 @@ async function runCommand(raw,{confidence=1,source="text"}={}){
       if(!period)throw new Error("수업부를 확인할 수 없습니다.");await setSession(period,"open");KMT_COMBO.reset();const msg=`${period.name} 수업 시작`;result("ok",msg,"수업 세션을 열었습니다.");say(msg);await logCommand({transcript:raw,normalized,commandType:"session_open",payload:{period_id:period.id},status:"executed",resultText:msg,confidence,source});await syncSessionInfo();return;
     }
     if(/수업\s*(종료|끝)/.test(normalized)){
-      if(!period)throw new Error("수업부를 확인할 수 없습니다.");const ok=await confirmCommand(`${period.name} 수업을 종료할까요?`);if(!ok){await logCommand({transcript:raw,normalized,commandType:"session_close",payload:{period_id:period.id},status:"cancelled",resultText:"사용자 취소",confidence,source});return}await setSession(period,"close");KMT_COMBO.reset();const msg=`${period.name} 수업 종료`;result("ok",msg,"수업 기록은 그대로 보존됩니다.");say(msg);await logCommand({transcript:raw,normalized,commandType:"session_close",payload:{period_id:period.id},status:"executed",resultText:msg,confidence,source});await syncSessionInfo();return;
+      if(!period)throw new Error("수업부를 확인할 수 없습니다.");const ok=await confirmCommand(`${period.name} 수업을 종료하고 자동 시상식을 시작할까요?`);if(!ok){await logCommand({transcript:raw,normalized,commandType:"session_close",payload:{period_id:period.id},status:"cancelled",resultText:"사용자 취소",confidence,source});return}await setSession(period,"close");KMT_COMBO.reset();const msg=`${period.name} 수업 종료`;result("ok",msg,"이어서 자동 시상식을 시작합니다.");say(msg);await logCommand({transcript:raw,normalized,commandType:"session_close",payload:{period_id:period.id},status:"executed",resultText:msg,confidence,source});await syncSessionInfo();await runCeremonySequence(period,{autoClose:true});return;
     }
 
 
@@ -417,9 +502,10 @@ async function runCommand(raw,{confidence=1,source="text"}={}){
       }
 
       await saveStar(student,category,period);
+      const liveSession=state.session||await getSession(period,{create:false});const newBadges=liveSession?await awardAdvancedBadges(student.id,liveSession.id):[];
       const msg=quick?`와아! ${student.name}! 별 하나 추가!`:`${student.name} ${category.name} 하나`;
       result("ok",msg,quick?"STAR +1 저장 완료":"STAR가 저장되었습니다.");
-      if(quick){playQuickStarEffect(student.name);const comboCount=KMT_COMBO.bump(student);playComboEffect(student,comboCount)}
+      if(quick){playQuickStarEffect(student.name);const comboCount=KMT_COMBO.bump(student);playComboEffect(student,comboCount)}if(newBadges.includes("PERFECT STAR"))voiceMega("🌟",`${student.name} PERFECT STAR!`,"한 수업 STAR 12개 달성!",2700,"champion");else if(newBadges.length)voiceMega("🏅",`${student.name} 새 배지!`,newBadges.join(" · "),2400,"gold")
       say(msg);
       await logCommand({
         transcript:raw,normalized,commandType:"star",
