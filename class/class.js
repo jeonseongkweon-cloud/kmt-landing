@@ -14,3 +14,21 @@
 
   document.documentElement.dataset.classReady = "true";
 })();
+
+(async function(){
+ const gate=document.getElementById("classGate"),btn=document.getElementById("gateLogin"),msg=document.getElementById("gateMessage");
+ const db=window.supabase.createClient("https://ojxarsfaewehwjidwgac.supabase.co","sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
+ const owner="jeonseongkweon@gmail.com";
+ const {data:{session}}=await db.auth.getSession();
+ if(session && String(session.user?.email||"").toLowerCase()===owner){
+   gate.style.display="none"; history.replaceState({},document.title,location.pathname);
+ } else {
+   if(session) await db.auth.signOut();
+   gate.style.display="grid";
+ }
+ btn.onclick=async()=>{
+   msg.textContent="관장 계정을 확인하는 중...";
+   const {error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}/class/`}});
+   if(error) msg.textContent=error.message;
+ };
+})();

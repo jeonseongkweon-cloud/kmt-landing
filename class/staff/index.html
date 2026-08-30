@@ -1,6 +1,6 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>지도자 관리 | 계명태권도 CLASS</title><link rel="stylesheet" href="staff.css"></head><body>
-<section id="loginScreen" class="login"><h1>지도자 관리</h1><p>OWNER 계정만 접근할 수 있습니다.</p><button id="googleLogin">Google 로그인</button><p id="loginMessage"></p></section>
-<div id="app" hidden><header><div><strong>계명태권도 CLASS · 지도자 관리</strong><span id="me"></span></div><nav><a href="../">CLASS</a><a href="../admin/">원생관리</a><button id="logoutButton">로그아웃</button></nav></header><main>
+<section id="loginScreen" hidden class="login"><h1>지도자 관리</h1><p>OWNER 계정만 접근할 수 있습니다.</p><button id="googleLogin">Google 로그인</button><p id="loginMessage"></p></section>
+<div id="app"><header><div><strong>계명태권도 CLASS · 지도자 관리</strong><span id="me"></span></div><nav><a href="../">CLASS</a><a href="../admin/">원생관리</a><button id="logoutButton">로그아웃</button></nav></header><main>
 <section class="panel"><h2>지도자 등록</h2><div class="form"><input id="email" type="email" placeholder="Google 이메일"><input id="name" placeholder="이름"><select id="role"><option value="master">수석사범</option><option value="instructor" selected>사범</option><option value="assistant">보조지도자</option><option value="owner">관장(OWNER)</option></select><label><input id="active" type="checkbox" checked> 사용</label><button id="save">저장</button></div><p class="help">등록된 이메일로 Google 로그인하면 역할에 맞는 CLASS 권한을 사용합니다.</p></section>
 <section class="panel"><h2>현재 지도자</h2><div id="list"></div></section></main></div><div id="toast"></div>
 <script type="module" src="staff.js"></script></body></html>

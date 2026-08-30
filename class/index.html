@@ -10,6 +10,13 @@
   <link rel="stylesheet" href="class.css">
 </head>
 <body>
+<section id="classGate" style="position:fixed;inset:0;z-index:9999;background:#071425;display:grid;place-items:center;color:white;font-family:system-ui,sans-serif">
+<div style="width:min(420px,88vw);padding:32px;border:1px solid #30415e;border-radius:22px;background:#13213a;text-align:center">
+<img src="../assets/icons/192로고.png" alt="" style="width:64px;border-radius:14px">
+<p style="color:#e7c65a">CLASS v1.8.1</p><h1>계명태권도 CLASS</h1>
+<p id="gateMessage">전성권 관장 계정은 처음 한 번만 확인합니다.</p>
+<button id="gateLogin" style="width:100%;padding:14px;border:0;border-radius:12px;font-weight:800;cursor:pointer">Google 관장 확인</button>
+</div></section>
   <main class="shell">
     <header class="topbar">
       <div class="brand">
@@ -35,7 +42,7 @@
 
     <section class="hero" aria-labelledby="class-title">
       <article class="panel intro">
-        <p class="eyebrow" data-version>CLASS v1.7.3</p>
+        <p class="eyebrow" data-version>CLASS v1.8.1</p>
         <h1 id="class-title">수업을 더 편하게,<br>성장을 더 즐겁게.</h1>
         <p>출석·STAR·수업운영을 그대로 유지하면서 GLOBAL SPARK로 바로 이동할 수 있습니다.</p>
         <a class="spark-hero" href="spark/"><span>🔥</span><strong>GLOBAL SPARK</strong><small>SPARK 바로가기 →</small></a>
@@ -54,10 +61,11 @@
       </aside>
     </section>
 
-    <p class="notice"><strong>현재 버전: CLASS v1.7.3</strong> · NEXT-03 “계명아” 음성리모컨으로 출석·STAR·MVP·수업 시작/종료를 빠르게 처리하고, 중요 명령은 재확인합니다.</p>
+    <p class="notice"><strong>현재 버전: CLASS v1.8.1</strong> · NEXT-03 “계명아” 음성리모컨으로 출석·STAR·MVP·수업 시작/종료를 빠르게 처리하고, 중요 명령은 재확인합니다.</p>
   </main>
 
-  <script src="config.js"></script>
-  <script src="class.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js?v=181"></script>
+  <script src="class.js?v=181"></script>
 </body>
 </html>
