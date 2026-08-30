@@ -13,7 +13,7 @@
 <section id="classGate" style="position:fixed;inset:0;z-index:9999;background:#071425;display:grid;place-items:center;color:white;font-family:system-ui,sans-serif">
 <div style="width:min(420px,88vw);padding:32px;border:1px solid #30415e;border-radius:22px;background:#13213a;text-align:center">
 <img src="../assets/icons/192로고.png" alt="" style="width:64px;border-radius:14px">
-<p style="color:#e7c65a">CLASS v2.6.0 · AUTH RECOVERY</p><h1>계명태권도 CLASS</h1>
+<p style="color:#e7c65a">CLASS v2.6.1 · VOICE & SCHEDULE RECOVERY</p><h1>계명태권도 CLASS</h1>
 <form id="gateForm" method="post" action="./" style="display:grid;gap:10px;text-align:left">
 <label for="gateId" style="font-size:13px;color:#c8d3e6">관리자 아이디</label>
 <input id="gateId" name="username" type="text" value="admin" autocomplete="username" autocapitalize="none" spellcheck="false" required style="box-sizing:border-box;width:100%;padding:14px;border:1px solid #415575;border-radius:12px;background:#081426;color:white;font-size:16px">
@@ -38,6 +38,7 @@
         <a class="home-link start-link" href="live/">📺 CLASS LIVE</a>
         <a class="home-link start-link" href="game/">🎮 게임센터</a>
         <a class="home-link start-link" href="report/">💌 성장리포트</a>
+        <a class="home-link start-link" href="growth/">📅 수업 일정</a>
         <a class="home-link start-link" href="ceremony/">🏆 시상식·수업도구</a>
         <a class="home-link start-link voice-link" href="voice/">🎙 계명아</a>
         <a class="home-link start-link" href="attendance/">출석 시작</a>
@@ -62,6 +63,7 @@
               <a href="tools/">🧰 수업운영</a>
               <a href="game/">🎮 게임센터</a>
               <a href="ceremony/">🏆 시상식·도구</a>
+              <a href="growth/">📅 수업 일정</a>
             </div>
           </section>
           <section>
@@ -89,7 +91,7 @@
 
     <section class="hero" aria-labelledby="class-title">
       <article class="panel intro">
-        <p class="eyebrow" data-version>CLASS v2.6.0</p>
+        <p class="eyebrow" data-version>CLASS v2.6.1</p>
         <h1 id="class-title">수업을 더 편하게,<br>성장을 더 즐겁게.</h1>
         <p>출석·STAR·수업운영을 그대로 유지하면서 GLOBAL SPARK로 바로 이동할 수 있습니다.</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap"><a class="spark-hero" href="spark/"><span>🔥</span><strong>GLOBAL SPARK</strong><small>SPARK 바로가기 →</small></a><a class="spark-hero" href="growth/"><span>🚀</span><strong>성장센터</strong><small>LEVEL · XP · D-DAY →</small></a></div>
@@ -108,11 +110,11 @@
       </aside>
     </section>
 
-    <p class="notice"><strong>현재 버전: CLASS v2.6.0 · AUTH RECOVERY</strong> · CLASS 관리자 세션 하나로 수업부·출석·STAR·Voice를 사용합니다.</p>
+    <p class="notice"><strong>현재 버전: CLASS v2.6.1 · VOICE & SCHEDULE RECOVERY</strong> · 계명아 수업부·CLASS 복귀 링크·수업 일정을 복구했습니다.</p>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="config.js?v=251"></script>
-  <script src="class.js?v=252"></script>
+<script src="config.js?v=2610"></script>
+  <script src="class.js?v=2610"></script>
 </body>
 </html>

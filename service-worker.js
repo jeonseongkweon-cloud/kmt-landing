@@ -4,7 +4,7 @@
      2) https://...github.io/kmt-landing/ (BASE="/kmt-landing/")
 */
 
-const CACHE_NAME = "kmt-cache-v15-class-260-auth-recovery";
+const CACHE_NAME = "kmt-cache-v16-class-261-voice-schedule";
 
 /**
  * ✅ BASE 자동 판별

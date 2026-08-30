@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="class-admin@ipma.kr";
-const VOICE_BUILD="260";
+const VOICE_BUILD="261";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -105,14 +105,18 @@ async function boot(){
   await loadHistory();
 }
 async function loadBase(){
-  const[p,s,c]=await Promise.all([
-    db.from("class_periods").select("id,code,name,start_time,end_time,sort_order").eq("is_active",true).order("sort_order"),
+  const p=await db.from("class_periods").select("id,code,name,start_time,end_time,sort_order").eq("is_active",true).order("sort_order");
+  if(p.error){result("error","수업부를 불러오지 못했습니다.",p.error.message);return}
+  state.periods=p.data||[];
+  const sel=$("periodSelect");
+  sel.innerHTML=state.periods.length?state.periods.map(x=>`<option value="${x.id}">${esc(x.code)} · ${esc(x.name)}</option>`).join(""):'<option value="">등록된 수업부 없음</option>';
+  if(!state.periods.length){result("error","등록된 수업부가 없습니다.","출석 화면의 수업부 등록 상태를 확인해 주세요.");return}
+  const[s,c]=await Promise.all([
     db.from("students").select("id,student_code,name,enrollments(class_period_id,status)").order("student_code"),
     db.from("star_categories").select("id,code,name,icon,sort_order").eq("is_active",true).order("sort_order")
   ]);
-  const error=p.error||s.error||c.error;if(error){result("error","기초자료를 불러오지 못했습니다.",error.message);return}
-  state.periods=p.data||[];state.students=(s.data||[]).filter(x=>enrollment(x).status==="재원");state.categories=c.data||[];
-  const sel=$("periodSelect");sel.innerHTML=state.periods.map(x=>`<option value="${x.id}">${esc(x.code)} · ${esc(x.name)}</option>`).join("");
+  const error=s.error||c.error;if(error){result("error","학생 또는 STAR 자료를 불러오지 못했습니다.",error.message);return}
+  state.students=(s.data||[]).filter(x=>enrollment(x).status==="재원");state.categories=c.data||[];
   state.period=recommendPeriod()||state.periods[0]||null;if(state.period)sel.value=state.period.id;sel.onchange=async()=>{state.period=state.periods.find(x=>x.id===sel.value)||null;await syncSessionInfo()};
   await syncSessionInfo();
 }
