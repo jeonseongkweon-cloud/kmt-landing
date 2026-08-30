@@ -1,4 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
+const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 const cfg=window.KMT_STAR_CONFIG,db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}}),$=id=>document.getElementById(id);
 const state={periods:[],students:[],session:null,period:null,categories:[],category:null,attendance:[],events:[],praises:[],champions:[],realtimeChannel:null,realtimeTimer:null};
 const praisePresets=["오늘 인사가 아주 좋았어요.","친구를 도와줬어요.","끝까지 포기하지 않았어요.","수업에 집중했어요."];
@@ -13,7 +16,7 @@ function eventsFor(id){return state.events.filter(e=>e.student_id===id)}
 function categoryCount(id,cat){return eventsFor(id).filter(e=>e.category_id===cat).length}
 
 async function login(){const {error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}${location.pathname}`,queryParams:{prompt:"select_account"}}});if(error)$("loginMessage").textContent=error.message}
-async function boot(){const {data:{session}}=await db.auth.getSession();if(!session){$("loginScreen").hidden=false;return}const {data:staffProfile,error:staffError}=await db.rpc("kmt_get_my_staff_profile");const {data:staffAllowed,error:permError}=await db.rpc("kmt_has_permission",{p_permission:"star"});if(staffError||permError||!staffProfile?.is_active||!staffAllowed){$("loginMessage").textContent="이 화면을 사용할 지도자 권한이 없습니다.";return}$("loginScreen").hidden=true;$("app").hidden=false;startClock();await loadBase()}
+async function boot(){const {data:{session}}=await db.auth.getSession();if(!session){$("loginScreen").hidden=false;return}if(!isSingleOwner(session)){$("loginMessage").textContent="이 화면을 사용할 지도자 권한이 없습니다.";return}$("loginScreen").hidden=true;$("app").hidden=false;startClock();await loadBase()}
 function startClock(){const tick=()=>{$("dateLabel").textContent=new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,year:"numeric",month:"long",day:"numeric",weekday:"short"}).format(new Date());$("clockLabel").textContent=localTime()};tick();setInterval(tick,15000)}
 async function loadBase(){const [p,s,c]=await Promise.all([db.from("class_periods").select("*").eq("is_active",true).order("sort_order"),db.from("students").select("id,student_code,name,photo_url,enrollments(class_period_id,status)").order("student_code"),db.from("star_categories").select("*").eq("is_active",true).order("sort_order")]);const error=p.error||s.error||c.error;if(error){toast(error.message);return}state.periods=p.data||[];state.students=(s.data||[]).filter(x=>enrollment(x).status==="재원");state.categories=c.data||[];state.category=state.categories[0]||null;renderPeriods()}
 function renderPeriods(){$("periodGrid").innerHTML=state.periods.map(p=>`<button class="period-card" data-id="${p.id}"><small>${escapeHtml(p.code)}</small><strong>${escapeHtml(p.name)}</strong><span>${rosterFor(p).length}명 · STAR 수업판</span></button>`).join("");document.querySelectorAll(".period-card").forEach(b=>b.onclick=()=>openPeriod(state.periods.find(p=>p.id===b.dataset.id)))}

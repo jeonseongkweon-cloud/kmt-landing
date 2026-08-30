@@ -1,5 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
+const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
+
 const cfg=window.KMT_ATTENDANCE_CONFIG;
 const db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
 const $=id=>document.getElementById(id);
@@ -33,7 +36,7 @@ async function login(){
 async function boot(){
   const {data:{session}}=await db.auth.getSession();
   if(!session){$("loginScreen").hidden=false;$("attendanceApp").hidden=true;return}
-  const {data:staffProfileRows,error:staffError}=await db.rpc("kmt_get_my_staff_profile");const staffProfile=Array.isArray(staffProfileRows)?staffProfileRows[0]:staffProfileRows;const {data:staffAllowed,error:permError}=await db.rpc("kmt_has_permission",{p_permission:"attendance"});if(staffError||permError||!staffProfile?.is_active||!staffAllowed){$("loginMessage").textContent="이 화면을 사용할 지도자 권한이 없습니다.";return}
+  if(!isSingleOwner(session)){$("loginMessage").textContent="이 화면을 사용할 지도자 권한이 없습니다.";return}
   $("loginScreen").hidden=true;$("attendanceApp").hidden=false;startClock();await loadPeriods();
 }
 
