@@ -32,3 +32,23 @@
 @media(max-width:900px){.notice{align-items:flex-start;gap:8px}.live-status{justify-content:flex-end}.notice-form{grid-template-columns:1fr}.primary.compact{width:100%}}
 @media(max-width:760px){.notice{display:grid}.live-status{justify-content:flex-start}.voice-start{flex:1}.class-ticker{bottom:4px}.ticker-track{font-size:13px}.notice-row{grid-template-columns:85px 1fr auto}}
 @media(max-width:540px){.voice-status{font-size:11px}.voice-start{font-size:12px}.class-ticker{margin-top:10px}.ticker-manage{padding:0 9px;font-size:11px}}
+
+/* v2.8.0 STAR LOCAL PATCH — one-shot voice / live rank / 3-part info board */
+.star-voice{border-color:rgba(246,196,81,.48);background:rgba(246,196,81,.08);color:#ffe69b}
+.voice-feedback{display:flex;align-items:center;gap:12px;margin:0 0 13px;padding:10px 14px;border:1px solid rgba(45,132,255,.25);border-radius:12px;background:rgba(45,132,255,.06);font-size:13px}
+.voice-feedback span{color:#b9cee4;font-weight:900;white-space:nowrap}.voice-feedback strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#fff}
+.student{position:relative;will-change:transform}.student.current-leader{border-color:rgba(246,196,81,.88);box-shadow:0 0 0 2px rgba(246,196,81,.16),0 0 28px rgba(246,196,81,.23);animation:leaderGlow 2.8s ease-in-out infinite}
+.leader-badge{position:absolute;z-index:4;top:8px;left:8px;padding:5px 8px;border:1px solid rgba(255,232,145,.58);border-radius:999px;background:rgba(52,35,5,.88);color:#ffe79b;font-size:11px;font-weight:1000;box-shadow:0 4px 18px rgba(0,0,0,.3)}
+.student.leader-changed{animation:leaderChanged 1.35s cubic-bezier(.2,.8,.2,1),leaderGlow 2.8s 1.35s ease-in-out infinite}
+.leader-change-effect,.mission-clear-effect{position:fixed;inset:0;z-index:70;display:grid;place-items:center;pointer-events:none;background:radial-gradient(circle at center,rgba(246,196,81,.16),transparent 42%);transition:opacity .4s ease}
+.leader-change-effect>div,.mission-clear-effect>div{display:grid;justify-items:center;gap:6px;padding:22px 34px;border:1px solid rgba(246,196,81,.58);border-radius:24px;background:rgba(7,24,41,.96);box-shadow:0 20px 75px rgba(0,0,0,.45),0 0 45px rgba(246,196,81,.24);animation:leaderPop .48s cubic-bezier(.2,.9,.25,1)}
+.leader-change-effect span,.mission-clear-effect span{font-size:58px}.leader-change-effect strong,.mission-clear-effect strong{font-size:25px;color:#ffe18c}.leader-change-effect b,.mission-clear-effect b{font-size:34px;color:#fff}.leader-change-effect.out,.mission-clear-effect.out{opacity:0}
+.info-board{display:grid;grid-template-columns:1.08fr 1fr 1fr;gap:10px;margin-top:16px}.info-panel{min-height:108px;padding:13px 14px;border:1px solid var(--line);border-radius:15px;background:rgba(9,27,48,.82)}
+.info-panel.mission-panel{border-color:rgba(66,214,139,.24)}.info-panel.notice-panel{border-color:rgba(246,196,81,.22)}.info-panel.personal-panel{border-color:rgba(45,132,255,.24)}
+.info-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)}.info-head strong{font-size:14px}.info-manage{padding:5px 8px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.04);color:var(--muted);font-size:11px;font-weight:900;cursor:pointer}
+.info-content{display:grid;gap:5px;padding-top:8px}.info-line{font-size:13px;line-height:1.42;color:#e7f1fb}.info-empty{font-size:12px;line-height:1.4;color:#8298af}
+@keyframes leaderGlow{0%,100%{box-shadow:0 0 0 2px rgba(246,196,81,.12),0 0 20px rgba(246,196,81,.16)}50%{box-shadow:0 0 0 2px rgba(246,196,81,.24),0 0 36px rgba(246,196,81,.32)}}
+@keyframes leaderChanged{0%{transform:scale(.94)}35%{transform:scale(1.065)}65%{transform:scale(.99)}100%{transform:scale(1)}}
+@keyframes leaderPop{0%{opacity:0;transform:scale(.72)}70%{transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+@media(max-width:1000px){.info-board{grid-template-columns:1fr 1fr}.personal-panel{grid-column:span 2}}
+@media(max-width:760px){.voice-feedback{display:grid;gap:4px}.voice-feedback span,.voice-feedback strong{white-space:normal}.info-board{grid-template-columns:1fr}.personal-panel{grid-column:auto}}
