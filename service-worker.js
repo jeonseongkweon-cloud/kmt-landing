@@ -4,7 +4,7 @@
      2) https://...github.io/kmt-landing/ (BASE="/kmt-landing/")
 */
 
-const CACHE_NAME = "kmt-cache-v14-class-admin-permissions";
+const CACHE_NAME = "kmt-cache-v15-class-260-auth-recovery";
 
 /**
  * ✅ BASE 자동 판별
