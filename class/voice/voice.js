@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="187";
+const VOICE_BUILD="188";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -175,7 +175,23 @@ function categoryMatches(text){const t=text.replace(/\s/g,"");return state.categ
 function choose(title,items,label){return new Promise(resolve=>{const d=$("choiceDialog"),list=$("choiceList");$("choiceTitle").textContent=title;list.innerHTML="";items.forEach(item=>{const b=document.createElement("button");b.type="button";b.innerHTML=label(item);b.onclick=()=>{d.close();resolve(item)};list.appendChild(b)});d.onclose=()=>resolve(null);d.showModal()})}
 function confirmCommand(message){return new Promise(resolve=>{const d=$("confirmDialog");$("confirmMessage").textContent=message;d.onclose=()=>resolve(d.returnValue==="confirm");d.showModal()})}
 async function resolveStudent(text,period){const matches=studentMatches(text,null);if(matches.length===1)return matches[0];if(matches.length>1)return choose("같거나 비슷한 이름이 있습니다. 학생을 선택해 주세요.",matches,s=>`${esc(s.name)} <small>${esc(s.student_code)}</small>`);return null}
-async function resolveCategory(text){const matches=categoryMatches(text);if(matches.length===1)return matches[0];if(matches.length>1)return choose("STAR 종류를 선택해 주세요.",matches,c=>`${c.icon||"⭐"} ${esc(c.name)}`);return choose("어떤 STAR를 줄까요?",state.categories,c=>`${c.icon||"⭐"} ${esc(c.name)}`)}
+async 
+function defaultStarCategory(){
+  const list=state.categories||[];
+  if(!list.length)return null;
+  // 기본/칭찬 계열이 있으면 우선, 없으면 현재 활성 STAR의 첫 항목을 사용한다.
+  return list.find(c=>/기본|칭찬|basic|general/i.test(`${clean(c.name)} ${clean(c.code)}`)) || list[0];
+}
+function isBareStarCommand(text){
+  // "김민규 별", "민규 별"처럼 별 종류를 말하지 않은 가장 빠른 수업용 명령.
+  const n=normalize(text);
+  const cats=(state.categories||[]).filter(c=>{
+    const key=clean(c.name).replace(/별$/,"").replace(/\s/g,"");
+    return key && n.replace(/\s/g,"").includes(key);
+  });
+  return /별$/.test(n) && cats.length===0;
+}
+function resolveCategory(text){const matches=categoryMatches(text);if(matches.length===1)return matches[0];if(matches.length>1)return choose("STAR 종류를 선택해 주세요.",matches,c=>`${c.icon||"⭐"} ${esc(c.name)}`);return choose("어떤 STAR를 줄까요?",state.categories,c=>`${c.icon||"⭐"} ${esc(c.name)}`)}
 
 async function logCommand({transcript,normalized,commandType,payload,status,resultText,confidence,source}){
   try{await db.from("kmt_voice_command_log").insert({transcript,normalized_text:normalized,command_type:commandType||"unknown",payload:payload||{},status,result_text:resultText||null,confidence:confidence||null,input_source:source||"text"})}catch{}
@@ -223,7 +239,27 @@ async function runCommand(raw,{confidence=1,source="text"}={}){
     }
 
     if(/별|STAR|스타/i.test(normalized)){
-      const student=await resolveStudent(normalized,period);if(!student)throw new Error("STAR를 받을 학생을 확인할 수 없습니다.");const category=await resolveCategory(normalized);if(!category){result("warn","STAR 지급을 취소했습니다.","카테고리를 선택하지 않았습니다.");return}await saveStar(student,category,period);const msg=`${student.name} ${category.name} 하나`;result("ok",msg,"STAR가 저장되었습니다.");say(msg);await logCommand({transcript:raw,normalized,commandType:"star",payload:{student_id:student.id,category_id:category.id,period_id:period?.id},status:"executed",resultText:msg,confidence,source});return;
+      const studentText=extractStudentTextForAction(normalized);
+      const student=await resolveStudent(studentText||normalized,period);
+      if(!student)throw new Error("STAR를 받을 학생을 확인할 수 없습니다.");
+
+      const quick=isBareStarCommand(normalized);
+      const category=quick?defaultStarCategory():await resolveCategory(normalized);
+      if(!category){
+        result("warn","STAR 지급을 취소했습니다.","사용 가능한 STAR 항목이 없습니다.");
+        return;
+      }
+
+      await saveStar(student,category,period);
+      const msg=quick?`${student.name} 별 하나 추가`:`${student.name} ${category.name} 하나`;
+      result("ok",msg,quick?"STAR +1 저장 완료":"STAR가 저장되었습니다.");
+      say(msg);
+      await logCommand({
+        transcript:raw,normalized,commandType:"star",
+        payload:{student_id:student.id,category_id:category.id,period_id:period?.id,quick_star:quick},
+        status:"executed",resultText:msg,confidence,source
+      });
+      return;
     }
 
     const status=/지각/.test(normalized)?"late":/결석/.test(normalized)?"absent":/출석/.test(normalized)?"present":null;
