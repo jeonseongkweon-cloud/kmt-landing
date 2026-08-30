@@ -9,15 +9,16 @@
   <link rel="icon" href="../../assets/icons/kmt_favicon_48.png">
   <link rel="stylesheet" href="attendance.css">
   <link rel="stylesheet" href="attendance-v050.css">
+  <link rel="stylesheet" href="attendance-v120.css">
 </head>
 <body>
   <section class="login-screen" id="loginScreen">
-    <div class="login-card"><img src="../../assets/icons/192로고.png" alt="계명태권도 로고"><p>CLASS v0.9.0</p><h1>오늘 수업 시작</h1><span>승인된 Google 관리자 계정으로 로그인해 주세요.</span><button id="loginButton">Google 관리자 로그인</button><a href="../">CLASS로 돌아가기</a><em id="loginMessage"></em></div>
+    <div class="login-card"><img src="../../assets/icons/192로고.png" alt="계명태권도 로고"><p>CLASS v1.2.0</p><h1>오늘 수업 시작</h1><span>승인된 Google 관리자 계정으로 로그인해 주세요.</span><button id="loginButton">Google 관리자 로그인</button><a href="../">CLASS로 돌아가기</a><em id="loginMessage"></em></div>
   </section>
 
   <div id="attendanceApp" hidden>
     <header class="topbar">
-      <div class="brand"><img src="../../assets/icons/192로고.png" alt=""><div><strong>계명태권도 CLASS</strong><span>v0.9.1 · 쌍둥이 식별 패치</span></div></div>
+      <div class="brand"><img src="../../assets/icons/192로고.png" alt=""><div><strong>계명태권도 CLASS</strong><span>v1.2.0 · SPARK 성장정보</span></div></div>
       <div class="clock"><strong id="todayLabel"></strong><span id="clockLabel"></span></div>
       <nav><a href="../spark/">🔥 SPARK</a><a href="../sms/">문자대기</a><a href="../../dashboard/">LIVE</a><a href="../tools/">수업운영</a><a href="../star/">STAR</a><a href="../admin/">원생관리</a><a href="../">CLASS</a><button id="logoutButton">로그아웃</button></nav>
     </header>
@@ -55,6 +56,6 @@
   <dialog id="trialDialog"><form id="trialForm"><h2>체험생 출석</h2><label>이름<input id="trialName" required maxlength="30" placeholder="체험생 이름"></label><label>메모<input id="trialNote" maxlength="100" placeholder="선택사항"></label><div><button type="button" id="trialCancel">취소</button><button type="submit">체험 출석</button></div><p id="trialMessage"></p></form></dialog>
   <div class="toast" id="toast"></div>
   <script src="attendance-config.js"></script>
-  <script type="module" src="attendance.js?v=091"></script>
+  <script type="module" src="attendance.js?v=120"></script>
 </body>
 </html>

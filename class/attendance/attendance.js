@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const cfg=window.KMT_ATTENDANCE_CONFIG;
 const db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
 const $=id=>document.getElementById(id);
-const state={periods:[],students:[],session:null,records:[],smsRows:[],period:null,attendedOnly:false};
+const state={periods:[],students:[],session:null,records:[],smsRows:[],sparkByStudent:new Map(),period:null,attendedOnly:false};
 const statusText={present:"출석",late:"지각",absent:"결석",cancelled:"미처리"};
 
 function clean(v){return v==null?"":String(v).trim()}
@@ -63,7 +63,7 @@ async function openPeriod(period){
   let {data:existing,error:findError}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",period.id).maybeSingle();
   if(findError){toast(findError.message);return}
   if(!existing){const {data,error}=await db.from("class_sessions").insert({session_date:localDate(),class_period_id:period.id,status:"open"}).select().single();if(error){toast(error.message);return}existing=data}
-  state.session=existing;await loadAttendance();
+  state.session=existing;await loadAttendance();loadSparkSummary();
   $("periodScreen").hidden=true;$("classScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent=`${period.name} 오늘 수업`;$("sessionStatus").textContent=existing.status==="closed"?"수업 종료됨":"수업 진행 중";$("closeSessionButton").textContent=existing.status==="closed"?"수업 다시 열기":"수업 종료";setSaving("Supabase 자동저장");
 }
 
@@ -73,9 +73,22 @@ async function loadAttendance(){
 }
 
 function visibleStudents(){const list=studentsForPeriod(state.period);return state.attendedOnly?list.filter(s=>["present","late"].includes(recordFor(s.id)?.status)):list}
+function sparkMarkup(studentId){
+  const info=state.sparkByStudent.get(studentId);if(!info)return "";
+  if(!info.linked){const label=info.reason==="LINK_NOT_VERIFIED"?"SPARK 연결 확인 중":info.reason==="SPARK_UNAVAILABLE"?"SPARK 정보 일시 확인 불가":"SPARK 미연결";return `<span class="spark-summary muted"><strong>🔥 ${label}</strong></span>`}
+  const sp=info.spark||{},mi=info.missions||{},st=info.streak||{};const streak=st.current_streak??st.current??0;
+  return `<span class="spark-summary"><strong>🔥 ${escapeHtml(sp.tier_icon||"")} ${escapeHtml(sp.tier_name||"SPARK")} · ${Number(sp.lifetime_spark||0).toLocaleString()} SPARK</strong><span>오늘 미션 ${mi.today_completed||0}/${mi.today_total||0} · 연속 ${streak}일 · 배지 준비 중</span></span>`
+}
+async function loadSparkSummary(){
+  const students=studentsForPeriod(state.period);if(!students.length)return;
+  const {data,error}=await db.rpc("kmt_get_class_spark_dashboard",{p_student_ids:students.map(s=>s.id)});
+  if(error){console.warn("SPARK summary unavailable",error);return}
+  state.sparkByStudent=new Map((data?.items||[]).map(item=>[item.student_id,item]));renderStudents();
+}
 function renderStudents(){
   const grid=$("studentGrid");grid.innerHTML="";const list=visibleStudents();$("emptyMessage").hidden=list.length>0;
   list.forEach(s=>{const r=recordFor(s.id),status=r?.status==="cancelled"?"":(r?.status||"");const card=document.createElement("article");card.className="student-card";card.dataset.status=status||"waiting";const photo=clean(s.photo_url);card.innerHTML=`<button class="student-main" data-action="present">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="">`:`<div class="photo photo-fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<strong>${escapeHtml(s.name)}</strong><span>${escapeHtml(s.student_code)}</span><span class="status-pill">${status?statusText[status]:"눌러서 출석"}${r&&status?` · ${localTime(r.checked_at)}`:""}</span></button><div class="quick-actions"><button class="p" data-action="present">출석</button><button class="l" data-action="late">지각</button><button class="a" data-action="absent">결석</button><button data-action="cancelled">취소</button></div>`;
+    card.querySelector(".student-main").insertAdjacentHTML("beforeend",sparkMarkup(s.id));
     if(r&&["present","late"].includes(status)){const sms=document.createElement("small");sms.className="sms-state";sms.textContent=smsLabel(smsFor(r.id));card.querySelector(".student-main").appendChild(sms)}card.querySelectorAll("[data-action]").forEach(btn=>btn.onclick=()=>markStudent(s,btn.dataset.action));grid.appendChild(card)});
 }
 
