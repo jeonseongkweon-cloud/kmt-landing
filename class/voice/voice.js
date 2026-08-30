@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="188";
+const VOICE_BUILD="189";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -75,20 +75,34 @@ function normalize(t){
 
 async function login(){const{error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}${location.pathname}`}});if(error)$("loginMessage").textContent=error.message}
 async function hasPermission(permission){
-  const{data:{session}}=await db.auth.getSession();
-  if(session && isSingleOwner(session)) return true;
-  const{data,error}=await db.rpc("kmt_has_permission",{p_permission:permission});
-  if(error)throw error;
-  return Boolean(data);
+  // v1.8.9 DIRECT MODE
+  // 계명태권도 CLASS는 단일 관리자 운영이므로,
+  // 음성명령 실행 전에 관리자 확인 응답을 기다리지 않는다.
+  // 실제 DB 읽기/쓰기는 기존 Supabase RLS가 그대로 보호한다.
+  return true;
 }
 async function boot(){
-  const{data:{session}}=await db.auth.getSession();
+  // v1.8.9 DIRECT MODE
+  // auth.getSession()이 늦어져도 "지도자 확인 중"에서 멈추지 않도록
+  // 화면과 음성인식을 즉시 초기화한다.
   state.staff={email:SINGLE_OWNER_EMAIL,display_name:"전성권 관장",role:"owner",is_active:true};
   $("app").hidden=false;
-  $("staffLabel").textContent="전성권 관장 · 관장";
-  await loadBase();
+  $("staffLabel").textContent="전성권 관장 · 준비 완료";
+  $("recognitionState").textContent="준비";
   setupRecognition();
-  await loadHistory();
+
+  try{
+    await loadBase();
+  }catch(err){
+    console.error("[VOICE] loadBase failed",err);
+    result("error","수업 자료를 불러오지 못했습니다.",err?.message||String(err));
+  }
+
+  try{
+    await loadHistory();
+  }catch(err){
+    console.warn("[VOICE] history load skipped",err);
+  }
 }
 async function loadBase(){
   const[p,s,c]=await Promise.all([
@@ -275,4 +289,10 @@ $("micButton").onclick=()=>{if(!state.recognition)return;try{state.listening?sta
 $("runButton").onclick=()=>runCommand($("commandInput").value,{source:"text"});$("commandInput").onkeydown=e=>{if(e.key==="Enter")runCommand($("commandInput").value,{source:"text"})};
 $("refreshButton").onclick=async()=>{await loadBase();await loadHistory();toast("새로고침 완료")};$("helpButton").onclick=()=>$("helpDialog").showModal();
 document.querySelectorAll("[data-quick]").forEach(b=>b.onclick=()=>{let t=b.dataset.quick;if(t==="오늘 MVP")t=`오늘 ${state.period?.name||""} MVP`;if(t==="수업 종료")t=`${state.period?.name||""} 수업 종료`;$("commandInput").value=t;runCommand(t,{source:"text"})});
-db.auth.onAuthStateChange(()=>{});boot();
+try{db.auth.onAuthStateChange(()=>{})}catch(_){}
+boot().catch(err=>{
+  console.error("[VOICE] boot fatal",err);
+  $("staffLabel").textContent="전성권 관장 · 준비 오류";
+  $("recognitionState").textContent="오류";
+  result("error","계명아 초기화 오류",err?.message||String(err));
+});
