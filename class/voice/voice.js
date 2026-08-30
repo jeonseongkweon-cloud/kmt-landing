@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="188";
+const VOICE_BUILD="190";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -205,6 +205,72 @@ async function saveAttendance(student,status,period){
   const payload={session_id:session.id,student_id:student.id,attendance_date:localDate(),status,checked_at:new Date().toISOString(),points_awarded:["present","late"].includes(status)?1:0};
   const r=old?await db.from("attendance").update(payload).eq("id",old.id):await db.from("attendance").insert(payload);if(r.error)throw r.error;return session;
 }
+
+function playQuickStarEffect(studentName){
+  try{
+    const old=document.getElementById("quickStarEffect");
+    if(old)old.remove();
+
+    const layer=document.createElement("div");
+    layer.id="quickStarEffect";
+    layer.className="quick-star-effect";
+    layer.innerHTML=`
+      <div class="quick-star-glow"></div>
+      <div class="quick-star-main">
+        <div class="quick-star-burst">★</div>
+        <div class="quick-star-name">${esc(studentName)}</div>
+        <div class="quick-star-plus">+1 STAR</div>
+      </div>
+      <div class="quick-star-particles" aria-hidden="true"></div>
+    `;
+    document.body.appendChild(layer);
+
+    const particleBox=layer.querySelector(".quick-star-particles");
+    const particleCount=22;
+    for(let i=0;i<particleCount;i++){
+      const p=document.createElement("span");
+      p.className="quick-star-particle";
+      p.textContent=i%3===0?"✦":"★";
+      const angle=(Math.PI*2*i)/particleCount;
+      const distance=110+Math.random()*190;
+      p.style.setProperty("--x",`${Math.cos(angle)*distance}px`);
+      p.style.setProperty("--y",`${Math.sin(angle)*distance}px`);
+      p.style.setProperty("--delay",`${Math.random()*0.16}s`);
+      p.style.setProperty("--spin",`${Math.round((Math.random()*2-1)*260)}deg`);
+      particleBox.appendChild(p);
+    }
+
+    try{
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      if(AudioCtx){
+        const ctx=window.__kmtStarAudioCtx||(window.__kmtStarAudioCtx=new AudioCtx());
+        if(ctx.state==="suspended")ctx.resume().catch(()=>{});
+        const now=ctx.currentTime;
+        [659.25,783.99,987.77].forEach((freq,index)=>{
+          const osc=ctx.createOscillator();
+          const gain=ctx.createGain();
+          osc.type="sine";
+          osc.frequency.setValueAtTime(freq,now+index*0.07);
+          gain.gain.setValueAtTime(0.0001,now+index*0.07);
+          gain.gain.exponentialRampToValueAtTime(0.12,now+index*0.07+0.015);
+          gain.gain.exponentialRampToValueAtTime(0.0001,now+index*0.07+0.28);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now+index*0.07);
+          osc.stop(now+index*0.07+0.3);
+        });
+      }
+    }catch(soundError){
+      console.warn("[STAR EFFECT sound]",soundError);
+    }
+
+    window.setTimeout(()=>layer.classList.add("quick-star-effect-out"),1350);
+    window.setTimeout(()=>layer.remove(),1900);
+  }catch(effectError){
+    console.warn("[STAR EFFECT]",effectError);
+  }
+}
+
 async function saveStar(student,category,period){if(!await hasPermission("star"))throw new Error("STAR 지급 권한이 없습니다.");const session=await getSession(period,{create:true,open:true});const r=await db.from("star_events").insert({session_id:session.id,student_id:student.id,category_id:category.id,note:"계명아 음성명령"});if(r.error)throw r.error;return session}
 async function saveMvp(student,period){if(!await hasPermission("mvp"))throw new Error("MVP 선정 권한이 없습니다.");const session=await getSession(period,{create:true,open:true});const r=await db.from("champions").upsert({session_id:session.id,student_id:student.id,title:"오늘의 챔피언",category_id:null},{onConflict:"session_id,title"});if(r.error)throw r.error;return session}
 async function saveFamilySpark(student){if(!await hasPermission("spark"))throw new Error("SPARK 확인 권한이 없습니다.");const r=await db.rpc("kmt_record_spark_together",{p_student_id:student.id,p_axis:"family",p_activity_code:"help_first",p_partner_student_id:null,p_partner_label:"가족",p_note:"계명아 음성명령 · 가족돕기",p_activity_date:localDate(),p_idempotency_key:crypto.randomUUID()});if(r.error)throw r.error;return r.data}
@@ -252,6 +318,7 @@ async function runCommand(raw,{confidence=1,source="text"}={}){
       await saveStar(student,category,period);
       const msg=quick?`${student.name} 별 하나 추가`:`${student.name} ${category.name} 하나`;
       result("ok",msg,quick?"STAR +1 저장 완료":"STAR가 저장되었습니다.");
+      if(quick)playQuickStarEffect(student.name);
       say(msg);
       await logCommand({
         transcript:raw,normalized,commandType:"star",
