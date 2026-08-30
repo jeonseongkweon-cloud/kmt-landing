@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071425">
+<title>성장센터 | 계명태권도 CLASS</title>
+<link rel="icon" href="../../assets/icons/kmt_favicon_48.png">
+<link rel="stylesheet" href="growth.css?v=210">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../"><img src="../../assets/icons/192로고.png" alt=""><div><strong>계명태권도 CLASS</strong><span>v2.1.0 · GROWTH CENTER</span></div></a>
+  <nav><a href="../voice/">🎙 계명아</a><a href="../attendance/">출석</a><a href="../star/">STAR</a><a href="../../dashboard/">LIVE</a></nav>
+</header>
+<main>
+  <section class="hero">
+    <div><p class="eyebrow">GROWTH & REWARD</p><h1>아이들의 성장이<br>눈에 보이기 시작합니다.</h1><p>출석과 STAR를 XP로 자동 연결하고 LEVEL 1~36, 연속출석, 다음 목표와 도장 일정을 한 화면에서 확인합니다.</p></div>
+    <div class="today"><small>오늘</small><strong id="todayLabel">-</strong><span id="summary">성장정보 불러오는 중</span></div>
+  </section>
+
+  <section class="toolbar">
+    <label>수업부 <select id="periodSelect"><option value="">전체 재원생</option></select></label>
+    <label>검색 <input id="searchInput" placeholder="학생 이름"></label>
+    <button id="refreshBtn">새로고침</button>
+  </section>
+
+  <section class="events-wrap">
+    <div class="section-title"><div><small>UPCOMING</small><h2>도장 일정 · D-DAY</h2></div><button id="eventAddBtn">+ 일정 추가</button></div>
+    <div id="eventList" class="events"><div class="empty">일정을 불러오는 중...</div></div>
+  </section>
+
+  <section class="section-title"><div><small>STUDENT GROWTH</small><h2>성장 카드</h2></div><div class="legend">출석 +10 XP · STAR +5 XP</div></section>
+  <section id="studentGrid" class="grid"><div class="empty">학생 성장정보를 불러오는 중...</div></section>
+</main>
+
+<dialog id="eventDialog">
+<form method="dialog" id="eventForm">
+<h3>도장 일정 추가</h3>
+<label>일정명<input id="eventTitle" maxlength="80" required></label>
+<label>날짜<input id="eventDate" type="date" required></label>
+<label>종류<select id="eventType"><option value="event">행사</option><option value="exam">심사</option><option value="camp">합숙</option><option value="award">표창</option><option value="holiday">휴무</option></select></label>
+<label>메모<textarea id="eventNote" maxlength="200"></textarea></label>
+<div class="dlg-actions"><button value="cancel">취소</button><button id="eventSaveBtn" value="default">저장</button></div>
+</form>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js?v=210"></script>
+<script src="growth.js?v=210"></script>
+</body></html>
