@@ -1,7 +1,7 @@
 window.KMT_CLASS_CONFIG = Object.freeze({
   appName: "계명태권도 CLASS SYSTEM",
-  version: "2.6.1",
-  stage: "CLASS v2.6.1 · VOICE & SCHEDULE RECOVERY",
+  version: "2.6.2",
+  stage: "CLASS v2.6.2 · VOICE DIRECT LOAD",
   homeUrl: "../",
   adminLoginId: "admin",
   adminAuthEmail: "class-admin@ipma.kr",

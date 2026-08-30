@@ -4,7 +4,7 @@
      2) https://...github.io/kmt-landing/ (BASE="/kmt-landing/")
 */
 
-const CACHE_NAME = "kmt-cache-v16-class-261-voice-schedule";
+const CACHE_NAME = "kmt-cache-v17-class-262-voice-direct";
 
 /**
  * ✅ BASE 자동 판별

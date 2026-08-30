@@ -1,7 +1,7 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+const { createClient } = window.supabase;
 
 const SINGLE_OWNER_EMAIL="class-admin@ipma.kr";
-const VOICE_BUILD="261";
+const VOICE_BUILD="262";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -411,7 +411,7 @@ async function buildCeremonyAwards(period){
   // 팀 우승
   const tr=await db.from("kmt_team_scores").select("team_name,points").eq("score_date",localDate()); 
   if(!tr.error){
-    const sums=new Map(); for(const x of(tr.data||[])sums.set(x.team_name,(sums.get(x.team_name)||0)+Number(x.points||0));
+    const sums=new Map(); for(const x of (tr.data||[])) sums.set(x.team_name,(sums.get(x.team_name)||0)+Number(x.points||0));
     if(sums.size){let team="",max=-Infinity;for(const [k,n] of sums){if(n>max){team=k;max=n}} awards.push({icon:"🏅",title:"팀 우승",name:team,sub:`${max}점`,award_type:"team"});}
   }
   // 성공한 미션
