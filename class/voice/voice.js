@@ -1,19 +1,11 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="1810";
+const VOICE_BUILD="188";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
-const directLock=async(_name,_acquireTimeout,fn)=>await fn();
-const db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{
-  auth:{
-    persistSession:true,
-    detectSessionInUrl:true,
-    flowType:"pkce",
-    lock:directLock
-  }
-});
+const db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
 const $=id=>document.getElementById(id);
 const state={staff:null,periods:[],students:[],categories:[],period:null,session:null,recognition:null,listening:false,history:[]};
 const clean=v=>v==null?"":String(v).trim();
@@ -21,10 +13,6 @@ const esc=v=>clean(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const localDate=()=>new Intl.DateTimeFormat("en-CA",{timeZone:cfg.timezone,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
 const timeText=()=>new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date());
 const roleLabel=r=>({owner:"관장",master:"수석사범",instructor:"사범",assistant:"보조지도자"}[r]||r||"지도자");
-const withTimeout=(promise,ms,label)=>Promise.race([
-  promise,
-  new Promise((_,reject)=>setTimeout(()=>reject(new Error(`${label} 응답시간 초과 (${Math.round(ms/1000)}초)`)),ms))
-]);
 function toast(m){$("toast").textContent=m;$("toast").classList.add("show");clearTimeout(window.__voiceToast);window.__voiceToast=setTimeout(()=>$("toast").classList.remove("show"),1800)}
 function say(m){try{if(!("speechSynthesis" in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(m);u.lang="ko-KR";u.rate=1.05;window.speechSynthesis.speak(u)}catch{}}
 function result(kind,title,detail=""){const box=$("resultBox");box.className=`result-box ${kind}`;$("resultText").textContent=title;$("resultDetail").textContent=detail}
@@ -87,74 +75,32 @@ function normalize(t){
 
 async function login(){const{error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}${location.pathname}`}});if(error)$("loginMessage").textContent=error.message}
 async function hasPermission(permission){
-  // v1.8.9 DIRECT MODE
-  // 계명태권도 CLASS는 단일 관리자 운영이므로,
-  // 음성명령 실행 전에 관리자 확인 응답을 기다리지 않는다.
-  // 실제 DB 읽기/쓰기는 기존 Supabase RLS가 그대로 보호한다.
-  return true;
+  const{data:{session}}=await db.auth.getSession();
+  if(session && isSingleOwner(session)) return true;
+  const{data,error}=await db.rpc("kmt_has_permission",{p_permission:permission});
+  if(error)throw error;
+  return Boolean(data);
 }
 async function boot(){
+  const{data:{session}}=await db.auth.getSession();
   state.staff={email:SINGLE_OWNER_EMAIL,display_name:"전성권 관장",role:"owner",is_active:true};
   $("app").hidden=false;
-  $("staffLabel").textContent="전성권 관장 · 시작 중";
-  $("recognitionState").textContent="준비";
-
-  try{setupRecognition()}catch(err){
-    console.error("[VOICE] recognition failed",err);
-  }
-
+  $("staffLabel").textContent="전성권 관장 · 관장";
   await loadBase();
-
-  try{
-    await withTimeout(loadHistory(),5000,"최근 명령");
-  }catch(err){
-    console.warn("[VOICE] history skipped",err);
-  }
+  setupRecognition();
+  await loadHistory();
 }
 async function loadBase(){
-  $("staffLabel").textContent="전성권 관장 · 자료 불러오는 중";
-  $("recognitionState").textContent="준비";
-  $("refreshButton").disabled=true;
-
-  try{
-    const[p,s,c]=await Promise.all([
-      withTimeout(db.from("class_periods").select("id,code,name,start_time,end_time,sort_order").eq("is_active",true).order("sort_order"),8000,"수업부"),
-      withTimeout(db.from("students").select("id,student_code,name,enrollments(class_period_id,status)").order("student_code"),8000,"원생"),
-      withTimeout(db.from("star_categories").select("id,code,name,icon,sort_order").eq("is_active",true).order("sort_order"),8000,"STAR 항목")
-    ]);
-
-    const error=p.error||s.error||c.error;
-    if(error)throw error;
-
-    state.periods=p.data||[];
-    state.students=(s.data||[]).filter(x=>enrollment(x).status==="재원");
-    state.categories=c.data||[];
-
-    const sel=$("periodSelect");
-    sel.innerHTML=state.periods.map(x=>`<option value="${x.id}">${esc(x.code)} · ${esc(x.name)}</option>`).join("");
-
-    state.period=recommendPeriod()||state.periods[0]||null;
-    if(state.period)sel.value=state.period.id;
-    sel.onchange=async()=>{
-      state.period=state.periods.find(x=>x.id===sel.value)||null;
-      await syncSessionInfo();
-    };
-
-    await syncSessionInfo();
-    $("staffLabel").textContent="전성권 관장 · 준비 완료";
-    $("speechSupport").textContent ||= "한국어 음성인식 준비 완료";
-    return true;
-  }catch(err){
-    console.error("[VOICE] loadBase failed",err);
-    state.periods=[];state.students=[];state.categories=[];state.period=null;
-    $("periodSelect").innerHTML="";
-    $("sessionInfo").textContent="수업 자료 연결 실패";
-    $("staffLabel").textContent="전성권 관장 · 자료 연결 오류";
-    result("error","수업 자료를 불러오지 못했습니다.",err?.message||String(err));
-    return false;
-  }finally{
-    $("refreshButton").disabled=false;
-  }
+  const[p,s,c]=await Promise.all([
+    db.from("class_periods").select("id,code,name,start_time,end_time,sort_order").eq("is_active",true).order("sort_order"),
+    db.from("students").select("id,student_code,name,enrollments(class_period_id,status)").order("student_code"),
+    db.from("star_categories").select("id,code,name,icon,sort_order").eq("is_active",true).order("sort_order")
+  ]);
+  const error=p.error||s.error||c.error;if(error){result("error","기초자료를 불러오지 못했습니다.",error.message);return}
+  state.periods=p.data||[];state.students=(s.data||[]).filter(x=>enrollment(x).status==="재원");state.categories=c.data||[];
+  const sel=$("periodSelect");sel.innerHTML=state.periods.map(x=>`<option value="${x.id}">${esc(x.code)} · ${esc(x.name)}</option>`).join("");
+  state.period=recommendPeriod()||state.periods[0]||null;if(state.period)sel.value=state.period.id;sel.onchange=async()=>{state.period=state.periods.find(x=>x.id===sel.value)||null;await syncSessionInfo()};
+  await syncSessionInfo();
 }
 function recommendPeriod(){
   const now=new Date(),minutes=Number(new Intl.DateTimeFormat("en-GB",{timeZone:cfg.timezone,hour:"2-digit",minute:"2-digit",hour12:false}).format(now).replace(":",""));
@@ -327,21 +273,6 @@ const loginButton=$("loginButton"); if(loginButton) loginButton.onclick=login;
 const logoutButton=$("logoutButton"); if(logoutButton) logoutButton.onclick=async()=>{await db.auth.signOut();location.reload()};
 $("micButton").onclick=()=>{if(!state.recognition)return;try{state.listening?state.recognition.stop():state.recognition.start()}catch{}};
 $("runButton").onclick=()=>runCommand($("commandInput").value,{source:"text"});$("commandInput").onkeydown=e=>{if(e.key==="Enter")runCommand($("commandInput").value,{source:"text"})};
-$("refreshButton").onclick=async()=>{
-  toast("수업 자료 다시 불러오는 중");
-  const ok=await loadBase();
-  if(ok){
-    try{await withTimeout(loadHistory(),5000,"최근 명령")}catch(_){}
-    toast("새로고침 완료");
-  }else{
-    toast("자료 연결을 확인해 주세요");
-  }
-};$("helpButton").onclick=()=>$("helpDialog").showModal();
+$("refreshButton").onclick=async()=>{await loadBase();await loadHistory();toast("새로고침 완료")};$("helpButton").onclick=()=>$("helpDialog").showModal();
 document.querySelectorAll("[data-quick]").forEach(b=>b.onclick=()=>{let t=b.dataset.quick;if(t==="오늘 MVP")t=`오늘 ${state.period?.name||""} MVP`;if(t==="수업 종료")t=`${state.period?.name||""} 수업 종료`;$("commandInput").value=t;runCommand(t,{source:"text"})});
-try{db.auth.onAuthStateChange(()=>{})}catch(_){}
-boot().catch(err=>{
-  console.error("[VOICE] boot fatal",err);
-  $("staffLabel").textContent="전성권 관장 · 준비 오류";
-  $("recognitionState").textContent="오류";
-  result("error","계명아 초기화 오류",err?.message||String(err));
-});
+db.auth.onAuthStateChange(()=>{});boot();
