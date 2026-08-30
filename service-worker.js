@@ -4,7 +4,7 @@
      2) https://...github.io/kmt-landing/ (BASE="/kmt-landing/")
 */
 
-const CACHE_NAME = "kmt-cache-v11";
+const CACHE_NAME = "kmt-cache-v12";
 
 /**
  * ✅ BASE 자동 판별
@@ -125,6 +125,19 @@ self.addEventListener("fetch", (event) => {
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
     const cached = await cache.match(req);
+
+    // ✅ CLASS 개발영역: 네트워크 우선.
+    // 출석/STAR/계명아를 자주 업데이트하므로 이전 JS/CSS 캐시에 갇히지 않게 한다.
+    const classPrefix = BASE + "class/";
+    if (url.pathname.startsWith(classPrefix)) {
+      try {
+        const res = await fetch(req, { cache: "no-cache" });
+        if (isCacheableResponse(res)) await cache.put(req, res.clone());
+        return res;
+      } catch (e) {
+        return cached || Response.error();
+      }
+    }
 
     // ✅ HTML: 네트워크 우선(최신) → 실패 시 캐시/홈으로 폴백
     if (isHTMLRequest(req)) {
