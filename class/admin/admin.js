@@ -19,6 +19,7 @@ function enrollment(s){ return first(s.enrollments) || {}; }
 function guardian(s,pos){ return (s.guardians || []).find(g=>Number(g.position)===pos) || {}; }
 function cert(s,type){ return (s.certificates || []).find(c=>c.discipline===type) || {}; }
 function points(s){ return first(s.student_points) || {}; }
+function sparkLink(s){ return first(s.spark_member_links) || {}; }
 function isClassReview(s){ const e=enrollment(s); return !e.class_period_id || clean(e.class_label_raw)==="30"; }
 
 async function signIn(){
@@ -45,7 +46,7 @@ async function validateSession(){
 async function loadData(){
   $("dataStatus").textContent="Supabase에서 불러오는 중...";
   const [studentResult, periodResult] = await Promise.all([
-    db.from("students").select(`id,student_code,name,gender,birth_date,birth_date_review_required,photo_url,student_phone,school_name,address,guardians(id,position,name,phone,is_primary,sms_enabled),enrollments(id,class_period_id,class_label_raw,time_raw,training_days,joined_on,member_number,status,status_changed_on,monthly_fee,fee_due_day,class_periods(id,code,name)),certificates(id,discipline,rank_text,next_exam_on),student_points(id,point_type,balance)`).order("student_code"),
+    db.from("students").select(`id,student_code,name,gender,birth_date,birth_date_review_required,photo_url,student_phone,school_name,address,guardians(id,position,name,phone,is_primary,sms_enabled),enrollments(id,class_period_id,class_label_raw,time_raw,training_days,joined_on,member_number,status,status_changed_on,monthly_fee,fee_due_day,class_periods(id,code,name)),certificates(id,discipline,rank_text,next_exam_on),student_points(id,point_type,balance),spark_member_links(id,spark_user_id,spark_display_name,link_status,linked_at,verified_at)`).order("student_code"),
     db.from("class_periods").select("id,code,name,start_time,end_time,sort_order").eq("is_active",true).order("sort_order")
   ]);
   if(studentResult.error){
@@ -96,13 +97,13 @@ function renderList(){
   $("emptyState").hidden=state.filtered.length>0;
   state.filtered.forEach(s=>{
     const e=enrollment(s), p=first(e.class_periods);
-    const photo=clean(s.photo_url); const review=s.birth_date_review_required || isClassReview(s);
+    const photo=clean(s.photo_url); const review=s.birth_date_review_required || isClassReview(s), spark=sparkLink(s);
     const row=document.createElement("article"); row.className="student-row"; row.tabIndex=0;
     row.innerHTML=`${photo?`<img class="avatar" src="${escapeHtml(photo)}" alt="">`:`<div class="avatar avatar-fallback">${escapeHtml(s.name.slice(0,2))}</div>`}
       <div><span class="code">${escapeHtml(s.student_code)}</span><span class="sub">${escapeHtml(s.gender||"-")} · ${escapeHtml(s.birth_date||"생년월일 미확정")}</span></div>
       <div><span class="name">${escapeHtml(s.name)}</span><span class="sub">${escapeHtml(s.school_name||"학교 미입력")}</span></div>
       <div class="hide-small"><strong>${escapeHtml(p?.name || e.class_label_raw || "수업부 미확정")}</strong><span class="sub">${escapeHtml((e.training_days||[]).join(","))}</span></div>
-      <div class="hide-mid"><span class="badge">${escapeHtml(e.status||"재원")}</span></div>
+      <div class="hide-mid"><span class="badge ${spark.id?`spark ${spark.link_status}`:''}">${spark.id?`🔥 ${spark.link_status==='verified'?'SPARK 연결':'SPARK 확인중'}`:escapeHtml(e.status||"재원")}</span></div>
       <div class="hide-mid">${review?'<span class="badge warn">확인 필요</span>':''}</div><div class="edit-mark">›</div>`;
     row.addEventListener("click",()=>openStudent(s)); row.addEventListener("keydown",ev=>{if(ev.key==="Enter")openStudent(s)}); list.appendChild(row);
   });
@@ -121,7 +122,31 @@ function openStudent(s=null){
   setValue("guardian1Name",g1.name); setValue("guardian1Phone",g1.phone); setValue("guardian2Name",g2.name); setValue("guardian2Phone",g2.phone);
   $("guardian1Sms").checked=s?Boolean(g1.sms_enabled):true; $("guardian2Sms").checked=s?Boolean(g2.sms_enabled):false;
   setValue("certTkd",s?cert(s,"태권도").rank_text:""); setValue("certIpma",s?cert(s,"경호무술").rank_text:""); setValue("certTkkd",s?cert(s,"태권검도_검도").rank_text:""); setValue("growthPoints",s?points(s).balance:0);
+  const spark=s?sparkLink(s):{};
+  $("sparkStudentIdentity").textContent=s?`${s.student_code} · ${s.name}`:"신규 학생은 먼저 저장해 주세요.";
+  $("sparkStudentUuid").textContent=s?`CLASS UUID: ${s.id}`:"";
+  setValue("sparkUserId",spark.spark_user_id);setValue("sparkDisplayName",spark.spark_display_name);setValue("sparkLinkStatus",spark.link_status||"pending");setValue("sparkConfirmCode","");
+  $("sparkLinkMessage").textContent=spark.id?`연결됨 · ${spark.spark_user_id}`:"아직 연결되지 않음";
+  $("saveSparkLink").disabled=!s;$("unlinkSpark").hidden=!spark.id;
   $("saveMessage").textContent=""; $("studentDialog").showModal();
+}
+
+async function saveSparkLink(){
+  const s=state.editing,code=clean($("sparkConfirmCode").value),sparkId=clean($("sparkUserId").value);
+  if(!s)return toast("원생정보를 먼저 저장해 주세요.");
+  if(!sparkId)return $("sparkLinkMessage").textContent="SPARK 고유 ID를 입력해 주세요.";
+  if(code.toUpperCase()!==s.student_code.toUpperCase())return $("sparkLinkMessage").textContent=`확인을 위해 ${s.student_code}를 정확히 입력해 주세요.`;
+  $("saveSparkLink").disabled=true;$("sparkLinkMessage").textContent="연결 저장 중...";
+  const {error}=await db.rpc("kmt_link_spark_member",{p_student_id:s.id,p_confirm_student_code:code,p_spark_user_id:sparkId,p_spark_display_name:clean($("sparkDisplayName").value)||null,p_link_status:$("sparkLinkStatus").value});
+  $("saveSparkLink").disabled=false;if(error)return $("sparkLinkMessage").textContent=error.message;
+  toast(`${s.name} 학생의 SPARK 연결을 저장했습니다.`);$("studentDialog").close();await loadData();
+}
+async function unlinkSpark(){
+  const s=state.editing,code=clean($("sparkConfirmCode").value);if(!s)return;
+  if(code.toUpperCase()!==s.student_code.toUpperCase())return $("sparkLinkMessage").textContent=`연결 해제 전 ${s.student_code}를 정확히 입력해 주세요.`;
+  if(!confirm(`${s.name} 학생과 SPARK 회원의 연결을 해제할까요? 연결 이력은 보존됩니다.`))return;
+  $("unlinkSpark").disabled=true;const {error}=await db.rpc("kmt_unlink_spark_member",{p_student_id:s.id,p_confirm_student_code:code});$("unlinkSpark").disabled=false;
+  if(error)return $("sparkLinkMessage").textContent=error.message;toast(`${s.name} 학생의 SPARK 연결을 해제했습니다.`);$("studentDialog").close();await loadData();
 }
 
 function nextStudentCode(){
@@ -154,6 +179,8 @@ $("logoutButton").addEventListener("click",async()=>{await db.auth.signOut();loc
 $("addStudentButton").addEventListener("click",()=>openStudent());
 $("studentForm").addEventListener("submit",saveStudent);
 $("cancelEdit").addEventListener("click",()=>$("studentDialog").close());
+$("saveSparkLink").addEventListener("click",saveSparkLink);
+$("unlinkSpark").addEventListener("click",unlinkSpark);
 $("closeDialog").addEventListener("click",()=>$("studentDialog").close());
 [$("searchInput"),$("statusFilter"),$("classFilter"),$("reviewOnly")].forEach(el=>el.addEventListener(el.type==="search"?"input":"change",applyFilters));
 db.auth.onAuthStateChange((_event,session)=>{ if(session && adminApp.hidden) setTimeout(validateSession,0); });
