@@ -1,5 +1,5 @@
 window.KMT_ATTENDANCE_CONFIG = Object.freeze({
-  version: "1.2.0",
+  version:"1.5.0",
   supabaseUrl: "https://ojxarsfaewehwjidwgac.supabase.co",
   supabasePublishableKey: "sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",
   allowedAdminEmail: "jeonseongkweon@gmail.com",

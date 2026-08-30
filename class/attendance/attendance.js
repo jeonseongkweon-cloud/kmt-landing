@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const cfg=window.KMT_ATTENDANCE_CONFIG;
 const db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
 const $=id=>document.getElementById(id);
-const state={periods:[],students:[],session:null,records:[],smsRows:[],sparkByStudent:new Map(),period:null,attendedOnly:false};
+const state={periods:[],students:[],session:null,records:[],smsRows:[],sparkByStudent:new Map(),period:null,attendedOnly:false,realtimeChannel:null,realtimeTimer:null};
 const statusText={present:"출석",late:"지각",absent:"결석",cancelled:"미처리"};
 
 function clean(v){return v==null?"":String(v).trim()}
@@ -63,7 +63,7 @@ async function openPeriod(period){
   let {data:existing,error:findError}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",period.id).maybeSingle();
   if(findError){toast(findError.message);return}
   if(!existing){const {data,error}=await db.from("class_sessions").insert({session_date:localDate(),class_period_id:period.id,status:"open"}).select().single();if(error){toast(error.message);return}existing=data}
-  state.session=existing;await loadAttendance();loadSparkSummary();
+  state.session=existing;await loadAttendance();loadSparkSummary();startRealtime();
   $("periodScreen").hidden=true;$("classScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent=`${period.name} 오늘 수업`;$("sessionStatus").textContent=existing.status==="closed"?"수업 종료됨":"수업 진행 중";$("closeSessionButton").textContent=existing.status==="closed"?"수업 다시 열기":"수업 종료";setSaving("Supabase 자동저장");
 }
 
@@ -107,6 +107,41 @@ async function markStudent(student,status){
   const i=state.records.findIndex(r=>r.id===result.data.id);if(i>=0)state.records[i]=result.data;else state.records.push(result.data);await loadAttendance();setSaving("저장 완료");toast(`${student.name} · ${statusText[status]}`);setTimeout(()=>setSaving("Supabase 자동저장"),900);
 }
 
+function stopRealtime(){
+  if(state.realtimeTimer){clearTimeout(state.realtimeTimer);state.realtimeTimer=null}
+  if(state.realtimeChannel){db.removeChannel(state.realtimeChannel);state.realtimeChannel=null}
+}
+function scheduleRealtimeRefresh(){
+  clearTimeout(state.realtimeTimer);
+  state.realtimeTimer=setTimeout(async()=>{
+    if(!state.session)return;
+    await loadAttendance();
+    setSaving("LIVE 동기화");
+    setTimeout(()=>{if(state.session)setSaving("Supabase 자동저장 · LIVE")},700);
+  },250);
+}
+async function syncSessionState(){
+  if(!state.session)return;
+  const {data,error}=await db.from("class_sessions").select("*").eq("id",state.session.id).maybeSingle();
+  if(error||!data)return;
+  state.session=data;
+  $("sessionStatus").textContent=data.status==="closed"?"수업 종료됨":"수업 진행 중";
+  $("closeSessionButton").textContent=data.status==="closed"?"수업 다시 열기":"수업 종료";
+}
+function startRealtime(){
+  stopRealtime();
+  if(!state.session)return;
+  const sid=state.session.id;
+  state.realtimeChannel=db.channel(`kmt-attendance-live-${sid}`)
+    .on("postgres_changes",{event:"*",schema:"public",table:"attendance",filter:`session_id=eq.${sid}`},scheduleRealtimeRefresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"sms_outbox"},scheduleRealtimeRefresh)
+    .on("postgres_changes",{event:"UPDATE",schema:"public",table:"class_sessions",filter:`id=eq.${sid}`},async()=>{await syncSessionState();scheduleRealtimeRefresh()})
+    .subscribe(status=>{
+      if(status==="SUBSCRIBED")setSaving("Supabase 자동저장 · LIVE");
+      else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT")setSaving("LIVE 재연결 중");
+    });
+}
+
 function updateStats(){
   const roster=studentsForPeriod(state.period);const active=state.records.filter(r=>r.status!=="cancelled");
   const count=s=>active.filter(r=>r.status===s).length;$("statTotal").textContent=roster.length;$("statPresent").textContent=count("present");$("statLate").textContent=count("late");$("statAbsent").textContent=count("absent");$("statTrial").textContent=count("trial");const done=new Set(active.filter(r=>r.student_id).map(r=>r.student_id));$("statWaiting").textContent=Math.max(0,roster.length-done.size);
@@ -123,5 +158,5 @@ async function cancelTrial(id){const {data,error}=await db.from("attendance").up
 
 async function toggleSession(){const closed=state.session.status==="closed";const payload=closed?{status:"open",ended_at:null}:{status:"closed",ended_at:new Date().toISOString()};const {data,error}=await db.from("class_sessions").update(payload).eq("id",state.session.id).select().single();if(error){toast(error.message);return}state.session=data;$("sessionStatus").textContent=data.status==="closed"?"수업 종료됨":"수업 진행 중";$("closeSessionButton").textContent=data.status==="closed"?"수업 다시 열기":"수업 종료";toast(data.status==="closed"?"오늘 수업을 종료했습니다.":"수업을 다시 열었습니다.")}
 
-$("loginButton").onclick=login;$("logoutButton").onclick=async()=>{await db.auth.signOut();location.reload()};$("backButton").onclick=()=>{$("classScreen").hidden=true;$("periodScreen").hidden=false;state.session=null;state.period=null};$("viewToggle").onclick=()=>{state.attendedOnly=!state.attendedOnly;$("viewToggle").textContent=state.attendedOnly?"전체 명단 보기":"출석 학생만 보기";renderStudents()};$("trialButton").onclick=()=>{$("trialForm").reset();$("trialMessage").textContent="";$("trialDialog").showModal()};$("trialCancel").onclick=()=>$("trialDialog").close();$("trialForm").onsubmit=addTrial;$("closeSessionButton").onclick=toggleSession;
+$("loginButton").onclick=login;$("logoutButton").onclick=async()=>{await db.auth.signOut();location.reload()};$("backButton").onclick=()=>{stopRealtime();$("classScreen").hidden=true;$("periodScreen").hidden=false;state.session=null;state.period=null};$("viewToggle").onclick=()=>{state.attendedOnly=!state.attendedOnly;$("viewToggle").textContent=state.attendedOnly?"전체 명단 보기":"출석 학생만 보기";renderStudents()};$("trialButton").onclick=()=>{$("trialForm").reset();$("trialMessage").textContent="";$("trialDialog").showModal()};$("trialCancel").onclick=()=>$("trialDialog").close();$("trialForm").onsubmit=addTrial;$("closeSessionButton").onclick=toggleSession;
 db.auth.onAuthStateChange((_e,s)=>{if(s&&$("attendanceApp").hidden)setTimeout(boot,0)});boot();
