@@ -1,0 +1,12 @@
+:root{--kmt-effect-z:2147483000;--kmt-effect-light:850ms;--kmt-effect-power:1200ms;--kmt-effect-mega:2200ms}
+#kmt-effect-root{position:fixed;inset:0;z-index:var(--kmt-effect-z);pointer-events:none;overflow:hidden;contain:layout paint style}
+.kmt-effect-flash{position:absolute;inset:0;opacity:0;pointer-events:none;animation:kmtFxFlash var(--kmt-fx-duration,850ms) ease-out forwards}
+.kmt-effect-flash.light{background:radial-gradient(circle at center,rgba(255,255,255,.24),rgba(124,214,255,.08) 35%,transparent 70%)}
+.kmt-effect-flash.power{background:radial-gradient(circle at center,rgba(255,229,93,.34),rgba(255,158,33,.12) 40%,transparent 72%)}
+.kmt-effect-flash.mega{background:radial-gradient(circle at center,rgba(255,238,127,.42),rgba(180,100,255,.18) 42%,rgba(24,8,64,.16) 72%,transparent)}
+.kmt-effect-particle{position:absolute;left:var(--x,50%);top:var(--y,50%);transform:translate(-50%,-50%);font-size:var(--size,24px);line-height:1;opacity:0;will-change:transform,opacity;animation:kmtFxParticle var(--life,950ms) cubic-bezier(.18,.72,.2,1) forwards;animation-delay:var(--delay,0ms);text-shadow:0 0 16px rgba(255,221,77,.55)}
+.kmt-effect-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(.88);font:900 clamp(20px,4vw,52px)/1.1 system-ui,sans-serif;letter-spacing:-.03em;text-align:center;color:#fff7c2;text-shadow:0 4px 30px rgba(0,0,0,.55),0 0 24px rgba(255,210,56,.5);opacity:0;animation:kmtFxLabel var(--life,1200ms) ease-out forwards;white-space:pre-line}
+@keyframes kmtFxFlash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+@keyframes kmtFxParticle{0%{opacity:0;transform:translate(-50%,-50%) scale(.5) rotate(0)}18%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx,0px)),calc(-50% + var(--dy,-120px))) scale(1.25) rotate(var(--rot,80deg))}}
+@keyframes kmtFxLabel{0%{opacity:0;transform:translate(-50%,-42%) scale(.76)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}72%{opacity:1;transform:translate(-50%,-56%) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(.96)}}
+@media (prefers-reduced-motion:reduce){.kmt-effect-flash,.kmt-effect-particle,.kmt-effect-label{animation-duration:160ms!important}}
