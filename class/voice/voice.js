@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
-const VOICE_BUILD="174";
+const VOICE_BUILD="175";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 
 const cfg=window.KMT_VOICE_CONFIG;
@@ -21,14 +21,22 @@ function rosterFor(period){return state.students.filter(s=>enrollment(s).class_p
 function normalize(t){return clean(t).replace(/[,.!?~]/g," ").replace(/\s+/g," ").replace(/^계명아\s*/i,"").trim()}
 
 async function login(){const{error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}${location.pathname}`}});if(error)$("loginMessage").textContent=error.message}
-async function hasPermission(permission){const{data,error}=await db.rpc("kmt_has_permission",{p_permission:permission});if(error)throw error;return Boolean(data)}
+async function hasPermission(permission){
+  const{data:{session}}=await db.auth.getSession();
+  if(session && isSingleOwner(session)) return true;
+  const{data,error}=await db.rpc("kmt_has_permission",{p_permission:permission});
+  if(error)throw error;
+  return Boolean(data);
+}
 async function boot(){
   const{data:{session}}=await db.auth.getSession();
-  if(!session){$("loginScreen").hidden=false;$("app").hidden=true;return}
-  const profile={email:session.user.email,display_name:"전성권 관장",role:"owner",is_active:true};
-  if(!isSingleOwner(session)){$("loginScreen").hidden=false;$("app").hidden=true;$("loginMessage").textContent="관장 계정으로 로그인해 주세요.";return}
-  state.staff=profile;$("loginScreen").hidden=true;$("app").hidden=false;$("staffLabel").textContent=`${profile.display_name||profile.email} · ${roleLabel(profile.role)}`;
-  await loadBase();setupRecognition();await loadHistory();
+  state.staff={email:SINGLE_OWNER_EMAIL,display_name:"전성권 관장",role:"owner",is_active:true};
+  $("loginScreen").hidden=true;
+  $("app").hidden=false;
+  $("staffLabel").textContent="전성권 관장 · 관장";
+  await loadBase();
+  setupRecognition();
+  await loadHistory();
 }
 async function loadBase(){
   const[p,s,c]=await Promise.all([
