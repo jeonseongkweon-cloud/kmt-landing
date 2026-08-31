@@ -31,7 +31,7 @@ function showGrowthCelebration(stage,total,goal){
 function renderGrowth({celebrate=true}={}){
   const panel=$("growthPanel");if(!panel)return;const total=state.events.length,goal=state.growth.goal,stage=growthStageFor(total,goal),thresholds=goal?growthThresholds(goal):[];
   if(!$("growthStages").children.length)$("growthStages").innerHTML=Array.from({length:7},(_,i)=>`<div class="growth-stage" data-stage="${i+1}"><span>${i+1}</span><img src="../../assets/star-growth/stage-${String(i+1).padStart(2,"0")}.png" alt="공동성장 ${i+1}단계"></div>`).join("");
-  document.querySelectorAll(".growth-stage").forEach((el,index)=>{const active=index<stage;el.classList.toggle("active",active);el.classList.toggle("new-stage",celebrate&&state.growth.ready&&index+1===stage&&stage>state.growth.stage)});
+  document.querySelectorAll(".growth-stage").forEach((el,index)=>{const active=index<stage,current=stage>0&&stage<7&&index+1===stage;el.classList.toggle("active",active);el.classList.toggle("current-stage",current);el.classList.toggle("new-stage",celebrate&&state.growth.ready&&index+1===stage&&stage>state.growth.stage)});
   $("growthScore").textContent=goal?`⭐ ${total} / ${goal}`:"⭐ 0 / 목표 미정";$("growthMeterFill").style.width=goal?`${Math.min(100,total/goal*100)}%`:"0%";
   if(!goal){$("growthNext").textContent="오늘의 목표를 먼저 정해 주세요.";$("growthHint").textContent="출석 확인 후 오늘의 목표를 산출해 주세요."}
   else if(stage>=7){$("growthNext").textContent=total>goal?`목표 초과 ⭐ +${total-goal}`:"공동 목표를 달성했습니다!";$("growthHint").textContent=`오늘 목표 ${goal} STAR · 완전체 달성`}

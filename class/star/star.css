@@ -136,6 +136,8 @@
   .growth-stage>span{position:absolute;z-index:2;left:1px;top:5px;display:grid;place-items:center;width:18px;height:18px;border:1px solid rgba(255,255,255,.32);border-radius:50%;background:rgba(3,12,23,.78);color:#b5c5d4;font-size:10px;font-weight:1000}
   .growth-stage.active{opacity:1;filter:none;transform:scale(1)}.growth-stage.active>span{border-color:#ffe18c;background:#6b4a05;color:#fff3bd}
   .growth-stage.new-stage{z-index:3;animation:growthCharacterUnlock 1.05s cubic-bezier(.2,.9,.25,1)}
+  .growth-stage.current-stage{z-index:2;animation:growthCurrentPulse 2.2s ease-in-out infinite}
+  .growth-stage.current-stage.new-stage{z-index:3;animation:growthCharacterUnlock 1.05s cubic-bezier(.2,.9,.25,1),growthCurrentPulse 2.2s 1.05s ease-in-out infinite}
   .growth-progress{display:grid;grid-template-columns:auto minmax(120px,1fr) auto;align-items:center;gap:9px}.growth-progress strong{color:#fff0a6;font-size:16px}.growth-progress span{color:#d2e0ee;font-size:11px;font-weight:850;white-space:nowrap}
   .growth-meter{height:7px;border-radius:99px;background:rgba(255,255,255,.10);overflow:hidden}.growth-meter i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ff7a18,#ffd45d,#fff5ba);box-shadow:0 0 12px rgba(255,211,83,.5);transition:width .5s ease}
   .growth-panel.complete{border-color:rgba(255,218,91,.72);box-shadow:0 0 28px rgba(246,196,81,.22),inset 0 0 30px rgba(246,196,81,.08)}.growth-panel.over-goal{animation:growthOverGoal 3.6s ease-in-out infinite}
@@ -146,7 +148,8 @@
   .growth-particles{position:absolute;inset:-30px;pointer-events:none;background:radial-gradient(circle at 10% 30%,#fff 0 2px,transparent 3px),radial-gradient(circle at 90% 20%,#ffe174 0 3px,transparent 4px),radial-gradient(circle at 20% 85%,#ff8b26 0 3px,transparent 4px),radial-gradient(circle at 78% 82%,#fff 0 2px,transparent 3px);animation:growthParticles 1.15s ease-out infinite}
 }
 @keyframes growthCharacterUnlock{0%{opacity:.22;filter:grayscale(1) brightness(.45);transform:scale(.78)}38%{opacity:1;filter:brightness(1.75);transform:scale(1.24)}70%{filter:drop-shadow(0 0 22px #ffd45d);transform:scale(.96)}100%{filter:none;transform:scale(1)}}
+@keyframes growthCurrentPulse{0%,100%{opacity:.82;filter:drop-shadow(0 0 5px rgba(255,207,71,.35));transform:scale(.97)}50%{opacity:1;filter:drop-shadow(0 0 18px rgba(255,215,82,.95)) brightness(1.12);transform:scale(1.055)}}
 @keyframes growthCelebrationPop{0%{opacity:0;transform:scale(.65)}70%{transform:scale(1.07)}100%{opacity:1;transform:scale(1)}}
 @keyframes growthParticles{0%{opacity:0;transform:scale(.7) rotate(0)}35%{opacity:1}100%{opacity:0;transform:scale(1.25) rotate(22deg)}}
 @keyframes growthOverGoal{0%,100%{box-shadow:0 0 24px rgba(246,196,81,.18)}50%{box-shadow:0 0 38px rgba(246,196,81,.34)}}
-@media(prefers-reduced-motion:reduce){.growth-stage,.growth-stage.new-stage,.growth-panel.over-goal,.growth-celebration>div,.growth-particles{animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){.growth-stage,.growth-stage.new-stage,.growth-stage.current-stage,.growth-panel.over-goal,.growth-celebration>div,.growth-particles{animation:none!important;transition:none!important}}
