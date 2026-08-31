@@ -82,3 +82,12 @@
 
 /* v2.6.0 ceremony sequence */
 .kmt-mega-effect .kmt-mega-title{max-width:92vw;text-align:center}.kmt-mega-effect .kmt-mega-subtitle{max-width:92vw;text-align:center}
+
+/* v2.7.1 — 모바일 음성 리모컨 */
+@media(max-width:760px), (max-width:1024px) and (pointer:coarse){
+  body{padding-bottom:175px}.topbar{position:sticky;top:0;z-index:8;display:flex;align-items:center;flex-direction:row;padding:7px 9px}.brand img{width:34px;height:34px}.brand span,.topbar nav{display:none}.brand strong{font-size:14px}
+  .shell{width:calc(100% - 12px);margin:7px auto 20px;gap:7px}.panel{padding:10px;border-radius:13px}.hero{padding:9px 11px}.hero .eyebrow,.hero>p:not(.eyebrow),.staff-line{display:none}.hero h1{margin:0;font-size:21px}
+  .control-grid{display:block}.current-class{padding:9px}.section-head h2{margin:2px 0;font-size:16px}.section-head .eyebrow{display:none}.current-class select{padding:10px}.session-info{margin:7px 0;padding:8px;font-size:11px}.quick-links{gap:5px}.quick-links button{padding:7px 8px;font-size:10px}
+  .mic-panel{position:static;min-height:0;padding:0;border:0;background:transparent;box-shadow:none}.mic-button{position:fixed;right:18px;bottom:18px;z-index:25;width:138px;height:138px;border-width:5px;gap:1px;box-shadow:0 0 0 8px rgba(245,200,76,.07),0 16px 42px rgba(0,0,0,.48)}.mic-button span{font-size:35px}.mic-button strong{font-size:21px}.mic-button small{font-size:10px}.mic-button.listening{animation:pulse 1s infinite}
+  #speechSupport{display:none}.command-panel{padding:10px}.command-panel .section-head{display:none}.command-row input{padding:10px;font-size:12px}.command-row button{padding:10px}.heard-box,.result-box{margin-top:7px;padding:9px;font-size:11px}.history-panel{display:none}.effect-control-panel,.sound-control-bar{display:none!important}
+}

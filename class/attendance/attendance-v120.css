@@ -22,3 +22,12 @@
 @media(max-width:1200px){.student-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
 @media(max-width:800px){.student-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:560px){.student-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.photo{width:52px;height:52px}.student-main strong{font-size:15px}.quick-actions button{min-height:44px;font-size:11px}.stats{grid-template-columns:repeat(3,1fr)}}
+
+/* v2.8.0 — 모바일 출석 리모컨 */
+@media(max-width:760px), (max-width:1024px) and (pointer:coarse){
+  main{width:calc(100% - 12px);padding:8px 0 70px}.topbar{padding:7px 9px}.brand img{width:34px;height:34px}.brand span,.clock,.topbar nav a{display:none}.brand strong{font-size:14px}.topbar nav{margin-left:auto}.topbar nav button{padding:7px 9px;font-size:11px}
+  .class-head{gap:7px}.class-head p{margin:0;font-size:11px}.class-head h1{font-size:23px}.class-actions{gap:5px}.class-actions a,.class-actions button{padding:7px 9px;font-size:11px}
+  .stats{grid-template-columns:repeat(6,1fr);gap:4px;margin:8px 0}.stats article{padding:7px 3px;border-radius:9px;text-align:center}.stats span{font-size:9px}.stats strong{margin-top:2px;font-size:17px}.notice-line{margin-bottom:7px;padding:7px 9px;font-size:10px}
+  .student-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.student-card{border-radius:12px}.student-main{display:flex;align-items:center;justify-content:space-between;gap:5px;min-height:47px;padding:7px 8px;text-align:left}.student-main .photo,.student-main .photo-fallback{display:none!important}.student-main strong{min-width:0;margin:0;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.student-main>span:not(.status-pill){margin:0;font-size:9px;white-space:nowrap}.status-pill{flex:0 0 auto;margin:0!important;padding:2px 4px;font-size:9px!important}
+  .quick-actions{grid-template-columns:repeat(3,1fr)}.quick-actions button{min-height:40px;padding:0 2px;font-size:11px}.trial-list{margin-top:10px;padding:10px}
+}

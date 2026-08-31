@@ -224,3 +224,17 @@ main{padding-top:8px}
   .category-live-inline{display:grid}
   .category-live-inline .live-status{justify-content:flex-start;flex-wrap:wrap}
 }
+
+/* v3.1.0 — 모바일 CLASS 리모컨 */
+@media(max-width:760px), (max-width:1024px) and (pointer:coarse){
+  body{background:#061321}header{position:sticky;padding:7px 9px}.brand img{width:34px}.brand span,.clock,nav a{display:none}.brand strong{font-size:14px}nav{margin-left:auto}nav button{padding:7px 9px;font-size:11px}
+  main{width:calc(100% - 12px);padding:7px 0 90px}.class-head{display:block;margin:0 0 5px}.class-head p{display:none}.class-head h1{font-size:24px;line-height:1}.subtle{padding:6px 8px;font-size:11px}
+  .star-growth-dashboard{margin:0 0 5px}.growth-panel,.summary{display:none!important}.category-zone{padding:5px 6px;border-radius:11px}.category-zone .categories{padding:0;gap:5px}.praise-primary{padding:9px 13px!important;font-size:13px!important}.category-more summary{padding:9px 11px;font-size:11px}
+  .category-live-inline{padding:5px 0;border:0}.category-live-inline>strong,.category-live-inline #saveStatus{display:none}.category-live-inline .live-status{display:grid;grid-template-columns:1fr 1fr auto;gap:5px;width:100%}.category-live-inline .voice-start{min-height:38px;padding:7px 6px;font-size:11px}.voice-status{align-self:center;padding:5px 6px;font-size:10px}
+  .student-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.student{display:grid;grid-template-columns:minmax(0,1fr) 38px;min-height:66px;border-radius:13px;text-align:left;overflow:hidden}.student.current-leader{box-shadow:0 0 0 1px rgba(246,196,81,.5)}.leader-badge{display:none}
+  .star-main{display:flex;align-items:center;justify-content:space-between;gap:5px;min-width:0;padding:10px 8px}.star-main .photo,.star-main .fallback,.star-main .meter,.star-main small{display:none!important}.star-main h2{min-width:0;margin:0;font-size:16px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.star-count{flex:0 0 auto;font-size:18px;white-space:nowrap}
+  .card-actions{display:block;border-top:0;border-left:1px solid var(--line)}.card-actions button{display:none}.card-actions .undo{display:block;width:100%;height:100%;min-height:64px;padding:0;border:0;font-size:0}.card-actions .undo::after{content:"↶";font-size:22px}
+  .student.voice-hit,.student.voice-arrive{animation:mobileStarTap .42s ease;box-shadow:0 0 0 2px rgba(246,196,81,.78),0 0 18px rgba(246,196,81,.32)}.star-main .voice-plus{right:6px;top:2px;font-size:19px}
+  .burst,.growth-celebration,.voice-feedback,.info-board,.director-made,.class-ticker{display:none!important}.empty{padding:35px 10px}
+}
+@keyframes mobileStarTap{0%{transform:scale(1)}45%{transform:scale(1.035);filter:brightness(1.3)}100%{transform:scale(1)}}
