@@ -192,3 +192,35 @@
 @media(max-width:600px){
   .class-head h1{font-size:32px}.praise-primary{font-size:14px!important}.category-more-list{width:calc(100vw - 28px);max-height:50vh;overflow:auto}
 }
+
+/* v3.0.1 — 상단 여백 축소, STAR 조작·음성 상태 한 줄 통합 */
+main{padding-top:8px}
+.class-head{margin-bottom:2px}
+.class-head p{margin:2px 0 0}
+.class-head h1{line-height:1.06}
+@media(min-width:1201px){
+  #sessionTitle::after{font-size:38px}
+  .star-growth-dashboard{gap:7px;margin:4px 0 8px}
+  .growth-panel{min-height:220px;padding-top:10px}
+  .category-zone{display:flex;align-items:center;gap:10px;padding:6px 9px}
+  .category-zone .categories{flex:0 0 auto;padding:0}
+  .category-live-inline{flex:1;display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;margin:0;padding:0 2px;border:0;background:transparent}
+  .category-live-inline>strong{font-size:13px;white-space:nowrap}
+  .category-live-inline .live-status{flex-wrap:nowrap;margin-left:auto}
+  .category-live-inline .voice-start{padding:9px 12px;white-space:nowrap}
+  .category-live-inline #saveStatus{white-space:nowrap}
+}
+@media(min-width:1201px) and (max-width:1400px){
+  .category-live-inline>strong{display:none}
+  .category-live-inline .voice-start{padding-inline:9px;font-size:12px}
+  .category-live-inline #saveStatus{font-size:11px}
+}
+@media(max-width:1200px){
+  main{padding-top:12px}
+  .category-zone{display:grid;gap:7px}
+  .category-live-inline{margin:0;padding:8px 10px}
+}
+@media(max-width:760px){
+  .category-live-inline{display:grid}
+  .category-live-inline .live-status{justify-content:flex-start;flex-wrap:wrap}
+}
