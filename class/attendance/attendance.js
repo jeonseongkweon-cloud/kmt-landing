@@ -6,7 +6,7 @@ const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase
 const cfg=window.KMT_ATTENDANCE_CONFIG;
 const db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
 const $=id=>document.getElementById(id);
-const state={periods:[],students:[],session:null,records:[],smsRows:[],period:null,attendedOnly:false,realtimeChannel:null,realtimeTimer:null,voice:{recognition:null,listening:false}};
+const state={periods:[],students:[],session:null,records:[],smsRows:[],period:null,attendedOnly:false,sortMode:localStorage.getItem("kmt-attendance-sort")||"period",realtimeChannel:null,realtimeTimer:null,voice:{recognition:null,listening:false}};
 const statusText={present:"출석",late:"출석",absent:"결석",cancelled:"미처리",checked_out:"귀가"};
 
 function clean(v){return v==null?"":String(v).trim()}
@@ -67,7 +67,8 @@ function trainingDaysText(s){
   return sorted.join(" · ");
 }
 function periodOrder(s){const id=enrollment(s).class_period_id,index=state.periods.findIndex(p=>p.id===id);return index<0?999:index}
-function sortedStudents(){return [...state.students].sort((a,b)=>periodOrder(a)-periodOrder(b)||a.name.localeCompare(b.name,"ko"))}
+function attendanceStatusRank(s){const status=displayStatus(recordFor(s.id));return !status?0:status==="absent"?1:status==="checked_out"?2:3}
+function sortedStudents(){return [...state.students].sort((a,b)=>attendanceStatusRank(a)-attendanceStatusRank(b)||(state.sortMode==="name"?a.name.localeCompare(b.name,"ko"):periodOrder(a)-periodOrder(b)||a.name.localeCompare(b.name,"ko")))}
 async function openUnifiedBoard(){
   const period=state.periods.find(p=>p.code==="OTHER")||state.periods[0];
   if(!period){toast("활성 수업부가 없습니다.");return}
@@ -94,8 +95,13 @@ function renderStudents(){
 
 async function markStudent(student,status){
   if(state.session.status==="closed"){toast("종료된 수업입니다. 먼저 수업을 다시 열어주세요.");return}
+  const old=recordFor(student.id),current=displayStatus(old);
+  if((status==="present"&&["present","late"].includes(current))||(status==="absent"&&current==="absent")){
+    const result=await db.from("attendance").update({status:"cancelled",checked_out_at:null,points_awarded:0}).eq("id",old.id).select().single();if(result.error){toast(result.error.message);return}await loadAttendance();toast(`${student.name} · ${statusText[status]} 취소`);return
+  }
   if(status==="checked_out"){
-    const old=recordFor(student.id);if(!old||!["present","late"].includes(old.status)){toast("먼저 출석 처리해 주세요.");return}
+    if(current==="checked_out"){const result=await db.from("attendance").update({checked_out_at:null}).eq("id",old.id).select().single();if(result.error){toast(result.error.message);return}await loadAttendance();toast(`${student.name} · 귀가 취소 · 출석 복귀`);return}
+    if(!old||!["present","late"].includes(old.status)){toast("먼저 출석 처리해 주세요.");return}
     const result=await db.from("attendance").update({checked_out_at:new Date().toISOString()}).eq("id",old.id).select().single();
     if(result.error){toast(result.error.message);return}await loadAttendance();toast(`${student.name} · 귀가`);return;
   }
@@ -106,7 +112,7 @@ async function markStudent(student,status){
       if(!confirm(`보호자 번호가 ${others} 학생과 같습니다.\n\n${student.name} (${student.student_code}) 학생을 ${statusText[status]} 처리할까요?`))return;
     }
   }
-  setSaving(`${student.name} 저장 중...`);const old=recordFor(student.id);const payload={session_id:old?.session_id||state.session.id,student_id:student.id,attendance_date:localDate(),status,checked_at:new Date().toISOString(),checked_out_at:null,points_awarded:status==="present"?1:0};
+  setSaving(`${student.name} 저장 중...`);const payload={session_id:old?.session_id||state.session.id,student_id:student.id,attendance_date:localDate(),status,checked_at:new Date().toISOString(),checked_out_at:null,points_awarded:status==="present"?1:0};
   let result;if(old)result=await db.from("attendance").update(payload).eq("id",old.id).select().single();else result=await db.from("attendance").insert(payload).select().single();
   if(result.error){toast(result.error.message);setSaving("저장 오류");return}
   const i=state.records.findIndex(r=>r.id===result.data.id);if(i>=0)state.records[i]=result.data;else state.records.push(result.data);await loadAttendance();setSaving("저장 완료");toast(`${student.name} · ${statusText[status]}`);if(status==="present")showAttendanceSuccess(student);setTimeout(()=>setSaving("Supabase 자동저장"),900);
@@ -161,4 +167,5 @@ async function cancelTrial(id){const {data,error}=await db.from("attendance").up
 
 $("loginButton").onclick=login;$("logoutButton").onclick=async()=>{await db.auth.signOut();location.reload()};$("viewToggle").onclick=()=>{state.attendedOnly=!state.attendedOnly;$("viewToggle").textContent=state.attendedOnly?"전체 명단 보기":"현재 도장 학생만";renderStudents()};$("trialButton").onclick=()=>{$("trialForm").reset();$("trialMessage").textContent="";$("trialDialog").showModal()};$("trialCancel").onclick=()=>$("trialDialog").close();$("trialForm").onsubmit=addTrial;
 $("attendanceVoiceRemote").onclick=toggleAttendanceVoice;
+$("attendanceSortSelect").value=state.sortMode==="name"?"name":"period";$("attendanceSortSelect").onchange=e=>{state.sortMode=e.target.value;localStorage.setItem("kmt-attendance-sort",state.sortMode);renderStudents()};
 db.auth.onAuthStateChange((_e,s)=>{if(s&&$("attendanceApp").hidden)setTimeout(boot,0)});boot();

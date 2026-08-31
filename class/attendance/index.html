@@ -9,7 +9,7 @@
   <link rel="icon" href="../../assets/icons/kmt_favicon_48.png">
   <link rel="stylesheet" href="attendance.css">
   <link rel="stylesheet" href="attendance-v050.css">
-  <link rel="stylesheet" href="attendance-v120.css?v=290">
+  <link rel="stylesheet" href="attendance-v120.css?v=300">
 <link rel="stylesheet" href="../effects/effect-manager.css?v=100"></head>
 <body>
   <section class="login-screen" id="loginScreen" hidden>
@@ -44,7 +44,7 @@
           <article><span>미처리</span><strong id="statWaiting">0</strong></article>
         </section>
 
-        <div class="notice-line"><strong id="sessionStatus">수업 준비</strong><span id="saveStatus">Supabase 자동저장</span></div>
+        <div class="notice-line"><div class="attendance-board-controls"><strong id="sessionStatus">수업 준비</strong><label class="attendance-sort-control"><span>↕</span><select id="attendanceSortSelect" aria-label="출석판 정렬"><option value="period">부별순</option><option value="name">이름순</option></select></label></div><span id="saveStatus">Supabase 자동저장</span></div>
         <section class="student-grid" id="studentGrid"></section>
         <div class="empty" id="emptyMessage" hidden>표시할 학생이 없습니다.</div>
 
@@ -58,6 +58,6 @@
   <dialog id="trialDialog"><form id="trialForm"><h2>체험생 출석</h2><label>이름<input id="trialName" required maxlength="30" placeholder="체험생 이름"></label><label>메모<input id="trialNote" maxlength="100" placeholder="선택사항"></label><div><button type="button" id="trialCancel">취소</button><button type="submit">체험 출석</button></div><p id="trialMessage"></p></form></dialog>
   <div class="toast" id="toast"></div>
   <script src="attendance-config.js"></script>
-  <script type="module" src="attendance.js?v=2900"></script>
+  <script type="module" src="attendance.js?v=3000"></script>
 <script src="../effects/effect-manager.js?v=100"></script></body>
 </html>
