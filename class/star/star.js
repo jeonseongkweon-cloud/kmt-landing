@@ -90,6 +90,8 @@ function categoryFromVoice(text){
   const t=clean(text).replace(/\s/g,"");
   const aliases={NEAT:["단정별","단정"],GREETING:["인사별","인사"],POSTURE:["자세별","자세","집중별","집중"],KICK:["효도별","효도","발차기별","발차기"],CARE:["인성별","인성","배려별","배려"],CLEANUP:["정리별","정리"],CHALLENGE:["도전별","도전","미션별"],GAME:["게임별","게임"]};
   for(const c of state.categories){const words=[...(aliases[c.code]||[]),clean(c.name).replace(/\s/g,"")];if(words.some(w=>w&&t.includes(w)))return c}
+  const genericStar=state.students.some(s=>[s.name,...voiceAliases(s)].some(name=>t===`${voiceNameKey(name)}별`));
+  if(genericStar)return state.categories.find(c=>c.code==="CARE")||null;
   if(/별|스타|칭찬/.test(t))return state.category;
   return null;
 }
