@@ -7,3 +7,6 @@
 .student-photo-controls{display:grid;gap:8px;min-width:0}.student-photo-controls>strong{font-size:17px}.student-photo-controls>span{color:var(--muted);font-size:12px}
 .student-photo-controls>div{display:flex;gap:8px;flex-wrap:wrap}.ghost-button.danger{border-color:rgba(255,125,134,.4);color:var(--red)}
 @media(max-width:620px){.student-photo-editor{align-items:flex-start}.student-photo-preview{width:96px;height:96px;border-radius:18px}}
+
+/* v2.5.5 원생 목록 정렬 선택 */
+@media(min-width:981px){.toolbar{grid-template-columns:minmax(240px,1fr) 150px 160px 180px auto auto}}

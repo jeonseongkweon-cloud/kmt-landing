@@ -22,6 +22,16 @@ function cert(s,type){ return (s.certificates || []).find(c=>c.discipline===type
 function points(s){ return first(s.student_points) || {}; }
 function sparkLink(s){ return first(s.spark_member_links) || {}; }
 function isClassReview(s){ const e=enrollment(s); return !e.class_period_id || clean(e.class_label_raw)==="30"; }
+function compareName(a,b){ return clean(a.name).localeCompare(clean(b.name),"ko",{sensitivity:"base",numeric:true}) || clean(a.student_code).localeCompare(clean(b.student_code),"ko",{numeric:true}); }
+function compareStudents(a,b,mode){
+  if(mode==="code")return clean(a.student_code).localeCompare(clean(b.student_code),"ko",{numeric:true}) || compareName(a,b);
+  if(mode==="age-young"||mode==="age-old"){
+    const av=Date.parse(a.birth_date||""),bv=Date.parse(b.birth_date||""),aMissing=!Number.isFinite(av),bMissing=!Number.isFinite(bv);
+    if(aMissing!==bMissing)return aMissing?1:-1;
+    if(!aMissing&&av!==bv)return mode==="age-young"?bv-av:av-bv;
+  }
+  return compareName(a,b);
+}
 function revokePhotoPreview(){ if(state.photoPreviewUrl){ URL.revokeObjectURL(state.photoPreviewUrl); state.photoPreviewUrl=""; } }
 function setPhotoPreview(url,name=""){
   const img=$("studentPhotoPreview"),fallback=$("studentPhotoFallback");
@@ -115,7 +125,7 @@ function updateSummary(){
 
 function applyFilters(){
   const q=clean($("searchInput").value).toLowerCase();
-  const status=$("statusFilter").value, classId=$("classFilter").value, review=$("reviewOnly").checked;
+  const status=$("statusFilter").value, classId=$("classFilter").value, review=$("reviewOnly").checked, sort=$("sortOrder").value;
   state.filtered=state.students.filter(s=>{
     const e=enrollment(s);
     const searchOk=!q || s.name.toLowerCase().includes(q) || s.student_code.toLowerCase().includes(q);
@@ -123,7 +133,7 @@ function applyFilters(){
     const classOk=classId==="all" || (classId==="review" ? isClassReview(s) : e.class_period_id===classId);
     const reviewOk=!review || s.birth_date_review_required || isClassReview(s);
     return searchOk && statusOk && classOk && reviewOk;
-  });
+  }).sort((a,b)=>compareStudents(a,b,sort));
   renderList();
 }
 
@@ -253,6 +263,6 @@ $("cancelEdit").addEventListener("click",()=>{revokePhotoPreview();$("studentDia
 $("saveSparkLink").addEventListener("click",saveSparkLink);
 $("unlinkSpark").addEventListener("click",unlinkSpark);
 $("closeDialog").addEventListener("click",()=>{revokePhotoPreview();$("studentDialog").close();});
-[$("searchInput"),$("statusFilter"),$("classFilter"),$("reviewOnly")].forEach(el=>el.addEventListener(el.type==="search"?"input":"change",applyFilters));
+[$("searchInput"),$("statusFilter"),$("sortOrder"),$("classFilter"),$("reviewOnly")].forEach(el=>el.addEventListener(el.type==="search"?"input":"change",applyFilters));
 db.auth.onAuthStateChange((_event,session)=>{ if(session && adminApp.hidden) setTimeout(validateSession,0); });
 validateSession();
