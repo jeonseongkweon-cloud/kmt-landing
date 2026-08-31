@@ -34,10 +34,14 @@ function say(m){
 function result(kind,title,detail=""){const box=$("resultBox");box.className=`result-box ${kind}`;$("resultText").textContent=title;$("resultDetail").textContent=detail}
 function enrollment(s){return Array.isArray(s.enrollments)?(s.enrollments[0]||{}):(s.enrollments||{})}
 function rosterFor(period){return state.students.filter(s=>enrollment(s).class_period_id===period?.id)}
+const WAKE_ALIASES=["계명아","개명아","계명이야","개명이야","계명하","개명하","계명","개명","계명야","개명야","계명아아","계명아파트"];
+const voiceKey=v=>clean(v).toLowerCase().replace(/\s+/g,"");
+const aliasesFor=s=>(s?.kmt_student_voice_aliases||[]).map(a=>clean(a.alias)).filter(Boolean);
+function stripWakeWord(value){let x=clean(value),compact=voiceKey(x);const hit=[...WAKE_ALIASES].sort((a,b)=>b.length-a.length).find(a=>compact.startsWith(voiceKey(a)));if(!hit)return x;let remaining=compact.slice(voiceKey(hit).length);return remaining.trim()}
 function normalize(t){
   let x=clean(t).replace(/[,.!?~·]/g," ").replace(/\s+/g," ").trim();
-  // 호출어는 선택사항. Chrome의 대표적인 "계명아" 오인식도 호출어로 인정.
-  x=x.replace(/^(계명아파트|계명 아파트|계명아아|계명 아|계명야|계명 야|개명아|개명 아|개명야|계명이야|계명아)\s*/i,"").trim();
+  // 호출어는 선택사항이며, 관리되는 안전한 alias만 문장 시작에서 제거한다.
+  x=stripWakeWord(x);
   // 수업 중 자연스럽게 말하는 표현을 기존 명령어로 변환.
   x=x.replace(/^(.+?)\s*(왔어|왔어요|왔습니다|왔다|도착|도착했어|도착했어요)$/,"$1 출석");
   x=x.replace(/^(.+?)\s*(출석해|출석해줘|출석 해줘|출석해주세요|출석 처리|출석처리)$/,"$1 출석");
@@ -112,7 +116,7 @@ async function loadBase(){
   sel.innerHTML=state.periods.length?state.periods.map(x=>`<option value="${x.id}">${esc(x.code)} · ${esc(x.name)}</option>`).join(""):'<option value="">등록된 수업부 없음</option>';
   if(!state.periods.length){result("error","등록된 수업부가 없습니다.","출석 화면의 수업부 등록 상태를 확인해 주세요.");return}
   const[s,c]=await Promise.all([
-    db.from("students").select("id,student_code,name,enrollments(class_period_id,status)").order("student_code"),
+    db.from("students").select("id,student_code,name,enrollments(class_period_id,status),kmt_student_voice_aliases(id,alias,alias_key)").order("student_code"),
     db.from("star_categories").select("id,code,name,icon,sort_order").eq("is_active",true).order("sort_order")
   ]);
   const error=s.error||c.error;if(error){result("error","학생 또는 STAR 자료를 불러오지 못했습니다.",error.message);return}
@@ -147,7 +151,7 @@ function setupRecognition(){
       const n=normalize(a.transcript), compact=n.replace(/\s/g,"");
       let sc=Number(a.confidence||0);
       if(/출석|지각|결석|별|STAR|스타|칭찬|잘했어|최고|MVP|엠브이피|챔피언|수업|시작|종료|마치|전원|SPARK|스파크/.test(n))sc+=2;
-      if(state.students.some(st=>compact.includes(clean(st.name).replace(/\s/g,""))))sc+=3;
+      if(state.students.some(st=>[st.name,...aliasesFor(st)].some(name=>compact.includes(voiceKey(name)))))sc+=3;
       if(state.periods.some(pd=>compact.includes(clean(pd.name).replace(/\s/g,""))||compact.includes(clean(pd.code).replace(/\s/g,""))))sc+=1;
       return sc;
     };
@@ -184,16 +188,19 @@ function studentMatches(text,period=null){
   // 전체 재원생에서 성명 완전 포함 검색
   const exact=all.filter(s=>t.includes(clean(s.name).replace(/\s/g,"")));
   if(exact.length)return exact;
+  // 관장이 승인해 등록한 음성 별칭 완전 포함 검색
+  const aliasExact=all.filter(s=>aliasesFor(s).some(alias=>t.includes(voiceKey(alias))));
+  if(aliasExact.length)return aliasExact;
   // 명령어를 제거해 "민규 출석" -> "민규"로 검색
   let q=t;
   ["출석","지각","결석","별","스타","STAR","MVP","엠브이피","챔피언","칭찬","칭찬해줘","칭찬해","왔어","왔어요","왔습니다","도착","도착했어","늦었어","안왔어","안와"].forEach(w=>q=q.replaceAll(w,""));
   q=q.replace(/^(계명아파트|계명아|개명아|계명야)/,"").trim();
   if(!q)return [];
-  const partial=all.filter(s=>{const n=clean(s.name).replace(/\s/g,"");return n.includes(q)||q.includes(n)});
+  const partial=all.filter(s=>[s.name,...aliasesFor(s)].some(value=>{const n=voiceKey(value);return n.includes(q)||q.includes(n)}));
   if(partial.length)return partial;
   // 이름 한 글자 STT 오인식: 유일한 최단 후보일 때만 허용
   const dist=(a,b)=>{const d=Array.from({length:a.length+1},()=>Array(b.length+1).fill(0));for(let i=0;i<=a.length;i++)d[i][0]=i;for(let j=0;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]};
-  const ranked=all.map(st=>({st,d:dist(clean(st.name).replace(/\s/g,""),q)})).sort((a,b)=>a.d-b.d);
+  const ranked=all.map(st=>({st,d:Math.min(...[st.name,...aliasesFor(st)].map(value=>dist(voiceKey(value),q)))})).sort((a,b)=>a.d-b.d);
   return ranked.length&&ranked[0].d<=1&&(!ranked[1]||ranked[1].d>ranked[0].d)?[ranked[0].st]:[];
 }
 function categoryMatches(text){const t=text.replace(/\s/g,"");return state.categories.filter(c=>t.includes(clean(c.name).replace(/별$/,""))||t.includes(clean(c.code).toLowerCase()))}

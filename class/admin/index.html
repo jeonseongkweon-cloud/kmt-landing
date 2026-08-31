@@ -7,7 +7,7 @@
   <meta name="robots" content="noindex,nofollow">
   <title>원생관리 | 계명태권도 CLASS</title>
   <link rel="icon" href="../../assets/icons/kmt_favicon_48.png">
-  <link rel="stylesheet" href="admin.css?v=255">
+  <link rel="stylesheet" href="admin.css?v=320">
   <link rel="stylesheet" href="admin-v110.css">
 </head>
 <body>
@@ -115,6 +115,14 @@
           <label>태권도 단증<input id="certTkd"></label><label>경호무술 단증<input id="certIpma"></label>
           <label>태권검도·검도 단증<input id="certTkkd"></label><label>계명 성장포인트<input id="growthPoints" type="number" min="0"></label>
         </div></div>
+        <div class="form-section voice-alias-section"><h3>🎙 음성 이름 설정</h3>
+          <p class="voice-alias-guide">실제 이름은 변경하지 않고, 음성 출석과 STAR에서 이 학생을 찾는 보조 이름만 등록합니다.</p>
+          <div class="voice-real-name"><span>실제 이름</span><strong id="voiceRealName">-</strong></div>
+          <div id="voiceAliasList" class="voice-alias-list"></div>
+          <div class="voice-alias-add"><input id="voiceAliasInput" maxlength="30" placeholder="예: 유강영"><button class="ghost-button" id="addVoiceAlias" type="button">+ 별칭 추가</button></div>
+          <div class="voice-test-actions"><button class="ghost-button voice-test-button" id="testVoiceName" type="button">🎙 이름 인식 테스트</button><span id="voiceTestStatus">마이크로 이름을 시험할 수 있습니다.</span></div>
+          <div id="voiceTestResult" class="voice-test-result" hidden><span>인식된 말</span><strong id="voiceHeardName"></strong><button class="primary-button" id="addHeardAlias" type="button"></button></div>
+        </div>
         <div class="form-section spark-section"><h3>🔥 GLOBAL SPARK 회원 연결</h3><p class="spark-guide">이름·생년월일·전화번호가 아닌 CLASS 학생 UUID와 SPARK 고유 ID만 1:1로 연결합니다.</p><div class="identity-box"><span>선택한 CLASS 학생</span><strong id="sparkStudentIdentity">신규 학생은 먼저 저장해 주세요.</strong><small id="sparkStudentUuid"></small></div><div class="form-grid"><label>SPARK 고유 ID<input id="sparkUserId" maxlength="120" placeholder="SPARK 회원의 고유 ID"></label><label>SPARK 표시이름<input id="sparkDisplayName" maxlength="80" placeholder="확인용 이름(선택)"></label><label>연결상태<select id="sparkLinkStatus"><option value="pending">확인 대기</option><option value="verified">확인 완료</option><option value="suspended">연결 중지</option></select></label><label>KM번호 재입력<input id="sparkConfirmCode" autocomplete="off" placeholder="예: KM009"></label></div><div class="spark-actions"><span id="sparkLinkMessage" role="status"></span><button class="ghost-button danger" id="unlinkSpark" type="button">연결 해제</button><button class="primary-button spark-save" id="saveSparkLink" type="button">SPARK 연결 저장</button></div></div>
       </div>
       <footer class="dialog-footer"><span id="saveMessage" role="status"></span><button class="ghost-button" value="cancel" type="button" id="cancelEdit">취소</button><button class="primary-button" type="submit" id="saveStudent">저장</button></footer>
@@ -123,6 +131,6 @@
 
   <div class="toast" id="toast" role="status"></div>
   <script src="admin-config.js"></script>
-  <script type="module" src="admin.js?v=255"></script>
+  <script type="module" src="admin.js?v=320"></script>
 </body>
 </html>

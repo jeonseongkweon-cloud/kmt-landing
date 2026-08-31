@@ -54,6 +54,8 @@ function setVoiceFeedback(label,transcript=""){
   if($("voiceTranscript"))$("voiceTranscript").textContent=transcript||"예: 김나라 출석 / 김강민 배려별";
 }
 function normalizeSpeech(v){return clean(v).replace(/[.!?。]/g,"").replace(/\s+/g," ").trim()}
+function voiceAliases(s){return (s?.kmt_student_voice_aliases||[]).map(a=>clean(a.alias)).filter(Boolean)}
+function voiceNameKey(v){return clean(v).replace(/\s/g,"")}
 function levenshtein(a,b){
   a=clean(a);b=clean(b);const m=a.length,n=b.length,dp=Array(n+1).fill(0).map((_,i)=>i);
   for(let i=1;i<=m;i++){let prev=dp[0];dp[0]=i;for(let j=1;j<=n;j++){const tmp=dp[j];dp[j]=Math.min(dp[j]+1,dp[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));prev=tmp}}
@@ -64,18 +66,23 @@ function matchStudentFromText(text,{allowGlobalExact=false}={}){
   const raw=clean(text).replace(/\s/g,""),roster=currentRoster();
   const exact=roster.filter(s=>raw.includes(clean(s.name).replace(/\s/g,"")));
   if(exact.length===1)return {student:exact[0],confidence:1,scope:"roster"};
-  let best=null;
+  const aliasExact=roster.filter(s=>voiceAliases(s).some(alias=>raw.includes(voiceNameKey(alias))));
+  if(aliasExact.length===1)return {student:aliasExact[0],confidence:1,scope:"roster-alias"};
+  if(aliasExact.length>1)return null;
+  const candidateScores=new Map();
   for(const s of roster){
-    const name=clean(s.name).replace(/\s/g,"");
+    const names=[s.name,...voiceAliases(s)].map(voiceNameKey);
     const tokens=[raw,...raw.split(/별|스타|칭찬|출석|체크|왔어|왔어요|도착|지각|단정|인사|자세|발차기|배려|정리|도전|게임|미션|성공/).filter(Boolean)];
-    for(const token of tokens){
+    for(const name of names)for(const token of tokens){
       const sample=token.slice(0,Math.max(name.length,token.length));
       const d=levenshtein(name,sample),score=1-d/Math.max(name.length,sample.length,1);
-      if(!best||score>best.score)best={student:s,score};
+      candidateScores.set(s.id,Math.max(candidateScores.get(s.id)||0,score));
     }
   }
-  if(best&&best.score>=.78)return {student:best.student,confidence:best.score,scope:"roster-fuzzy"};
-  if(allowGlobalExact){const global=state.students.filter(s=>raw.includes(clean(s.name).replace(/\s/g,"")));if(global.length===1)return {student:global[0],confidence:.98,scope:"global-exact"}}
+  const ranked=[...candidateScores].map(([id,score])=>({student:roster.find(s=>s.id===id),score})).sort((a,b)=>b.score-a.score);
+  const best=ranked[0],second=ranked[1];
+  if(best&&best.score>=.78&&(!second||best.score-second.score>=.08))return {student:best.student,confidence:best.score,scope:"roster-fuzzy"};
+  if(allowGlobalExact){const global=state.students.filter(s=>[s.name,...voiceAliases(s)].some(value=>raw.includes(voiceNameKey(value))));if(global.length===1)return {student:global[0],confidence:.98,scope:"global-exact"}}
   return null;
 }
 function categoryFromVoice(text){
@@ -211,7 +218,7 @@ async function deleteNotice(id){const r=await db.from("kmt_class_notices").updat
 async function login(){location.replace("../")}
 async function boot(){const{data:{session},error}=await db.auth.getSession();if(error){toast(`로그인 확인 실패: ${error.message}`);return}if(!session||!isSingleOwner(session)){location.replace("../");return}$("loginScreen").hidden=true;$("app").hidden=false;startClock();await loadBase()}
 function startClock(){const tick=()=>{$("dateLabel").textContent=new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,year:"numeric",month:"long",day:"numeric",weekday:"short"}).format(new Date());$("clockLabel").textContent=localTime()};tick();setInterval(tick,15000)}
-async function loadBase(){const [p,s,c]=await Promise.all([db.from("class_periods").select("*").eq("is_active",true).order("sort_order"),db.from("students").select("id,student_code,name,photo_url,enrollments(class_period_id,status)").order("student_code"),db.from("star_categories").select("*").eq("is_active",true).order("sort_order")]);const error=p.error||s.error||c.error;if(error){toast(error.message);return}state.periods=p.data||[];state.students=(s.data||[]).filter(x=>enrollment(x).status==="재원");state.categories=c.data||[];state.category=state.categories[0]||null;renderPeriods()}
+async function loadBase(){const [p,s,c]=await Promise.all([db.from("class_periods").select("*").eq("is_active",true).order("sort_order"),db.from("students").select("id,student_code,name,photo_url,enrollments(class_period_id,status),kmt_student_voice_aliases(id,alias,alias_key)").order("student_code"),db.from("star_categories").select("*").eq("is_active",true).order("sort_order")]);const error=p.error||s.error||c.error;if(error){toast(error.message);return}state.periods=p.data||[];state.students=(s.data||[]).filter(x=>enrollment(x).status==="재원");state.categories=c.data||[];state.category=state.categories[0]||null;renderPeriods()}
 function renderPeriods(){$("periodGrid").innerHTML=state.periods.map(p=>`<button class="period-card" data-id="${p.id}"><small>${escapeHtml(p.code)}</small><strong>${escapeHtml(p.name)}</strong><span>${rosterFor(p).length}명 · STAR 수업판</span></button>`).join("");document.querySelectorAll(".period-card").forEach(b=>b.onclick=()=>openPeriod(state.periods.find(p=>p.id===b.dataset.id)))}
 async function openPeriod(p){state.period=p;const {data,error}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",p.id).maybeSingle();if(error){toast(error.message);return}if(!data){toast("먼저 출석 화면에서 오늘 수업을 시작해 주세요.");return}state.session=data;state.growth.goal=readGrowthGoal();state.growth.stage=0;state.growth.ready=false;await loadRecords();await loadNotices();startRealtime();startLiveFallback();$("periodScreen").hidden=true;$("starScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent=`${p.name} STAR 수업`;$("sessionTitle").dataset.desktopTitle=`${p.name} ⭐ CLASS`;renderCategories();renderStudents();renderGrowth({celebrate:false})}
 async function loadRecords(){const [a,e,p,c]=await Promise.all([db.from("attendance").select("id,session_id,student_id,status,checked_at,checked_out_at").eq("attendance_date",localDate()),db.from("star_events").select("*").eq("session_id",state.session.id).order("awarded_at"),db.from("praise_events").select("*").eq("session_id",state.session.id).order("praised_at"),db.from("champions").select("*,star_categories(name,icon)").eq("session_id",state.session.id).order("selected_at")]);const error=a.error||e.error||p.error||c.error;if(error){toast(error.message);return}state.attendance=a.data||[];state.events=e.data||[];state.praises=p.data||[];state.champions=c.data||[]}

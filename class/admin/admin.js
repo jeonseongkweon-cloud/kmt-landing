@@ -6,7 +6,7 @@ const db = createClient(cfg.supabaseUrl, cfg.supabasePublishableKey, {
 });
 
 const $ = (id) => document.getElementById(id);
-const state = { students: [], periods: [], filtered: [], editing: null, photoFile: null, photoPreviewUrl: "", photoDelete: false };
+const state = { students: [], periods: [], filtered: [], editing: null, photoFile: null, photoPreviewUrl: "", photoDelete: false, voiceTestRecognition: null, voiceTestTranscript: "" };
 const PHOTO_BUCKET = "kmt-student-photos";
 const loginScreen = $("loginScreen");
 const adminApp = $("adminApp");
@@ -21,6 +21,8 @@ function guardian(s,pos){ return (s.guardians || []).find(g=>Number(g.position)=
 function cert(s,type){ return (s.certificates || []).find(c=>c.discipline===type) || {}; }
 function points(s){ return first(s.student_points) || {}; }
 function sparkLink(s){ return first(s.spark_member_links) || {}; }
+function voiceAliases(s){ return s?.kmt_student_voice_aliases || []; }
+function voiceKey(value){ return clean(value).toLowerCase().replace(/\s+/g,""); }
 function isClassReview(s){ const e=enrollment(s); return !e.class_period_id || clean(e.class_label_raw)==="30"; }
 function compareName(a,b){ return clean(a.name).localeCompare(clean(b.name),"ko",{sensitivity:"base",numeric:true}) || clean(a.student_code).localeCompare(clean(b.student_code),"ko",{numeric:true}); }
 function compareStudents(a,b,mode){
@@ -92,7 +94,7 @@ async function validateSession(){
 async function loadData(){
   $("dataStatus").textContent="Supabase에서 불러오는 중...";
   const [studentResult, periodResult] = await Promise.all([
-    db.from("students").select(`id,student_code,name,gender,birth_date,birth_date_review_required,photo_url,student_phone,school_name,address,guardians(id,position,name,phone,is_primary,sms_enabled),enrollments(id,class_period_id,class_label_raw,time_raw,training_days,joined_on,member_number,status,status_changed_on,monthly_fee,fee_due_day,class_periods(id,code,name)),certificates(id,discipline,rank_text,next_exam_on),student_points(id,point_type,balance),spark_member_links(id,spark_user_id,spark_display_name,link_status,linked_at,verified_at)`).order("student_code"),
+    db.from("students").select(`id,student_code,name,gender,birth_date,birth_date_review_required,photo_url,student_phone,school_name,address,guardians(id,position,name,phone,is_primary,sms_enabled),enrollments(id,class_period_id,class_label_raw,time_raw,training_days,joined_on,member_number,status,status_changed_on,monthly_fee,fee_due_day,class_periods(id,code,name)),certificates(id,discipline,rank_text,next_exam_on),student_points(id,point_type,balance),spark_member_links(id,spark_user_id,spark_display_name,link_status,linked_at,verified_at),kmt_student_voice_aliases(id,alias,alias_key)`).order("student_code"),
     db.from("class_periods").select("id,code,name,start_time,end_time,sort_order").eq("is_active",true).order("sort_order")
   ]);
   if(studentResult.error){
@@ -156,6 +158,29 @@ function renderList(){
 }
 
 function setValue(id,value){ $(id).value=value ?? ""; }
+function renderVoiceAliases(){
+  const s=state.editing,list=$("voiceAliasList"),aliases=voiceAliases(s);$("voiceRealName").textContent=s?.name||"신규 학생";
+  list.innerHTML=aliases.length?aliases.map(a=>`<span class="voice-alias-chip">${escapeHtml(a.alias)}<button type="button" data-delete-voice-alias="${a.id}" aria-label="${escapeHtml(a.alias)} 삭제">×</button></span>`).join(""):'<span class="voice-alias-empty">등록된 음성 별칭이 없습니다.</span>';
+  list.querySelectorAll("[data-delete-voice-alias]").forEach(b=>b.onclick=()=>deleteVoiceAlias(b.dataset.deleteVoiceAlias));
+  $("voiceAliasInput").value="";$("addVoiceAlias").disabled=!s;$("testVoiceName").disabled=!s;$("voiceTestResult").hidden=true;state.voiceTestTranscript="";
+}
+async function addVoiceAlias(value){
+  const s=state.editing,alias=clean(value);if(!s)return toast("원생정보를 먼저 저장해 주세요.");if(alias.length<2)return toast("음성 별칭을 두 글자 이상 입력해 주세요.");
+  const key=voiceKey(alias),actual=state.students.find(x=>x.id!==s.id&&voiceKey(x.name)===key);if(actual)return toast(`실제 이름 ${actual.name} 학생과 같아 등록할 수 없습니다.`);
+  const owner=state.students.find(x=>x.id!==s.id&&voiceAliases(x).some(a=>voiceKey(a.alias)===key));if(owner)return toast(`이 음성 이름은 ${owner.name} 학생에게 이미 등록되어 있습니다.`);
+  if(voiceKey(s.name)===key||voiceAliases(s).some(a=>voiceKey(a.alias)===key))return toast("이미 사용할 수 있는 이름입니다.");
+  const {data,error}=await db.from("kmt_student_voice_aliases").insert({student_id:s.id,alias}).select("id,alias,alias_key").single();if(error){toast(error.code==="23505"?"이 음성 이름은 다른 학생에게 이미 등록되어 있습니다.":error.message);return}
+  s.kmt_student_voice_aliases=[...voiceAliases(s),data];renderVoiceAliases();toast(`${alias} 별칭을 추가했습니다.`);
+}
+async function deleteVoiceAlias(id){const s=state.editing;if(!s)return;const alias=voiceAliases(s).find(a=>a.id===id);if(!confirm(`음성 별칭 “${alias?.alias||""}”을 삭제할까요?`))return;const {error}=await db.from("kmt_student_voice_aliases").delete().eq("id",id);if(error)return toast(error.message);s.kmt_student_voice_aliases=voiceAliases(s).filter(a=>a.id!==id);renderVoiceAliases();toast("음성 별칭을 삭제했습니다.")}
+function testVoiceName(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return toast("이 브라우저는 음성인식을 지원하지 않습니다.");if(state.voiceTestRecognition){try{state.voiceTestRecognition.stop()}catch{};return}
+  const r=new SR();state.voiceTestRecognition=r;r.lang="ko-KR";r.continuous=false;r.interimResults=false;r.maxAlternatives=3;
+  r.onstart=()=>{$("testVoiceName").classList.add("listening");$("voiceTestStatus").textContent="🎙 이름을 말씀해 주세요."};
+  r.onresult=e=>{const heard=clean(e.results?.[0]?.[0]?.transcript).replace(/[.!?。]/g,"");state.voiceTestTranscript=heard;$("voiceHeardName").textContent=`“${heard}”`;$("addHeardAlias").textContent=`+ “${heard}”을 ${state.editing.name} 별칭으로 추가`;$("addHeardAlias").disabled=!heard||voiceKey(heard)===voiceKey(state.editing.name);$("voiceTestResult").hidden=false};
+  r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed")toast("Chrome 주소창의 마이크 권한을 허용해 주세요.");else if(e.error!=="no-speech"&&e.error!=="aborted")toast(`음성인식 오류: ${e.error}`)};
+  r.onend=()=>{state.voiceTestRecognition=null;$("testVoiceName").classList.remove("listening");$("voiceTestStatus").textContent=state.voiceTestTranscript?"인식 결과를 확인해 주세요.":"다시 테스트할 수 있습니다."};try{r.start()}catch{state.voiceTestRecognition=null;toast("마이크를 다시 눌러 주세요.")}
+}
 function openStudent(s=null){
   state.editing=s;
   const e=s?enrollment(s):{}, g1=s?guardian(s,1):{}, g2=s?guardian(s,2):{};
@@ -174,6 +199,7 @@ function openStudent(s=null){
   setValue("sparkUserId",spark.spark_user_id);setValue("sparkDisplayName",spark.spark_display_name);setValue("sparkLinkStatus",spark.link_status||"pending");setValue("sparkConfirmCode","");
   $("sparkLinkMessage").textContent=spark.id?`연결됨 · ${spark.spark_user_id}`:"아직 연결되지 않음";
   $("saveSparkLink").disabled=!s;$("unlinkSpark").hidden=!spark.id;
+  renderVoiceAliases();
   resetPhotoEditor(s); $("saveMessage").textContent=""; $("studentDialog").showModal();
 }
 
@@ -262,6 +288,10 @@ $("studentForm").addEventListener("submit",saveStudent);
 $("cancelEdit").addEventListener("click",()=>{revokePhotoPreview();$("studentDialog").close();});
 $("saveSparkLink").addEventListener("click",saveSparkLink);
 $("unlinkSpark").addEventListener("click",unlinkSpark);
+$("addVoiceAlias").addEventListener("click",()=>addVoiceAlias($("voiceAliasInput").value));
+$("voiceAliasInput").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addVoiceAlias(e.currentTarget.value)}});
+$("testVoiceName").addEventListener("click",testVoiceName);
+$("addHeardAlias").addEventListener("click",()=>addVoiceAlias(state.voiceTestTranscript));
 $("closeDialog").addEventListener("click",()=>{revokePhotoPreview();$("studentDialog").close();});
 [$("searchInput"),$("statusFilter"),$("sortOrder"),$("classFilter"),$("reviewOnly")].forEach(el=>el.addEventListener(el.type==="search"?"input":"change",applyFilters));
 db.auth.onAuthStateChange((_event,session)=>{ if(session && adminApp.hidden) setTimeout(validateSession,0); });
