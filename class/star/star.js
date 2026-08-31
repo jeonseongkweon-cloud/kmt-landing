@@ -5,7 +5,7 @@ const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase
 const cfg=window.KMT_STAR_CONFIG,db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}}),$=id=>document.getElementById(id);
 const VOICE_COMMAND_COOLDOWN_MS=2600;
 const NOTICE_ICONS={focus:"🥋",notice:"📢",personal:"🔔",item:"🎒",event:"📅",praise:"⭐"};
-const state={periods:[],students:[],session:null,period:null,categories:[],category:null,attendance:[],events:[],praises:[],champions:[],notices:[],realtimeChannel:null,realtimeTimer:null,leaderId:null,leaderReady:false,voice:{recognition:null,listening:false,mode:null,lastCommands:new Map(),lastVoiceStarId:null}};
+const state={periods:[],students:[],session:null,period:null,categories:[],category:null,attendance:[],events:[],praises:[],champions:[],notices:[],realtimeChannel:null,realtimeTimer:null,livePollTimer:null,livePollBusy:false,leaderId:null,leaderReady:false,voice:{recognition:null,listening:false,mode:null,lastCommands:new Map(),lastVoiceStarId:null}};
 const praisePresets=["오늘 인사가 아주 좋았어요.","친구를 도와줬어요.","끝까지 포기하지 않았어요.","수업에 집중했어요."];
 const clean=v=>v==null?"":String(v).trim(),escapeHtml=v=>clean(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
 function localDate(){return new Intl.DateTimeFormat("en-CA",{timeZone:cfg.timezone,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())}
@@ -186,7 +186,7 @@ async function boot(){const{data:{session},error}=await db.auth.getSession();if(
 function startClock(){const tick=()=>{$("dateLabel").textContent=new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,year:"numeric",month:"long",day:"numeric",weekday:"short"}).format(new Date());$("clockLabel").textContent=localTime()};tick();setInterval(tick,15000)}
 async function loadBase(){const [p,s,c]=await Promise.all([db.from("class_periods").select("*").eq("is_active",true).order("sort_order"),db.from("students").select("id,student_code,name,photo_url,enrollments(class_period_id,status)").order("student_code"),db.from("star_categories").select("*").eq("is_active",true).order("sort_order")]);const error=p.error||s.error||c.error;if(error){toast(error.message);return}state.periods=p.data||[];state.students=(s.data||[]).filter(x=>enrollment(x).status==="재원");state.categories=c.data||[];state.category=state.categories[0]||null;renderPeriods()}
 function renderPeriods(){$("periodGrid").innerHTML=state.periods.map(p=>`<button class="period-card" data-id="${p.id}"><small>${escapeHtml(p.code)}</small><strong>${escapeHtml(p.name)}</strong><span>${rosterFor(p).length}명 · STAR 수업판</span></button>`).join("");document.querySelectorAll(".period-card").forEach(b=>b.onclick=()=>openPeriod(state.periods.find(p=>p.id===b.dataset.id)))}
-async function openPeriod(p){state.period=p;const {data,error}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",p.id).maybeSingle();if(error){toast(error.message);return}if(!data){toast("먼저 출석 화면에서 오늘 수업을 시작해 주세요.");return}state.session=data;await loadRecords();await loadNotices();startRealtime();$("periodScreen").hidden=true;$("starScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent=`${p.name} STAR 수업`;renderCategories();renderStudents()}
+async function openPeriod(p){state.period=p;const {data,error}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",p.id).maybeSingle();if(error){toast(error.message);return}if(!data){toast("먼저 출석 화면에서 오늘 수업을 시작해 주세요.");return}state.session=data;await loadRecords();await loadNotices();startRealtime();startLiveFallback();$("periodScreen").hidden=true;$("starScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent=`${p.name} STAR 수업`;renderCategories();renderStudents()}
 async function loadRecords(){const [a,e,p,c]=await Promise.all([db.from("attendance").select("student_id,status").eq("session_id",state.session.id),db.from("star_events").select("*").eq("session_id",state.session.id).order("awarded_at"),db.from("praise_events").select("*").eq("session_id",state.session.id).order("praised_at"),db.from("champions").select("*,star_categories(name,icon)").eq("session_id",state.session.id).order("selected_at")]);const error=a.error||e.error||p.error||c.error;if(error){toast(error.message);return}state.attendance=a.data||[];state.events=e.data||[];state.praises=p.data||[];state.champions=c.data||[]}
 function renderCategories(){$("categoryBar").innerHTML=state.categories.map(c=>`<button class="category ${c.id===state.category?.id?"active":""}" data-id="${c.id}">${c.icon} ${escapeHtml(c.name)}</button>`).join("");document.querySelectorAll(".category").forEach(b=>b.onclick=()=>{state.category=state.categories.find(c=>c.id===b.dataset.id);$("categoryName").textContent=`${state.category.icon} ${state.category.name} 선택됨`;renderCategories()})}
 function scoreReachedAt(studentId){
@@ -228,7 +228,29 @@ function advancedRewardText(student,total,newBadges){
 }
 
 async function award(s,{source="click"}={}){if(!state.category){toast("STAR 카테고리를 먼저 선택해 주세요.");return}if(state.session.status==="closed"){toast("종료된 수업입니다.");return}$("saveStatus").textContent=`${s.name} 저장 중...`;const category=state.category;const {data,error}=await db.from("star_events").insert({session_id:state.session.id,student_id:s.id,category_id:category.id}).select().single();if(error){toast(error.message);return}state.events.push(data);state.voice.lastVoiceStarId=source==="voice"?data.id:state.voice.lastVoiceStarId;const total=eventsFor(s.id).length;const newBadges=await awardAdvancedBadges(s.id);renderStudents();showBurst(s,category,total,newBadges);highlightStudent(s);playStarSound();if(source==="voice")speakShort(`${s.name} ${category.name} 하나!`);$("saveStatus").textContent=advancedRewardText(s,total,newBadges);setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장",900)}
-function stopRealtime(){if(state.realtimeTimer){clearTimeout(state.realtimeTimer);state.realtimeTimer=null}if(state.realtimeChannel){db.removeChannel(state.realtimeChannel);state.realtimeChannel=null}}
+function stopRealtime(){if(state.realtimeTimer){clearTimeout(state.realtimeTimer);state.realtimeTimer=null}if(state.livePollTimer){clearInterval(state.livePollTimer);state.livePollTimer=null}state.livePollBusy=false;if(state.realtimeChannel){db.removeChannel(state.realtimeChannel);state.realtimeChannel=null}}
+function liveSnapshotKey(attendance=state.attendance,events=state.events){
+  const a=(attendance||[]).map(x=>`${x.student_id}:${x.status}`).sort().join("|");
+  const e=(events||[]).map(x=>`${x.id}:${x.student_id}:${x.category_id}`).sort().join("|");
+  return `${a}::${e}`
+}
+async function pollLiveChanges(){
+  if(!state.session||state.livePollBusy||document.hidden)return;state.livePollBusy=true;
+  try{
+    const sid=state.session.id,before=liveSnapshotKey();
+    const[a,e]=await Promise.all([
+      db.from("attendance").select("student_id,status").eq("session_id",sid),
+      db.from("star_events").select("id,student_id,category_id,awarded_at").eq("session_id",sid).order("awarded_at")
+    ]);
+    if(a.error||e.error){console.warn("[STAR LIVE FALLBACK]",a.error?.message||e.error?.message);return}
+    const nextAttendance=a.data||[],nextEvents=e.data||[],after=liveSnapshotKey(nextAttendance,nextEvents);
+    if(after!==before){state.attendance=nextAttendance;state.events=nextEvents;renderStudents();$("saveStatus").textContent="Supabase 자동저장 · LIVE"}
+  }finally{state.livePollBusy=false}
+}
+function startLiveFallback(){
+  if(state.livePollTimer)clearInterval(state.livePollTimer);
+  state.livePollTimer=setInterval(pollLiveChanges,3000);
+}
 function scheduleRealtimeRefresh(){clearTimeout(state.realtimeTimer);state.realtimeTimer=setTimeout(async()=>{if(!state.session)return;await loadRecords();renderStudents();if(!$("championDialog").open)renderChampions();$("saveStatus").textContent="Supabase 자동저장 · LIVE"},250)}
 async function syncSessionState(){if(!state.session)return;const{data,error}=await db.from("class_sessions").select("*").eq("id",state.session.id).maybeSingle();if(!error&&data)state.session=data}
 function startRealtime(){
