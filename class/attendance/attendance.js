@@ -42,13 +42,20 @@ async function boot(){
 async function loadPeriods(){
   const [pRes,sRes]=await Promise.all([
     db.from("class_periods").select("id,code,name,start_time,end_time,sort_order").eq("is_active",true).order("sort_order"),
-    db.from("students").select("id,student_code,name,photo_url,guardians(phone,sms_enabled),enrollments(class_period_id,class_label_raw,status)").order("student_code")
+    db.from("students").select("id,student_code,name,photo_url,guardians(phone,sms_enabled),enrollments(class_period_id,class_label_raw,training_days,status)").order("student_code")
   ]);
   if(pRes.error||sRes.error){toast(`자료 조회 실패: ${(pRes.error||sRes.error).message}`);return}
   state.periods=pRes.data||[];state.students=(sRes.data||[]).filter(s=>(s.enrollments?.[0]?.status||s.enrollments?.status)==="재원");renderPeriods();
 }
 
 function enrollment(s){return Array.isArray(s.enrollments)?(s.enrollments[0]||{}):(s.enrollments||{})}
+function trainingDaysText(s){
+  const values=Array.isArray(enrollment(s).training_days)?enrollment(s).training_days:[];
+  const days=[...new Set(values.map(v=>clean(v).replace(/요일$/,"")).filter(Boolean))];
+  if(!days.length)return "요일 미등록";
+  const order=["월","화","수","목","금","토","일"];
+  return [...order.filter(day=>days.includes(day)),...days.filter(day=>!order.includes(day))].join(" · ");
+}
 function studentsForPeriod(period){
   if(period.code==="OTHER")return state.students.filter(s=>enrollment(s).class_period_id===period.id);
   return state.students.filter(s=>enrollment(s).class_period_id===period.id);
@@ -87,7 +94,7 @@ async function loadSparkSummary(){
 }
 function renderStudents(){
   const grid=$("studentGrid");grid.innerHTML="";const list=visibleStudents();$("emptyMessage").hidden=list.length>0;
-  list.forEach(s=>{const r=recordFor(s.id),status=r?.status==="cancelled"?"":(r?.status||"");const card=document.createElement("article");card.className="student-card";card.dataset.status=status||"waiting";const photo=clean(s.photo_url);card.innerHTML=`<button class="student-main" data-action="present">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="">`:`<div class="photo photo-fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<strong>${escapeHtml(s.name)}</strong><span>${escapeHtml(s.student_code)}</span><span class="status-pill">${status?statusText[status]:"눌러서 출석"}${r&&status?` · ${localTime(r.checked_at)}`:""}</span></button><div class="quick-actions"><button class="p" data-action="present">출석</button><button class="l" data-action="late">지각</button><button class="a" data-action="absent">결석</button><button data-action="cancelled">취소</button></div>`;
+  list.forEach(s=>{const r=recordFor(s.id),status=r?.status==="cancelled"?"":(r?.status||"");const card=document.createElement("article");card.className="student-card";card.dataset.status=status||"waiting";const photo=clean(s.photo_url);card.innerHTML=`<button class="student-main" data-action="present">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="">`:`<div class="photo photo-fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<strong>${escapeHtml(s.name)}</strong><span>${escapeHtml(trainingDaysText(s))}</span><span class="status-pill">${status?statusText[status]:"눌러서 출석"}${r&&status?` · ${localTime(r.checked_at)}`:""}</span></button><div class="quick-actions"><button class="p" data-action="present">출석</button><button class="l" data-action="late">지각</button><button class="a" data-action="absent">결석</button><button data-action="cancelled">취소</button></div>`;
     card.querySelector(".student-main").insertAdjacentHTML("beforeend",sparkMarkup(s.id));
     if(r&&["present","late"].includes(status)){const sms=document.createElement("small");sms.className="sms-state";sms.textContent=smsLabel(smsFor(r.id));card.querySelector(".student-main").appendChild(sms)}card.querySelectorAll("[data-action]").forEach(btn=>btn.onclick=()=>markStudent(s,btn.dataset.action));grid.appendChild(card)});
 }
