@@ -47,6 +47,7 @@ function setVoiceStatus(mode,text){
   const el=$("voiceStatus");if(!el)return;el.className=`voice-status ${mode}`;el.textContent=text;
   $("voiceAttendanceButton")?.classList.toggle("active",state.voice.listening&&state.voice.mode==="attendance");
   $("voiceStarButton")?.classList.toggle("active",state.voice.listening&&state.voice.mode==="star");
+  const remote=$("mobileVoiceRemote");if(remote){remote.classList.toggle("listening",state.voice.listening);remote.querySelector("strong").textContent=state.voice.listening?"듣고 있어요":"계명아";remote.querySelector("small").textContent=state.voice.listening?"말씀해 주세요":"눌러서 말하기"}
 }
 function setVoiceFeedback(label,transcript=""){
   if($("voiceFeedbackLabel"))$("voiceFeedbackLabel").textContent=label;
@@ -91,9 +92,9 @@ function isDuplicateVoiceCommand(command){
 }
 function playStarSound(){
   try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ctx=window.__kmtStarAudio||(window.__kmtStarAudio=new C());if(ctx.state==="suspended")ctx.resume();
-    const now=ctx.currentTime;[[740,0],[988,.06],[1318,.12]].forEach(([f,d],i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(.0001,now+d);g.gain.exponentialRampToValueAtTime(i===2?.07:.045,now+d+.012);g.gain.exponentialRampToValueAtTime(.0001,now+d+.16);o.connect(g).connect(ctx.destination);o.start(now+d);o.stop(now+d+.18)})}catch(e){console.warn("[STAR SOUND]",e)}
+    const now=ctx.currentTime;[[740,0],[988,.06],[1318,.12]].forEach(([f,d],i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(.0001,now+d);g.gain.exponentialRampToValueAtTime(i===2?.14:.09,now+d+.012);g.gain.exponentialRampToValueAtTime(.0001,now+d+.16);o.connect(g).connect(ctx.destination);o.start(now+d);o.stop(now+d+.18)})}catch(e){console.warn("[STAR SOUND]",e)}
 }
-function playAttendanceSound(){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ctx=window.__kmtStarAudio||(window.__kmtStarAudio=new C());if(ctx.state==="suspended")ctx.resume();const o=ctx.createOscillator(),g=ctx.createGain(),n=ctx.currentTime;o.frequency.setValueAtTime(660,n);o.frequency.linearRampToValueAtTime(990,n+.15);g.gain.setValueAtTime(.05,n);g.gain.exponentialRampToValueAtTime(.0001,n+.22);o.connect(g).connect(ctx.destination);o.start();o.stop(n+.23)}catch{}}
+function playAttendanceSound(){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ctx=window.__kmtStarAudio||(window.__kmtStarAudio=new C());if(ctx.state==="suspended")ctx.resume();const o=ctx.createOscillator(),g=ctx.createGain(),n=ctx.currentTime;o.frequency.setValueAtTime(660,n);o.frequency.linearRampToValueAtTime(990,n+.15);g.gain.setValueAtTime(.1,n);g.gain.exponentialRampToValueAtTime(.0001,n+.22);o.connect(g).connect(ctx.destination);o.start();o.stop(n+.23)}catch{}}
 function highlightStudent(student,{arrive=false}={}){
   requestAnimationFrame(()=>{const card=document.querySelector(`[data-student="${student.id}"]`);if(!card)return;card.classList.remove("voice-hit","voice-arrive");void card.offsetWidth;card.classList.add(arrive?"voice-arrive":"voice-hit");const main=card.querySelector(".star-main");if(main){const plus=document.createElement("span");plus.className="voice-plus";plus.textContent=arrive?"어서 와!":"⭐ +1";main.appendChild(plus);setTimeout(()=>plus.remove(),1000)}setTimeout(()=>card.classList.remove("voice-hit","voice-arrive"),950)})
 }
@@ -123,7 +124,7 @@ function startOneShotVoice(mode){
   if(state.voice.listening){stopOneShotVoice();return}
   if(!state.session){toast("수업부를 먼저 선택해 주세요.");return}
   if(!initSpeechRecognition()){toast("이 브라우저는 Web Speech 음성인식을 지원하지 않습니다.");setVoiceStatus("off","🔴 음성 미지원");return}
-  state.voice.mode=mode;setVoiceFeedback(mode==="attendance"?"🎤 음성 출석 준비":"⭐ 음성 STAR 준비",mode==="attendance"?"예: 김나라 출석 / 김강민 왔어":"예: 김나라 별 / 김강민 배려별");
+  state.voice.mode=mode;setVoiceFeedback(mode==="attendance"?"🎤 음성 출석 준비":mode==="star"?"⭐ 음성 STAR 준비":"🎙 계명아 듣기 준비",mode==="attendance"?"예: 김나라 출석 / 김강민 왔어":mode==="star"?"예: 김나라 별 / 김강민 배려별":"예: 김나라 출석 / 김강민 배려별");
   try{state.voice.recognition.start()}catch{toast("마이크를 다시 눌러 주세요.")}
 }
 async function markAttendanceFromStar(student){
@@ -266,7 +267,7 @@ function advancedRewardText(student,total,newBadges){
   return `${total>=cfg.perfectStar?"PERFECT STAR!":`오늘 ⭐${total}`}${leaderText}${badgeText}`;
 }
 
-async function award(s,{source="click"}={}){if(!state.category){toast("STAR 카테고리를 먼저 선택해 주세요.");return}if(state.session.status==="closed"){toast("종료된 수업입니다.");return}$("saveStatus").textContent=`${s.name} 저장 중...`;const category=state.category;const {data,error}=await db.from("star_events").insert({session_id:state.session.id,student_id:s.id,category_id:category.id}).select().single();if(error){toast(error.message);return}state.events.push(data);state.voice.lastVoiceStarId=source==="voice"?data.id:state.voice.lastVoiceStarId;const total=eventsFor(s.id).length;const newBadges=await awardAdvancedBadges(s.id);renderStudents();showBurst(s,category,total,newBadges);highlightStudent(s);playStarSound();if(source==="voice")speakShort(`${s.name} ${category.name} 하나!`);$("saveStatus").textContent=advancedRewardText(s,total,newBadges);setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장",900)}
+async function award(s,{source="click"}={}){if(!state.category){toast("STAR 카테고리를 먼저 선택해 주세요.");return}if(state.session.status==="closed"){toast("종료된 수업입니다.");return}$("saveStatus").textContent=`${s.name} 저장 중...`;const category=state.category;const {data,error}=await db.from("star_events").insert({session_id:state.session.id,student_id:s.id,category_id:category.id}).select().single();if(error){toast(error.message);return}state.events.push(data);state.voice.lastVoiceStarId=source==="voice"?data.id:state.voice.lastVoiceStarId;const total=eventsFor(s.id).length;const newBadges=await awardAdvancedBadges(s.id);renderStudents();showBurst(s,category,total,newBadges);highlightStudent(s);playStarSound();speakShort(`${s.name} ${category.name} 하나!`);$("saveStatus").textContent=advancedRewardText(s,total,newBadges);setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장",900)}
 function stopRealtime(){if(state.realtimeTimer){clearTimeout(state.realtimeTimer);state.realtimeTimer=null}if(state.livePollTimer){clearInterval(state.livePollTimer);state.livePollTimer=null}state.livePollBusy=false;if(state.realtimeChannel){db.removeChannel(state.realtimeChannel);state.realtimeChannel=null}}
 function liveSnapshotKey(attendance=state.attendance,events=state.events){
   const a=(attendance||[]).map(x=>`${x.student_id}:${x.status}:${x.checked_out_at||""}`).sort().join("|");
@@ -318,6 +319,7 @@ async function deleteChampion(id){const {error}=await db.from("champions").delet
 
 $("voiceAttendanceButton").onclick=()=>startOneShotVoice("attendance");
 $("voiceStarButton").onclick=()=>startOneShotVoice("star");
+$("mobileVoiceRemote").onclick=()=>startOneShotVoice(null);
 $("goalButton").onclick=calculateGrowthGoal;
 $("goalResetButton").onclick=resetGrowthGoal;
 $("noticeManageButton").onclick=()=>{renderNoticeList();$("noticeDialog").showModal()};

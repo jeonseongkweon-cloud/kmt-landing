@@ -9,7 +9,7 @@
   <link rel="icon" href="../../assets/icons/kmt_favicon_48.png">
   <link rel="stylesheet" href="attendance.css">
   <link rel="stylesheet" href="attendance-v050.css">
-  <link rel="stylesheet" href="attendance-v120.css?v=280">
+  <link rel="stylesheet" href="attendance-v120.css?v=290">
 <link rel="stylesheet" href="../effects/effect-manager.css?v=100"></head>
 <body>
   <section class="login-screen" id="loginScreen" hidden>
@@ -49,6 +49,8 @@
         <div class="empty" id="emptyMessage" hidden>표시할 학생이 없습니다.</div>
 
         <section class="trial-list" id="trialSection" hidden><h2>오늘의 체험생</h2><div id="trialList"></div></section>
+        <button id="attendanceVoiceRemote" class="attendance-voice-remote" type="button" aria-label="계명아 음성출석 시작"><span>🎙️</span><strong>계명아</strong><small>눌러서 말하기</small></button>
+        <div id="attendanceSuccessFlash" class="attendance-success-flash" hidden aria-live="polite"></div>
       </section>
     </main>
   </div>
@@ -56,6 +58,6 @@
   <dialog id="trialDialog"><form id="trialForm"><h2>체험생 출석</h2><label>이름<input id="trialName" required maxlength="30" placeholder="체험생 이름"></label><label>메모<input id="trialNote" maxlength="100" placeholder="선택사항"></label><div><button type="button" id="trialCancel">취소</button><button type="submit">체험 출석</button></div><p id="trialMessage"></p></form></dialog>
   <div class="toast" id="toast"></div>
   <script src="attendance-config.js"></script>
-  <script type="module" src="attendance.js?v=2700"></script>
+  <script type="module" src="attendance.js?v=2900"></script>
 <script src="../effects/effect-manager.js?v=100"></script></body>
 </html>
