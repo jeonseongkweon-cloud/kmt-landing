@@ -1,1 +1,24 @@
 .spark-summary{display:grid;gap:3px;width:100%;margin-top:7px;padding:7px 8px;border:1px solid rgba(246,196,81,.24);border-radius:10px;background:rgba(246,196,81,.07);text-align:left}.spark-summary strong{color:#ffd45f;font-size:12px}.spark-summary span{color:#b8c9dc;font-size:10px;line-height:1.35}.spark-summary.muted{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.035)}.spark-summary.muted strong{color:#9eb0c5}
+
+/* v2.7.0 통합 출석판: 초소형 카드와 출석/결석/귀가 3상태 */
+.student-grid{grid-template-columns:repeat(8,minmax(0,1fr));gap:8px}
+.student-card{border-radius:15px}
+.student-card[data-status="present"],.student-card[data-status="late"]{border-color:var(--blue);background:linear-gradient(180deg,rgba(45,132,255,.2),var(--panel));opacity:1}
+.student-card[data-status="absent"]{border-color:var(--red);background:linear-gradient(180deg,rgba(255,116,126,.15),var(--panel));opacity:1}
+.student-card[data-status="checked_out"]{border-color:var(--green);background:linear-gradient(180deg,rgba(66,214,139,.18),var(--panel));opacity:1}
+.student-main{padding:10px 7px 8px}
+.photo{width:58px;height:58px;border-radius:15px}
+.student-main strong{margin-top:7px;font-size:17px}
+.student-main span{margin-top:2px;font-size:10px}
+.status-pill{margin-top:5px!important;padding:3px 6px}
+.student-card[data-status="present"] .status-pill,.student-card[data-status="late"] .status-pill{color:#76adff}
+.student-card[data-status="absent"] .status-pill{color:var(--red)}
+.student-card[data-status="checked_out"] .status-pill{color:var(--green)}
+.quick-actions{grid-template-columns:repeat(3,1fr)}
+.quick-actions button{min-height:42px;font-size:12px}
+.quick-actions .p{color:#76adff}.quick-actions .a{color:var(--red)}.quick-actions .o{color:var(--green)}
+.stats{grid-template-columns:repeat(5,1fr)}
+.stats .checked-out strong{color:var(--green)}
+@media(max-width:1200px){.student-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(max-width:800px){.student-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:560px){.student-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.photo{width:52px;height:52px}.student-main strong{font-size:15px}.quick-actions button{min-height:44px;font-size:11px}.stats{grid-template-columns:repeat(3,1fr)}}

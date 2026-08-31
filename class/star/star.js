@@ -13,7 +13,7 @@ function localTime(v=new Date()){return new Intl.DateTimeFormat("ko-KR",{timeZon
 function toast(m){$("toast").textContent=m;$("toast").classList.add("show");clearTimeout(window.__t);window.__t=setTimeout(()=>$("toast").classList.remove("show"),1600)}
 function enrollment(s){return Array.isArray(s.enrollments)?(s.enrollments[0]||{}):(s.enrollments||{})}
 function rosterFor(p){return state.students.filter(s=>enrollment(s).class_period_id===p.id)}
-function attendedStudents(){const ids=new Set(state.attendance.filter(a=>["present","late"].includes(a.status)).map(a=>a.student_id));return rosterFor(state.period).filter(s=>ids.has(s.id))}
+function attendedStudents(){const latest=new Map();state.attendance.forEach(a=>{const old=latest.get(a.student_id);if(!old||new Date(a.checked_at||a.updated_at||0)>new Date(old.checked_at||old.updated_at||0))latest.set(a.student_id,a)});const ids=new Set([...latest.values()].filter(a=>["present","late"].includes(a.status)&&!a.checked_out_at).map(a=>a.student_id));return state.students.filter(s=>ids.has(s.id))}
 function eventsFor(id){return state.events.filter(e=>e.student_id===id)}
 function categoryCount(id,cat){return eventsFor(id).filter(e=>e.category_id===cat).length}
 const GROWTH_RATIOS=[0,1/6,2/6,3/6,4/6,5/6,1];
@@ -58,7 +58,7 @@ function levenshtein(a,b){
   for(let i=1;i<=m;i++){let prev=dp[0];dp[0]=i;for(let j=1;j<=n;j++){const tmp=dp[j];dp[j]=Math.min(dp[j]+1,dp[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));prev=tmp}}
   return dp[n];
 }
-function currentRoster(){return state.period?rosterFor(state.period):[]}
+function currentRoster(){return attendedStudents()}
 function matchStudentFromText(text,{allowGlobalExact=false}={}){
   const raw=clean(text).replace(/\s/g,""),roster=currentRoster();
   const exact=roster.filter(s=>raw.includes(clean(s.name).replace(/\s/g,"")));
@@ -129,9 +129,9 @@ function startOneShotVoice(mode){
 async function markAttendanceFromStar(student){
   if(state.session.status==="closed")throw new Error("종료된 수업입니다.");
   const old=state.attendance.find(a=>a.student_id===student.id);
-  const payload={session_id:state.session.id,student_id:student.id,attendance_date:localDate(),status:"present",checked_at:new Date().toISOString(),points_awarded:1};
-  const q=old?db.from("attendance").update(payload).eq("session_id",state.session.id).eq("student_id",student.id):db.from("attendance").insert(payload);
-  const {data,error}=await q.select("student_id,status").single();if(error)throw error;
+  const payload={session_id:old?.session_id||state.session.id,student_id:student.id,attendance_date:localDate(),status:"present",checked_at:new Date().toISOString(),checked_out_at:null,points_awarded:1};
+  const q=old?db.from("attendance").update(payload).eq("id",old.id):db.from("attendance").insert(payload);
+  const {data,error}=await q.select("id,session_id,student_id,status,checked_at,checked_out_at").single();if(error)throw error;
   const i=state.attendance.findIndex(a=>a.student_id===student.id);if(i>=0)state.attendance[i]=data;else state.attendance.push(data);
   renderStudents();highlightStudent(student,{arrive:true});playAttendanceSound();speakShort(`${student.name} 출석 완료!`);toast(`${student.name} 출석 완료`);
 }
@@ -147,7 +147,6 @@ async function handleVoiceCommand(command,mode=null){
   const attendanceIntent=/출석|출석\s*체크|왔어|왔어요|왔다|왔습니다|도착|도착했어/.test(t);
   if(mode==="attendance"||attendanceIntent){
     const hit=matchStudentFromText(t,{allowGlobalExact:true});if(!hit)throw new Error("학생 이름을 확실히 찾지 못했습니다.");
-    if(enrollment(hit.student).class_period_id!==state.period.id)throw new Error(`${hit.student.name} 학생은 현재 수업부 명단이 아닙니다.`);
     await markAttendanceFromStar(hit.student);return;
   }
   if(/미션\s*(성공|완료|클리어)/.test(t)){
@@ -214,7 +213,7 @@ function startClock(){const tick=()=>{$("dateLabel").textContent=new Intl.DateTi
 async function loadBase(){const [p,s,c]=await Promise.all([db.from("class_periods").select("*").eq("is_active",true).order("sort_order"),db.from("students").select("id,student_code,name,photo_url,enrollments(class_period_id,status)").order("student_code"),db.from("star_categories").select("*").eq("is_active",true).order("sort_order")]);const error=p.error||s.error||c.error;if(error){toast(error.message);return}state.periods=p.data||[];state.students=(s.data||[]).filter(x=>enrollment(x).status==="재원");state.categories=c.data||[];state.category=state.categories[0]||null;renderPeriods()}
 function renderPeriods(){$("periodGrid").innerHTML=state.periods.map(p=>`<button class="period-card" data-id="${p.id}"><small>${escapeHtml(p.code)}</small><strong>${escapeHtml(p.name)}</strong><span>${rosterFor(p).length}명 · STAR 수업판</span></button>`).join("");document.querySelectorAll(".period-card").forEach(b=>b.onclick=()=>openPeriod(state.periods.find(p=>p.id===b.dataset.id)))}
 async function openPeriod(p){state.period=p;const {data,error}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",p.id).maybeSingle();if(error){toast(error.message);return}if(!data){toast("먼저 출석 화면에서 오늘 수업을 시작해 주세요.");return}state.session=data;state.growth.goal=readGrowthGoal();state.growth.stage=0;state.growth.ready=false;await loadRecords();await loadNotices();startRealtime();startLiveFallback();$("periodScreen").hidden=true;$("starScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent=`${p.name} STAR 수업`;$("sessionTitle").dataset.desktopTitle=`${p.name} ⭐ CLASS`;renderCategories();renderStudents();renderGrowth({celebrate:false})}
-async function loadRecords(){const [a,e,p,c]=await Promise.all([db.from("attendance").select("student_id,status").eq("session_id",state.session.id),db.from("star_events").select("*").eq("session_id",state.session.id).order("awarded_at"),db.from("praise_events").select("*").eq("session_id",state.session.id).order("praised_at"),db.from("champions").select("*,star_categories(name,icon)").eq("session_id",state.session.id).order("selected_at")]);const error=a.error||e.error||p.error||c.error;if(error){toast(error.message);return}state.attendance=a.data||[];state.events=e.data||[];state.praises=p.data||[];state.champions=c.data||[]}
+async function loadRecords(){const [a,e,p,c]=await Promise.all([db.from("attendance").select("id,session_id,student_id,status,checked_at,checked_out_at").eq("attendance_date",localDate()),db.from("star_events").select("*").eq("session_id",state.session.id).order("awarded_at"),db.from("praise_events").select("*").eq("session_id",state.session.id).order("praised_at"),db.from("champions").select("*,star_categories(name,icon)").eq("session_id",state.session.id).order("selected_at")]);const error=a.error||e.error||p.error||c.error;if(error){toast(error.message);return}state.attendance=a.data||[];state.events=e.data||[];state.praises=p.data||[];state.champions=c.data||[]}
 function renderCategories(){$("categoryBar").innerHTML=state.categories.map(c=>`<button class="category ${c.id===state.category?.id?"active":""}" data-id="${c.id}">${c.icon} ${escapeHtml(c.name)}</button>`).join("");document.querySelectorAll(".category").forEach(b=>b.onclick=()=>{state.category=state.categories.find(c=>c.id===b.dataset.id);$("categoryName").textContent=`${state.category.icon} ${state.category.name} 선택됨`;renderCategories()})}
 function scoreReachedAt(studentId){
   const rows=eventsFor(studentId);if(!rows.length)return Number.MAX_SAFE_INTEGER;const t=Date.parse(rows.at(-1).awarded_at||"");return Number.isFinite(t)?t:Number.MAX_SAFE_INTEGER
@@ -257,7 +256,7 @@ function advancedRewardText(student,total,newBadges){
 async function award(s,{source="click"}={}){if(!state.category){toast("STAR 카테고리를 먼저 선택해 주세요.");return}if(state.session.status==="closed"){toast("종료된 수업입니다.");return}$("saveStatus").textContent=`${s.name} 저장 중...`;const category=state.category;const {data,error}=await db.from("star_events").insert({session_id:state.session.id,student_id:s.id,category_id:category.id}).select().single();if(error){toast(error.message);return}state.events.push(data);state.voice.lastVoiceStarId=source==="voice"?data.id:state.voice.lastVoiceStarId;const total=eventsFor(s.id).length;const newBadges=await awardAdvancedBadges(s.id);renderStudents();showBurst(s,category,total,newBadges);highlightStudent(s);playStarSound();if(source==="voice")speakShort(`${s.name} ${category.name} 하나!`);$("saveStatus").textContent=advancedRewardText(s,total,newBadges);setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장",900)}
 function stopRealtime(){if(state.realtimeTimer){clearTimeout(state.realtimeTimer);state.realtimeTimer=null}if(state.livePollTimer){clearInterval(state.livePollTimer);state.livePollTimer=null}state.livePollBusy=false;if(state.realtimeChannel){db.removeChannel(state.realtimeChannel);state.realtimeChannel=null}}
 function liveSnapshotKey(attendance=state.attendance,events=state.events){
-  const a=(attendance||[]).map(x=>`${x.student_id}:${x.status}`).sort().join("|");
+  const a=(attendance||[]).map(x=>`${x.student_id}:${x.status}:${x.checked_out_at||""}`).sort().join("|");
   const e=(events||[]).map(x=>`${x.id}:${x.student_id}:${x.category_id}`).sort().join("|");
   return `${a}::${e}`
 }
@@ -266,7 +265,7 @@ async function pollLiveChanges(){
   try{
     const sid=state.session.id,before=liveSnapshotKey();
     const[a,e]=await Promise.all([
-      db.from("attendance").select("student_id,status").eq("session_id",sid),
+      db.from("attendance").select("id,session_id,student_id,status,checked_at,checked_out_at").eq("attendance_date",localDate()),
       db.from("star_events").select("id,student_id,category_id,awarded_at").eq("session_id",sid).order("awarded_at")
     ]);
     if(a.error||e.error){console.warn("[STAR LIVE FALLBACK]",a.error?.message||e.error?.message);return}
@@ -281,9 +280,9 @@ function startLiveFallback(){
 function scheduleRealtimeRefresh(){clearTimeout(state.realtimeTimer);state.realtimeTimer=setTimeout(async()=>{if(!state.session)return;await loadRecords();renderStudents();if(!$("championDialog").open)renderChampions();$("saveStatus").textContent="Supabase 자동저장 · LIVE"},250)}
 async function syncSessionState(){if(!state.session)return;const{data,error}=await db.from("class_sessions").select("*").eq("id",state.session.id).maybeSingle();if(!error&&data)state.session=data}
 function startRealtime(){
-  stopRealtime();if(!state.session)return;const sid=state.session.id;
-  state.realtimeChannel=db.channel(`kmt-star-live-${sid}`)
-    .on("postgres_changes",{event:"*",schema:"public",table:"attendance",filter:`session_id=eq.${sid}`},scheduleRealtimeRefresh)
+  stopRealtime();if(!state.session)return;const sid=state.session.id,today=localDate();
+  state.realtimeChannel=db.channel(`kmt-star-live-${sid}-${today}`)
+    .on("postgres_changes",{event:"*",schema:"public",table:"attendance",filter:`attendance_date=eq.${today}`},scheduleRealtimeRefresh)
     .on("postgres_changes",{event:"*",schema:"public",table:"star_events",filter:`session_id=eq.${sid}`},scheduleRealtimeRefresh)
     .on("postgres_changes",{event:"*",schema:"public",table:"praise_events",filter:`session_id=eq.${sid}`},scheduleRealtimeRefresh)
     .on("postgres_changes",{event:"*",schema:"public",table:"champions",filter:`session_id=eq.${sid}`},scheduleRealtimeRefresh)
