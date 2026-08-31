@@ -153,3 +153,42 @@
 @keyframes growthParticles{0%{opacity:0;transform:scale(.7) rotate(0)}35%{opacity:1}100%{opacity:0;transform:scale(1.25) rotate(22deg)}}
 @keyframes growthOverGoal{0%,100%{box-shadow:0 0 24px rgba(246,196,81,.18)}50%{box-shadow:0 0 38px rgba(246,196,81,.34)}}
 @media(prefers-reduced-motion:reduce){.growth-stage,.growth-stage.new-stage,.growth-stage.current-stage,.growth-panel.over-goal,.growth-celebration>div,.growth-particles{animation:none!important;transition:none!important}}
+
+/* v3.0.0 — 아이들이 보는 STAR 화면: 공동성장·학생 카드 중심 */
+.summary{display:none}
+.class-head{margin-bottom:8px}
+.category-more{position:relative}
+.category-more summary{list-style:none;cursor:pointer;user-select:none;padding:12px 15px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.045);color:#b9cde1;font-size:12px;font-weight:900;white-space:nowrap}
+.category-more summary::-webkit-details-marker{display:none}
+.category-more-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px;padding:10px;border:1px solid var(--line);border-radius:14px;background:rgba(5,18,32,.97);box-shadow:0 14px 36px rgba(0,0,0,.3)}
+.praise-primary{padding-inline:22px!important;border-color:rgba(246,196,81,.5)!important;background:linear-gradient(135deg,rgba(246,196,81,.2),rgba(255,139,38,.12))!important;color:#fff1ad!important;font-size:15px!important}
+@media(min-width:1201px){
+  .star-growth-dashboard{display:flex;flex-direction:column;gap:10px;margin:10px 0 12px}
+  .growth-panel{order:1;min-height:230px;padding:14px 18px}
+  .category-zone{order:2;display:block;padding:8px 10px}
+  .category-zone .categories{display:flex;align-items:flex-start;gap:8px}
+  .category-zone .category{padding:11px 14px;font-size:12px}
+  .category-more-list{position:absolute;z-index:20;left:0;top:100%;width:min(720px,70vw)}
+  .growth-toolbar strong{font-size:20px}.growth-toolbar span{font-size:13px}
+  .growth-stages{min-height:166px;gap:8px;padding:5px 4px 3px}
+  .growth-stage{height:calc(115px + var(--growth-step,0)*7px);transform:scale(.91)}
+  .growth-stage>span{width:23px;height:23px;font-size:12px}
+  .growth-progress strong{font-size:19px}.growth-progress span{font-size:13px}
+  .student-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:15px}
+  .student{border-radius:25px}
+  .star-main{padding:18px 12px 15px}
+  .photo{width:112px;height:112px;border-radius:28px}
+  .star-main h2{margin-top:10px;font-size:25px}
+  .star-count{font-size:35px}
+  .card-actions button{min-height:42px;font-size:13px}
+}
+@media(min-width:1201px) and (max-height:850px){
+  .growth-panel{min-height:195px}.growth-stages{min-height:133px}.growth-stage{height:calc(91px + var(--growth-step,0)*6px)}
+  .photo{width:100px;height:100px}.star-main h2{font-size:22px}.star-count{font-size:31px}
+}
+@media(max-width:1200px){
+  .summary{display:none}.category-zone .categories{display:flex;align-items:flex-start;gap:8px;padding:12px 0}.category-more-list{width:min(680px,88vw)}
+}
+@media(max-width:600px){
+  .class-head h1{font-size:32px}.praise-primary{font-size:14px!important}.category-more-list{width:calc(100vw - 28px);max-height:50vh;overflow:auto}
+}
