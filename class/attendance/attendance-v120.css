@@ -20,6 +20,13 @@
 .stats{grid-template-columns:repeat(5,1fr)}
 .stats .checked-out strong{color:var(--green)}
 .attendance-board-controls{display:flex;align-items:center;gap:10px;min-width:0}.attendance-sort-control{display:flex;align-items:center;gap:3px;margin:0;padding:2px 5px 2px 9px;border:1px solid rgba(91,162,255,.34);border-radius:999px;background:rgba(91,162,255,.09);color:#cfe2f5;font-size:12px;font-weight:950}.attendance-sort-control select{min-height:32px;padding:0 22px 0 4px;border:0;background:transparent;color:inherit;font:inherit;outline:0}.attendance-sort-control option{background:#0a1b2f;color:#f5f8fc}
+/* v3.1.4 — PC 상단 헤더: 브랜드 다음에 시계, 메뉴는 한 줄 유지 */
+@media(min-width:1025px){
+  .topbar{grid-template-columns:max-content max-content minmax(0,1fr);column-gap:14px}
+  .topbar .clock{min-width:0;text-align:center}
+  .topbar nav{min-width:0;flex-wrap:nowrap;gap:6px}
+  .topbar nav a,.topbar nav button{flex:0 0 auto;padding-inline:11px;white-space:nowrap}
+}
 @media(max-width:1200px){.student-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
 @media(max-width:800px){.student-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:560px){.student-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.photo{width:52px;height:52px}.student-main strong{font-size:15px}.quick-actions button{min-height:44px;font-size:11px}.stats{grid-template-columns:repeat(3,1fr)}}
