@@ -1,8 +1,14 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07111e"><meta name="robots" content="noindex,nofollow"><title>STAR | 계명태권도 CLASS</title><link rel="icon" href="../../assets/icons/kmt_favicon_48.png"><link rel="stylesheet" href="star.css?v=281"><link rel="stylesheet" href="../effects/effect-manager.css?v=100"></head><body>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07111e"><meta name="robots" content="noindex,nofollow"><title>STAR | 계명태권도 CLASS</title><link rel="icon" href="../../assets/icons/kmt_favicon_48.png"><link rel="stylesheet" href="star.css?v=290"><link rel="stylesheet" href="../effects/effect-manager.css?v=100"></head><body>
 <section id="loginScreen" hidden class="login"><div><img src="../../assets/icons/192로고.png" alt=""><p>CLASS v0.9.0</p><h1>STAR 수업판</h1><span>CLASS 관리자 로그인이 필요합니다.</span><button id="loginButton">CLASS 관리자 로그인으로 이동</button><a href="../">CLASS로 돌아가기</a><em id="loginMessage"></em></div></section>
 <div id="app"><header><div class="brand"><img src="../../assets/icons/192로고.png" alt=""><div><strong>계명태권도 CLASS</strong><span>v2.8.2 · STAR LIVE CLASSROOM</span></div></div><div class="clock"><strong id="dateLabel"></strong><span id="clockLabel"></span></div><nav><a href="../spark/">🔥 SPARK</a><a href="../sms/">문자대기</a><a href="../../dashboard/">LIVE</a><a href="../tools/">수업운영</a><a href="../attendance/">출석</a><a href="../admin/">원생관리</a><button id="logoutButton">로그아웃</button></nav></header>
 <main><section id="periodScreen" class="period"><div class="title"><p>CLASS STAR</p><h1>수업부를 선택해 주세요</h1><span>오늘 출석한 학생만 STAR 수업판에 표시됩니다.</span></div><div id="periodGrid" class="period-grid"></div></section>
-<section id="starScreen" hidden><div class="class-head"><div><button id="backButton" class="subtle">‹ 수업부 선택</button><p id="sessionDate"></p><h1 id="sessionTitle"></h1></div><div class="summary"><span>오늘 지급</span><strong id="totalStars">0</strong><button id="championButton">🏆 챔피언 선정</button></div></div><div id="categoryBar" class="categories"></div><div class="notice">
+<section id="starScreen" hidden><div class="class-head"><div><button id="backButton" class="subtle">‹ 수업부 선택</button><p id="sessionDate"></p><h1 id="sessionTitle"></h1></div><div class="summary"><span>오늘 지급</span><strong id="totalStars">0</strong><button id="championButton">🏆 챔피언 선정</button></div></div>
+<section class="star-growth-dashboard"><div class="category-zone"><div id="categoryBar" class="categories"></div></div>
+<article id="growthPanel" class="growth-panel" aria-label="STAR 공동성장 캐릭터" data-ready="false">
+  <div class="growth-toolbar"><div><strong>🔥 우리 반 공동성장</strong><span id="growthHint">출석 확인 후 오늘의 목표를 산출해 주세요.</span></div><div class="growth-actions"><button id="goalButton" type="button">🎯 오늘의 목표 산출</button><button id="goalResetButton" type="button" hidden>목표 다시 산출</button></div></div>
+  <div id="growthStages" class="growth-stages"></div>
+  <div class="growth-progress"><strong id="growthScore">⭐ 0 / 목표 미정</strong><div class="growth-meter" aria-hidden="true"><i id="growthMeterFill"></i></div><span id="growthNext">오늘의 목표를 먼저 정해 주세요.</span></div>
+</article></section><div class="notice">
   <strong id="categoryName">카테고리를 선택하세요</strong>
   <div class="live-status">
     <button id="voiceAttendanceButton" class="voice-start" type="button">🎤 음성 출석</button>
@@ -35,5 +41,5 @@
 <div id="noticeList" class="notice-list"></div>
 </div></dialog>
 <dialog id="championDialog"><div class="dialog-body wide"><button class="close" data-close="championDialog">×</button><h2>오늘의 챔피언</h2><p class="muted">STAR 결과를 참고하여 여러 학생을 서로 다른 왕으로 선정할 수 있습니다.</p><div id="championSuggestions"></div><h3>저장된 챔피언</h3><div id="championList"></div></div></dialog>
-<div id="starBurst" class="burst" hidden><div><span id="burstIcon">⭐</span><h2 id="burstName"></h2><p id="burstCategory"></p><strong>STAR +1</strong><em id="burstTotal"></em></div></div><div id="toast" class="toast"></div>
-<script src="star-config.js?v=2600"></script><script type="module" src="star.js?v=2820"></script><script src="../effects/effect-manager.js?v=100"></script></body></html>
+<div id="starBurst" class="burst" hidden><div><span id="burstIcon">⭐</span><h2 id="burstName"></h2><p id="burstCategory"></p><strong>STAR +1</strong><em id="burstTotal"></em></div></div><div id="growthCelebration" class="growth-celebration" hidden aria-live="polite"></div><div id="toast" class="toast"></div>
+<script src="star-config.js?v=2600"></script><script type="module" src="star.js?v=2900"></script><script src="../effects/effect-manager.js?v=100"></script></body></html>
