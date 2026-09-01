@@ -367,3 +367,19 @@ main{padding-top:8px}
   .star-count{font-size:22px}
   .card-actions button{min-height:27px}
 }
+
+
+/* Unified STAR ROOM: award every currently-present student at once */
+.award-all{
+  border:1px solid rgba(255,199,62,.68)!important;
+  background:linear-gradient(180deg,rgba(255,184,24,.24),rgba(255,145,0,.12))!important;
+  color:#ffe890!important;
+  font-weight:900!important;
+  white-space:nowrap;
+  box-shadow:0 0 0 1px rgba(255,205,74,.08) inset;
+}
+.award-all:hover{filter:brightness(1.12)}
+.award-all:disabled{opacity:.55;cursor:wait}
+@media (max-width:760px){
+  .award-all{min-height:44px;font-size:14px;padding:0 12px!important}
+}
