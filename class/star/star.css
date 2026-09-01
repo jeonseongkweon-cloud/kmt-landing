@@ -138,7 +138,7 @@
   .growth-stage.new-stage{z-index:3;animation:growthCharacterUnlock 1.05s cubic-bezier(.2,.9,.25,1)}
   .growth-stage.current-stage{z-index:2;animation:growthCurrentPulse 2.2s ease-in-out infinite}
   .growth-stage.current-stage.new-stage{z-index:3;animation:growthCharacterUnlock 1.05s cubic-bezier(.2,.9,.25,1),growthCurrentPulse 2.2s 1.05s ease-in-out infinite}
-  .growth-progress{display:grid;grid-template-columns:auto minmax(120px,1fr) auto;align-items:center;gap:9px}.growth-progress strong{color:#fff0a6;font-size:16px}.growth-progress span{color:#d2e0ee;font-size:11px;font-weight:850;white-space:nowrap}
+  .growth-progress{position:relative;z-index:4;display:grid;grid-template-columns:auto minmax(120px,1fr) auto;align-items:center;gap:9px}.growth-progress strong{color:#fff0a6;font-size:16px}.growth-progress span{color:#d2e0ee;font-size:11px;font-weight:850;white-space:nowrap}
   .growth-meter{height:7px;border-radius:99px;background:rgba(255,255,255,.10);overflow:hidden}.growth-meter i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ff7a18,#ffd45d,#fff5ba);box-shadow:0 0 12px rgba(255,211,83,.5);transition:width .5s ease}
   .growth-panel.complete{border-color:rgba(255,218,91,.72);box-shadow:0 0 28px rgba(246,196,81,.22),inset 0 0 30px rgba(246,196,81,.08)}.growth-panel.over-goal{animation:growthOverGoal 3.6s ease-in-out infinite}
   .growth-celebration{position:fixed;inset:0;z-index:90;display:grid;place-items:center;pointer-events:none;background:radial-gradient(circle,rgba(255,193,55,.27),rgba(2,10,20,.42) 48%,transparent 72%);opacity:1;transition:opacity .42s ease}
@@ -167,6 +167,7 @@
 .mobile-sort-control{display:none}
 .mobile-voice-remote{display:none}
 @media(min-width:1201px){
+  #sessionDate{display:none}
   .star-growth-dashboard{display:flex;flex-direction:column;gap:10px;margin:10px 0 12px}
   .growth-panel{order:1;min-height:230px;padding:14px 18px}
   .category-zone{order:2;display:block;padding:8px 10px}
@@ -176,8 +177,10 @@
   .growth-toolbar strong{font-size:20px}.growth-toolbar span{font-size:13px}
   .growth-stages{min-height:166px;gap:8px;padding:5px 4px 3px}
   .growth-stage{height:calc(115px + var(--growth-step,0)*7px);transform:scale(.91)}
+  .growth-stage:nth-child(1) img{width:68%;height:68%;transform:translate(8px,-5px)}
+  .growth-stage:nth-child(2) img{width:92%;height:92%}
   .growth-stage>span{width:23px;height:23px;font-size:12px}
-  .growth-progress strong{font-size:19px}.growth-progress span{font-size:13px}
+  .growth-progress strong{font-size:19px}.growth-progress span{display:flex;align-items:center;gap:9px;font-size:15px;text-shadow:0 2px 8px #000}.growth-progress span small{font-size:15px;font-weight:900}.growth-progress span b{color:#ffe16f;font-size:29px;line-height:1;font-weight:1000;text-shadow:0 0 12px rgba(246,196,81,.42),0 2px 8px #000}
   .student-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:15px}
   .student{border-radius:25px}
   .star-main{padding:18px 12px 15px}
@@ -212,7 +215,7 @@ main{padding-top:8px}
   .category-live-inline>strong{font-size:13px;white-space:nowrap}
   .category-live-inline .live-status{flex-wrap:nowrap;margin-left:auto}
   .category-live-inline .voice-start{padding:9px 12px;white-space:nowrap}
-  .category-live-inline #saveStatus{white-space:nowrap}
+  .category-live-inline #saveStatus{display:none}
 }
 @media(min-width:1201px) and (max-width:1400px){
   .category-live-inline>strong{display:none}
@@ -247,8 +250,10 @@ main{padding-top:8px}
 
 /* v3.1.4 — PC 상단 헤더: 브랜드 다음에 시계, 메뉴는 한 줄 유지 */
 @media(min-width:1025px){
-  header{grid-template-columns:max-content max-content minmax(0,1fr);column-gap:24px}
-  header .clock{min-width:132px;text-align:center}
+  header{grid-template-columns:max-content minmax(132px,1fr) max-content;column-gap:18px}
+  header .clock{min-width:0;text-align:center}
+  header .clock strong{font-size:12px;line-height:1.15}
+  header .clock span{font-size:26px;line-height:1.05;font-weight:1000}
   header nav{min-width:0;flex-wrap:nowrap;gap:6px}
   header nav a,header nav button{flex:0 0 auto;padding-inline:11px;white-space:nowrap}
 }

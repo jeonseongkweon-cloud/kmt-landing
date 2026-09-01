@@ -36,7 +36,7 @@ function renderGrowth({celebrate=true}={}){
   $("growthScore").textContent=goal?`⭐ ${total} / ${goal}`:"⭐ 0 / 목표 미정";$("growthMeterFill").style.width=goal?`${Math.min(100,total/goal*100)}%`:"0%";
   if(!goal){$("growthNext").textContent="오늘의 목표를 먼저 정해 주세요.";$("growthHint").textContent="출석 확인 후 오늘의 목표를 산출해 주세요."}
   else if(stage>=7){$("growthNext").textContent=total>goal?`목표 초과 ⭐ +${total-goal}`:"공동 목표를 달성했습니다!";$("growthHint").textContent=`오늘 목표 ${goal} STAR · 완전체 달성`}
-  else{const next=thresholds[stage];$("growthNext").textContent=`다음 성장까지 ⭐ ${Math.max(0,next-total)}`;$("growthHint").textContent=`오늘 목표 ${goal} STAR · 현재 ${stage}단계`}
+  else{const next=thresholds[stage];$("growthNext").innerHTML=`<small>다음 성장까지</small><b>⭐ ${Math.max(0,next-total)}</b>`;$("growthHint").textContent=`오늘 목표 ${goal} STAR · 현재 ${stage}단계`}
   $("goalButton").hidden=!!goal;$("goalResetButton").hidden=!goal;panel.dataset.ready=goal?"true":"false";panel.classList.toggle("complete",stage===7);panel.classList.toggle("over-goal",stage===7&&total>goal);
   if(celebrate&&state.growth.ready&&stage>state.growth.stage)showGrowthCelebration(stage,total,goal);state.growth.stage=stage;state.growth.ready=true
 }
