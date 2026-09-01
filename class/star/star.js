@@ -36,6 +36,19 @@ function primeGrowthLevelUpAudio(){
 function playGrowthLevelUpMusic(){
   try{const audio=getGrowthLevelUpAudio();audio.pause();audio.currentTime=0;audio.volume=1;const promise=audio.play();if(promise?.catch)promise.catch(e=>console.warn("[GROWTH LEVEL-UP MP3]",e))}catch(e){console.warn("[GROWTH LEVEL-UP MP3]",e)}
 }
+const LEADER_CHANGE_AUDIO="../../assets/star-effects/leader-change.wav";
+let leaderChangeAudio=null,leaderChangeAudioPrimed=false;
+function getLeaderChangeAudio(){
+  if(!leaderChangeAudio){leaderChangeAudio=new Audio(LEADER_CHANGE_AUDIO);leaderChangeAudio.preload="auto";leaderChangeAudio.volume=1}
+  return leaderChangeAudio
+}
+function primeLeaderChangeAudio(){
+  if(leaderChangeAudioPrimed)return;const audio=getLeaderChangeAudio();
+  try{audio.volume=0;const promise=audio.play();if(promise?.then)promise.then(()=>{audio.pause();audio.currentTime=0;audio.volume=1;leaderChangeAudioPrimed=true}).catch(()=>{audio.volume=1})}catch{audio.volume=1}
+}
+function playLeaderChangeSound(){
+  try{const audio=getLeaderChangeAudio();audio.pause();audio.currentTime=0;audio.volume=1;const promise=audio.play();if(promise?.catch)promise.catch(e=>console.warn("[LEADER CHANGE WAV]",e))}catch(e){console.warn("[LEADER CHANGE WAV]",e)}
+}
 function playGrowthSound(final=false){
   try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ctx=window.__kmtStarAudio||(window.__kmtStarAudio=new C());if(ctx.state==="suspended")ctx.resume();const now=ctx.currentTime,notes=final?[523,659,784,1047,1319]:[659,880,1175];notes.forEach((frequency,index)=>{const o=ctx.createOscillator(),g=ctx.createGain(),start=now+index*.075;o.type=index%2?"triangle":"sine";o.frequency.setValueAtTime(frequency,start);g.gain.setValueAtTime(.0001,start);g.gain.exponentialRampToValueAtTime(final?.075:.052,start+.018);g.gain.exponentialRampToValueAtTime(.0001,start+(final?.42:.24));o.connect(g).connect(ctx.destination);o.start(start);o.stop(start+(final?.44:.26))})}catch(e){console.warn("[GROWTH SOUND]",e)}
 }
@@ -125,6 +138,7 @@ function unlockStarAudio(){
   const ctx=ensureStarAudioReady();
   if(ctx){try{const o=ctx.createOscillator(),g=ctx.createGain(),n=ctx.currentTime;g.gain.setValueAtTime(.00001,n);o.connect(g).connect(ctx.destination);o.start(n);o.stop(n+.01)}catch{}}
   primeGrowthLevelUpAudio();
+  primeLeaderChangeAudio();
 }
 function playStarSound(){
   try{const ctx=ensureStarAudioReady();if(!ctx)return;
@@ -276,7 +290,7 @@ function sortedAttendedStudents(){
 function captureCardPositions(){const m=new Map();document.querySelectorAll("#studentGrid .student[data-student]").forEach(el=>m.set(el.dataset.student,el.getBoundingClientRect()));return m}
 function animateCardMoves(before){requestAnimationFrame(()=>document.querySelectorAll("#studentGrid .student[data-student]").forEach(el=>{const prev=before.get(el.dataset.student);if(!prev)return;const now=el.getBoundingClientRect(),dx=prev.left-now.left,dy=prev.top-now.top;if(Math.abs(dx)<1&&Math.abs(dy)<1)return;el.animate([{transform:`translate(${dx}px,${dy}px)`},{transform:"translate(0,0)"}],{duration:430,easing:"cubic-bezier(.2,.8,.2,1)"})}))}
 function showLeaderChanged(student){
-  const old=document.getElementById("leaderChangeEffect");if(old)old.remove();const layer=document.createElement("div");layer.id="leaderChangeEffect";layer.className="leader-change-effect";layer.innerHTML=`<div><span>👑</span><strong>새로운 1위!</strong><b>${escapeHtml(student.name)}</b></div>`;document.body.appendChild(layer);setTimeout(()=>layer.classList.add("out"),1200);setTimeout(()=>layer.remove(),1800)
+  const old=document.getElementById("leaderChangeEffect");if(old)old.remove();const layer=document.createElement("div");layer.id="leaderChangeEffect";layer.className="leader-change-effect";layer.innerHTML=`<div><span>👑</span><strong>새로운 1위!</strong><b>${escapeHtml(student.name)}</b></div>`;document.body.appendChild(layer);playLeaderChangeSound();setTimeout(()=>layer.classList.add("out"),1200);setTimeout(()=>layer.remove(),1800)
 }
 function renderStudents(){
   const before=captureCardPositions(),list=sortedAttendedStudents(),leader=attendedStudents().map((s,index)=>({s,index,count:eventsFor(s.id).length,reached:scoreReachedAt(s.id)})).sort((a,b)=>b.count-a.count||a.reached-b.reached||a.index-b.index||a.s.name.localeCompare(b.s.name,"ko"))[0]?.s||null,previousLeader=state.leaderId;
