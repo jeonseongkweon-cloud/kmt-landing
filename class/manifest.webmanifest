@@ -1,0 +1,14 @@
+{
+  "name": "계명태권도 CLASS",
+  "short_name": "계명 CLASS",
+  "description": "계명태권도 수업 운영 시스템",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#071425",
+  "theme_color": "#071425",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
