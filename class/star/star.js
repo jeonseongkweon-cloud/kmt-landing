@@ -23,11 +23,24 @@ function readGrowthGoal(){const n=Number(localStorage.getItem(growthStorageKey()
 function growthThresholds(goal){let previous=0;return GROWTH_RATIOS.map((ratio,index)=>{const value=index===0?1:(index===6?goal:Math.ceil(goal*ratio));previous=Math.min(goal,Math.max(previous+1,value));return previous})}
 function growthStageFor(total,goal){if(!goal||total<1)return 0;const thresholds=growthThresholds(goal);let stage=0;thresholds.forEach((value,index)=>{if(total>=value)stage=index+1});return stage}
 function clearGrowthTimers(){if(state.growth.revealTimer){clearInterval(state.growth.revealTimer);state.growth.revealTimer=null}state.growth.celebrationTimers.forEach(clearTimeout);state.growth.celebrationTimers=[]}
+const GROWTH_LEVEL_UP_AUDIO="../../assets/star-growth/growth-level-up.mp3";
+let growthLevelUpAudio=null,growthLevelUpAudioPrimed=false;
+function getGrowthLevelUpAudio(){
+  if(!growthLevelUpAudio){growthLevelUpAudio=new Audio(GROWTH_LEVEL_UP_AUDIO);growthLevelUpAudio.preload="auto";growthLevelUpAudio.volume=1}
+  return growthLevelUpAudio
+}
+function primeGrowthLevelUpAudio(){
+  if(growthLevelUpAudioPrimed)return;const audio=getGrowthLevelUpAudio();
+  try{audio.volume=0;const promise=audio.play();if(promise?.then)promise.then(()=>{audio.pause();audio.currentTime=0;audio.volume=1;growthLevelUpAudioPrimed=true}).catch(()=>{audio.volume=1})}catch{audio.volume=1}
+}
+function playGrowthLevelUpMusic(){
+  try{const audio=getGrowthLevelUpAudio();audio.pause();audio.currentTime=0;audio.volume=1;const promise=audio.play();if(promise?.catch)promise.catch(e=>console.warn("[GROWTH LEVEL-UP MP3]",e))}catch(e){console.warn("[GROWTH LEVEL-UP MP3]",e)}
+}
 function playGrowthSound(final=false){
   try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ctx=window.__kmtStarAudio||(window.__kmtStarAudio=new C());if(ctx.state==="suspended")ctx.resume();const now=ctx.currentTime,notes=final?[523,659,784,1047,1319]:[659,880,1175];notes.forEach((frequency,index)=>{const o=ctx.createOscillator(),g=ctx.createGain(),start=now+index*.075;o.type=index%2?"triangle":"sine";o.frequency.setValueAtTime(frequency,start);g.gain.setValueAtTime(.0001,start);g.gain.exponentialRampToValueAtTime(final?.075:.052,start+.018);g.gain.exponentialRampToValueAtTime(.0001,start+(final?.42:.24));o.connect(g).connect(ctx.destination);o.start(start);o.stop(start+(final?.44:.26))})}catch(e){console.warn("[GROWTH SOUND]",e)}
 }
 function showGrowthCelebration(stage,total,goal){
-  const layer=$("growthCelebration");if(!layer)return;clearGrowthTimers();const final=stage===7;layer.className=`growth-celebration ${final?"final":"level-up"}`;layer.innerHTML=final?`<div><span>🏆</span><strong>오늘의 공동 목표 달성!</strong><b>🔥 ${total} / ${goal} STAR 🔥</b><em>🎉 수련 완료! 신나는 놀이체육 TIME!</em><i class="growth-particles" aria-hidden="true"></i></div>`:`<div><span>✨</span><strong>성장 성공!</strong><b>${stage}단계 활성화</b><i class="growth-particles" aria-hidden="true"></i></div>`;layer.hidden=false;playGrowthSound(final);state.growth.celebrationTimers.push(setTimeout(()=>layer.classList.add("out"),final?2600:1350),setTimeout(()=>{layer.hidden=true;layer.classList.remove("out")},final?3300:1900))
+  const layer=$("growthCelebration");if(!layer)return;clearGrowthTimers();const final=stage===7;layer.className=`growth-celebration ${final?"final":"level-up"}`;layer.innerHTML=final?`<div><span>🏆</span><strong>오늘의 공동 목표 달성!</strong><b>🔥 ${total} / ${goal} STAR 🔥</b><em>🎉 수련 완료! 신나는 놀이체육 TIME!</em><i class="growth-particles" aria-hidden="true"></i></div>`:`<div><span>✨</span><strong>성장 성공!</strong><b>${stage}단계 활성화</b><i class="growth-particles" aria-hidden="true"></i></div>`;layer.hidden=false;playGrowthLevelUpMusic();state.growth.celebrationTimers.push(setTimeout(()=>layer.classList.add("out"),final?2600:1350),setTimeout(()=>{layer.hidden=true;layer.classList.remove("out")},final?3300:1900))
 }
 function renderGrowth({celebrate=true}={}){
   const panel=$("growthPanel");if(!panel)return;const total=state.events.length,goal=state.growth.goal,stage=growthStageFor(total,goal),thresholds=goal?growthThresholds(goal):[];
@@ -109,8 +122,9 @@ function ensureStarAudioReady(){
   }catch(e){console.warn("[STAR AUDIO READY]",e);return null}
 }
 function unlockStarAudio(){
-  const ctx=ensureStarAudioReady();if(!ctx)return;
-  try{const o=ctx.createOscillator(),g=ctx.createGain(),n=ctx.currentTime;g.gain.setValueAtTime(.00001,n);o.connect(g).connect(ctx.destination);o.start(n);o.stop(n+.01)}catch{}
+  const ctx=ensureStarAudioReady();
+  if(ctx){try{const o=ctx.createOscillator(),g=ctx.createGain(),n=ctx.currentTime;g.gain.setValueAtTime(.00001,n);o.connect(g).connect(ctx.destination);o.start(n);o.stop(n+.01)}catch{}}
+  primeGrowthLevelUpAudio();
 }
 function playStarSound(){
   try{const ctx=ensureStarAudioReady();if(!ctx)return;
