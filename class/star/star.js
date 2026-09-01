@@ -49,6 +49,20 @@ function primeLeaderChangeAudio(){
 function playLeaderChangeSound(){
   try{const audio=getLeaderChangeAudio();audio.pause();audio.currentTime=0;audio.volume=1;const promise=audio.play();if(promise?.catch)promise.catch(e=>console.warn("[LEADER CHANGE WAV]",e))}catch(e){console.warn("[LEADER CHANGE WAV]",e)}
 }
+
+const ALL_STAR_CHEER_AUDIO="../../assets/star-effects/all-star-cheer.mp3";
+let allStarCheerAudio=null,allStarCheerAudioPrimed=false;
+function getAllStarCheerAudio(){
+  if(!allStarCheerAudio){allStarCheerAudio=new Audio(ALL_STAR_CHEER_AUDIO);allStarCheerAudio.preload="auto";allStarCheerAudio.volume=1}
+  return allStarCheerAudio
+}
+function primeAllStarCheerAudio(){
+  if(allStarCheerAudioPrimed)return;const audio=getAllStarCheerAudio();
+  try{audio.volume=0;const promise=audio.play();if(promise?.then)promise.then(()=>{audio.pause();audio.currentTime=0;audio.volume=1;allStarCheerAudioPrimed=true}).catch(()=>{audio.volume=1})}catch{audio.volume=1}
+}
+function playAllStarCheerSound(){
+  try{const audio=getAllStarCheerAudio();audio.pause();audio.currentTime=0;audio.volume=1;const promise=audio.play();if(promise?.catch)promise.catch(e=>console.warn("[ALL STAR CHEER MP3]",e))}catch(e){console.warn("[ALL STAR CHEER MP3]",e)}
+}
 function playGrowthSound(final=false){
   try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const ctx=window.__kmtStarAudio||(window.__kmtStarAudio=new C());if(ctx.state==="suspended")ctx.resume();const now=ctx.currentTime,notes=final?[523,659,784,1047,1319]:[659,880,1175];notes.forEach((frequency,index)=>{const o=ctx.createOscillator(),g=ctx.createGain(),start=now+index*.075;o.type=index%2?"triangle":"sine";o.frequency.setValueAtTime(frequency,start);g.gain.setValueAtTime(.0001,start);g.gain.exponentialRampToValueAtTime(final?.075:.052,start+.018);g.gain.exponentialRampToValueAtTime(.0001,start+(final?.42:.24));o.connect(g).connect(ctx.destination);o.start(start);o.stop(start+(final?.44:.26))})}catch(e){console.warn("[GROWTH SOUND]",e)}
 }
@@ -139,6 +153,7 @@ function unlockStarAudio(){
   if(ctx){try{const o=ctx.createOscillator(),g=ctx.createGain(),n=ctx.currentTime;g.gain.setValueAtTime(.00001,n);o.connect(g).connect(ctx.destination);o.start(n);o.stop(n+.01)}catch{}}
   primeGrowthLevelUpAudio();
   primeLeaderChangeAudio();
+  primeAllStarCheerAudio();
 }
 function playStarSound(){
   try{const ctx=ensureStarAudioReady();if(!ctx)return;
@@ -337,7 +352,7 @@ async function awardAll(){
     await Promise.allSettled(students.map(s=>awardAdvancedBadges(s.id)));
     renderStudents();
     students.forEach((s,i)=>setTimeout(()=>highlightStudent(s),Math.min(i,6)*70));
-    playGrowthSound(false);playStarSound();
+    playGrowthSound(false);playStarSound();playAllStarCheerSound();
     speakShort(`전체 ${label} 하나!`);
     $("saveStatus").textContent=`전체 ${students.length}명 ${label} +1 완료`;
     toast(`⭐ ${students.length}명 모두에게 ${label} +1!`);
