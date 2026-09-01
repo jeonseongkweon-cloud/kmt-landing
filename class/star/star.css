@@ -257,3 +257,113 @@ main{padding-top:8px}
   header nav{min-width:0;flex-wrap:nowrap;gap:6px}
   header nav a,header nav button{flex:0 0 auto;padding-inline:11px;white-space:nowrap}
 }
+
+/* v3.2.0 — PC STAR 대형 전광판 핀셋 레이아웃
+   기능/데이터 로직은 변경하지 않고, 노트북·TV 화면의 세로 공간만 재배치한다. */
+@media (min-width:1201px){
+  /* 수업명/수업부 선택을 헤더 빈 공간으로 끌어올려 본문 상단 공백 제거 */
+  #starScreen>.class-head{
+    position:fixed;
+    z-index:12;
+    top:7px;
+    left:max(265px,calc((100vw - 1540px)/2 + 220px));
+    width:auto;
+    height:47px;
+    margin:0;
+    align-items:center;
+    gap:10px;
+    pointer-events:none;
+  }
+  #starScreen>.class-head>div{display:flex;align-items:center;gap:10px}
+  #starScreen>.class-head p{display:none}
+  #starScreen>.class-head h1{
+    margin:0;
+    max-width:300px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:30px;
+    line-height:1;
+    pointer-events:auto;
+  }
+  #starScreen>.class-head #backButton{
+    order:2;
+    padding:8px 10px;
+    font-size:12px;
+    pointer-events:auto;
+  }
+  #starScreen>.class-head .summary{display:none!important}
+
+  main{padding-top:2px}
+  #starScreen{padding-top:0}
+
+  /* 공동성장 캐릭터를 화면의 주인공으로 확대 */
+  .star-growth-dashboard{gap:5px;margin:2px 0 6px}
+  .growth-panel{
+    min-height:252px;
+    padding:8px 14px 7px;
+    border-radius:16px;
+  }
+  .growth-toolbar{min-height:31px}
+  .growth-toolbar strong{font-size:17px}
+  .growth-toolbar span{font-size:11px}
+  .growth-actions button{padding:7px 9px;font-size:11px}
+  .growth-stages{
+    min-height:188px;
+    gap:4px;
+    padding:0 4px;
+  }
+  .growth-stage{
+    height:calc(138px + var(--growth-step,0)*8px);
+    transform:scale(.96);
+  }
+  .growth-stage:nth-child(1) img{width:74%;height:74%;transform:translate(7px,-3px)}
+  .growth-stage:nth-child(2) img{width:96%;height:96%}
+  .growth-stage>span{width:21px;height:21px;font-size:11px}
+  .growth-progress{gap:8px}
+  .growth-progress strong{font-size:16px}
+  .growth-progress span{font-size:12px}
+  .growth-progress span small{font-size:12px}
+  .growth-progress span b{font-size:23px}
+
+  /* 카테고리/음성 줄은 얇게 유지하여 학생 카드가 바로 위로 붙도록 */
+  .category-zone{min-height:43px;padding:4px 7px;gap:7px}
+  .category-zone .category{padding:8px 11px;font-size:11px}
+  .category-more summary{padding:9px 11px;font-size:11px}
+  .category-live-inline .voice-start{padding:7px 10px;font-size:12px}
+  .voice-status{padding:5px 8px;font-size:11px}
+
+  /* 학생 카드: 노트북 1줄 7명, 2~3줄이 한 화면에 보이도록 축소 */
+  .student-grid{
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:8px;
+    align-items:start;
+  }
+  .student{border-radius:16px}
+  .student.current-leader .star-main{border-radius:15px}
+  .leader-badge{top:5px;left:5px;padding:3px 6px;font-size:9px}
+  .star-main{padding:8px 6px 7px}
+  .photo{width:72px;height:72px;border-radius:18px}
+  .star-main h2{margin:5px 0 0;font-size:17px;line-height:1.1}
+  .star-count{font-size:24px;line-height:1.1}
+  .meter{height:5px;margin:5px 9px}
+  .star-main small{font-size:10px}
+  .card-actions button{min-height:29px;padding:5px 1px;font-size:10px}
+
+  /* 아래 안내판도 카드 바로 밑으로 붙인다. */
+  .voice-feedback{margin:7px 0 7px;padding:7px 11px;font-size:11px}
+  .info-board{margin-top:7px;gap:8px}
+  .info-panel{min-height:90px;padding:10px 11px}
+  .director-made{margin-top:8px}
+}
+
+/* 낮은 노트북 화면에서는 공동성장 높이를 한 번 더 압축 */
+@media (min-width:1201px) and (max-height:850px){
+  .growth-panel{min-height:220px}
+  .growth-stages{min-height:157px}
+  .growth-stage{height:calc(112px + var(--growth-step,0)*7px)}
+  .photo{width:64px;height:64px}
+  .star-main h2{font-size:16px}
+  .star-count{font-size:22px}
+  .card-actions button{min-height:27px}
+}
