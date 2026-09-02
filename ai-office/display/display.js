@@ -19,10 +19,10 @@ async function showOffice2Action(p){
   if(!actionId){await ack(p?.id,false,"ACTION 정보가 없습니다.");return}
   try{
     $("loading").hidden=false;
-    stopMedia();
+    $("playerWrap").innerHTML="";
     theme("DARK_GOLD");
     const verify=$("actionReceiveVerify");
-    if(verify)verify.textContent=`DISPLAY v1.2.3 · ${actionId}`;
+    if(verify){verify.textContent=`DISPLAY v1.2.4 · 수신 ${actionId}`;document.body.appendChild(verify)}
     const url=new URL("https://ipma.kr/ai-office/");
     url.searchParams.set("displayAction",actionId);
     url.searchParams.set("display","1");
@@ -31,10 +31,12 @@ async function showOffice2Action(p){
     url.searchParams.set("fresh",String(Date.now()));
     $("webHelp").hidden=true;
     $("webFrame").hidden=false;
-    $("webFrame").src=url.toString();
+    const frame=$("webFrame");
+    let settled=false;
+    const timer=setTimeout(async()=>{if(settled)return;settled=true;$("loading").hidden=true;await ack(p.id,false,`로딩 실패 · ${actionId}`)},10000);
+    frame.onload=async()=>{if(settled)return;settled=true;clearTimeout(timer);$("loading").hidden=true;if(verify)verify.textContent=`DISPLAY v1.2.4 · 로드 ${actionId}`;await ack(p.id,true,`로드 ACTION · ${actionId}`)};
+    frame.src=url.toString();
     active("webView");
-    $("loading").hidden=true;
-    await ack(p.id,true);
   }catch(e){
     $("loading").hidden=true;
     await ack(p?.id,false,e.message||"AI OFFICE 표시 실패");
