@@ -1,5 +1,573 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#05070b"><title>AI 사무국</title><link rel="icon" href="favicon.ico?v=20260901"><link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png?v=20260901"><link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png?v=20260901"><link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=20260901"><link rel="manifest" href="manifest.webmanifest?v=20260901"><link rel="stylesheet" href="shared/ui.css"></head><body>
-<main class="shell"><section class="hero"><p style="color:var(--gold)">AI HEADQUARTERS · v1.0</p><h1>AI 사무국</h1><p>휴대폰은 CONTROL, 태블릿·노트북은 DISPLAY로 연결합니다.</p></section>
-<section id="loginPanel" class="panel" style="max-width:460px;padding:22px"><h2>관리자 로그인</h2><p style="color:var(--muted)">계명태권도 CLASS와 같은 관리자 아이디·비밀번호를 사용합니다.</p><form id="loginForm" class="form-grid" style="padding:0"><div class="field wide"><label>관리자 아이디</label><input id="loginId" value="admin" autocomplete="username" required></div><div class="field wide"><label>비밀번호</label><input id="password" type="password" autocomplete="current-password" required></div><button class="primary" type="submit">AI 사무국 입장</button><p id="message" style="color:var(--muted)"></p></form></section>
-<section id="launcher" hidden><div class="quick"><a class="command-button" href="control/"><b>📱 CONTROL</b><small>휴대폰 리모컨</small></a><a class="command-button" href="display/"><b>🖥 DISPLAY</b><small>태블릿·노트북 화면</small></a><a class="command-button" href="admin/"><b>⚙ 자료관리</b><small>메뉴·콘텐츠 관리</small></a></div></section></main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="config.js"></script><script type="module">import{db,$,cfg}from'./shared/core.js';const panel=$('loginPanel'),launcher=$('launcher');async function show(){const{data:{session}}=await db.auth.getSession();panel.hidden=!!session;launcher.hidden=!session;if(!session)$('password').focus()}$('loginForm').onsubmit=async e=>{e.preventDefault();if($('loginId').value.trim().toLowerCase()!=='admin'){$('message').textContent='아이디 또는 비밀번호를 확인해 주세요.';return}const{error}=await db.auth.signInWithPassword({email:cfg.adminAuthEmail,password:$('password').value});$('message').textContent=error?'아이디 또는 비밀번호를 확인해 주세요.':'로그인되었습니다.';show()};show();</script></body></html>
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="theme-color" content="#081b31">
+  <meta name="ai-office-version" content="1.4.0">
+  <title>AI 사무국 2.0 v1.4.0 | IPMA</title>
+  <link rel="stylesheet" href="./style.css?v=1.4.0">
+
+<style id="realWorkflowStyle">
+.workflow-grid{display:grid;gap:10px;margin-top:14px}
+.workflow-row{display:grid;grid-template-columns:minmax(110px,.7fr) minmax(0,1.8fr);gap:8px 14px;align-items:center;padding:13px 14px;border:1px solid rgba(148,163,184,.18);border-radius:14px;background:rgba(15,23,42,.45)}
+.workflow-row strong{font-size:14px}.workflow-row span{font-size:15px}.workflow-row small{grid-column:2;font-size:12px;opacity:.72}
+@media(max-width:700px){.workflow-row{grid-template-columns:1fr}.workflow-row small{grid-column:1}}
+</style>
+
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../admin-hub/" aria-label="관리자 허브로 이동">
+      <img src="../assets/logos/ipma-logo.jpg" alt="IPMA">
+      <span><b>AI OFFICE 2.0</b><small>IPMA AI 사무국</small></span>
+    </a>
+    <div class="top-actions">
+      <span class="version-chip">v1.4.0</span>
+      <span class="status"><i></i> HOME 17차</span>
+      <a class="ghost" href="../admin-hub/">관리자 허브</a>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="welcome">
+      <div>
+        <p class="eyebrow">AI OFFICE · DAILY COMMAND CENTER</p>
+        <h1>좋은 아침입니다.<br><strong>AI 사무국에 출근하셨습니다.</strong></h1>
+        <p class="welcome-copy">기존 GMS · IDP · SPARK를 다시 만들지 않고, 필요한 정보를 읽고 연결하는 상위 업무운영 HOME입니다.</p>
+        <div class="build-line"><span>현재 버전</span><b>AI OFFICE 2.0 · v1.4.0</b><em>16차 · 통합 테스트·운영 안정화</em></div>
+      </div>
+      <div class="clock-card" aria-label="현재 시각">
+        <span id="todayLabel">오늘</span>
+        <b id="clock">--:--</b>
+        <small>Asia/Seoul</small>
+      </div>
+    </section>
+
+    <section class="priority-strip" aria-label="핵심 업무 현황">
+      <article><span>지금 가장 중요한 일</span><b>서울 전략회의 준비</b><small>첫 실전 PROJECT</small></article>
+      <article><span>다음 중요 일정</span><b>9월 4일</b><small>국제드론순찰대 서울 전략회의</small></article>
+      <article><span>D-DAY</span><b id="dday">계산 중</b><small>2026.09.04 기준</small></article>
+      <article><span>시스템 원칙</span><b>REUSE → CONNECT</b><small>중복개발 금지</small></article>
+    </section>
+
+    <section class="section-head">
+      <div><p class="eyebrow">WORKSPACE</p><h2>오늘의 업무 공간</h2></div>
+      <p>12차에서는 GEN의 뉴스 ACTION을 실제 브리핑 보드로 확장합니다. 외부 뉴스 API나 자동 기사발행은 연결하지 않고, 확인된 뉴스 항목을 안전하게 모아 우선순위 브리핑으로 정리합니다.</p>
+    </section>
+
+    <section class="workspace-grid">
+      <button class="work-card" data-panel="briefing"><span class="icon">☀</span><strong>출근 브리핑</strong><small>오늘의 핵심을 한눈에</small><em>OPEN</em></button>
+      <button class="work-card active" data-panel="today"><span class="icon">📅</span><strong>오늘</strong><small>일정 · 업무 · 준비사항</small><em>3차</em></button>
+      <button class="work-card" data-panel="week"><span class="icon">🎯</span><strong>이번 주</strong><small>핵심목표 · 마감 · 진행률</small><em>3차</em></button>
+      <button class="work-card" data-panel="month"><span class="icon">🗓</span><strong>이번 달</strong><small>행사 · 프로젝트 · D-Day</small><em>3차</em></button>
+      <button class="work-card" data-panel="schedule"><span class="icon">🕘</span><strong>일정</strong><small>오늘 · 예정 · 준비사항</small><em>4차</em></button>
+      <button class="work-card" data-panel="dday"><span class="icon">⏳</span><strong>D-DAY</strong><small>중요 일정까지 남은 시간</small><em>4차</em></button>
+      <button class="work-card" data-panel="task"><span class="icon">☑</span><strong>TASK</strong><small>해야 할 일 · 마감 · 완료관리</small><em>5차</em></button>
+      <button class="work-card" data-panel="project"><span class="icon">📊</span><strong>PROJECT</strong><small>목적 · TASK · 결정 · 후속업무</small><em>6차</em></button>
+      <button class="work-card" data-panel="meeting"><span class="icon">👥</span><strong>회의</strong><small>안건 · 결정 · 담당 · 후속업무</small><em>7차</em></button>
+      <button class="work-card" data-panel="library"><span class="icon">📂</span><strong>자료</strong><small>기존 자료 검색 · 호출 · 표시</small><em>CONNECT</em></button>
+      <button class="work-card" data-panel="aria"><span class="icon">A</span><strong>ARIA · 아리아</strong><small>전략 · 일정 · TASK · PROJECT · 회의</small><em>8차</em></button>
+      <button class="work-card" data-panel="gen"><span class="icon">G</span><strong>GEN · 젠</strong><small>뉴스 · 기사 · 콘텐츠 · 이미지 · 홍보</small><em>8차</em></button>
+    </section>
+
+    <section class="period-board" aria-label="오늘 주간 월간 업무요약">
+      <article class="period-card selected" data-jump="today">
+        <div class="period-head"><span>📅</span><div><p>TODAY</p><h3 id="todayCardTitle">오늘</h3></div><b>운영</b></div>
+        <ul>
+          <li><strong>핵심</strong><span>서울 전략회의 준비</span></li>
+          <li><strong>일정</strong><span>다음 일정 9월 4일</span></li>
+          <li><strong>상태</strong><span>업무 DB 연결 전 · 읽기 중심</span></li>
+        </ul>
+      </article>
+      <article class="period-card" data-jump="week">
+        <div class="period-head"><span>🎯</span><div><p>THIS WEEK</p><h3 id="weekCardTitle">이번 주</h3></div><b>계획</b></div>
+        <ul>
+          <li><strong>목표</strong><span>AI 사무국 업무기반 확립</span></li>
+          <li><strong>순서</strong><span>오늘/주간/월간 → 일정 → TASK</span></li>
+          <li><strong>보호</strong><span>GMS · 인증 · Supabase 무수정</span></li>
+        </ul>
+      </article>
+      <article class="period-card" data-jump="month">
+        <div class="period-head"><span>🗓</span><div><p>THIS MONTH</p><h3 id="monthCardTitle">이번 달</h3></div><b>전망</b></div>
+        <ul>
+          <li><strong>프로젝트</strong><span>서울 전략회의를 첫 실전 사례로 적용</span></li>
+          <li><strong>연결</strong><span>PROJECT · 회의 · 자료 구조 준비</span></li>
+          <li><strong>원칙</strong><span>기존 기능 우선 재사용</span></li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="schedule-board" aria-label="일정 및 D-Day 보드">
+      <article class="schedule-summary">
+        <div class="schedule-head">
+          <div><p class="eyebrow">SCHEDULE · 4차</p><h2>일정</h2><p>현재 확인된 일정만 표시합니다. 임의 일정 생성 및 DB 쓰기는 하지 않습니다.</p></div>
+          <button type="button" class="schedule-open" data-panel-target="schedule">일정 자세히</button>
+        </div>
+        <div class="timeline">
+          <div class="timeline-item current"><time>09.02</time><span></span><p><b>오늘</b><small>AI 사무국 4차 · 일정/D-Day 기반 구축</small></p><em>진행</em></div>
+          <div class="timeline-item important"><time>09.04</time><span></span><p><b>국제드론순찰대 서울 전략회의</b><small>첫 실전 PROJECT 중요 일정</small></p><em>D-DAY</em></div>
+        </div>
+      </article>
+
+      <article class="dday-summary">
+        <div><p class="eyebrow">D-DAY · 4차</p><h2 id="ddayLarge">계산 중</h2><p class="dday-title">국제드론순찰대 서울 전략회의</p></div>
+        <div class="dday-date"><span>목표일</span><b>2026.09.04</b><small id="ddayState">Asia/Seoul 기준</small></div>
+        <button type="button" class="schedule-open secondary" data-panel-target="dday">D-Day 자세히</button>
+      </article>
+    </section>
+
+    <section class="task-board" aria-label="TASK 업무관리 보드">
+      <article class="task-main">
+        <div class="task-head">
+          <div><p class="eyebrow">TASK · 5차</p><h2>해야 할 일</h2><p>일정과 TASK를 구분해 관리하고, TASK는 PROJECT와 연결할 수 있도록 준비합니다.</p></div>
+          <div class="task-counts"><span>전체 <b id="taskTotal">0</b></span><span>진행 <b id="taskOpen">0</b></span><span>완료 <b id="taskDone">0</b></span></div>
+        </div>
+
+        <form class="task-form" id="taskForm">
+          <input id="taskTitle" type="text" maxlength="80" placeholder="해야 할 일을 입력하세요" autocomplete="off" required>
+          <input id="taskDue" type="date" aria-label="마감일">
+          <select id="taskPriority" aria-label="중요도"><option value="high">중요</option><option value="normal" selected>보통</option><option value="low">낮음</option></select>
+          <select id="taskProject" aria-label="관련 프로젝트"><option value="서울 전략회의">서울 전략회의</option><option value="AI 사무국">AI 사무국</option><option value="일반">일반</option></select>
+          <button type="submit">+ TASK 추가</button>
+        </form>
+
+        <div class="task-toolbar">
+          <div class="task-filters" role="group" aria-label="TASK 필터">
+            <button type="button" class="task-filter active" data-task-filter="all">전체</button>
+            <button type="button" class="task-filter" data-task-filter="open">진행</button>
+            <button type="button" class="task-filter" data-task-filter="done">완료</button>
+          </div>
+          <small>이 브라우저에만 저장 · Supabase 쓰기 없음</small>
+        </div>
+        <div class="task-list" id="taskList"></div>
+      </article>
+
+      <aside class="task-policy">
+        <p class="eyebrow">TASK POLICY</p>
+        <h2>5차 운영 원칙</h2>
+        <div><b>일정 ≠ TASK</b><small>일정은 언제, TASK는 무엇을 할지 관리합니다.</small></div>
+        <div><b>TASK → PROJECT</b><small>각 업무는 관련 프로젝트와 연결할 수 있도록 구성합니다.</small></div>
+        <div><b>미완료 유지</b><small>완료되지 않은 업무를 자동 삭제하지 않습니다.</small></div>
+        <div><b>기존 시스템 보호</b><small>GMS · 인증 · Supabase · RLS · Realtime은 수정하지 않습니다.</small></div>
+      </aside>
+    </section>
+
+    <section class="project-board" aria-label="PROJECT 업무관리 보드">
+      <article class="project-main">
+        <div class="project-head">
+          <div><p class="eyebrow">PROJECT · 6차</p><h2>국제드론순찰대 서울 전략회의</h2><p>첫 실전 PROJECT입니다. TASK를 연결하고 회의 전 준비부터 결정·미결·후속업무까지 한 흐름으로 관리합니다.</p></div>
+          <span class="project-status" id="projectStatusBadge">준비</span>
+        </div>
+
+        <div class="project-metrics">
+          <div><span>일정</span><b>2026.09.04</b><small>서울 전략회의</small></div>
+          <div><span>연결 TASK</span><b id="projectTaskTotal">0</b><small>서울 전략회의 TASK</small></div>
+          <div><span>완료 TASK</span><b id="projectTaskDone">0</b><small>완료 처리된 업무</small></div>
+          <div><span>진행률</span><b id="projectProgressText">0%</b><small>연결 TASK 기준 자동 계산</small></div>
+        </div>
+        <div class="project-progress"><i id="projectProgressBar" style="width:0%"></i></div>
+
+        <div class="project-core-grid">
+          <div class="project-info">
+            <h3>PROJECT 기본정보</h3>
+            <label><span>목적</span><textarea id="projectPurpose" rows="3">국제드론순찰대의 정체성 · 조직체계 · 회원제도 · 회비 · AI 사무국 · SPARK · 향후 공동사업을 검토하고 실행 방향을 정리한다.</textarea></label>
+            <div class="project-row"><label><span>상태</span><select id="projectStatus"><option value="기획">기획</option><option value="준비" selected>준비</option><option value="진행">진행</option><option value="완료">완료</option><option value="보류">보류</option></select></label><label><span>장소</span><input id="projectLocation" value="서울" maxlength="60"></label></div>
+            <label><span>참석자</span><input id="projectParticipants" value="확정 후 입력" maxlength="120"></label>
+            <label><span>관련자료 메모</span><textarea id="projectMaterials" rows="2" placeholder="회의자료 · 조직도 · 회비안 · SPARK 자료 등">조직도 · 회원등급안 · 회비안 · SPARK 비전 · Galaxy Tab 자료</textarea></label>
+            <button type="button" class="project-save" id="projectSave">PROJECT 기본정보 저장</button>
+            <small class="project-save-note" id="projectSaveNote">AI OFFICE 전용 localStorage 저장 · Supabase 쓰기 없음</small>
+          </div>
+
+          <div class="project-tasks">
+            <div class="subhead"><h3>연결 TASK</h3><button type="button" data-panel-target="task">TASK 보기</button></div>
+            <div id="projectTaskList" class="project-task-list"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="project-records">
+        <div class="record-column" data-record-kind="decisions">
+          <div class="record-title"><span>✓</span><div><p>DECISIONS</p><h3>결정사항</h3></div></div>
+          <form class="record-form"><input maxlength="120" placeholder="결정사항 입력"><button>추가</button></form>
+          <div class="record-list"></div>
+        </div>
+        <div class="record-column" data-record-kind="unresolved">
+          <div class="record-title"><span>?</span><div><p>UNRESOLVED</p><h3>미결사항</h3></div></div>
+          <form class="record-form"><input maxlength="120" placeholder="미결사항 입력"><button>추가</button></form>
+          <div class="record-list"></div>
+        </div>
+        <div class="record-column" data-record-kind="followups">
+          <div class="record-title"><span>→</span><div><p>FOLLOW-UP</p><h3>후속업무</h3></div></div>
+          <form class="record-form"><input maxlength="120" placeholder="후속업무 입력"><button>추가</button></form>
+          <div class="record-list"></div>
+        </div>
+      </article>
+    </section>
+
+
+    <section class="meeting-board" aria-label="회의관리 보드">
+      <article class="meeting-main">
+        <div class="meeting-head">
+          <div><p class="eyebrow">MEETING · 7차</p><h2>국제드론순찰대 서울 전략회의</h2><p>PROJECT와 연결된 첫 회의입니다. 회의 전 준비와 회의 후 실행기록을 한곳에서 관리합니다.</p></div>
+          <span class="meeting-status" id="meetingStatusBadge">준비</span>
+        </div>
+
+        <div class="meeting-meta-grid">
+          <label><span>회의일</span><input id="meetingDate" type="date" value="2026-09-04"></label>
+          <label><span>시작시간</span><input id="meetingTime" type="time" value="13:30"></label>
+          <label><span>장소</span><input id="meetingLocation" value="서울" maxlength="60"></label>
+          <label><span>상태</span><select id="meetingStatus"><option value="준비" selected>준비</option><option value="진행">진행</option><option value="종료">종료</option><option value="보류">보류</option></select></label>
+        </div>
+        <div class="meeting-info-grid">
+          <label><span>회의 목적</span><textarea id="meetingPurpose" rows="3">국제드론순찰대의 정체성 · 조직체계 · 회원제도 · 회비 · AI 사무국 · SPARK · 향후 공동사업의 실행 방향을 정리한다.</textarea></label>
+          <label><span>참석자</span><textarea id="meetingParticipants" rows="3" placeholder="참석자 입력">확정 후 입력</textarea></label>
+          <label><span>준비자료</span><textarea id="meetingMaterials" rows="3">조직도 · 회원등급안 · 회비안 · SPARK 비전 · Galaxy Tab 자료</textarea></label>
+        </div>
+        <div class="meeting-save-row"><button type="button" class="meeting-save" id="meetingSave">회의 기본정보 저장</button><small id="meetingSaveNote">AI OFFICE 전용 localStorage · Supabase 쓰기 없음</small></div>
+      </article>
+
+      <article class="meeting-flow">
+        <div class="meeting-phase before">
+          <div class="meeting-phase-title"><span>BEFORE</span><h3>회의 전 준비</h3><p>안건 · 질문 · 결정 필요사항</p></div>
+          <div class="meeting-columns">
+            <div class="meeting-list-box" data-meeting-kind="agenda"><div class="meeting-list-title"><b>01</b><h4>안건</h4></div><form class="meeting-item-form"><input maxlength="140" placeholder="회의 안건 입력"><button>추가</button></form><div class="meeting-item-list"></div></div>
+            <div class="meeting-list-box" data-meeting-kind="questions"><div class="meeting-list-title"><b>02</b><h4>질문</h4></div><form class="meeting-item-form"><input maxlength="140" placeholder="확인할 질문 입력"><button>추가</button></form><div class="meeting-item-list"></div></div>
+            <div class="meeting-list-box" data-meeting-kind="decisionNeeds"><div class="meeting-list-title"><b>03</b><h4>결정 필요사항</h4></div><form class="meeting-item-form"><input maxlength="140" placeholder="회의에서 결정할 사항"><button>추가</button></form><div class="meeting-item-list"></div></div>
+          </div>
+        </div>
+
+        <div class="meeting-phase after">
+          <div class="meeting-phase-title"><span>AFTER</span><h3>회의 후 기록</h3><p>결정 · 미결 · 담당/후속업무 · 다음 회의</p></div>
+          <div class="meeting-columns after-columns">
+            <div class="meeting-list-box" data-meeting-kind="decisions"><div class="meeting-list-title"><b>✓</b><h4>결정사항</h4></div><form class="meeting-item-form"><input maxlength="140" placeholder="결정사항 입력"><button>추가</button></form><div class="meeting-item-list"></div></div>
+            <div class="meeting-list-box" data-meeting-kind="unresolved"><div class="meeting-list-title"><b>?</b><h4>미결사항</h4></div><form class="meeting-item-form"><input maxlength="140" placeholder="미결사항 입력"><button>추가</button></form><div class="meeting-item-list"></div></div>
+            <div class="meeting-list-box followup-box" data-meeting-kind="followups"><div class="meeting-list-title"><b>→</b><h4>담당 · 후속업무</h4></div><form class="meeting-followup-form"><input class="followup-text" maxlength="120" placeholder="후속업무"><input class="followup-owner" maxlength="40" placeholder="담당"><input class="followup-due" type="date" aria-label="마감"><button>추가</button></form><div class="meeting-item-list"></div></div>
+          </div>
+          <div class="next-meeting-row"><label><span>다음 회의</span><input id="nextMeetingDate" type="date"></label><label><span>메모</span><input id="nextMeetingMemo" maxlength="120" placeholder="다음 회의 목적 또는 준비사항"></label><button type="button" id="nextMeetingSave">다음 회의 저장</button></div>
+        </div>
+      </article>
+
+      <article class="meeting-link-panel">
+        <div><p class="eyebrow">PROJECT CONNECTION</p><h3>서울 전략회의 PROJECT와 연결</h3><p>회의에서 확정한 결정사항 · 미결사항 · 후속업무를 PROJECT 기록에 반영할 수 있습니다.</p></div>
+        <div class="meeting-link-actions"><button type="button" id="meetingSyncProject">회의기록 → PROJECT 반영</button><small id="meetingSyncNote">중복 문구는 자동으로 건너뜁니다.</small></div>
+      </article>
+    </section>
+
+    <section class="ai-division-board" aria-label="AI 사무국장 업무분장">
+      <div class="ai-division-head">
+        <div><p class="eyebrow">AI SECRETARY · 9차</p><h2>아리아 · 젠 업무분장</h2><p>두 AI 사무국장은 기존 시스템을 대신하지 않습니다. 9차부터 음성 명령과 화면 버튼은 하나의 공통 ACTION 라우터를 사용합니다.</p></div>
+        <span>v0.9.0 · ACTION</span>
+      </div>
+      <div class="ai-division-grid">
+        <article class="ai-role aria-role">
+          <div class="ai-role-head"><span>A</span><div><p>ARIA</p><h3>아리아 · 전략/운영 사무국장</h3></div></div>
+          <div class="ai-duty-grid">
+            <button type="button" data-ai-action="today"><b>오늘</b><small>오늘 일정·업무 브리핑</small></button>
+            <button type="button" data-ai-action="schedule"><b>일정 · D-Day</b><small>중요일정과 준비사항</small></button>
+            <button type="button" data-ai-action="task"><b>TASK</b><small>해야 할 일·미완료 업무</small></button>
+            <button type="button" data-ai-action="project"><b>PROJECT</b><small>프로젝트 진행·결정·후속업무</small></button>
+            <button type="button" data-ai-action="meeting"><b>회의</b><small>회의 전·후 기록과 연결</small></button>
+            <button type="button" data-ai-action="week"><b>주간 운영</b><small>이번 주 목표·마감·진행</small></button>
+          </div>
+          <p class="ai-role-rule">AI 역할: 조사 · 정리 · 추천 · 준비 · 브리핑 / 사람 역할: 검토 · 판단 · 승인 · 결정 · 집행</p>
+        </article>
+        <article class="ai-role gen-role">
+          <div class="ai-role-head"><span>G</span><div><p>GEN</p><h3>젠 · 뉴스/콘텐츠 사무국장</h3></div></div>
+          <div class="ai-duty-grid">
+            <button type="button" data-gen-action="news"><b>뉴스</b><small>주요 뉴스·아이디어 준비</small></button>
+            <button type="button" data-gen-action="article"><b>기사</b><small>초안·자료·사진설명 준비</small></button>
+            <button type="button" data-gen-action="content"><b>콘텐츠</b><small>SNS·홍보·발표자료 준비</small></button>
+            <button type="button" data-gen-action="image"><b>이미지</b><small>기존 이미지 호출·표시 연결</small></button>
+            <button type="button" data-gen-action="media"><b>미디어</b><small>음악·영상 호출 · DISPLAY 준비</small></button>
+            <button type="button" data-gen-action="library"><b>자료</b><small>기존 자료 검색·분류·호출</small></button>
+          </div>
+          <p class="ai-role-rule">기사 자동 발행 금지 · 공식 발행과 대외 실행은 사람의 최종 승인 후 진행</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="voice-action-board" aria-label="음성 및 메뉴 ACTION">
+      <div class="voice-action-head">
+        <div><p class="eyebrow">VOICE + MENU ACTION · 9차</p><h2>말해도, 눌러도 같은 ACTION</h2><p>“아리아 오늘 일정 보여줘”, “젠 오늘 뉴스 보여줘”처럼 말하거나 아래 빠른 명령을 누르면 동일한 실행로직이 작동합니다.</p></div>
+        <span>v0.9.0</span>
+      </div>
+      <div class="voice-action-grid">
+        <article class="voice-console">
+          <button type="button" class="voice-mic" id="voiceMic" aria-pressed="false"><span>🎙</span><b>눌러서 말하기</b><small>브라우저 음성인식</small></button>
+          <div class="voice-state"><span id="voiceStateDot"></span><div><b id="voiceState">음성 대기</b><small id="voiceTranscript">명령을 말하면 여기에 표시됩니다.</small></div></div>
+          <p class="voice-support" id="voiceSupport">음성인식 지원 여부 확인 중</p>
+        </article>
+        <article class="voice-commands">
+          <div class="voice-command-title"><h3>빠른 ACTION</h3><small>버튼과 음성은 동일한 ACTION ID 사용</small></div>
+          <div class="voice-command-grid">
+            <button type="button" data-office-action="aria:today"><b>아리아 · 오늘</b><small>“아리아 오늘 보여줘”</small></button>
+            <button type="button" data-office-action="aria:schedule"><b>아리아 · 일정</b><small>“아리아 오늘 일정 보여줘”</small></button>
+            <button type="button" data-office-action="aria:task"><b>아리아 · TASK</b><small>“아리아 할 일 보여줘”</small></button>
+            <button type="button" data-office-action="aria:project"><b>아리아 · PROJECT</b><small>“아리아 서울회의 보여줘”</small></button>
+            <button type="button" data-office-action="aria:meeting"><b>아리아 · 회의</b><small>“아리아 회의 보여줘”</small></button>
+            <button type="button" data-office-action="gen:news"><b>젠 · 뉴스</b><small>“젠 오늘 뉴스 보여줘”</small></button>
+            <button type="button" data-office-action="gen:article"><b>젠 · 기사</b><small>“젠 기사 준비해줘”</small></button>
+            <button type="button" data-office-action="gen:image"><b>젠 · 이미지</b><small>“젠 이미지 보여줘”</small></button>
+          </div>
+        </article>
+      </div>
+      <div class="voice-policy"><b>9차 안전 원칙</b><span>음성은 화면 ACTION 호출까지만 수행합니다.</span><span>회원 승인 · 회비 변경 · 공식발행 · Supabase 쓰기 등은 실행하지 않습니다.</span></div>
+    </section>
+
+    <section class="desk-grid">
+      <article class="panel main-panel" id="detailPanel">
+        <div class="panel-title">
+          <div><p class="eyebrow" id="panelEyebrow">TODAY</p><h2 id="panelTitle">오늘</h2><p class="panel-date" id="panelDate">현재 날짜 기준</p></div>
+          <span class="safe-badge">DISPLAY READY · v1.4.0</span>
+        </div>
+        <div class="brief-list" id="panelBody"></div>
+        <div class="panel-foot" id="panelFoot">※ TASK와 PROJECT는 AI OFFICE 전용 localStorage에만 저장됩니다. 기존 Supabase/GMS 데이터는 수정하지 않습니다.</div>
+      </article>
+
+      <aside class="panel ai-panel">
+        <div class="ai-head"><span class="avatar">A</span><div><p class="eyebrow">AI SECRETARY</p><h3>ARIA · 아리아</h3></div></div>
+        <p>전략 · 기획 · 조직 · 일정 · 업무 · 프로젝트 · 회의 브리핑을 담당하는 AI 사무국장 영역입니다.</p>
+        <button class="ai-action" type="button" data-ai="aria">아리아 업무 보기</button>
+      </aside>
+
+      <aside class="panel ai-panel">
+        <div class="ai-head"><span class="avatar gen">G</span><div><p class="eyebrow">AI SECRETARY</p><h3>GEN · 젠</h3></div></div>
+        <p>뉴스 · 기사 · 콘텐츠 · 이미지 · 홍보 · SNS · 미디어 업무를 담당하는 AI 사무국장 영역입니다.</p>
+        <button class="ai-action" type="button" data-ai="gen">젠 업무 보기</button>
+      </aside>
+    </section>
+
+
+
+    <section class="news-briefing-board" id="newsBriefingBoard" aria-label="GEN 뉴스 브리핑">
+      <div class="news-briefing-head">
+        <div><p class="eyebrow">GEN NEWS BRIEFING · 12차</p><h2>뉴스 브리핑</h2><p>확인한 뉴스 제목·출처·요약을 직접 모아 GEN이 우선순위 브리핑으로 정리합니다. 외부 뉴스 자동수집과 기사 자동발행은 아직 연결하지 않습니다.</p></div>
+        <span>v1.4.0 · SAFE NEWS DESK</span>
+      </div>
+
+      <div class="news-briefing-grid">
+        <article class="news-input-card">
+          <h3>뉴스 항목 등록</h3>
+          <form id="newsBriefForm" class="news-brief-form">
+            <label class="wide"><span>제목</span><input id="newsTitle" maxlength="140" placeholder="확인한 뉴스 제목" required></label>
+            <label><span>분야</span><select id="newsCategory"><option>종합</option><option>안전</option><option>무도·스포츠</option><option>드론</option><option>공익</option><option>국제</option><option>조직</option></select></label>
+            <label><span>중요도</span><select id="newsPriority"><option value="3">긴급</option><option value="2" selected>중요</option><option value="1">일반</option></select></label>
+            <label class="wide"><span>출처</span><input id="newsSource" maxlength="100" placeholder="예: 연합뉴스 / 경찰청 / 확인한 매체"></label>
+            <label class="wide"><span>한줄 요약</span><textarea id="newsSummary" rows="3" maxlength="320" placeholder="브리핑에 표시할 핵심만 입력하세요." required></textarea></label>
+            <button type="submit" class="news-add">+ 뉴스 항목 추가</button>
+          </form>
+          <p class="news-safe-note">※ 현재는 직접 확인한 정보만 저장하는 로컬 브리핑함입니다. 사실 확인되지 않은 내용을 자동 생성하지 않습니다.</p>
+        </article>
+
+        <article class="news-summary-card">
+          <div class="news-summary-top"><div><h3>오늘의 GEN 브리핑</h3><small id="newsBriefTime">아직 생성 전</small></div><button type="button" id="newsBuildBrief">브리핑 새로 정리</button></div>
+          <div class="news-metrics"><div><small>전체</small><b id="newsTotal">0</b></div><div><small>긴급</small><b id="newsUrgent">0</b></div><div><small>중요</small><b id="newsImportant">0</b></div></div>
+          <div id="newsBriefTop" class="news-brief-top"><p>뉴스 항목을 등록하면 중요도 순으로 최대 5건을 브리핑합니다.</p></div>
+        </article>
+      </div>
+
+      <article class="news-list-card">
+        <div class="news-list-head"><div><h3>브리핑 뉴스함</h3><small>중요도 순 · 등록시간 순 / 이 브라우저 localStorage에만 저장</small></div><div class="news-filter-group"><button type="button" class="news-filter active" data-news-filter="all">전체</button><button type="button" class="news-filter" data-news-filter="3">긴급</button><button type="button" class="news-filter" data-news-filter="2">중요</button><button type="button" class="news-filter" data-news-filter="1">일반</button></div></div>
+        <div id="newsBriefList" class="news-brief-list"></div>
+      </article>
+    </section>
+
+
+    <section class="article-desk-board" id="articleDeskBoard" aria-label="GEN 기사 준비 데스크">
+      <div class="article-desk-head">
+        <div><p class="eyebrow">GEN ARTICLE DESK · 14차</p><h2>기사 준비</h2><p>확인된 뉴스 브리핑을 기사 작업으로 넘겨 제목·부제·요약·본문 초안·태그·이미지 요청 메모를 정리합니다. AI OFFICE는 초안을 준비할 뿐 자동 발행하지 않습니다.</p></div>
+        <span>v1.4.0 · HUMAN APPROVAL</span>
+      </div>
+
+      <div class="article-desk-grid">
+        <article class="article-editor-card">
+          <div class="article-card-head"><div><h3>기사 초안 작성</h3><small id="articleEditState">새 초안</small></div><button type="button" id="articleReset">새로 작성</button></div>
+          <form id="articleDraftForm" class="article-draft-form">
+            <input type="hidden" id="articleDraftId">
+            <label class="wide"><span>뉴스 브리핑 연결</span><select id="articleSourceNews"><option value="">직접 작성 · 뉴스 연결 없음</option></select></label>
+            <label class="wide"><span>제목</span><input id="articleTitle" maxlength="180" placeholder="기사 제목" required></label>
+            <label class="wide"><span>부제목</span><input id="articleSubtitle" maxlength="220" placeholder="기사 부제목"></label>
+            <label class="wide"><span>요약</span><textarea id="articleSummary" rows="3" maxlength="700" placeholder="기사 핵심 요약" required></textarea></label>
+            <label class="wide"><span>본문 초안</span><textarea id="articleBody" rows="10" maxlength="12000" placeholder="확인된 사실과 자료를 바탕으로 본문 초안을 작성하세요."></textarea></label>
+            <label><span>상태</span><select id="articleStatus"><option value="draft">초안</option><option value="review">검토중</option><option value="approval">승인대기</option></select></label>
+            <label><span>태그</span><input id="articleTags" maxlength="240" placeholder="예: IPMA, 드론, 안전"></label>
+            <label class="wide"><span>이미지 요청 메모</span><textarea id="articleImageBrief" rows="3" maxlength="600" placeholder="기사에 필요한 이미지의 장면·구도·문구 등을 메모"></textarea></label>
+            <button type="submit" class="article-save">기사 초안 저장</button>
+          </form>
+          <p class="article-safe-note">※ 저장은 이 브라우저 localStorage에만 합니다. Global News24 자동 발행·게시 API는 연결하지 않습니다.</p>
+        </article>
+
+        <article class="article-status-card">
+          <h3>기사 준비 현황</h3>
+          <div class="article-metrics"><div><small>전체 초안</small><b id="articleTotal">0</b></div><div><small>검토중</small><b id="articleReview">0</b></div><div><small>승인대기</small><b id="articleApproval">0</b></div></div>
+          <div class="article-policy-box"><b>발행 보호</b><span>기사 초안 작성</span><span>사람 검토</span><span>사람 최종 승인</span><em>자동 발행 없음</em></div>
+          <div class="article-preview" id="articlePreview"><p>저장된 초안을 선택하면 기사 구성을 미리 확인할 수 있습니다.</p></div>
+        </article>
+      </div>
+
+      <article class="article-list-card">
+        <div class="article-list-head"><div><h3>기사 초안함</h3><small>최종 수정시간 순 · 브라우저 localStorage</small></div><span id="articleCount">0개</span></div>
+        <div id="articleDraftList" class="article-draft-list"></div>
+      </article>
+    </section>
+
+    <section class="resource-display-board" id="resourceDisplayBoard" aria-label="자료 이미지 DISPLAY 준비">
+      <div class="resource-display-head">
+        <div><p class="eyebrow">RESOURCE → DISPLAY · 13차</p><h2>자료·이미지 DISPLAY</h2><p>기존 자료나 이미지의 위치(URL/경로)를 등록한 뒤 GEN ACTION으로 호출하고 SAFE BRIDGE에 전달합니다. 실제 CONTROL/DISPLAY transport가 연결되기 전에는 외부 기기로 전송하지 않습니다.</p></div>
+        <span>v1.4.0 · SAFE RESOURCE BRIDGE</span>
+      </div>
+      <div class="resource-display-grid">
+        <article class="resource-form-card">
+          <h3>표시 자료 등록</h3>
+          <form id="resourceForm" class="resource-form">
+            <label class="wide"><span>자료명</span><input id="resourceTitle" maxlength="100" placeholder="예: 서울 전략회의 조직도" required></label>
+            <label><span>종류</span><select id="resourceType"><option value="image">이미지</option><option value="document">문서</option><option value="chart">그래프</option><option value="link">링크</option></select></label>
+            <label><span>담당</span><select id="resourceAgent"><option value="gen">GEN · 젠</option><option value="aria">ARIA · 아리아</option></select></label>
+            <label class="wide"><span>URL / 기존 경로</span><input id="resourceUrl" maxlength="500" placeholder="https://... 또는 기존 시스템의 자료 경로" required></label>
+            <label class="wide"><span>메모</span><textarea id="resourceNote" rows="2" maxlength="240" placeholder="표시 목적이나 설명"></textarea></label>
+            <button type="submit" class="resource-add">+ DISPLAY 자료 등록</button>
+          </form>
+          <p class="resource-safe-note">※ 파일 자체를 AI OFFICE에 중복 저장하지 않습니다. 여기에는 기존 자료의 위치와 표시 명령만 보관합니다.</p>
+        </article>
+        <article class="resource-status-card">
+          <div class="resource-status-top"><div><h3>DISPLAY 호출 상태</h3><small>공통 ACTION → SAFE BRIDGE</small></div><button type="button" id="resourceClearSelection">선택 해제</button></div>
+          <div class="resource-preview" id="resourcePreview"><p>자료를 선택하면 여기에서 호출 내용을 확인합니다.</p></div>
+          <div class="resource-metrics"><div><small>등록 자료</small><b id="resourceTotal">0</b></div><div><small>선택 자료</small><b id="resourceSelected">없음</b></div><div><small>마지막 호출</small><b id="resourceLastSent">아직 없음</b></div></div>
+          <p class="resource-transport-note" id="resourceTransportNote">현재 transport 미연결이면 내부 Bridge 이벤트까지만 발생합니다.</p>
+        </article>
+      </div>
+      <article class="resource-list-card">
+        <div class="resource-list-head"><div><h3>자료 호출함</h3><small>이 브라우저 localStorage에는 자료의 위치 정보만 저장</small></div><span id="resourceCount">0개</span></div>
+        <div id="resourceList" class="resource-list"></div>
+      </article>
+    </section>
+
+
+    <section class="media-call-board" id="mediaCallBoard" aria-label="음악 영상 호출 보드">
+      <div class="media-call-head">
+        <div><p class="eyebrow">MEDIA ACTION · 15차</p><h2>음악·영상 호출</h2><p>기존 음악·영상의 URL 또는 경로를 등록하고 GEN ACTION으로 호출합니다. 이 화면의 미리재생은 반드시 사람이 눌러 시작하며, DISPLAY 전송은 SAFE BRIDGE까지만 준비합니다.</p></div>
+        <span>v1.4.0 · NO AUTOPLAY</span>
+      </div>
+      <div class="media-call-grid">
+        <article class="media-form-card">
+          <h3>미디어 등록</h3>
+          <form id="mediaForm" class="media-form">
+            <label class="wide"><span>콘텐츠명</span><input id="mediaTitle" maxlength="120" placeholder="예: 서울 전략회의 오프닝 영상" required></label>
+            <label><span>종류</span><select id="mediaType"><option value="video">영상</option><option value="audio">음악·오디오</option></select></label>
+            <label><span>담당</span><select id="mediaAgent"><option value="gen">GEN · 젠</option><option value="aria">ARIA · 아리아</option></select></label>
+            <label class="wide"><span>URL / 기존 경로</span><input id="mediaUrl" maxlength="700" placeholder="https://... 또는 기존 시스템 미디어 경로" required></label>
+            <label class="wide"><span>메모</span><textarea id="mediaNote" rows="2" maxlength="300" placeholder="언제, 어떤 목적으로 보여줄지 메모"></textarea></label>
+            <button type="submit" class="media-add">+ 미디어 등록</button>
+          </form>
+          <p class="media-safe-note">※ 미디어 파일 자체를 AI OFFICE에 복제하지 않습니다. URL/경로와 호출정보만 이 브라우저 localStorage에 저장합니다.</p>
+        </article>
+        <article class="media-player-card">
+          <div class="media-player-head"><div><h3>미리보기 · 호출 상태</h3><small>선택 후 사람이 재생 버튼을 눌러 확인</small></div><button type="button" id="mediaClearSelection">선택 해제</button></div>
+          <div class="media-preview" id="mediaPreview"><p>미디어를 선택하면 여기에서 호출정보를 확인합니다.</p></div>
+          <div class="media-metrics"><div><small>등록 미디어</small><b id="mediaTotal">0</b></div><div><small>선택</small><b id="mediaSelected">없음</b></div><div><small>마지막 DISPLAY 준비</small><b id="mediaLastSent">아직 없음</b></div></div>
+          <p class="media-transport-note" id="mediaTransportNote">자동재생 없음 · transport 미연결 시 브라우저 내부 Bridge 이벤트까지만 발생</p>
+        </article>
+      </div>
+      <article class="media-list-card">
+        <div class="media-list-head"><div><h3>미디어 호출함</h3><small>영상·음악을 새로 업로드하지 않고 기존 위치를 재사용</small></div><span id="mediaCount">0개</span></div>
+        <div id="mediaList" class="media-list"></div>
+      </article>
+    </section>
+
+    <section class="scheduler-board" aria-label="예약업무 보드">
+      <div class="scheduler-head">
+        <div><p class="eyebrow">SCHEDULED ACTION · 11차</p><h2>예약업무</h2><p>AI OFFICE가 열려 있는 동안 예약시간을 감지하여 기존 MENU/VOICE와 같은 공통 ACTION을 실행합니다. 브라우저가 닫혀 있으면 실행되지 않습니다.</p></div>
+        <span>v1.4.0 · LOCAL SCHEDULER</span>
+      </div>
+
+      <div class="scheduler-grid">
+        <article class="scheduler-form-card">
+          <h3>예약 등록</h3>
+          <form id="scheduleForm" class="scheduler-form">
+            <label class="wide"><span>업무명</span><input id="scheduleTitle" maxlength="80" placeholder="예: 아침 뉴스 브리핑" required></label>
+            <label><span>실행일</span><input id="scheduleDate" type="date"></label>
+            <label><span>시간</span><input id="scheduleTime" type="time" required></label>
+            <label><span>반복</span><select id="scheduleRepeat"><option value="once">한 번</option><option value="daily">매일</option><option value="weekly">매주</option><option value="monthly">매월</option></select></label>
+            <label><span>담당 AI</span><select id="scheduleAgent"><option value="aria">ARIA · 아리아</option><option value="gen">GEN · 젠</option></select></label>
+            <label class="wide"><span>연결 ACTION</span><select id="scheduleAction"></select></label>
+            <button type="submit" class="schedule-add">+ 예약업무 추가</button>
+          </form>
+          <div class="scheduler-policy"><b>현재 실행조건</b><span>페이지가 열려 있음</span><span>Asia/Seoul 기준</span><span>Supabase 쓰기 없음</span></div>
+        </article>
+
+        <article class="scheduler-status-card">
+          <h3>예약엔진 상태</h3>
+          <div class="scheduler-status-grid">
+            <div><small>엔진</small><b id="schedulerEngine">실행 중</b><em>30초마다 시간 확인</em></div>
+            <div><small>활성 예약</small><b id="schedulerActive">0</b><em>활성 상태만 실행</em></div>
+            <div><small>다음 실행</small><b id="schedulerNext">없음</b><em id="schedulerNextDetail">예약을 등록하세요.</em></div>
+            <div><small>마지막 실행</small><b id="schedulerLast">아직 없음</b><em id="schedulerLastDetail">공통 ACTION으로 실행</em></div>
+          </div>
+          <p class="scheduler-warning">※ 브라우저를 닫아도 실행되는 서버 예약은 아직 구현하지 않았습니다. 현 단계는 안전한 브라우저 내 1단계 예약엔진입니다.</p>
+        </article>
+      </div>
+
+      <article class="scheduler-list-card">
+        <div class="scheduler-list-head"><div><h3>등록된 예약업무</h3><small>활성/비활성 · 수정 대신 삭제 후 재등록 · 실행기록 유지</small></div><span id="schedulerCount">0개</span></div>
+        <div id="scheduleList" class="schedule-list"></div>
+      </article>
+    </section>
+
+    <section class="display-bridge-board" aria-label="CONTROL DISPLAY 연결 준비">
+      <div class="bridge-head">
+        <div><p class="eyebrow">CONTROL ↔ DISPLAY · 10차</p><h2>기존 송출 시스템 연결 준비</h2><p>현재 IPMA ZIP에는 실제 CONTROL/DISPLAY 원본이 포함되어 있지 않아 송수신 코드를 추측해 연결하지 않습니다. 대신 기존 시스템이 나중에 한 줄의 transport 등록만으로 AI OFFICE ACTION을 받을 수 있는 안전한 BRIDGE를 준비했습니다.</p></div>
+        <span>v1.4.0 · SAFE BRIDGE</span>
+      </div>
+      <div class="bridge-grid">
+        <article><small>BRIDGE 상태</small><b id="bridgeStatus">대기 · transport 미연결</b><em id="bridgeDetail">기존 CONTROL/DISPLAY 원본 확인 후 연결</em></article>
+        <article><small>마지막 ACTION</small><b id="bridgeLastAction">아직 없음</b><em id="bridgeLastSource">MENU / VOICE 공통</em></article>
+        <article><small>보호 원칙</small><b>기존 송수신 수정 0건</b><em>SESSION · 연결코드 · Realtime 보호</em></article>
+      </div>
+      <div class="bridge-actions"><button type="button" id="bridgeTest">BRIDGE 내부 테스트</button><small id="bridgeTestNote">테스트는 브라우저 내부 이벤트만 발생시키며 DISPLAY로 실제 전송하지 않습니다.</small></div>
+    </section>
+
+    <section class="connect-panel">
+      <div><p class="eyebrow">EXISTING SYSTEMS</p><h2>새로 만들지 않고 연결합니다</h2></div>
+      <nav class="system-links" aria-label="기존 시스템 바로가기">
+        <a href="../gms-admin/">GMS <span>회원 · PLAN · 회비 · 교육 · 통계</span></a>
+        <a href="../gms-admin/">IDP <span>기존 통합관제 구조 재사용</span></a>
+        <a href="../gms-admin/">SPARK <span>기존 SPARK 관리센터 재사용</span></a>
+        <a href="../admin-hub/">ADMIN HUB <span>기존 관리자 인증 영역</span></a>
+      </nav>
+    </section>
+
+    <footer>
+      <span><b>AI OFFICE 2.0 · v1.4.0</b> · HOME 17차 · 음악·영상 호출</span>
+      <span>REUSE → CONNECT → EXTEND</span>
+    </footer>
+  
+<section class="office-card integration-check-card" id="integration-check">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">INTEGRATION CHECK · 16차</span>
+      <h2>통합 테스트 · 운영 안정화</h2>
+      <p>기존 데이터를 변경하지 않는 자체점검 + 기존 CONTROL↔DISPLAY Realtime 실연결 상태를 확인합니다.</p>
+    </div>
+    <span class="version-badge">v1.4.0</span>
+  </div>
+  <div class="integration-actions">
+    <button type="button" class="primary-btn" id="runIntegrationCheck">통합 자체점검 실행</button>
+    <button type="button" class="ghost-btn" id="clearIntegrationCheck">점검결과 지우기</button>
+  </div>
+  <div id="integrationSummary" class="integration-summary" aria-live="polite">
+    아직 점검하지 않았습니다.
+  </div>
+  <div id="integrationResults" class="integration-results"></div>
+  <p class="safe-note">※ 점검은 화면 요소·공통 ACTION·SAFE BRIDGE·localStorage 접근 가능 여부만 확인하며 Supabase/Auth/RLS/Realtime/CONTROL/DISPLAY에는 쓰기 작업을 하지 않습니다.</p>
+</section>
+
+</main>
+
+  <script src="./app.js?v=0.16.0"></script>
+
+<script src="./config.js"></script>
+<script type="module" src="./realtime-bridge.js?v=1.4.0"></script>
+</body>
+</html>
