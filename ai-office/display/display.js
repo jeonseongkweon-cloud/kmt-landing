@@ -21,10 +21,14 @@ async function showOffice2Action(p){
     $("loading").hidden=false;
     stopMedia();
     theme("DARK_GOLD");
+    const verify=$("actionReceiveVerify");
+    if(verify)verify.textContent=`DISPLAY v1.2.3 · ${actionId}`;
     const url=new URL("https://ipma.kr/ai-office/");
     url.searchParams.set("displayAction",actionId);
     url.searchParams.set("display","1");
     url.searchParams.set("source",clean(p?.source||"mobile-control"));
+    url.searchParams.set("commandId",clean(p?.id||""));
+    url.searchParams.set("fresh",String(Date.now()));
     $("webHelp").hidden=true;
     $("webFrame").hidden=false;
     $("webFrame").src=url.toString();
