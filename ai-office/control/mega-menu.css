@@ -5,3 +5,6 @@
 
 /* v1.5.0 schedule + d-day */
 .office2-actions{align-items:stretch}
+
+/* v1.6.0 meeting command center */
+.office2-actions{grid-auto-flow:row}
