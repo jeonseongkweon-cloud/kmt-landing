@@ -99,20 +99,25 @@ function showGrowthCelebration(stage,total,goal){
   const layer=$("growthCelebration");if(!layer)return;clearGrowthTimers();const final=stage===7;layer.className=`growth-celebration ${final?"final":"level-up"}`;layer.innerHTML=final?`<div><span>🏆</span><strong>오늘의 공동 목표 달성!</strong><b>🔥 ${total} / ${goal} STAR 🔥</b><em>🎉 수련 완료! 신나는 놀이체육 TIME!</em><i class="growth-particles" aria-hidden="true"></i></div>`:`<div><span>✨</span><strong>성장 성공!</strong><b>${stage}단계 활성화</b><i class="growth-particles" aria-hidden="true"></i></div>`;layer.hidden=false;playGrowthLevelUpMusic();state.growth.celebrationTimers.push(setTimeout(()=>layer.classList.add("out"),final?2600:1350),setTimeout(()=>{layer.hidden=true;layer.classList.remove("out")},final?3300:1900))
 }
 function renderGrowth({celebrate=true}={}){
-  const panel=$("growthPanel");if(!panel)return;syncGrowthCycle();const total=currentRoomEvents().length,goal=state.growth.goal,stage=growthStageFor(total,goal),thresholds=goal?growthThresholds(goal):[];
+  const panel=$("growthPanel");if(!panel)return;syncGrowthCycle();
+  const total=currentRoomEvents().length,attendanceCount=attendedStudents().length,goal=attendanceCount*8;
+  state.growth.goal=goal;
+  const stage=growthStageFor(total,goal),thresholds=goal?growthThresholds(goal):[];
   if(!$("growthStages").children.length)$("growthStages").innerHTML=Array.from({length:7},(_,i)=>`<div class="growth-stage" data-stage="${i+1}"><span>${i+1}</span><img src="../../assets/star-growth/stage-${String(i+1).padStart(2,"0")}.png" alt="공동성장 ${i+1}단계"></div>`).join("");
   document.querySelectorAll(".growth-stage").forEach((el,index)=>{const active=index<stage,current=stage>0&&stage<7&&index+1===stage;el.classList.toggle("active",active);el.classList.toggle("current-stage",current);el.classList.toggle("new-stage",celebrate&&state.growth.ready&&index+1===stage&&stage>state.growth.stage)});
   $("growthScore").textContent=goal?`⭐ ${total} / ${goal}`:"⭐ 0 / 목표 미정";$("growthMeterFill").style.width=goal?`${Math.min(100,total/goal*100)}%`:"0%";
-  if(!goal){$("growthNext").textContent="오늘의 목표를 먼저 정해 주세요.";$("growthHint").textContent="출석 확인 후 오늘의 목표를 산출해 주세요."}
-  else if(stage>=7){$("growthNext").textContent=total>goal?`목표 초과 ⭐ +${total-goal}`:"공동 목표를 달성했습니다!";$("growthHint").textContent=`오늘 목표 ${goal} STAR · 완전체 달성`}
-  else{const next=thresholds[stage];$("growthNext").innerHTML=`<small>다음 성장까지</small><b>⭐ ${Math.max(0,next-total)}</b>`;$("growthHint").textContent=`오늘 목표 ${goal} STAR · 현재 ${stage}단계`}
-  $("goalButton").hidden=!!goal;$("goalResetButton").hidden=!goal;panel.dataset.ready=goal?"true":"false";panel.classList.toggle("complete",stage===7);panel.classList.toggle("over-goal",stage===7&&total>goal);
+  if(!goal){$("growthNext").textContent="첫 학생 출석 시 자동 산출됩니다.";$("growthHint").textContent="출석 인원 기준 자동 공동목표 · 출석 대기 중"}
+  else if(stage>=7){$("growthNext").textContent=total>goal?`목표 초과 ⭐ +${total-goal}`:"공동 목표를 달성했습니다!";$("growthHint").textContent=`출석 ${attendanceCount}명 · 자동 목표 ${goal} STAR · 완전체 달성`}
+  else{const next=thresholds[stage];$("growthNext").innerHTML=`<small>다음 성장까지</small><b>⭐ ${Math.max(0,next-total)}</b>`;$("growthHint").textContent=`출석 ${attendanceCount}명 · 자동 목표 ${goal} STAR · 현재 ${stage}단계`}
+  $("goalButton").hidden=true;$("goalResetButton").hidden=true;panel.dataset.ready=goal?"true":"false";panel.classList.toggle("complete",stage===7);panel.classList.toggle("over-goal",stage===7&&total>goal);
   if(celebrate&&state.growth.ready&&stage>state.growth.stage)showGrowthCelebration(stage,total,goal);state.growth.stage=stage;state.growth.ready=true
 }
 function calculateGrowthGoal(){
-  const count=attendedStudents().length;if(!count){toast("먼저 학생을 출석 처리해 주세요.");return}clearGrowthTimers();const goal=count*8,button=$("goalButton");button.disabled=true;let ticks=0;const values=[count*5,count*11,count*7,count*9,goal];state.growth.revealTimer=setInterval(()=>{const value=values[Math.min(ticks,values.length-1)];$("growthScore").textContent=`⭐ ${value} STAR 계산 중...`;playAttendanceSound();ticks++;if(ticks>=values.length){clearInterval(state.growth.revealTimer);state.growth.revealTimer=null;state.growth.goal=goal;state.growth.stage=0;localStorage.setItem(growthStorageKey(),String(goal));button.disabled=false;renderGrowth({celebrate:false});playGrowthSound(false);toast(`오늘의 목표 ${goal} STAR!`)}},420)
+  renderGrowth({celebrate:false});
+  const count=attendedStudents().length;if(count)toast(`출석 ${count}명 · 자동 목표 ${count*8} STAR`);else toast("첫 학생 출석 시 목표가 자동 산출됩니다.")
 }
-function resetGrowthGoal(){if(!confirm("현재 출석 인원으로 오늘의 목표를 다시 산출할까요?"))return;localStorage.removeItem(growthStorageKey());state.growth.goal=0;state.growth.stage=0;state.growth.ready=false;renderGrowth({celebrate:false});calculateGrowthGoal()}
+function resetGrowthGoal(){calculateGrowthGoal()}
+
 function setVoiceStatus(mode,text){
   const el=$("voiceStatus");if(!el)return;el.className=`voice-status ${mode}`;el.textContent=text;
   $("voiceAttendanceButton")?.classList.toggle("active",state.voice.listening&&state.voice.mode==="attendance");
@@ -309,7 +314,7 @@ async function loadBase(){const [p,s,c]=await Promise.all([db.from("class_period
 function integratedStarPeriod(){return state.periods.find(p=>clean(p.name).includes("기타")||clean(p.code).toUpperCase()==="ETC")||state.periods.at(-1)||state.periods[0]||null}
 async function openIntegratedStarRoom(){const p=integratedStarPeriod();if(!p){$("periodScreen").hidden=false;$("starScreen").hidden=true;$("periodGrid").innerHTML='<div class="empty">활성 수업부가 없어 STAR ROOM을 열 수 없습니다.</div>';toast("활성 수업부를 확인해 주세요.");return}await openPeriod(p)}
 function renderPeriods(){}
-async function openPeriod(p){state.period=p;let {data,error}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",p.id).maybeSingle();if(error){toast(error.message);return}if(!data){const created=await db.from("class_sessions").insert({session_date:localDate(),class_period_id:p.id,status:"open"}).select().single();if(created.error){toast(created.error.message);return}data=created.data}state.session=data;state.growth.goal=readGrowthGoal();state.growth.stage=0;state.growth.ready=false;await loadRecords();syncGrowthCycle();await loadNotices();startRealtime();startLiveFallback();$("periodScreen").hidden=true;$("starScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent="오늘의 통합 STAR ROOM";$("sessionTitle").dataset.desktopTitle="오늘 ⭐ STAR ROOM";renderCategories();renderStudents();renderGrowth({celebrate:false});setTimeout(playStarRoomEntrySound,80)}
+async function openPeriod(p){state.period=p;let {data,error}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",p.id).maybeSingle();if(error){toast(error.message);return}if(!data){const created=await db.from("class_sessions").insert({session_date:localDate(),class_period_id:p.id,status:"open"}).select().single();if(created.error){toast(created.error.message);return}data=created.data}state.session=data;state.growth.goal=0;state.growth.stage=0;state.growth.ready=false;await loadRecords();syncGrowthCycle();await loadNotices();startRealtime();startLiveFallback();$("periodScreen").hidden=true;$("starScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent="오늘의 통합 STAR ROOM";$("sessionTitle").dataset.desktopTitle="오늘 ⭐ STAR ROOM";renderCategories();renderStudents();renderGrowth({celebrate:false});setTimeout(playStarRoomEntrySound,80)}
 async function loadRecords(){const [a,e,p,c]=await Promise.all([db.from("attendance").select("id,session_id,student_id,status,checked_at,checked_out_at").eq("attendance_date",localDate()),db.from("star_events").select("*").eq("session_id",state.session.id).order("awarded_at"),db.from("praise_events").select("*").eq("session_id",state.session.id).order("praised_at"),db.from("champions").select("*,star_categories(name,icon)").eq("session_id",state.session.id).order("selected_at")]);const error=a.error||e.error||p.error||c.error;if(error){toast(error.message);return}state.attendance=a.data||[];state.events=e.data||[];state.praises=p.data||[];state.champions=c.data||[]}
 function renderCategories(){
   const primary=state.categories[0];if(!primary){$("categoryBar").innerHTML="";return}
@@ -409,7 +414,7 @@ function playIncomingStarFeedback(rows){
 }
 function stopRealtime(){if(state.realtimeTimer){clearTimeout(state.realtimeTimer);state.realtimeTimer=null}if(state.livePollTimer){clearInterval(state.livePollTimer);state.livePollTimer=null}state.livePollBusy=false;if(state.realtimeChannel){db.removeChannel(state.realtimeChannel);state.realtimeChannel=null}}
 function liveSnapshotKey(attendance=state.attendance,events=state.events){
-  const a=(attendance||[]).map(x=>`${x.student_id}:${x.status}:${x.checked_out_at||""}`).sort().join("|");
+  const a=(attendance||[]).map(x=>`${x.student_id}:${x.status}:${x.checked_at||""}:${x.checked_out_at||""}`).sort().join("|");
   const e=(events||[]).map(x=>`${x.id}:${x.student_id}:${x.category_id}`).sort().join("|");
   return `${a}::${e}`
 }
