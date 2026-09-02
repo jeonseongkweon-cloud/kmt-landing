@@ -91,13 +91,19 @@ async function loadAttendance(){
 function visibleStudents(){const list=sortedStudents();return state.attendedOnly?list.filter(s=>["present","late"].includes(recordFor(s.id)?.status)&&!recordFor(s.id)?.checked_out_at):list}
 function renderStudents(){
   const grid=$("studentGrid");grid.innerHTML="";const list=visibleStudents();$("emptyMessage").hidden=list.length>0;
-  list.forEach(s=>{const r=recordFor(s.id),status=displayStatus(r);const card=document.createElement("article");card.className="student-card";card.dataset.status=status||"waiting";card.dataset.student=s.id;const photo=clean(s.photo_url),days=trainingDaysText(s);card.innerHTML=`<button class="student-main" data-action="present">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="">`:`<div class="photo photo-fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<strong>${escapeHtml(s.name)}</strong>${days?`<span>${escapeHtml(days)}</span>`:""}<span class="status-pill">${status?statusText[status]:"미처리"}${r&&status?` · ${localTime(status==="checked_out"?r.checked_out_at:r.checked_at)}`:""}</span></button><div class="quick-actions"><button class="p" data-action="present">출석</button><button class="a" data-action="absent">결석</button><button class="o" data-action="checked_out">귀가</button></div>`;
+  list.forEach(s=>{const r=recordFor(s.id),status=displayStatus(r);const card=document.createElement("article");card.className="student-card";card.dataset.status=status||"waiting";card.dataset.student=s.id;const photo=clean(s.photo_url),days=trainingDaysText(s);card.innerHTML=`<button class="student-main" data-action="present">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="">`:`<div class="photo photo-fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<strong>${escapeHtml(s.name)}</strong>${days?`<span>${escapeHtml(days)}</span>`:""}<span class="status-pill">${status?statusText[status]:"미처리"}${r&&status?` · ${localTime(status==="checked_out"?r.checked_out_at:r.checked_at)}`:""}</span></button><div class="quick-actions"><button class="p" data-action="present">출석</button><button class="a" data-action="absent">결석</button><button class="o" data-action="checked_out">귀가</button><button class="w" data-action="cancelled">미선택</button></div>`;
     if(r&&["present","late"].includes(status)){const sms=document.createElement("small");sms.className="sms-state";sms.textContent=smsLabel(smsFor(r.id));card.querySelector(".student-main").appendChild(sms)}card.querySelectorAll("[data-action]").forEach(btn=>btn.onclick=()=>markStudent(s,btn.dataset.action));grid.appendChild(card)});
 }
 
 async function markStudent(student,status){
   if(state.session.status==="closed"){toast("종료된 수업입니다. 먼저 수업을 다시 열어주세요.");return}
   const old=recordFor(student.id),current=displayStatus(old);
+  if(status==="cancelled"){
+    if(!old||!current){toast(`${student.name} · 이미 미선택 상태입니다.`);return}
+    const result=await db.from("attendance").update({status:"cancelled",checked_out_at:null,points_awarded:0}).eq("id",old.id).select().single();
+    if(result.error){toast(result.error.message);return}
+    await loadAttendance();setSaving("저장 완료");toast(`${student.name} · 미선택으로 복귀`);setTimeout(()=>setSaving("Supabase 자동저장"),700);return
+  }
   if((status==="present"&&["present","late"].includes(current))||(status==="absent"&&current==="absent")){
     const result=await db.from("attendance").update({status:"cancelled",checked_out_at:null,points_awarded:0}).eq("id",old.id).select().single();if(result.error){toast(result.error.message);return}await loadAttendance();toast(`${student.name} · ${statusText[status]} 취소`);return
   }
