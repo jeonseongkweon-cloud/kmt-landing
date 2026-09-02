@@ -2,3 +2,6 @@
 .office2-panel{margin:24px 0;padding:18px;border:1px solid rgba(255,255,255,.09);border-radius:22px;background:linear-gradient(145deg,rgba(16,32,54,.92),rgba(9,15,26,.96))}.office2-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.office2-head small{font-size:11px;letter-spacing:.12em;opacity:.65}.office2-head h2{margin:4px 0 0;font-size:22px}.office2-head span{font-size:11px;border:1px solid rgba(255,193,77,.35);border-radius:999px;padding:6px 9px;color:#ffd27a}.office2-panel>p{margin:8px 0 14px;font-size:13px;opacity:.65}.office2-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.office2-action{min-height:54px;border:1px solid rgba(255,255,255,.1);border-radius:15px;background:#111c2d;color:#fff;font-size:15px;font-weight:800}.office2-action:active{transform:scale(.98);background:#1b2b43}
 /* v1.3.0: real-work action labels */
 .office2-action{padding:10px 8px;line-height:1.25}
+
+/* v1.5.0 schedule + d-day */
+.office2-actions{align-items:stretch}
