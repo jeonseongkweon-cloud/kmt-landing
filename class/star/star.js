@@ -448,7 +448,18 @@ function startRealtime(){
     .subscribe(status=>{if(status==="SUBSCRIBED")$("saveStatus").textContent="Supabase 자동저장 · LIVE";else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT")$("saveStatus").textContent="LIVE 재연결 중"});
 }
 
-function showBurst(s,c,total,newBadges=[]){$("burstIcon").textContent=total>=cfg.perfectStar?"🌟":c.icon;$("burstName").textContent=s.name;$("burstCategory").textContent=total>=cfg.perfectStar?"PERFECT STAR!":`${categoryDisplayName(c)} +1`;$("burstTotal").textContent=advancedRewardText(s,total,newBadges);$("starBurst").hidden=false;document.querySelector(".class-ticker")?.classList.add("star-priority");clearTimeout(window.__burst);window.__burst=setTimeout(()=>{$("starBurst").hidden=true;document.querySelector(".class-ticker")?.classList.remove("star-priority")},total>=cfg.perfectStar||newBadges.length?2500:1100)}
+function showBurst(s,c,total,newBadges=[]){
+  $("burstIcon").textContent=total>=cfg.perfectStar?"🌟":(c.icon||"⭐");
+  $("burstName").textContent=s.name;
+  $("burstCategory").textContent=total>=cfg.perfectStar?"PERFECT STAR!":`${categoryDisplayName(c)} +1`;
+  $("burstTotal").textContent=advancedRewardText(s,total,newBadges);
+  const photo=$("burstPhoto"),fallback=$("burstPhotoFallback"),src=clean(s.photo_url);
+  if(src){photo.src=src;photo.alt=`${s.name} 사진`;photo.hidden=false;fallback.hidden=true}
+  else{photo.removeAttribute("src");photo.alt="";photo.hidden=true;fallback.textContent=s.name.slice(0,2);fallback.hidden=false}
+  const layer=$("starBurst");layer.hidden=false;layer.classList.remove("star-award-replay");void layer.offsetWidth;layer.classList.add("star-award-replay");
+  document.querySelector(".class-ticker")?.classList.add("star-priority");
+  clearTimeout(window.__burst);window.__burst=setTimeout(()=>{layer.hidden=true;layer.classList.remove("star-award-replay");document.querySelector(".class-ticker")?.classList.remove("star-priority")},total>=cfg.perfectStar||newBadges.length?3200:2400)
+}
 async function undo(s){const last=eventsFor(s.id).at(-1);if(!last){toast("되돌릴 STAR가 없습니다.");return}const {error}=await db.from("star_events").delete().eq("id",last.id);if(error){toast(error.message);return}state.events=state.events.filter(e=>e.id!==last.id);renderStudents();toast(`${s.name} 마지막 STAR 입력을 취소했습니다.`)}
 function showDetail(s){const rows=state.categories.filter(c=>categoryCount(s.id,c.id)).map(c=>`<div class="detail-row"><span>${c.icon} ${escapeHtml(categoryDisplayName(c))}</span><strong>${categoryCount(s.id,c.id)}</strong></div>`).join("");const praises=state.praises.filter(p=>p.student_id===s.id).map(p=>`<div class="detail-row"><span>👏 ${escapeHtml(p.message)}</span><small>${localTime(p.praised_at)}</small></div>`).join("");$("detailContent").innerHTML=`<h2>${escapeHtml(s.name)} · ⭐ × ${eventsFor(s.id).length}</h2>${rows||'<p class="muted">아직 받은 STAR가 없습니다.</p>'}<h3>오늘의 칭찬</h3>${praises||'<p class="muted">아직 칭찬 기록이 없습니다.</p>'}`;$("detailDialog").showModal()}
 function showPraise(s){$("praiseStudentId").value=s.id;$("praiseTitle").textContent=`${s.name} 칭찬 기록`;$("praiseMessage").value="";$("praisePresets").innerHTML=praisePresets.map(x=>`<button type="button">${x}</button>`).join("");$("praisePresets").querySelectorAll("button").forEach(b=>b.onclick=()=>$("praiseMessage").value=b.textContent);$("praiseDialog").showModal()}

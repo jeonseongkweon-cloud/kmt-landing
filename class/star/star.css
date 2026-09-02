@@ -383,3 +383,143 @@ main{padding-top:8px}
 @media (max-width:760px){
   .award-all{min-height:44px;font-size:14px;padding:0 12px!important}
 }
+
+/* v2.8.6 — 개인 STAR 수상 대형 얼굴 카드 효과 (PC/TV 전광판 전용)
+   기존 STAR 저장/Realtime/음성/공동성장 로직은 변경하지 않는다. */
+@media (min-width:1025px){
+  .burst{
+    pointer-events:none;
+    position:fixed;
+    inset:0;
+    z-index:1200;
+    display:grid;
+    place-items:center;
+    padding:18px;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 50% 42%,rgba(255,224,104,.36),transparent 32%),
+      radial-gradient(circle at 50% 50%,rgba(22,67,108,.38),rgba(0,5,14,.96) 72%);
+    backdrop-filter:blur(4px);
+  }
+  .burst>.star-award-stage{
+    position:relative;
+    width:min(920px,94vw);
+    height:min(920px,92vh);
+    display:grid;
+    place-items:center;
+    animation:starAwardStageBang .42s cubic-bezier(.17,.89,.32,1.35) both;
+  }
+  .star-award-card{
+    position:relative;
+    z-index:2;
+    width:min(760px,78vw);
+    max-height:90vh;
+    padding:24px 34px 28px;
+    border:5px solid rgba(255,222,90,.95);
+    border-radius:42px;
+    background:linear-gradient(155deg,rgba(10,31,53,.98),rgba(4,15,29,.98));
+    box-shadow:0 0 0 9px rgba(255,255,255,.06),0 0 80px rgba(255,210,64,.62),0 32px 100px rgba(0,0,0,.72);
+    text-align:center;
+    animation:starAwardCardPulse 1.05s ease-in-out infinite alternate;
+  }
+  .star-award-photo-wrap{
+    position:relative;
+    width:min(510px,54vh,58vw);
+    height:min(510px,54vh,58vw);
+    margin:0 auto 10px;
+  }
+  .star-award-photo{
+    display:block;
+    width:100%;
+    height:100%;
+    margin:0;
+    border:7px solid #fff8c8;
+    border-radius:34px;
+    object-fit:cover;
+    background:#173c62;
+    box-shadow:0 0 48px rgba(255,220,84,.58);
+  }
+  .star-award-photo-fallback{
+    place-items:center;
+    color:#fff4b6;
+    font-size:clamp(80px,10vw,160px);
+    font-weight:1000;
+  }
+  .star-award-photo-fallback:not([hidden]){display:grid}
+  .star-award-icon{
+    position:absolute;
+    right:-28px;
+    top:-34px;
+    font-size:clamp(84px,8vw,132px)!important;
+    filter:drop-shadow(0 0 18px rgba(255,220,70,.9));
+    animation:starAwardIconSpin .7s cubic-bezier(.2,.9,.25,1.35) both;
+  }
+  .burst .star-award-card h2{
+    margin:0;
+    font-size:clamp(58px,6.5vw,104px);
+    line-height:1;
+    letter-spacing:-.04em;
+    text-shadow:0 4px 24px rgba(0,0,0,.75);
+  }
+  .burst .star-award-card p{
+    margin:10px 0 3px;
+    color:#fff2a8;
+    font-size:clamp(25px,2.4vw,40px);
+    font-weight:1000;
+  }
+  .burst .star-award-card strong{
+    display:block;
+    color:#ffd94e;
+    font-size:clamp(34px,3.6vw,58px);
+    line-height:1.1;
+    text-shadow:0 0 24px rgba(255,219,74,.7);
+  }
+  .burst .star-award-card em{
+    display:block;
+    margin-top:6px;
+    color:#e8f3ff;
+    font-style:normal;
+    font-size:clamp(18px,1.7vw,28px);
+    font-weight:900;
+  }
+  .star-award-sparks{position:absolute;inset:0;z-index:1}
+  .star-award-sparks i{
+    position:absolute;
+    left:50%;top:50%;
+    font-style:normal;
+    font-size:clamp(48px,5vw,82px);
+    opacity:0;
+    filter:drop-shadow(0 0 12px rgba(255,231,121,.9));
+  }
+  .star-award-replay .star-award-sparks i:nth-child(1){--x:-390px;--y:-300px;animation:starSpark .95s .02s ease-out both}
+  .star-award-replay .star-award-sparks i:nth-child(2){--x:390px;--y:-260px;animation:starSpark .9s .08s ease-out both}
+  .star-award-replay .star-award-sparks i:nth-child(3){--x:-430px;--y:30px;animation:starSpark .9s .11s ease-out both}
+  .star-award-replay .star-award-sparks i:nth-child(4){--x:430px;--y:20px;animation:starSpark 1s .05s ease-out both}
+  .star-award-replay .star-award-sparks i:nth-child(5){--x:-350px;--y:300px;animation:starSpark 1s .14s ease-out both}
+  .star-award-replay .star-award-sparks i:nth-child(6){--x:350px;--y:300px;animation:starSpark .95s .17s ease-out both}
+  .star-award-replay .star-award-sparks i:nth-child(7){--x:0px;--y:-430px;animation:starSpark .9s .1s ease-out both}
+  .star-award-replay .star-award-sparks i:nth-child(8){--x:0px;--y:410px;animation:starSpark 1s .18s ease-out both}
+}
+@keyframes starAwardStageBang{
+  0%{transform:scale(.18) rotate(-5deg);opacity:0;filter:brightness(3)}
+  58%{transform:scale(1.08) rotate(1deg);opacity:1;filter:brightness(1.5)}
+  100%{transform:scale(1);opacity:1;filter:brightness(1)}
+}
+@keyframes starAwardCardPulse{
+  from{transform:scale(1);box-shadow:0 0 0 9px rgba(255,255,255,.06),0 0 64px rgba(255,210,64,.48),0 32px 100px rgba(0,0,0,.72)}
+  to{transform:scale(1.018);box-shadow:0 0 0 11px rgba(255,255,255,.08),0 0 105px rgba(255,210,64,.78),0 32px 100px rgba(0,0,0,.72)}
+}
+@keyframes starAwardIconSpin{
+  0%{transform:scale(.2) rotate(-160deg);opacity:0}
+  75%{transform:scale(1.18) rotate(18deg);opacity:1}
+  100%{transform:scale(1) rotate(0)}
+}
+@keyframes starSpark{
+  0%{transform:translate(-50%,-50%) scale(.15) rotate(0);opacity:0}
+  18%{opacity:1}
+  75%{opacity:1}
+  100%{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1.18) rotate(190deg);opacity:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .burst>.star-award-stage,.star-award-card,.star-award-icon,.star-award-sparks i{animation:none!important}
+}
