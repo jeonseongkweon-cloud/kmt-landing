@@ -13,7 +13,30 @@ async function show(item,commandId){if(!item){ack(commandId,false,"자료를 찾
  else throw new Error("지원하지 않는 콘텐츠입니다.");state.current=item.id;$("loading").hidden=true;playSound(item.sound_effect);await ack(commandId,true)
  }catch(e){$("loading").hidden=true;await ack(commandId,false,e.message||"표시 실패")}}
 function playSound(kind){if(!["SOFT","IMPACT"].includes(kind))return;try{const ctx=new(window.AudioContext||window.webkitAudioContext)(),osc=ctx.createOscillator(),gain=ctx.createGain();osc.connect(gain);gain.connect(ctx.destination);osc.frequency.value=kind==="IMPACT"?180:520;gain.gain.setValueAtTime(.045,ctx.currentTime);gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.18);osc.start();osc.stop(ctx.currentTime+.18)}catch{}}
-async function showOffice2Action(p){const actionId=clean(p?.actionId);if(!actionId){await ack(p?.id,false,"ACTION 정보가 없습니다.");return}try{$("loading").hidden=false;stopMedia();theme("DARK_GOLD");const url=new URL("https://ipma.kr/ai-office/");url.searchParams.set("displayAction",actionId);url.searchParams.set("display","1");url.searchParams.set("source",clean(p?.source||"mobile-control"));$("webHelp").hidden=true;$("webFrame").hidden=false;$("webFrame").src=url.toString();active("webView");$("loading").hidden=true;await ack(p.id,true)}catch(e){$("loading").hidden=true;await ack(p?.id,false,e.message||"AI OFFICE 표시 실패")}}
+
+async function showOffice2Action(p){
+  const actionId=clean(p?.actionId);
+  if(!actionId){await ack(p?.id,false,"ACTION 정보가 없습니다.");return}
+  try{
+    $("loading").hidden=false;
+    stopMedia();
+    theme("DARK_GOLD");
+    const url=new URL("https://ipma.kr/ai-office/");
+    url.searchParams.set("displayAction",actionId);
+    url.searchParams.set("display","1");
+    url.searchParams.set("source",clean(p?.source||"mobile-control"));
+    $("webHelp").hidden=true;
+    $("webFrame").hidden=false;
+    $("webFrame").src=url.toString();
+    active("webView");
+    $("loading").hidden=true;
+    await ack(p.id,true);
+  }catch(e){
+    $("loading").hidden=true;
+    await ack(p?.id,false,e.message||"AI OFFICE 표시 실패");
+  }
+}
+
 function connect(code){state.code=code;localStorage.setItem("aiOfficeDisplayCode",code);state.channel=createPresentationChannel(code,"display",{command:p=>{if(p?.type==="SHOW_CONTENT")show(state.contents.find(c=>c.id===p.contentId),p.id);else if(p?.type==="AI_OFFICE_ACTION")showOffice2Action(p)},status:s=>{const on=s==="SUBSCRIBED";$("connection").querySelector(".dot").classList.toggle("on",on);$("connection").querySelector("span:last-child").textContent=on?`연결됨 · ${code}`:"재연결 중"}});$("pairing").style.display="none"}
 async function refreshCatalog(){({contents:state.contents}=await loadCatalog());const preload=()=>state.contents.filter(c=>c.content_type==="IMAGE"&&c.is_favorite).forEach(c=>{const img=new Image();img.src=c.source_url});(window.requestIdleCallback||setTimeout)(preload)}
 async function boot(){if(!await requireSession("../"))return;try{await refreshCatalog()}catch{$("pairMessage").textContent="설치 SQL을 먼저 실행해 주세요.";return}db.channel("ai-office-catalog-display").on("postgres_changes",{event:"*",schema:"public",table:"ai_office_contents"},refreshCatalog).subscribe();const saved=localStorage.getItem("aiOfficeDisplayCode");if(saved)connect(saved);$("pairForm").onsubmit=e=>{e.preventDefault();const code=clean($("code").value);if(!/^\d{6}$/.test(code)){$("pairMessage").textContent="6자리 숫자를 입력해 주세요.";return}connect(code)};$("fullscreen").onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();$("connection").onclick=()=>{if(state.channel)db.removeChannel(state.channel);$("pairing").style.display="grid";$("code").value=state.code}}boot();
