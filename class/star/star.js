@@ -374,7 +374,6 @@ async function awardAll(){
   if(state.session.status==="closed"){toast("종료된 수업입니다.");return}
   if(!students.length){toast("현재 STAR ROOM에 출석 중인 학생이 없습니다.");return}
   const label=categoryDisplayName(state.category)||"별";
-  if(!confirm(`현재 STAR ROOM ${students.length}명 모두에게 ${label} +1을 지급할까요?`))return;
   const button=$("awardAllButton"),category=state.category;
   button.disabled=true;state.localAwardPending++;$("saveStatus").textContent=`전체 ${students.length}명 저장 중...`;
   try{
