@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { syncSparkRoster, syncSparkAward, syncSparkUndo } from "./spark-connector.js";
+import { syncSparkRoster, syncSparkAward, syncSparkUndo } from "./spark-connector.js?v=102";
 
 const SINGLE_OWNER_EMAIL="class-admin@ipma.kr";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
@@ -382,6 +382,10 @@ async function awardAll(){
     const {data,error}=await db.from("star_events").insert(payload).select();
     if(error){toast(`전체 STAR 저장 실패: ${error.message}`);return}
     const rows=data||[];state.events.push(...rows);
+    await Promise.allSettled(rows.map(event=>{
+      const student=students.find(s=>String(s.id)===String(event.student_id));
+      return student?syncSparkAward({db,student,category,event}):Promise.resolve({skipped:true,reason:"STUDENT_NOT_FOUND"});
+    })).then(results=>results.forEach(result=>{if(result.status==="rejected")console.warn("[GLOBAL SPARK AWARD ALL]",result.reason)}));
     // 기존 고급 배지 로직은 학생별로 그대로 유지하되, 화면은 한 번만 다시 그린다.
     await Promise.allSettled(students.map(s=>awardAdvancedBadges(s.id)));
     renderStudents();
@@ -394,7 +398,7 @@ async function awardAll(){
   }finally{state.localAwardPending=Math.max(0,state.localAwardPending-1);button.disabled=false}
 }
 
-async function award(s,{source="click"}={}){if(!state.category){toast("STAR 카테고리를 먼저 선택해 주세요.");return}if(state.session.status==="closed"){toast("종료된 수업입니다.");return}$("saveStatus").textContent=`${s.name} 저장 중...`;const category=state.category;state.localAwardPending++;try{const {data,error}=await db.from("star_events").insert({session_id:state.session.id,student_id:s.id,category_id:category.id}).select().single();if(error){toast(error.message);return}state.events.push(data);syncSparkAward({db,student:s,category,event:data}).catch(e=>console.warn("[GLOBAL SPARK AWARD]",e));state.voice.lastVoiceStarId=source==="voice"?data.id:state.voice.lastVoiceStarId;const total=eventsFor(s.id).length;const newBadges=await awardAdvancedBadges(s.id);renderStudents();showBurst(s,category,total,newBadges);highlightStudent(s);playStarSound();speakShort(`${s.name} ${categoryDisplayName(category)} 하나!`);$("saveStatus").textContent=advancedRewardText(s,total,newBadges);setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장",900)}finally{state.localAwardPending=Math.max(0,state.localAwardPending-1)}}
+async function award(s,{source="click"}={}){if(!state.category){toast("STAR 카테고리를 먼저 선택해 주세요.");return}if(state.session.status==="closed"){toast("종료된 수업입니다.");return}$("saveStatus").textContent=`${s.name} 저장 중...`;const category=state.category;state.localAwardPending++;try{const {data,error}=await db.from("star_events").insert({session_id:state.session.id,student_id:s.id,category_id:category.id}).select().single();if(error){toast(error.message);return}state.events.push(data);syncSparkAward({db,student:s,category,event:data}).then(result=>{if(result?.ok)console.info("[GLOBAL SPARK AWARD]",result)}).catch(e=>console.warn("[GLOBAL SPARK AWARD]",e));state.voice.lastVoiceStarId=source==="voice"?data.id:state.voice.lastVoiceStarId;const total=eventsFor(s.id).length;const newBadges=await awardAdvancedBadges(s.id);renderStudents();showBurst(s,category,total,newBadges);highlightStudent(s);playStarSound();speakShort(`${s.name} ${categoryDisplayName(category)} 하나!`);$("saveStatus").textContent=advancedRewardText(s,total,newBadges);setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장",900)}finally{state.localAwardPending=Math.max(0,state.localAwardPending-1)}}
 function incomingStarEvents(beforeIds,rows=state.events){
   return (rows||[]).filter(e=>!beforeIds.has(String(e.id))).sort((a,b)=>new Date(a.awarded_at||0)-new Date(b.awarded_at||0));
 }
