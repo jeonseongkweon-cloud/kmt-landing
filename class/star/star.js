@@ -192,7 +192,7 @@ function unlockStarAudio(){
 }
 function playStarSound(){
   try{const ctx=ensureStarAudioReady();if(!ctx)return;
-    const now=ctx.currentTime;[[740,0],[988,.06],[1318,.12]].forEach(([f,d],i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(.0001,now+d);g.gain.exponentialRampToValueAtTime(i===2?.14:.09,now+d+.012);g.gain.exponentialRampToValueAtTime(.0001,now+d+.16);o.connect(g).connect(ctx.destination);o.start(now+d);o.stop(now+d+.18)})}catch(e){console.warn("[STAR SOUND]",e)}
+    const now=ctx.currentTime;[[740,0],[988,.06],[1318,.12]].forEach(([f,d],i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(.0001,now+d);g.gain.exponentialRampToValueAtTime(i===2?.018:.012,now+d+.012);g.gain.exponentialRampToValueAtTime(.0001,now+d+.16);o.connect(g).connect(ctx.destination);o.start(now+d);o.stop(now+d+.18)})}catch(e){console.warn("[STAR SOUND]",e)}
 }
 function playAttendanceSound(){try{const ctx=ensureStarAudioReady();if(!ctx)return;const o=ctx.createOscillator(),g=ctx.createGain(),n=ctx.currentTime;o.frequency.setValueAtTime(660,n);o.frequency.linearRampToValueAtTime(990,n+.15);g.gain.setValueAtTime(.1,n);g.gain.exponentialRampToValueAtTime(.0001,n+.22);o.connect(g).connect(ctx.destination);o.start();o.stop(n+.23)}catch{}}
 function highlightStudent(student,{arrive=false}={}){
@@ -386,7 +386,6 @@ async function awardAll(){
       const student=students.find(s=>String(s.id)===String(event.student_id));
       return student?syncSparkAward({db,student,category,event}):Promise.resolve({skipped:true,reason:"STUDENT_NOT_FOUND"});
     })).then(results=>results.forEach(result=>{if(result.status==="rejected")console.warn("[GLOBAL SPARK AWARD ALL]",result.reason)}));
-    // 기존 고급 배지 로직은 학생별로 그대로 유지하되, 화면은 한 번만 다시 그린다.
     await Promise.allSettled(students.map(s=>awardAdvancedBadges(s.id)));
     renderStudents();
     students.forEach((s,i)=>setTimeout(()=>highlightStudent(s),Math.min(i,6)*70));
@@ -398,7 +397,7 @@ async function awardAll(){
   }finally{state.localAwardPending=Math.max(0,state.localAwardPending-1);button.disabled=false}
 }
 
-async function award(s,{source="click"}={}){if(!state.category){toast("STAR 카테고리를 먼저 선택해 주세요.");return}if(state.session.status==="closed"){toast("종료된 수업입니다.");return}$("saveStatus").textContent=`${s.name} 저장 중...`;const category=state.category;state.localAwardPending++;try{const {data,error}=await db.from("star_events").insert({session_id:state.session.id,student_id:s.id,category_id:category.id}).select().single();if(error){toast(error.message);return}state.events.push(data);syncSparkAward({db,student:s,category,event:data}).then(result=>{if(result?.ok)console.info("[GLOBAL SPARK AWARD]",result)}).catch(e=>console.warn("[GLOBAL SPARK AWARD]",e));state.voice.lastVoiceStarId=source==="voice"?data.id:state.voice.lastVoiceStarId;const total=eventsFor(s.id).length;const newBadges=await awardAdvancedBadges(s.id);renderStudents();showBurst(s,category,total,newBadges);highlightStudent(s);playStarSound();speakShort(`${s.name} ${categoryDisplayName(category)} 하나!`);$("saveStatus").textContent=advancedRewardText(s,total,newBadges);setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장",900)}finally{state.localAwardPending=Math.max(0,state.localAwardPending-1)}}
+async function award(s,{source="click"}={}){if(!state.category){toast("STAR 카테고리를 먼저 선택해 주세요.");return}if(state.session.status==="closed"){toast("종료된 수업입니다.");return}$("saveStatus").textContent=`${s.name} 저장 중...`;const category=state.category;state.localAwardPending++;try{const {data,error}=await db.from("star_events").insert({session_id:state.session.id,student_id:s.id,category_id:category.id}).select().single();if(error){toast(error.message);return}state.events.push(data);syncSparkAward({db,student:s,category,event:data}).then(result=>{if(result?.ok)console.info("[GLOBAL SPARK AWARD]",result)}).catch(e=>console.warn("[GLOBAL SPARK AWARD]",e));state.voice.lastVoiceStarId=source==="voice"?data.id:state.voice.lastVoiceStarId;const total=eventsFor(s.id).length;const newBadges=await awardAdvancedBadges(s.id);renderStudents();showBurst(s,category,total,newBadges);highlightStudent(s);playStarSound();$("saveStatus").textContent=advancedRewardText(s,total,newBadges);setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장",900)}finally{state.localAwardPending=Math.max(0,state.localAwardPending-1)}}
 function incomingStarEvents(beforeIds,rows=state.events){
   return (rows||[]).filter(e=>!beforeIds.has(String(e.id))).sort((a,b)=>new Date(a.awarded_at||0)-new Date(b.awarded_at||0));
 }
@@ -410,9 +409,8 @@ function playIncomingStarFeedback(rows){
     if(!student)return;
     const total=eventsFor(student.id).length;
     highlightStudent(student);playStarSound();
-    if(category)speakShort(`${student.name} ${categoryDisplayName(category)} 하나!`);else speakShort(`${student.name} 별 하나!`);
     if(category)showBurst(student,category,total,[]);
-    $("saveStatus").textContent="다른 기기 STAR 수신 · 🔊 재생";
+    $("saveStatus").textContent="다른 기기 STAR 수신 · LIVE";
     setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장 · LIVE",1000);
   },index*220));
 }
