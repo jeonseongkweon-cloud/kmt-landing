@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>계명태권도 NEWSLETTER</title>
+  <meta name="description" content="계명태권도 학부모님을 위한 모바일 뉴스레터입니다." />
+  <meta name="theme-color" content="#fff8f1" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="계명태권도 NEWSLETTER" />
+  <meta property="og:description" content="우리 아이의 즐거운 성장 이야기와 계명태권도 소식을 한눈에 만나보세요." />
+  <meta property="og:image" content="https://raw.githubusercontent.com/jeonseongkweon-cloud/kmt-landing/main/assets/images/newsletter/KMT_NEWSLETTER_01.webp" />
+  <meta property="og:url" content="https://계명태권도.com/newsletter/" />
+  <style>
+    :root{
+      --bg:#fffaf5;
+      --paper:#ffffff;
+      --ink:#22314c;
+      --muted:#75839a;
+      --line:#f0e3d7;
+      --peach:#ff9f73;
+      --lav:#8f88df;
+      --mint:#65b9a6;
+      --shadow:0 14px 36px rgba(62,54,45,.10);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      color:var(--ink);
+      font-family:system-ui,-apple-system,"Segoe UI","Noto Sans KR",sans-serif;
+      background:
+        radial-gradient(800px 420px at 0 -5%,rgba(255,184,148,.20),transparent 60%),
+        radial-gradient(700px 420px at 100% 0,rgba(143,136,223,.13),transparent 58%),
+        linear-gradient(180deg,#fffaf5 0%,#fff 45%,#f8fbff 100%);
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit;text-decoration:none}
+    .page{max-width:760px;margin:0 auto;padding:0 12px calc(90px + env(safe-area-inset-bottom))}
+    .top{
+      position:sticky;top:0;z-index:20;
+      margin:0 -12px 14px;
+      padding:10px 14px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      background:rgba(255,250,245,.90);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(240,227,215,.82);
+    }
+    .brand{display:flex;align-items:center;gap:9px;min-width:0}
+    .mark{width:38px;height:38px;border-radius:14px;display:grid;place-items:center;font-weight:950;color:#fff;background:linear-gradient(135deg,var(--peach),var(--lav));box-shadow:0 8px 18px rgba(143,136,223,.20);flex:0 0 auto}
+    .brand strong{display:block;font-size:15px;letter-spacing:-.02em}
+    .brand small{display:block;margin-top:1px;color:var(--muted);font-size:11px}
+    .home{padding:9px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:12px;font-weight:800;white-space:nowrap}
+    .intro{padding:18px 8px 10px;text-align:center}
+    .eyebrow{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#fff1e9;color:#9c5738;font-size:11px;font-weight:900;letter-spacing:.08em}
+    h1{margin:12px 0 8px;font-size:clamp(28px,8vw,42px);line-height:1.08;letter-spacing:-.055em}
+    .intro p{margin:0 auto;max-width:560px;color:var(--muted);font-size:14px;line-height:1.7}
+    .issue{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin-top:12px}
+    .chip{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.88);border:1px solid var(--line);font-size:11px;font-weight:800;color:#63728a}
+    .newsletter{display:grid;gap:14px;margin-top:12px}
+    figure{margin:0;background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:7px;box-shadow:var(--shadow);overflow:hidden}
+    figure img{display:block;width:100%;height:auto;border-radius:16px;background:#f7f4f1}
+    figure:target{outline:3px solid rgba(143,136,223,.22);outline-offset:3px}
+    .end{margin-top:22px;padding:22px 18px;text-align:center;border:1px solid var(--line);background:rgba(255,255,255,.90);border-radius:24px;box-shadow:var(--shadow)}
+    .end h2{margin:0 0 7px;font-size:21px;letter-spacing:-.04em}
+    .end p{margin:0;color:var(--muted);font-size:13px;line-height:1.7}
+    .actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}
+    .btn{padding:12px 8px;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:900}
+    .btn.main{background:linear-gradient(135deg,#ffae87,#ff8f6c);border-color:transparent;color:#fff}
+    .footer{text-align:center;color:#9aa4b3;font-size:10px;line-height:1.7;padding:18px 4px 0}
+    .floating{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:30;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#fff;border:1px solid var(--line);box-shadow:0 12px 28px rgba(53,57,70,.18);font-size:20px;font-weight:900}
+    @media (min-width:700px){.newsletter{gap:18px}.page{padding-left:18px;padding-right:18px}.top{margin-left:-18px;margin-right:-18px}}
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  </style>
+</head>
+<body>
+  <div class="page" id="top">
+    <header class="top">
+      <a class="brand" href="../" aria-label="계명태권도 홈페이지로 이동"><span class="mark">K</span><span><strong>계명태권도 NEWSLETTER</strong><small>아이의 오늘을 함께 보는 작은 소식지</small></span></a>
+      <a class="home" href="../">홈으로</a>
+    </header>
+
+    <section class="intro">
+      <span class="eyebrow">KMT PARENT NEWSLETTER</span>
+      <h1>이번 주도 아이들은<br>한 뼘 더 자랐습니다.</h1>
+      <p>학부모님께 전해드리고 싶은 계명태권도의 소식을 편안하게 넘겨보세요. 이미지 한 장씩 천천히 보실 수 있도록 모바일에 맞춰 구성했습니다.</p>
+      <div class="issue"><span class="chip">계명태권도</span><span class="chip">학부모 뉴스레터</span><span class="chip">모바일 최적화</span></div>
+    </section>
+
+    <main class="newsletter" aria-label="계명태권도 뉴스레터 이미지">
+      <figure id="page-01"><img src="../assets/images/newsletter/KMT_NEWSLETTER_01.webp" alt="계명태권도 뉴스레터 1" loading="eager" decoding="async"></figure>
+      <figure id="page-02"><img src="../assets/images/newsletter/KMT_NEWSLETTER_02.webp" alt="계명태권도 뉴스레터 2" loading="lazy" decoding="async"></figure>
+      <figure id="page-03"><img src="../assets/images/newsletter/KMT_NEWSLETTER_03.webp" alt="계명태권도 뉴스레터 3" loading="lazy" decoding="async"></figure>
+      <figure id="page-04"><img src="../assets/images/newsletter/KMT_NEWSLETTER_04.webp" alt="계명태권도 뉴스레터 4" loading="lazy" decoding="async"></figure>
+      <figure id="page-05"><img src="../assets/images/newsletter/KMT_NEWSLETTER_05.webp" alt="계명태권도 뉴스레터 5" loading="lazy" decoding="async"></figure>
+      <figure id="page-06"><img src="../assets/images/newsletter/KMT_NEWSLETTER_06.webp" alt="계명태권도 뉴스레터 6" loading="lazy" decoding="async"></figure>
+      <figure id="page-07"><img src="../assets/images/newsletter/KMT_NEWSLETTER_07.webp" alt="계명태권도 뉴스레터 7" loading="lazy" decoding="async"></figure>
+      <figure id="page-08"><img src="../assets/images/newsletter/KMT_NEWSLETTER_08.webp" alt="계명태권도 뉴스레터 8" loading="lazy" decoding="async"></figure>
+      <figure id="page-09"><img src="../assets/images/newsletter/KMT_NEWSLETTER_09.webp" alt="계명태권도 뉴스레터 9" loading="lazy" decoding="async"></figure>
+      <figure id="page-10"><img src="../assets/images/newsletter/KMT_NEWSLETTER_10.webp" alt="계명태권도 뉴스레터 10" loading="lazy" decoding="async"></figure>
+      <figure id="page-11"><img src="../assets/images/newsletter/KMT_NEWSLETTER_11.webp" alt="계명태권도 뉴스레터 11" loading="lazy" decoding="async"></figure>
+      <figure id="page-12"><img src="../assets/images/newsletter/KMT_NEWSLETTER_12.webp" alt="계명태권도 뉴스레터 12" loading="lazy" decoding="async"></figure>
+      <figure id="page-13"><img src="../assets/images/newsletter/KMT_NEWSLETTER_13.webp" alt="계명태권도 뉴스레터 13" loading="lazy" decoding="async"></figure>
+      <figure id="page-14"><img src="../assets/images/newsletter/KMT_NEWSLETTER_14.webp" alt="계명태권도 뉴스레터 14" loading="lazy" decoding="async"></figure>
+      <figure id="page-15"><img src="../assets/images/newsletter/KMT_NEWSLETTER_15.webp" alt="계명태권도 뉴스레터 15" loading="lazy" decoding="async"></figure>
+      <figure id="page-16"><img src="../assets/images/newsletter/KMT_NEWSLETTER_16.webp" alt="계명태권도 뉴스레터 16" loading="lazy" decoding="async"></figure>
+    </main>
+
+    <section class="end">
+      <h2>끝까지 함께 봐주셔서 감사합니다.</h2>
+      <p>아이들이 즐겁고 건강하게 성장할 수 있도록 계명태권도가 늘 가까이에서 함께하겠습니다.</p>
+      <div class="actions"><a class="btn main" href="https://open.kakao.com/o/gF8p81hi" target="_blank" rel="noopener">카톡 문의</a><a class="btn" href="https://band.us/n/a8a7b9Xahdgb8" target="_blank" rel="noopener">밴드 보기</a><a class="btn" href="../">홈페이지</a></div>
+    </section>
+
+    <div class="footer">계명태권도 NEWSLETTER · v1.0.0<br>모바일 학부모 소식지</div>
+  </div>
+  <a class="floating" href="#top" aria-label="맨 위로 이동">↑</a>
+</body>
+</html>
