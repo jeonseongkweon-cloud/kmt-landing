@@ -37,6 +37,20 @@
       };
       img.src = theme.image(stage);
       img.alt = `${theme.label.replace(/^[^ ]+ /, "")} 공동성장 ${stage}단계`;
+
+      // 태권검도 1~4단계는 원본 구도상 하단이 잘리지 않도록
+      // 이미지 전체가 성장 카드 안에 들어오게 표시한다.
+      if (key === "taegeom" && stage <= 4) {
+        img.style.objectFit = "contain";
+        img.style.objectPosition = "center center";
+        img.style.transform = "scale(.88)";
+        img.style.transformOrigin = "center center";
+      } else {
+        img.style.objectFit = "";
+        img.style.objectPosition = "";
+        img.style.transform = "";
+        img.style.transformOrigin = "";
+      }
     });
 
     document.querySelectorAll("[data-growth-theme]").forEach(btn => {
