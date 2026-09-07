@@ -1,0 +1,24 @@
+import assert from "node:assert/strict";
+import {decomposeHangul,extractNamePhrase,resolveStudentName} from "./smart-name-voice.js";
+
+const student=(id,name,period="p1",aliases=[])=>({id,name,enrollments:[{class_period_id:period}],kmt_student_voice_aliases:aliases.map((alias,i)=>({id:`a${i}`,alias}))});
+const terms=["출석","도전별","인사별","STAR","별"];
+assert.equal(decomposeHangul("박윤아").startsWith("ㅂㅏㄱ"),true);
+assert.equal(extractNamePhrase("계명아 박윤안 출석",terms),"박윤안");
+let r=resolveStudentName({alternatives:["박윤아 출석"],students:[student(1,"박윤아")],preferredStudentIds:[1],commandTerms:terms});
+assert.equal(r.level,"A");assert.equal(r.student.name,"박윤아");
+r=resolveStudentName({alternatives:["박윤안 출석"],students:[student(1,"박윤아"),student(2,"김민규")],preferredStudentIds:[1,2],commandTerms:terms});
+assert.equal(r.level,"B");assert.equal(r.student.name,"박윤아");
+r=resolveStudentName({alternatives:["박윤안 출석","박윤아 출석"],students:[student(1,"박윤아"),student(2,"김민규")],preferredStudentIds:[1,2],commandTerms:terms});
+assert.equal(r.student.name,"박윤아");
+r=resolveStudentName({alternatives:["김민규 도전별"],students:[student(1,"박윤아"),student(2,"김민규")],preferredStudentIds:[1,2],commandTerms:terms});
+assert.equal(r.student.name,"김민규");
+r=resolveStudentName({alternatives:["박윤안 출석"],students:[student(1,"박윤아"),student(2,"박윤하")],preferredStudentIds:[1,2],commandTerms:terms});
+assert.equal(r.level,"C");
+r=resolveStudentName({alternatives:["최고봉 출석"],students:[student(1,"박윤아"),student(2,"김민규")],preferredStudentIds:[1,2],commandTerms:terms});
+assert.equal(r.level,"NONE");
+r=resolveStudentName({alternatives:["유강영 출석"],students:[student(1,"유강현","p1",["유강영"])],preferredStudentIds:[1],commandTerms:terms});
+assert.equal(r.level,"A");assert.equal(r.student.name,"유강현");
+r=resolveStudentName({alternatives:["민규 도전별"],students:[student(1,"김민규"),student(2,"박윤아")],preferredStudentIds:[1,2],commandTerms:terms});
+assert.equal(r.level,"B");assert.equal(r.student.name,"김민규");
+console.log("SMART NAME VOICE tests: 8 passed");

@@ -523,3 +523,15 @@ main{padding-top:8px}
 @media (prefers-reduced-motion:reduce){
   .burst>.star-award-stage,.star-award-card,.star-award-icon,.star-award-sparks i{animation:none!important}
 }
+
+/* SMART NAME VOICE v1.0 — LEVEL C에서만 표시되는 안전 확인창 */
+.voice-choice-dialog{width:min(520px,calc(100% - 24px));border:1px solid rgba(246,196,81,.55);border-radius:24px;background:#081a2c;color:#f7fbff;box-shadow:0 24px 90px rgba(0,0,0,.65)}
+.voice-choice-dialog::backdrop{background:rgba(2,9,17,.76);backdrop-filter:blur(5px)}
+.voice-choice-dialog .dialog-body>p{margin:0 0 5px;color:#f6c451;font-size:12px;font-weight:950;letter-spacing:.08em}
+.voice-choice-dialog .dialog-body>h2{margin:0 0 18px;font-size:clamp(25px,6vw,36px)}
+.voice-choice-dialog .dialog-body>small{display:block;margin-top:13px;color:#9fb6cc;text-align:center}
+.voice-choice-buttons{display:grid;gap:10px}
+.voice-choice-buttons button{display:flex;align-items:center;justify-content:space-between;min-height:68px;padding:12px 18px;border:1px solid rgba(91,162,255,.38);border-radius:16px;background:linear-gradient(135deg,rgba(91,162,255,.18),rgba(255,255,255,.05));color:#fff;cursor:pointer}
+.voice-choice-buttons button:active{transform:scale(.985)}
+.voice-choice-buttons strong{font-size:25px}.voice-choice-buttons span{color:#b9cde1;font-size:13px;font-weight:900}
+@media(max-width:600px){.voice-choice-dialog .dialog-body{padding:24px 16px}.voice-choice-buttons button{min-height:74px}.voice-choice-buttons strong{font-size:27px}}

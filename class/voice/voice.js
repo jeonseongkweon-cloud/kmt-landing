@@ -7,7 +7,7 @@ const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase
 const cfg=window.KMT_VOICE_CONFIG;
 const db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
 const $=id=>document.getElementById(id);
-const state={staff:null,periods:[],students:[],categories:[],period:null,session:null,recognition:null,listening:false,history:[]};
+const state={staff:null,periods:[],students:[],categories:[],period:null,session:null,recognition:null,listening:false,history:[],smartNameVoice:null,lastVoiceAlternatives:[]};
 const clean=v=>v==null?"":String(v).trim();
 const esc=v=>clean(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
 const localDate=()=>new Intl.DateTimeFormat("en-CA",{timeZone:cfg.timezone,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
@@ -105,6 +105,7 @@ async function boot(){
   $("app").hidden=false;
   $("staffLabel").textContent="전성권 관장 · 관장";
   await loadBase();
+  state.smartNameVoice=await import("../star/smart-name-voice.js?v=100").catch(e=>{console.warn("[SMART NAME VOICE] module unavailable",e);return null});
   setupRecognition();
   await loadHistory();
 }
@@ -141,7 +142,8 @@ async function syncSessionInfo(){state.session=await getSession(state.period).ca
 function setupRecognition(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){$("speechSupport").textContent="이 브라우저는 음성인식을 지원하지 않습니다. 아래 입력창으로 같은 명령을 사용할 수 있습니다.";$("micButton").disabled=true;return}
-  const r=new SR();r.lang=cfg.language||"ko-KR";r.continuous=false;r.interimResults=false;r.maxAlternatives=3;state.recognition=r;
+  const r=new SR();r.lang=cfg.language||"ko-KR";r.continuous=false;r.interimResults=false;r.maxAlternatives=5;state.recognition=r;
+  const Phrase=window.SpeechRecognitionPhrase;if(Phrase&&("phrases" in r)){try{r.phrases=[...new Set(state.students.flatMap(s=>[s.name,...aliasesFor(s)]).filter(Boolean))].map(value=>new Phrase(value,5))}catch(e){console.info("[SMART NAME VOICE] contextual biasing unavailable",e)}}
   r.onstart=()=>{state.listening=true;$("micButton").classList.add("listening");$("recognitionState").textContent="듣는 중…"};
   r.onend=()=>{state.listening=false;$("micButton").classList.remove("listening");$("recognitionState").textContent="대기"};
   r.onerror=e=>{result("error","음성인식 오류",e.error||"다시 시도해 주세요.")};
@@ -159,7 +161,8 @@ function setupRecognition(){
     const text=alt.transcript,confidence=Number(alt.confidence||0);
     $("heardBox").hidden=false;$("heardText").textContent=text;
     $("confidenceText").textContent=confidence?`인식 신뢰도 ${Math.round(confidence*100)}%`:"";
-    $("commandInput").value=text;await runCommand(text,{confidence,source:"voice"});
+    const alternatives=alts.map(a=>a.transcript).filter(Boolean);state.lastVoiceAlternatives=alternatives;
+    $("commandInput").value=text;await runCommand(text,{confidence,source:"voice",alternatives});
   };
   $("speechSupport").textContent="한국어 음성인식 준비 완료";
 }
@@ -185,6 +188,13 @@ function extractStudentTextForAction(text){
 }
 function studentMatches(text,period=null){
   const t=clean(text).replace(/\s/g,""),all=state.students||[];
+  if(state.smartNameVoice){
+    const commandTerms=["출석","지각","결석","단정별","인사별","자세별","집중별","효도별","발차기별","인성별","배려별","정리별","도전별","미션별","게임별","칭찬별","별","스타","STAR","MVP","엠브이피","챔피언"];
+    const preferredStudentIds=rosterFor(period||state.period).map(s=>s.id),alternatives=state.lastVoiceAlternatives.length?state.lastVoiceAlternatives:[text];
+    const resolved=state.smartNameVoice.resolveStudentName({alternatives,students:all,preferredStudentIds,commandTerms});
+    console.info("[SMART NAME VOICE]",{alternatives,level:resolved.level,candidates:resolved.candidates.map(x=>`${x.student.name} ${Math.round(x.score*100)}%`),final:resolved.student?.name||""});
+    if(resolved.student)return [resolved.student];if(resolved.level==="C")return resolved.candidates.map(x=>x.student);return []
+  }
   // 전체 재원생에서 성명 완전 포함 검색
   const exact=all.filter(s=>t.includes(clean(s.name).replace(/\s/g,"")));
   if(exact.length)return exact;
@@ -206,7 +216,7 @@ function studentMatches(text,period=null){
 function categoryMatches(text){const t=text.replace(/\s/g,"");return state.categories.filter(c=>t.includes(clean(c.name).replace(/별$/,""))||t.includes(clean(c.code).toLowerCase()))}
 function choose(title,items,label){return new Promise(resolve=>{const d=$("choiceDialog"),list=$("choiceList");$("choiceTitle").textContent=title;list.innerHTML="";items.forEach(item=>{const b=document.createElement("button");b.type="button";b.innerHTML=label(item);b.onclick=()=>{d.close();resolve(item)};list.appendChild(b)});d.onclose=()=>resolve(null);d.showModal()})}
 function confirmCommand(message){return new Promise(resolve=>{const d=$("confirmDialog");$("confirmMessage").textContent=message;d.onclose=()=>resolve(d.returnValue==="confirm");d.showModal()})}
-async function resolveStudent(text,period){const matches=studentMatches(text,null);if(matches.length===1)return matches[0];if(matches.length>1)return choose("같거나 비슷한 이름이 있습니다. 학생을 선택해 주세요.",matches,s=>`${esc(s.name)} <small>${esc(s.student_code)}</small>`);return null}
+async function resolveStudent(text,period){const matches=studentMatches(text,period);state.lastVoiceAlternatives=[];if(matches.length===1)return matches[0];if(matches.length>1)return choose("누구를 말씀하셨나요?",matches,s=>`${esc(s.name)} <small>${esc(s.student_code)}</small>`);return null}
 function defaultStarCategory(){
   const list=state.categories||[];
   if(!list.length)return null;
@@ -438,7 +448,8 @@ async function runCeremonySequence(period,{autoClose=false}={}){
   voiceMega("👏","오늘도 최고였어요!","모두 박수!",2600,"blue"); say("오늘도 모두 최고였어요. 박수!");
 }
 
-async function runCommand(raw,{confidence=1,source="text"}={}){
+async function runCommand(raw,{confidence=1,source="text",alternatives=[raw]}={}){
+  state.lastVoiceAlternatives=source==="voice"?alternatives:[];
   const normalized=normalize(raw);if(!normalized)return;
   result("warn","명령을 확인하고 있습니다…",normalized);
   if(source==="voice"&&confidence>0&&confidence<.6){const ok=await confirmCommand(`음성 인식 신뢰도가 ${Math.round(confidence*100)}%입니다. “${raw}” 명령을 계속할까요?`);if(!ok){await logCommand({transcript:raw,normalized,commandType:"low_confidence",status:"cancelled",resultText:"낮은 신뢰도로 실행 취소",confidence,source});result("warn","실행하지 않았습니다.","다시 또렷하게 말해 주세요.");return}}

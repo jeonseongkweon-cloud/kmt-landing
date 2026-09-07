@@ -1,12 +1,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { syncSparkRoster, syncSparkAward, syncSparkUndo } from "./spark-connector.js?v=102";
+import { resolveStudentName } from "./smart-name-voice.js?v=100";
 
 const SINGLE_OWNER_EMAIL="class-admin@ipma.kr";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 const cfg=window.KMT_STAR_CONFIG,db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}}),$=id=>document.getElementById(id);
 const VOICE_COMMAND_COOLDOWN_MS=2600;
 const NOTICE_ICONS={focus:"🥋",notice:"📢",personal:"🔔",item:"🎒",event:"📅",praise:"⭐"};
-const state={periods:[],students:[],session:null,period:null,categories:[],category:null,attendance:[],events:[],praises:[],champions:[],notices:[],mobileSort:localStorage.getItem("kmt-star-mobile-sort")||"stars",realtimeChannel:null,realtimeTimer:null,livePollTimer:null,livePollBusy:false,localAwardPending:0,leaderId:null,leaderReady:false,growth:{goal:0,stage:0,ready:false,revealTimer:null,celebrationTimers:[]},voice:{recognition:null,listening:false,mode:null,lastCommands:new Map(),lastVoiceStarId:null}};
+const state={periods:[],students:[],session:null,period:null,categories:[],category:null,attendance:[],events:[],praises:[],champions:[],notices:[],mobileSort:localStorage.getItem("kmt-star-mobile-sort")||"stars",realtimeChannel:null,realtimeTimer:null,livePollTimer:null,livePollBusy:false,localAwardPending:0,leaderId:null,leaderReady:false,growth:{goal:0,stage:0,ready:false,revealTimer:null,celebrationTimers:[]},voice:{recognition:null,listening:false,mode:null,lastCommands:new Map(),lastVoiceStarId:null,pending:null,lastDebug:null}};
 const praisePresets=["오늘 인사가 아주 좋았어요.","친구를 도와줬어요.","끝까지 포기하지 않았어요.","수업에 집중했어요."];
 const clean=v=>v==null?"":String(v).trim(),escapeHtml=v=>clean(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
 const categoryDisplayName=category=>category?.code==="CARE"?"인성별":category?.code==="KICK"?"효도별":clean(category?.name);
@@ -132,34 +133,33 @@ function setVoiceFeedback(label,transcript=""){
 function normalizeSpeech(v){return clean(v).replace(/[.!?。]/g,"").replace(/\s+/g," ").trim()}
 function voiceAliases(s){return (s?.kmt_student_voice_aliases||[]).map(a=>clean(a.alias)).filter(Boolean)}
 function voiceNameKey(v){return clean(v).replace(/\s/g,"")}
-function levenshtein(a,b){
-  a=clean(a);b=clean(b);const m=a.length,n=b.length,dp=Array(n+1).fill(0).map((_,i)=>i);
-  for(let i=1;i<=m;i++){let prev=dp[0];dp[0]=i;for(let j=1;j<=n;j++){const tmp=dp[j];dp[j]=Math.min(dp[j]+1,dp[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));prev=tmp}}
-  return dp[n];
-}
 function currentRoster(){return attendedStudents()}
-function matchStudentFromText(text,{allowGlobalExact=false}={}){
-  const raw=clean(text).replace(/\s/g,""),roster=currentRoster();
-  const exact=roster.filter(s=>raw.includes(clean(s.name).replace(/\s/g,"")));
-  if(exact.length===1)return {student:exact[0],confidence:1,scope:"roster"};
-  const aliasExact=roster.filter(s=>voiceAliases(s).some(alias=>raw.includes(voiceNameKey(alias))));
-  if(aliasExact.length===1)return {student:aliasExact[0],confidence:1,scope:"roster-alias"};
-  if(aliasExact.length>1)return null;
-  const candidateScores=new Map();
-  for(const s of roster){
-    const names=[s.name,...voiceAliases(s)].map(voiceNameKey);
-    const tokens=[raw,...raw.split(/별|스타|칭찬|출석|체크|왔어|왔어요|도착|지각|단정|인사|자세|발차기|효도|배려|인성|정리|도전|게임|미션|성공/).filter(Boolean)];
-    for(const name of names)for(const token of tokens){
-      const sample=token.slice(0,Math.max(name.length,token.length));
-      const d=levenshtein(name,sample),score=1-d/Math.max(name.length,sample.length,1);
-      candidateScores.set(s.id,Math.max(candidateScores.get(s.id)||0,score));
-    }
-  }
-  const ranked=[...candidateScores].map(([id,score])=>({student:roster.find(s=>s.id===id),score})).sort((a,b)=>b.score-a.score);
-  const best=ranked[0],second=ranked[1];
-  if(best&&best.score>=.78&&(!second||best.score-second.score>=.08))return {student:best.student,confidence:best.score,scope:"roster-fuzzy"};
-  if(allowGlobalExact){const global=state.students.filter(s=>[s.name,...voiceAliases(s)].some(value=>raw.includes(voiceNameKey(value))));if(global.length===1)return {student:global[0],confidence:.98,scope:"global-exact"}}
-  return null;
+const VOICE_COMMAND_TERMS=["출석체크","출석 처리","출석","체크","왔습니다","왔어요","왔어","왔다","도착했어","도착","미션성공","미션완료","미션클리어","단정별","인사별","자세별","집중별","효도별","발차기별","인성별","배려별","정리별","도전별","미션별","게임별","칭찬별","스타","STAR","별","단정","인사","자세","집중","효도","발차기","인성","배려","정리","도전","미션","게임","칭찬"];
+function preferredVoiceIds(mode){
+  const attended=currentRoster().map(s=>String(s.id));
+  if(mode!=="attendance")return attended;
+  const integrated=clean(state.period?.name).includes("기타")||clean(state.period?.code).toUpperCase()==="ETC";
+  const periodIds=integrated?[]:rosterFor(state.period).map(s=>String(s.id));return [...new Set([...periodIds,...attended])]
+}
+function debugVoice(alternatives,resolution,command){
+  const top=resolution.candidates.map(x=>`${x.student.name} ${Math.round(x.score*100)}%`).join(" / ");
+  state.voice.lastDebug={alternatives,name:resolution.phrases?.[0]||"",command,top,level:resolution.level,final:resolution.student?.name||""};
+  console.info("[SMART NAME VOICE]",state.voice.lastDebug)
+}
+function resolveVoiceStudent(alternatives,mode,command){
+  const students=mode==="star"||/별|스타|칭찬|미션\s*(성공|완료|클리어)/.test(command)?currentRoster():state.students;
+  return resolveStudentName({alternatives,students,preferredStudentIds:preferredVoiceIds(mode),commandTerms:VOICE_COMMAND_TERMS})
+}
+function contextualPhrases(){return [...new Set(state.students.flatMap(s=>[s.name,...voiceAliases(s)]).map(clean).filter(Boolean))]}
+function applyContextualBiasing(recognition){
+  const Phrase=window.SpeechRecognitionPhrase;if(!Phrase||!("phrases" in recognition))return false;
+  try{recognition.phrases=contextualPhrases().map(value=>new Phrase(value,5));return true}catch(e){console.info("[SMART NAME VOICE] contextual biasing unavailable",e);return false}
+}
+function showVoiceChoice(resolution,alternatives,mode,command){
+  state.voice.pending={alternatives,mode,command};const dialog=$("voiceChoiceDialog"),buttons=$("voiceChoiceButtons");
+  buttons.innerHTML=resolution.candidates.map(x=>`<button type="button" data-voice-student="${escapeHtml(x.student.id)}"><strong>${escapeHtml(x.student.name)}</strong><span>${Math.round(x.score*100)}%</span></button>`).join("");
+  buttons.querySelectorAll("[data-voice-student]").forEach(button=>button.onclick=async()=>{const pending=state.voice.pending,student=state.students.find(s=>String(s.id)===String(button.dataset.voiceStudent));dialog.close();state.voice.pending=null;if(!pending||!student)return;try{await executeResolvedVoiceCommand(student,pending.command,pending.mode);setVoiceFeedback("✅ 확인 후 처리 완료:",student.name)}catch(err){toast(err.message||"음성명령 처리 실패")}});
+  dialog.showModal()
 }
 function categoryFromVoice(text){
   const t=clean(text).replace(/\s/g,"");
@@ -208,13 +208,13 @@ function stopOneShotVoice(message="⚪ 음성 대기"){
 function initSpeechRecognition(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return false;
   if(state.voice.recognition)return true;
-  const r=new SR();r.lang="ko-KR";r.continuous=false;r.interimResults=false;r.maxAlternatives=3;
+  const r=new SR();r.lang="ko-KR";r.continuous=false;r.interimResults=false;r.maxAlternatives=5;applyContextualBiasing(r);
   r.onstart=()=>{state.voice.listening=true;setVoiceStatus("listening","🎤 듣는 중...");setVoiceFeedback("🎤 듣는 중...","말씀해 주세요.")};
   r.onresult=async e=>{
-    const res=e.results[e.resultIndex];const text=normalizeSpeech(res?.[0]?.transcript||"");if(!text)return;
+    const res=e.results[e.resultIndex],alternatives=Array.from(res||[]).map(x=>normalizeSpeech(x?.transcript||"")).filter(Boolean),text=alternatives[0]||"";if(!text)return;
     setVoiceFeedback("인식된 명령:",`“${text}”`);
     if(isDuplicateVoiceCommand(text)){toast("같은 음성명령 중복 실행을 막았습니다.");return}
-    try{await handleVoiceCommand(text,state.voice.mode);setVoiceFeedback("✅ 처리 완료:",`“${text}”`)}catch(err){console.error("[STAR VOICE]",err);toast(err.message||"음성명령 처리 실패");setVoiceFeedback("⚠ 다시 말씀해 주세요.",`“${text}”`)}
+    try{await handleVoiceCommand(text,state.voice.mode,alternatives);if(!state.voice.pending)setVoiceFeedback("✅ 처리 완료:",`“${text}”`)}catch(err){console.error("[STAR VOICE]",err);toast(err.message||"음성명령 처리 실패");setVoiceFeedback("⚠ 다시 말씀해 주세요.",`“${text}”`)}
   };
   r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed"){toast("Chrome 주소창의 마이크 권한을 허용해 주세요.");setVoiceFeedback("🔴 마이크 권한이 필요합니다.","")}else if(e.error!=="no-speech"&&e.error!=="aborted")toast(`음성인식 오류: ${e.error}`)};
   r.onend=()=>{state.voice.listening=false;state.voice.mode=null;setVoiceStatus("off","⚪ 음성 대기")};
@@ -224,7 +224,7 @@ function startOneShotVoice(mode){
   if(state.voice.listening){stopOneShotVoice();return}
   if(!state.session){toast("수업부를 먼저 선택해 주세요.");return}
   if(!initSpeechRecognition()){toast("이 브라우저는 Web Speech 음성인식을 지원하지 않습니다.");setVoiceStatus("off","🔴 음성 미지원");return}
-  state.voice.mode=mode;setVoiceFeedback(mode==="attendance"?"🎤 음성 출석 준비":mode==="star"?"⭐ 음성 STAR 준비":"🎙 계명아 듣기 준비",mode==="attendance"?"예: 김나라 출석 / 김강민 왔어":mode==="star"?"예: 김나라 별 / 김강민 인성별":"예: 김나라 출석 / 김강민 인성별");
+  state.voice.pending=null;state.voice.lastDebug=null;state.voice.mode=mode;applyContextualBiasing(state.voice.recognition);setVoiceFeedback(mode==="attendance"?"🎤 음성 출석 준비":mode==="star"?"⭐ 음성 STAR 준비":"🎙 계명아 듣기 준비",mode==="attendance"?"예: 김나라 출석 / 김강민 왔어":mode==="star"?"예: 김나라 별 / 김강민 인성별":"예: 김나라 출석 / 김강민 인성별");
   try{state.voice.recognition.start()}catch{toast("마이크를 다시 눌러 주세요.")}
 }
 async function markAttendanceFromStar(student){
@@ -242,25 +242,20 @@ async function undoLastVoiceStar(){
   const student=state.students.find(s=>s.id===last.student_id);const {error}=await db.from("star_events").delete().eq("id",last.id);if(error)throw error;
   state.events=state.events.filter(e=>e.id!==last.id);renderStudents();toast(`${student?.name||"학생"} STAR 1건 취소`);speakShort("방금 별 취소 완료");
 }
-async function handleVoiceCommand(command,mode=null){
+async function executeResolvedVoiceCommand(student,command,mode=null){
+  const t=normalizeSpeech(command),attendanceIntent=/출석|출석\s*체크|왔어|왔어요|왔다|왔습니다|도착|도착했어/.test(t);
+  if(mode==="attendance"||attendanceIntent){await markAttendanceFromStar(student);return}
+  if(/미션\s*(성공|완료|클리어)/.test(t)){const missionCategory=state.categories.find(c=>c.code==="CHALLENGE")||state.category;if(!missionCategory)throw new Error("STAR 종류를 먼저 선택해 주세요.");await awardByVoice(student,missionCategory);showMissionClear(student);return}
+  const category=categoryFromVoice(t),resolved=category||state.category;if(mode==="star"||category){if(!resolved)throw new Error("STAR 카테고리를 먼저 선택해 주세요.");await awardByVoice(student,resolved);return}
+  throw new Error("출석 또는 STAR 명령을 이해하지 못했습니다.")
+}
+async function handleVoiceCommand(command,mode=null,alternatives=[command]){
   const t=normalizeSpeech(command);
   if(/^(방금\s*)?(취소|별\s*취소|스타\s*취소)$/.test(t)){await undoLastVoiceStar();return}
-  const attendanceIntent=/출석|출석\s*체크|왔어|왔어요|왔다|왔습니다|도착|도착했어/.test(t);
-  if(mode==="attendance"||attendanceIntent){
-    const hit=matchStudentFromText(t,{allowGlobalExact:true});if(!hit)throw new Error("학생 이름을 확실히 찾지 못했습니다.");
-    await markAttendanceFromStar(hit.student);return;
-  }
-  if(/미션\s*(성공|완료|클리어)/.test(t)){
-    const hit=matchStudentFromText(t);if(!hit)throw new Error("현재 수업 학생 중 이름을 찾지 못했습니다.");
-    const missionCategory=state.categories.find(c=>c.code==="CHALLENGE")||state.category;if(!missionCategory)throw new Error("STAR 종류를 먼저 선택해 주세요.");
-    await awardByVoice(hit.student,missionCategory);showMissionClear(hit.student);return;
-  }
-  const category=categoryFromVoice(t);if(mode==="star"||category){
-    const hit=matchStudentFromText(t);if(!hit)throw new Error("현재 수업 학생 중 이름을 확실히 찾지 못했습니다.");
-    const resolved=category||state.category;if(!resolved)throw new Error("STAR 카테고리를 먼저 선택해 주세요.");
-    await awardByVoice(hit.student,resolved);return;
-  }
-  throw new Error("출석 또는 STAR 명령을 이해하지 못했습니다.");
+  const resolution=resolveVoiceStudent(alternatives,mode,t);debugVoice(alternatives,resolution,t);
+  if(resolution.level==="C"){showVoiceChoice(resolution,alternatives,mode,t);setVoiceFeedback("누구를 말씀하셨나요?",resolution.candidates.map(x=>x.student.name).join(" / "));return}
+  if(!resolution.student)throw new Error("학생 이름을 확실히 찾지 못했습니다.");
+  await executeResolvedVoiceCommand(resolution.student,t,mode)
 }
 function showMissionClear(student){
   const old=document.getElementById("missionClearEffect");if(old)old.remove();const layer=document.createElement("div");layer.id="missionClearEffect";layer.className="mission-clear-effect";layer.innerHTML=`<div><span>🎯</span><strong>MISSION CLEAR!</strong><b>${escapeHtml(student.name)} ⭐ +1</b></div>`;document.body.appendChild(layer);setTimeout(()=>layer.classList.add("out"),1200);setTimeout(()=>layer.remove(),1750)
