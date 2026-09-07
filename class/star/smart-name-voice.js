@@ -35,7 +35,7 @@ export function extractNamePhrase(transcript,commandTerms=[]){
   const wake=["계명아","개명아","계명이야","개명이야","계명하","개명하","계명","개명"].map(compact).sort((a,b)=>b.length-a.length).find(x=>value.startsWith(x));
   if(wake)value=value.slice(wake.length);
   for(const term of [...commandTerms].map(compact).filter(Boolean).sort((a,b)=>b.length-a.length)){if(value.endsWith(term)){value=value.slice(0,-term.length);break}}
-  return value.replace(/^(학생|원생)/,"").replace(/(학생|원생)$/," ").trim()
+  return value.replace(/^(학생|원생)/,"").replace(/(학생|원생|에게|한테|이한테|께)$/,"").trim()
 }
 export function resolveStudentName({alternatives,students,preferredStudentIds=[],commandTerms=[]}){
   const phrases=(alternatives||[]).map(extract=>extractNamePhrase(extract,commandTerms)).filter(Boolean);

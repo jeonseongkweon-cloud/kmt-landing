@@ -1,4 +1,4 @@
-const originalUrl = new URL('./star.js?v=3300', import.meta.url);
+const originalUrl = new URL('./star.js?v=3311', import.meta.url);
 const connectorUrl = new URL('./spark-connector.js?v=102', import.meta.url).href;
 const smartNameVoiceUrl = new URL('./smart-name-voice.js?v=100', import.meta.url).href;
 const source = await fetch(originalUrl, { cache: 'no-store' }).then(r => {

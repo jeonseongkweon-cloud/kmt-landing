@@ -7,7 +7,7 @@ const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase
 const cfg=window.KMT_STAR_CONFIG,db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}}),$=id=>document.getElementById(id);
 const VOICE_COMMAND_COOLDOWN_MS=2600;
 const NOTICE_ICONS={focus:"🥋",notice:"📢",personal:"🔔",item:"🎒",event:"📅",praise:"⭐"};
-const state={periods:[],students:[],session:null,period:null,categories:[],category:null,attendance:[],events:[],praises:[],champions:[],notices:[],mobileSort:localStorage.getItem("kmt-star-mobile-sort")||"stars",realtimeChannel:null,realtimeTimer:null,livePollTimer:null,livePollBusy:false,localAwardPending:0,leaderId:null,leaderReady:false,growth:{goal:0,stage:0,ready:false,revealTimer:null,celebrationTimers:[]},voice:{recognition:null,listening:false,mode:null,lastCommands:new Map(),lastVoiceStarId:null,pending:null,lastDebug:null}};
+const state={periods:[],students:[],session:null,period:null,categories:[],category:null,attendance:[],events:[],praises:[],champions:[],notices:[],mobileSort:localStorage.getItem("kmt-star-mobile-sort")||"stars",realtimeChannel:null,realtimeTimer:null,livePollTimer:null,livePollBusy:false,localAwardPending:0,leaderId:null,leaderReady:false,growth:{goal:0,stage:0,ready:false,revealTimer:null,celebrationTimers:[]},voice:{recognition:null,listening:false,mode:null,lastCommands:new Map(),lastVoiceStarId:null,pending:null,lastDebug:null,sessionId:0,active:null,retryTimer:null,debug:localStorage.getItem("kmt-voice-debug")==="on",debugEvents:[]}};
 const praisePresets=["오늘 인사가 아주 좋았어요.","친구를 도와줬어요.","끝까지 포기하지 않았어요.","수업에 집중했어요."];
 const clean=v=>v==null?"":String(v).trim(),escapeHtml=v=>clean(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
 const categoryDisplayName=category=>category?.code==="CARE"?"인성별":category?.code==="KICK"?"효도별":clean(category?.name);
@@ -130,6 +130,30 @@ function setVoiceFeedback(label,transcript=""){
   if($("voiceFeedbackLabel"))$("voiceFeedbackLabel").textContent=label;
   if($("voiceTranscript"))$("voiceTranscript").textContent=transcript||"예: 김나라 출석 / 김강민 인성별";
 }
+function voiceTime(){return new Intl.DateTimeFormat("ko-KR",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date())}
+function voiceDebug(event,detail=""){
+  const row={time:voiceTime(),event,detail:clean(detail)};state.voice.debugEvents.push(row);state.voice.debugEvents=state.voice.debugEvents.slice(-40);
+  console.info("[VOICE DEBUG]",row);renderVoiceDebug()
+}
+function setVoiceDebugField(id,value){const el=$(id);if(el)el.textContent=clean(value)||"-"}
+function renderVoiceDebug(){
+  const panel=$("voiceDebugPanel");if(!panel)return;panel.hidden=!state.voice.debug;
+  $("voiceDebugToggle")?.setAttribute("aria-pressed",state.voice.debug?"true":"false");
+  setVoiceDebugField("voiceDebugSupport",(window.SpeechRecognition||window.webkitSpeechRecognition)?"지원":"미지원");
+  setVoiceDebugField("voiceDebugPermission",state.voice.permission||"확인 중");
+  setVoiceDebugField("voiceDebugSession",state.voice.active?.id||"-");
+  setVoiceDebugField("voiceDebugRaw",state.voice.active?.raw||"-");
+  setVoiceDebugField("voiceDebugAlt",(state.voice.active?.alternatives||[]).map((x,i)=>`${i+1}. ${x}`).join(" / ")||"-");
+  setVoiceDebugField("voiceDebugMatch",state.voice.lastDebug?.top||"-");
+  setVoiceDebugField("voiceDebugFinal",state.voice.lastDebug?.final||"-");
+  setVoiceDebugField("voiceDebugCommand",state.voice.lastDebug?.command||"-");
+  setVoiceDebugField("voiceDebugResult",state.voice.active?.result||"-");
+  const log=$("voiceDebugEvents");if(log)log.textContent=state.voice.debugEvents.map(x=>`[${x.time}] ${x.event}${x.detail?` · ${x.detail}`:""}`).join("\n")
+}
+async function inspectMicrophonePermission(){
+  if(!navigator.permissions?.query){state.voice.permission="브라우저 확인 필요";renderVoiceDebug();return}
+  try{const p=await navigator.permissions.query({name:"microphone"});state.voice.permission=p.state;p.onchange=()=>{state.voice.permission=p.state;renderVoiceDebug()}}catch{state.voice.permission="브라우저 확인 필요"}renderVoiceDebug()
+}
 function normalizeSpeech(v){return clean(v).replace(/[.!?。]/g,"").replace(/\s+/g," ").trim()}
 function voiceAliases(s){return (s?.kmt_student_voice_aliases||[]).map(a=>clean(a.alias)).filter(Boolean)}
 function voiceNameKey(v){return clean(v).replace(/\s/g,"")}
@@ -144,7 +168,7 @@ function preferredVoiceIds(mode){
 function debugVoice(alternatives,resolution,command){
   const top=resolution.candidates.map(x=>`${x.student.name} ${Math.round(x.score*100)}%`).join(" / ");
   state.voice.lastDebug={alternatives,name:resolution.phrases?.[0]||"",command,top,level:resolution.level,final:resolution.student?.name||""};
-  console.info("[SMART NAME VOICE]",state.voice.lastDebug)
+  console.info("[SMART NAME VOICE]",state.voice.lastDebug);renderVoiceDebug()
 }
 function resolveVoiceStudent(alternatives,mode,command){
   const students=mode==="star"||/별|스타|칭찬|미션\s*(성공|완료|클리어)/.test(command)?currentRoster():state.students;
@@ -158,7 +182,7 @@ function applyContextualBiasing(recognition){
 function showVoiceChoice(resolution,alternatives,mode,command){
   state.voice.pending={alternatives,mode,command};const dialog=$("voiceChoiceDialog"),buttons=$("voiceChoiceButtons");
   buttons.innerHTML=resolution.candidates.map(x=>`<button type="button" data-voice-student="${escapeHtml(x.student.id)}"><strong>${escapeHtml(x.student.name)}</strong><span>${Math.round(x.score*100)}%</span></button>`).join("");
-  buttons.querySelectorAll("[data-voice-student]").forEach(button=>button.onclick=async()=>{const pending=state.voice.pending,student=state.students.find(s=>String(s.id)===String(button.dataset.voiceStudent));dialog.close();state.voice.pending=null;if(!pending||!student)return;try{await executeResolvedVoiceCommand(student,pending.command,pending.mode);setVoiceFeedback("✅ 확인 후 처리 완료:",student.name)}catch(err){toast(err.message||"음성명령 처리 실패")}});
+  buttons.querySelectorAll("[data-voice-student]").forEach(button=>button.onclick=async()=>{const pending=state.voice.pending,student=state.students.find(s=>String(s.id)===String(button.dataset.voiceStudent));dialog.close();state.voice.pending=null;if(!pending||!student)return;try{await executeResolvedVoiceCommand(student,pending.command,pending.mode);if(state.voice.active)state.voice.active.result="후보 확인 후 실행 성공";setVoiceFeedback("✅ 확인 후 처리 완료:",student.name);voiceDebug("후보 선택",student.name)}catch(err){if(state.voice.active)state.voice.active.result=err.message||"후보 실행 실패";toast(err.message||"음성명령 처리 실패");voiceDebug("후보 실행 실패",err.message)}});
   dialog.showModal()
 }
 function categoryFromVoice(text){
@@ -203,29 +227,44 @@ function speakShort(text){
   const voices=speechSynthesis.getVoices();u.voice=voices.find(v=>/ko-KR/i.test(v.lang))||null;speechSynthesis.speak(u);
 }
 function stopOneShotVoice(message="⚪ 음성 대기"){
-  state.voice.listening=false;state.voice.mode=null;try{state.voice.recognition?.stop()}catch{};setVoiceStatus("off",message);
+  clearTimeout(state.voice.retryTimer);state.voice.listening=false;state.voice.mode=null;if(state.voice.active)state.voice.active.cancelled=true;try{state.voice.recognition?.stop()}catch{};setVoiceStatus("off",message);voiceDebug("수동 종료",message);
+}
+function voiceErrorMessage(code){return {"no-speech":"음성을 듣지 못했습니다. 다시 말씀해 주세요.","audio-capture":"마이크를 사용할 수 없습니다. 다른 앱의 마이크 사용 여부를 확인해 주세요.","not-allowed":"마이크 권한이 차단되었습니다. Chrome 사이트 설정에서 허용해 주세요.","service-not-allowed":"브라우저 음성인식 서비스 사용이 차단되었습니다.",network:"네트워크 음성인식 오류입니다. 인터넷 연결을 확인해 주세요.",aborted:"음성인식이 중단되었습니다.","language-not-supported":"한국어 음성인식을 지원하지 않는 브라우저입니다."}[code]||`음성인식 오류: ${code||"unknown"}`}
+async function processVoiceSession(session,{fromInterim=false}={}){
+  if(!session||session.executed||session.cancelled)return;const alternatives=[...new Set(session.alternatives.map(normalizeSpeech).filter(Boolean))];if(!alternatives.length)return;
+  session.executed=true;session.raw=alternatives[0];session.result=fromInterim?"중간 결과로 명령 확인 중":"최종 결과 확인 중";renderVoiceDebug();
+  setVoiceStatus("processing","🔎 결과 확인");setVoiceFeedback(fromInterim?"🔎 인식 결과 확인:":"인식된 명령:",`“${alternatives[0]}”`);
+  if(isDuplicateVoiceCommand(alternatives[0])){session.result="중복 실행 차단";voiceDebug("중복 차단",alternatives[0]);toast("같은 음성명령 중복 실행을 막았습니다.");return}
+  try{await handleVoiceCommand(alternatives[0],session.mode,alternatives);session.result=state.voice.pending?"후보 선택 대기":"명령 실행 성공";voiceDebug("명령 실행",session.result);if(!state.voice.pending)setVoiceFeedback("✅ 처리 완료:",`“${alternatives[0]}”`)}
+  catch(err){session.result=err.message||"명령 실행 실패";voiceDebug("명령 실패",session.result);console.error("[STAR VOICE]",err);toast(session.result);setVoiceFeedback("⚠ "+session.result,`“${alternatives[0]}”`)}
+  finally{renderVoiceDebug()}
 }
 function initSpeechRecognition(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return false;
   if(state.voice.recognition)return true;
-  const r=new SR();r.lang="ko-KR";r.continuous=false;r.interimResults=false;r.maxAlternatives=5;applyContextualBiasing(r);
-  r.onstart=()=>{state.voice.listening=true;setVoiceStatus("listening","🎤 듣는 중...");setVoiceFeedback("🎤 듣는 중...","말씀해 주세요.")};
+  const r=new SR();r.lang="ko-KR";r.continuous=false;r.interimResults=true;r.maxAlternatives=5;applyContextualBiasing(r);
+  r.onstart=()=>{const s=state.voice.active;if(!s)return;state.voice.listening=true;s.startedAt=new Date().toISOString();setVoiceStatus("listening","🎤 듣는 중");setVoiceFeedback("🎤 듣고 있습니다…","“박윤아 도전별”처럼 말씀하세요.");voiceDebug("onstart",s.startedAt)};
+  r.onaudiostart=()=>{setVoiceStatus("listening","🎤 마이크 연결");voiceDebug("onaudiostart")};
+  r.onsoundstart=()=>{setVoiceStatus("listening","🎤 음성 감지 중");setVoiceFeedback("🎤 음성 감지 중…","계속 말씀하세요.");voiceDebug("onsoundstart")};
+  r.onspeechstart=()=>{setVoiceStatus("listening","🎤 말소리 인식 중");voiceDebug("onspeechstart")};
   r.onresult=async e=>{
-    const res=e.results[e.resultIndex],alternatives=Array.from(res||[]).map(x=>normalizeSpeech(x?.transcript||"")).filter(Boolean),text=alternatives[0]||"";if(!text)return;
-    setVoiceFeedback("인식된 명령:",`“${text}”`);
-    if(isDuplicateVoiceCommand(text)){toast("같은 음성명령 중복 실행을 막았습니다.");return}
-    try{await handleVoiceCommand(text,state.voice.mode,alternatives);if(!state.voice.pending)setVoiceFeedback("✅ 처리 완료:",`“${text}”`)}catch(err){console.error("[STAR VOICE]",err);toast(err.message||"음성명령 처리 실패");setVoiceFeedback("⚠ 다시 말씀해 주세요.",`“${text}”`)}
+    const s=state.voice.active;if(!s||s.cancelled)return;let finalSeen=false;
+    for(let i=e.resultIndex;i<e.results.length;i++){const res=e.results[i],alts=Array.from(res||[]).map(x=>normalizeSpeech(x?.transcript||"")).filter(Boolean);s.alternatives.push(...alts);if(alts[0])s.raw=alts[0];if(res.isFinal)finalSeen=true}
+    s.alternatives=[...new Set(s.alternatives)].slice(0,10);setVoiceStatus("processing",finalSeen?"🔎 결과 확인":"✍️ 인식 중");setVoiceFeedback(finalSeen?"🔎 결과 확인 중…":"✍️ 인식 중…",`“${s.raw||""}”`);voiceDebug("onresult",`${finalSeen?"final":"interim"} · ${s.raw||""}`);
+    if(finalSeen)await processVoiceSession(s)
   };
-  r.onerror=e=>{if(e.error==="not-allowed"||e.error==="service-not-allowed"){toast("Chrome 주소창의 마이크 권한을 허용해 주세요.");setVoiceFeedback("🔴 마이크 권한이 필요합니다.","")}else if(e.error!=="no-speech"&&e.error!=="aborted")toast(`음성인식 오류: ${e.error}`)};
-  r.onend=()=>{state.voice.listening=false;state.voice.mode=null;setVoiceStatus("off","⚪ 음성 대기")};
+  r.onspeechend=()=>voiceDebug("onspeechend");r.onsoundend=()=>voiceDebug("onsoundend");r.onaudioend=()=>voiceDebug("onaudioend");
+  r.onnomatch=()=>{const s=state.voice.active;if(s)s.error="no-match";voiceDebug("onnomatch","일치 결과 없음");setVoiceFeedback("⚠ 음성을 인식하지 못했습니다.","다시 말씀해 주세요.")};
+  r.onerror=e=>{const s=state.voice.active;if(s)s.error=e.error;const message=voiceErrorMessage(e.error);voiceDebug("onerror",e.error);setVoiceFeedback("⚠ "+message,"");toast(message)};
+  r.onend=async()=>{const s=state.voice.active;state.voice.listening=false;voiceDebug("onend",s?.error||"정상");if(s&&!s.executed&&!s.cancelled&&s.alternatives.length)await processVoiceSession(s,{fromInterim:true});if(s&&!s.executed&&!s.cancelled&&s.error==="no-speech"&&s.retryCount<1){s.retryCount++;setVoiceStatus("listening","🔁 한 번 더 듣기");setVoiceFeedback("🔁 음성을 듣지 못해 한 번 더 시도합니다.","지금 말씀해 주세요.");voiceDebug("자동 재시도","1회");state.voice.retryTimer=setTimeout(()=>startOneShotVoice(s.mode,{retryCount:s.retryCount}),500);return}state.voice.mode=null;setVoiceStatus("off",s?.result==="명령 실행 성공"?"✅ 실행 완료":"⚪ 음성 대기")};
   state.voice.recognition=r;return true;
 }
-function startOneShotVoice(mode){
+function startOneShotVoice(mode,{retryCount=0}={}){
   if(state.voice.listening){stopOneShotVoice();return}
   if(!state.session){toast("수업부를 먼저 선택해 주세요.");return}
   if(!initSpeechRecognition()){toast("이 브라우저는 Web Speech 음성인식을 지원하지 않습니다.");setVoiceStatus("off","🔴 음성 미지원");return}
-  state.voice.pending=null;state.voice.lastDebug=null;state.voice.mode=mode;applyContextualBiasing(state.voice.recognition);setVoiceFeedback(mode==="attendance"?"🎤 음성 출석 준비":mode==="star"?"⭐ 음성 STAR 준비":"🎙 계명아 듣기 준비",mode==="attendance"?"예: 김나라 출석 / 김강민 왔어":mode==="star"?"예: 김나라 별 / 김강민 인성별":"예: 김나라 출석 / 김강민 인성별");
-  try{state.voice.recognition.start()}catch{toast("마이크를 다시 눌러 주세요.")}
+  state.voice.pending=null;state.voice.lastDebug=null;state.voice.mode=mode;const id=++state.voice.sessionId;state.voice.active={id,mode,retryCount,alternatives:[],raw:"",result:"대기",error:"",executed:false,cancelled:false};applyContextualBiasing(state.voice.recognition);voiceDebug("세션 생성",`#${id} · ${mode||"자동 명령"}`);setVoiceStatus("listening","🎤 시작 준비");setVoiceFeedback(mode==="attendance"?"🎤 음성 출석 준비":mode==="star"?"⭐ 음성 STAR 준비":"🎙 계명아 듣기 준비",mode==="attendance"?"예: 김나라 출석 / 김강민 왔어":mode==="star"?"예: 김나라 별 / 김강민 인성별":"예: 김나라 출석 / 김강민 인성별");
+  try{state.voice.recognition.start()}catch(err){state.voice.active.error="start-failed";voiceDebug("start 실패",err.message);toast("마이크를 시작하지 못했습니다. 잠시 후 다시 눌러 주세요.")}
 }
 async function markAttendanceFromStar(student){
   if(state.session.status==="closed")throw new Error("종료된 수업입니다.");
@@ -304,7 +343,7 @@ async function deleteNotice(id){const r=await db.from("kmt_class_notices").updat
 
 
 async function login(){location.replace("../")}
-async function boot(){const{data:{session},error}=await db.auth.getSession();if(error){toast(`로그인 확인 실패: ${error.message}`);return}if(!session||!isSingleOwner(session)){location.replace("../");return}$("loginScreen").hidden=true;$("app").hidden=false;startClock();await loadBase()}
+async function boot(){const{data:{session},error}=await db.auth.getSession();if(error){toast(`로그인 확인 실패: ${error.message}`);return}if(!session||!isSingleOwner(session)){location.replace("../");return}$("loginScreen").hidden=true;$("app").hidden=false;startClock();await loadBase();await inspectMicrophonePermission();renderVoiceDebug()}
 function startClock(){const tick=()=>{$("dateLabel").textContent=new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,year:"numeric",month:"long",day:"numeric",weekday:"short"}).format(new Date());$("clockLabel").textContent=localTime()};tick();setInterval(tick,15000)}
 async function loadBase(){const [p,s,c]=await Promise.all([db.from("class_periods").select("*").eq("is_active",true).order("sort_order"),db.from("students").select("id,student_code,name,photo_url,enrollments(class_period_id,status),kmt_student_voice_aliases(id,alias,alias_key)").order("student_code"),db.from("star_categories").select("*").eq("is_active",true).order("sort_order")]);const error=p.error||s.error||c.error;if(error){toast(error.message);return}state.periods=p.data||[];state.students=(s.data||[]).filter(x=>enrollment(x).status==="재원");state.categories=c.data||[];state.category=state.categories[0]||null;syncSparkRoster({db,students:state.students}).catch(e=>console.warn("[GLOBAL SPARK ROSTER]",e));await openIntegratedStarRoom()}
 function integratedStarPeriod(){return state.periods.find(p=>clean(p.name).includes("기타")||clean(p.code).toUpperCase()==="ETC")||state.periods.at(-1)||state.periods[0]||null}
@@ -473,6 +512,8 @@ $("awardAllButton").onclick=awardAll;
 $("voiceAttendanceButton").onclick=()=>startOneShotVoice("attendance");
 $("voiceStarButton").onclick=()=>startOneShotVoice("star");
 $("mobileVoiceRemote").onclick=()=>startOneShotVoice(null);
+$("voiceDebugToggle").onclick=()=>{state.voice.debug=!state.voice.debug;localStorage.setItem("kmt-voice-debug",state.voice.debug?"on":"off");renderVoiceDebug();if(state.voice.debug)voiceDebug("진단 모드","ON")};
+$("voiceDebugClose").onclick=()=>{state.voice.debug=false;localStorage.setItem("kmt-voice-debug","off");renderVoiceDebug()};
 $("goalButton").onclick=calculateGrowthGoal;
 $("goalResetButton").onclick=resetGrowthGoal;
 $("noticeManageButton").onclick=()=>{renderNoticeList();$("noticeDialog").showModal()};

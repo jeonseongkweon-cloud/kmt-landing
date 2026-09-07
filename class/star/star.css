@@ -579,3 +579,12 @@ main{padding-top:8px}
 .voice-choice-buttons button:active{transform:scale(.985)}
 .voice-choice-buttons strong{font-size:25px}.voice-choice-buttons span{color:#b9cde1;font-size:13px;font-weight:900}
 @media(max-width:600px){.voice-choice-dialog .dialog-body{padding:24px 16px}.voice-choice-buttons button{min-height:74px}.voice-choice-buttons strong{font-size:27px}}
+
+/* SMART NAME VOICE v1.1 — 관리자 현장 진단 */
+.voice-debug-toggle{min-height:36px;padding:7px 10px;border:1px solid rgba(89,202,255,.42);border-radius:10px;background:rgba(56,153,214,.12);color:#d9f3ff;font-size:11px;font-weight:900;cursor:pointer}
+.voice-debug-toggle[aria-pressed="true"]{border-color:#5ed5ff;background:rgba(56,185,255,.25);box-shadow:0 0 16px rgba(69,194,255,.22)}
+.voice-debug-panel{position:fixed;z-index:55;right:12px;bottom:12px;width:min(560px,calc(100vw - 24px));max-height:min(78vh,720px);overflow:auto;padding:15px;border:1px solid rgba(89,202,255,.48);border-radius:18px;background:rgba(4,18,31,.97);color:#eef8ff;box-shadow:0 22px 70px rgba(0,0,0,.58);text-align:left}
+.voice-debug-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;color:#66dcff}.voice-debug-head button{padding:7px 11px;border:1px solid #34536b;border-radius:9px;background:#102a3f;color:#fff}
+.voice-debug-grid{display:grid;grid-template-columns:105px minmax(0,1fr);gap:6px 10px;font-size:12px}.voice-debug-grid span{color:#91abc0}.voice-debug-grid b{overflow-wrap:anywhere;color:#fff}
+.voice-debug-panel pre{max-height:230px;margin:12px 0 0;padding:10px;overflow:auto;border-radius:11px;background:#020b13;color:#94e7ff;font:11px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap}
+@media(max-width:760px){.voice-debug-toggle{position:fixed;left:10px;bottom:16px;z-index:44}.voice-debug-panel{right:6px;bottom:68px;width:calc(100vw - 12px);max-height:72vh;padding:12px}.voice-debug-grid{grid-template-columns:86px minmax(0,1fr)}}
