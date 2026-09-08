@@ -1,7 +1,7 @@
 const originalUrl = new URL('./star.js?v=3311', import.meta.url);
 const connectorUrl = new URL('./spark-connector.js?v=102', import.meta.url).href;
 const smartNameVoiceUrl = new URL('./smart-name-voice.js?v=100', import.meta.url).href;
-const smartMultiStarUrl = new URL('./smart-multi-star.js?v=100', import.meta.url).href;
+const smartMultiStarUrl = new URL('./smart-multi-star.js?v=101', import.meta.url).href;
 const source = await fetch(originalUrl, { cache: 'no-store' }).then(r => {
   if (!r.ok) throw new Error(`STAR module load failed: ${r.status}`);
   return r.text();
@@ -41,7 +41,7 @@ const url = URL.createObjectURL(blob);
 try {
   await import(url);
   const version=document.querySelector('.brand span');
-  if(version)version.textContent='v3.4.0 · SMART NAME VOICE v1.1.1 · SMART MULTI STAR v1.0';
+  if(version)version.textContent='v3.4.1 · SMART NAME VOICE v1.1.1 · SMART MULTI STAR v1.0.1';
 } finally {
   setTimeout(() => URL.revokeObjectURL(url), 10000);
 }
