@@ -1,7 +1,9 @@
 import {resolveStudentName,compact,decomposeHangul,levenshtein} from "./smart-name-voice.js?v=100";
 
-// SMART MULTI STAR v1.0
+// SMART MULTI STAR v1.0.1
 // 여러 학생 이름을 한 문장에서 찾되 후보는 호출자가 전달한 현재 출석자만 사용한다.
+// v1.0.1: 음성 문장에 실제 출석자 이름/alias가 2개 이상 직접 포함되면
+// 기존 1인 후보 선택으로 내려가기 전에 다중 학생으로 우선 확정한다.
 
 function similarity(a,b){
   a=String(a??"");b=String(b??"");
@@ -34,10 +36,32 @@ function stripCommand(raw,commandTerms=[]){
 function tokenise(raw){
   return String(raw??"")
     .replace(/[，、,/]+/g," ")
-    .replace(/\b그리고\b|\b및\b|\b또\b/g," ")
+    .replace(/그리고|및|또/g," ")
     .split(/\s+/)
     .map(x=>x.replace(/(에게|한테|이한테|께|하고|이랑|랑|과|와)$/,""))
     .map(x=>x.trim()).filter(Boolean)
+}
+function resolveExactContained(raw,students){
+  const text=compact(raw);if(!text)return [];
+  const hits=[];
+  for(const student of students){
+    let best=null;
+    for(const name of namesFor(student)){
+      if(name.length<2)continue;
+      const index=text.indexOf(name);
+      if(index<0)continue;
+      const row={student,score:1,spoken:name,index,len:name.length,registered:name};
+      if(!best||row.len>best.len||row.index<best.index)best=row
+    }
+    if(best)hits.push(best)
+  }
+  hits.sort((a,b)=>a.index-b.index||b.len-a.len);
+  const out=[];let end=-1;
+  for(const hit of hits){
+    if(hit.index<end)continue;
+    out.push(hit);end=hit.index+hit.len
+  }
+  return out
 }
 function resolveTokens(tokens,students){
   const out=[];const used=new Set();
@@ -53,7 +77,7 @@ function resolveTokens(tokens,students){
 function resolveJoined(raw,students){
   const text=compact(raw);if(text.length<4)return [];
   const out=[];const used=new Set();let pos=0,guard=0;
-  while(pos<text.length&&guard++<8){
+  while(pos<text.length&&guard++<12){
     let best=null,second=null;
     for(const student of students){
       if(used.has(String(student.id)))continue;
@@ -79,9 +103,12 @@ export function resolveMultiStudentNames({alternatives=[],students=[],commandTer
   const roster=students||[];let best={students:[],rows:[],source:"",score:0};
   for(const raw of alternatives||[]){
     const nameArea=stripCommand(raw,commandTerms);if(!nameArea)continue;
-    const tokens=tokenise(nameArea);
-    let rows=tokens.length>1?resolveTokens(tokens,roster):[];
-    if(rows.length<2)rows=resolveJoined(nameArea,roster);
+    let rows=resolveExactContained(nameArea,roster);
+    if(rows.length<2){
+      const tokens=tokenise(nameArea);
+      rows=tokens.length>1?resolveTokens(tokens,roster):[];
+      if(rows.length<2)rows=resolveJoined(nameArea,roster)
+    }
     rows=uniqueRows(rows);
     const score=rows.length?rows.reduce((sum,x)=>sum+(x.score||0),0)/rows.length:0;
     if(rows.length>best.students.length||(rows.length===best.students.length&&score>best.score)){
