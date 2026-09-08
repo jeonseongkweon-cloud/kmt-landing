@@ -215,7 +215,7 @@ function unlockStarAudio(){
 }
 function playStarSound(){
   try{const ctx=ensureStarAudioReady();if(!ctx)return;
-    const now=ctx.currentTime;[[740,0],[988,.06],[1318,.12]].forEach(([f,d],i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(.0001,now+d);g.gain.exponentialRampToValueAtTime(i===2?.018:.012,now+d+.012);g.gain.exponentialRampToValueAtTime(.0001,now+d+.16);o.connect(g).connect(ctx.destination);o.start(now+d);o.stop(now+d+.18)})}catch(e){console.warn("[STAR SOUND]",e)}
+    const now=ctx.currentTime;[[740,0],[988,.06],[1318,.12]].forEach(([f,d],i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(.0001,now+d);g.gain.exponentialRampToValueAtTime(i===2?.08:.05,now+d+.012);g.gain.exponentialRampToValueAtTime(.0001,now+d+.16);o.connect(g).connect(ctx.destination);o.start(now+d);o.stop(now+d+.18)})}catch(e){console.warn("[STAR SOUND]",e)}
 }
 function playAttendanceSound(){try{const ctx=ensureStarAudioReady();if(!ctx)return;const o=ctx.createOscillator(),g=ctx.createGain(),n=ctx.currentTime;o.frequency.setValueAtTime(660,n);o.frequency.linearRampToValueAtTime(990,n+.15);g.gain.setValueAtTime(.1,n);g.gain.exponentialRampToValueAtTime(.0001,n+.22);o.connect(g).connect(ctx.destination);o.start();o.stop(n+.23)}catch{}}
 function highlightStudent(student,{arrive=false}={}){
