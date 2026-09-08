@@ -1,4 +1,4 @@
-// SMART MULTI STAR v2.0 — integrated parser for the existing STAR microphone.
+// SMART MULTI STAR v2.1 — integrated parser for the existing STAR microphone.
 // Pure name resolution only. STAR storage/execution remains inside star.js.
 import { compact, decomposeHangul, levenshtein } from "./smart-name-voice.js?v=101";
 
@@ -16,7 +16,7 @@ function exactRows(raw,students){
   const text=compact(clean(raw)),rows=[];
   for(const student of students){
     let best=null;
-    for(const name of namesFor(student)){const index=text.indexOf(name);if(index<0)continue;const row={student,index,end:index+name.length,spoken:name,score:1};if(!best||row.index<best.index||row.index===best.index&&row.end>best.end)best=row}
+    for(const name of namesFor(student)){const index=text.indexOf(name);if(index<0)continue;const row={student,index,end:index+name.length,spoken:name,score:1,exact:true};if(!best||row.index<best.index||row.index===best.index&&row.end>best.end)best=row}
     if(best)rows.push(best)
   }
   rows.sort((a,b)=>a.index-b.index||b.end-a.end);
@@ -28,7 +28,7 @@ function tokenRows(raw,students){
   const tokens=clean(raw).split(/\s+/).map(compact).filter(x=>x.length>=2),used=new Set(),out=[];
   for(const token of tokens){
     let best=null,second=null;
-    for(const student of students){if(used.has(student.id))continue;let s=0;for(const name of namesFor(student))s=Math.max(s,score(token,name));const row={student,spoken:token,score:s};if(!best||s>best.score){second=best;best=row}else if(!second||s>second.score)second=row}
+    for(const student of students){if(used.has(student.id))continue;let s=0;for(const name of namesFor(student))s=Math.max(s,score(token,name));const row={student,spoken:token,score:s,exact:s===1};if(!best||s>best.score){second=best;best=row}else if(!second||s>second.score)second=row}
     if(best&&best.score>=.68&&best.score-(second?.score||0)>=.045){out.push(best);used.add(best.student.id)}
   }
   return out
@@ -46,7 +46,7 @@ function joinedRows(raw,students){
         const len=registered.length;
         for(const take of [len-1,len,len+1].filter(x=>x>=2)){
           if(pos+take>text.length)continue;const spoken=text.slice(pos,pos+take),s=score(spoken,registered);if(s<.67)continue;
-          const nextUsed=new Set(used);nextUsed.add(student.id);const next=walk(pos+take,nextUsed);const candidate={rows:[{student,spoken,score:s},...next.rows],sum:s+next.sum};
+          const nextUsed=new Set(used);nextUsed.add(student.id);const next=walk(pos+take,nextUsed);const candidate={rows:[{student,spoken,score:s,exact:s===1},...next.rows],sum:s+next.sum};
           if(candidate.rows.length>best.rows.length||candidate.rows.length===best.rows.length&&candidate.sum>best.sum)best=candidate
         }
       }
@@ -61,11 +61,27 @@ function bestRows(raw,students){
   return sets.sort((a,b)=>b.length-a.length||b.reduce((s,x)=>s+(x.score||0),0)-a.reduce((s,x)=>s+(x.score||0),0))[0]
 }
 export function resolveIntegratedMultiVoice({alternatives=[],students=[]}={}){
+  const perAlternative=alternatives.map((raw,altIndex)=>({raw,altIndex,rows:bestRows(raw,students)}));
   let best=[];
-  for(const raw of alternatives){const rows=bestRows(raw,students);if(rows.length>best.length||rows.length===best.length&&rows.reduce((s,x)=>s+(x.score||0),0)>best.reduce((s,x)=>s+(x.score||0),0))best=rows}
+  for(const item of perAlternative){const rows=item.rows;if(rows.length>best.length||rows.length===best.length&&rows.reduce((s,x)=>s+(x.score||0),0)>best.reduce((s,x)=>s+(x.score||0),0))best=rows}
+
+  // Samsung/Web Speech frequently splits a multi-name utterance across alternatives:
+  // e.g. one alternative contains "아리아", another contains "김강민". Preserve every
+  // exact current-roster name heard in any alternative, instead of throwing the second name away.
+  const exactAcross=new Map();
+  for(const item of perAlternative){
+    for(const row of exactRows(item.raw,students))if(!exactAcross.has(String(row.student.id)))exactAcross.set(String(row.student.id),{...row,altIndex:item.altIndex})
+  }
+  if(exactAcross.size>=2){
+    const merged=[...exactAcross.values()];
+    // Prefer the order from an alternative that contains several names; otherwise use alternative order.
+    merged.sort((a,b)=>a.altIndex-b.altIndex||a.index-b.index);
+    best=merged
+  }
+
   const seen=new Set();best=best.filter(x=>!seen.has(String(x.student.id))&&seen.add(String(x.student.id)));
-  const obviousMulti=alternatives.some(raw=>{
+  const obviousMulti=best.length>=2||alternatives.some(raw=>{
     const text=clean(raw),tokens=text.split(/\s+/).filter(x=>x.length>=2);return tokens.length>=2||compact(text).length>=5;
-  });
-  return {students:best.map(x=>x.student),rows:best,obviousMulti};
+  })||exactAcross.size>=2;
+  return {students:best.map(x=>x.student),rows:best,obviousMulti,exactAcross:[...exactAcross.values()]};
 }
