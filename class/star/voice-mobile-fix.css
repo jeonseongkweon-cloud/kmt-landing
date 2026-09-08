@@ -1,0 +1,15 @@
+/* Mobile voice UI visibility patch — keep guidance readable without changing STAR logic. */
+@media(max-width:760px), (max-width:1024px) and (pointer:coarse){
+  .mobile-voice-remote{
+    width:88px!important;
+    height:88px!important;
+    right:max(8px,env(safe-area-inset-right))!important;
+    bottom:max(10px,calc(env(safe-area-inset-bottom) + 8px))!important;
+    border-width:3px!important;
+  }
+  .mobile-voice-remote span{font-size:22px!important}
+  .mobile-voice-remote strong{font-size:14px!important}
+  .mobile-voice-remote small{font-size:9px!important}
+  .voice-choice-dialog[open] ~ .mobile-voice-remote{display:none!important}
+  .voice-debug-panel:not([hidden]) ~ .mobile-voice-remote{display:none!important}
+}
