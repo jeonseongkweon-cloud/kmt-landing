@@ -7,7 +7,7 @@ const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase
 const cfg=window.KMT_STAR_CONFIG,db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}}),$=id=>document.getElementById(id);
 const VOICE_COMMAND_COOLDOWN_MS=2600;
 const NOTICE_ICONS={focus:"🥋",notice:"📢",personal:"🔔",item:"🎒",event:"📅",praise:"⭐"};
-const state={periods:[],students:[],session:null,period:null,categories:[],category:null,attendance:[],events:[],praises:[],champions:[],notices:[],mobileSort:localStorage.getItem("kmt-star-mobile-sort")||"stars",realtimeChannel:null,realtimeTimer:null,livePollTimer:null,livePollBusy:false,localAwardPending:0,leaderId:null,leaderReady:false,growth:{goal:0,stage:0,ready:false,revealTimer:null,celebrationTimers:[]},voice:{recognition:null,listening:false,mode:null,lastCommands:new Map(),lastVoiceStarId:null,pending:null,lastDebug:null,sessionId:0,active:null,retryTimer:null,debug:localStorage.getItem("kmt-voice-debug")==="on",debugEvents:[]}};
+const state={periods:[],students:[],session:null,period:null,categories:[],category:null,attendance:[],events:[],praises:[],champions:[],notices:[],selectedIds:new Set(),mobileSort:localStorage.getItem("kmt-star-mobile-sort")||"stars",realtimeChannel:null,realtimeTimer:null,livePollTimer:null,livePollBusy:false,localAwardPending:0,leaderId:null,leaderReady:false,growth:{goal:0,stage:0,ready:false,revealTimer:null,celebrationTimers:[]},voice:{recognition:null,listening:false,mode:null,lastCommands:new Map(),lastVoiceStarId:null,pending:null,lastDebug:null,sessionId:0,active:null,retryTimer:null,debug:localStorage.getItem("kmt-voice-debug")==="on",debugEvents:[]}};
 const praisePresets=["오늘 인사가 아주 좋았어요.","친구를 도와줬어요.","끝까지 포기하지 않았어요.","수업에 집중했어요."];
 const clean=v=>v==null?"":String(v).trim(),escapeHtml=v=>clean(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
 const categoryDisplayName=category=>category?.code==="CARE"?"인성별":category?.code==="KICK"?"효도별":clean(category?.name);
@@ -105,8 +105,7 @@ function renderGrowth({celebrate=true}={}){
   const total=currentRoomEvents().length,attendanceCount=attendedStudents().length,goal=attendanceCount*8;
   state.growth.goal=goal;
   const stage=growthStageFor(total,goal),thresholds=goal?growthThresholds(goal):[];
-  if(!$("growthStages").children.length)$("growthStages").innerHTML=Array.from({length:7},(_,i)=>`<div class="growth-stage" data-stage="${i+1}"><span>${i+1}</span><img src="../../assets/star-growth/stage-${String(i+1).padStart(2,"0")}.png" alt="공동성장 ${i+1}단계"></div>`).join("");
-  document.querySelectorAll(".growth-stage").forEach((el,index)=>{const active=index<stage,current=stage>0&&index+1===stage;el.classList.toggle("active",active);el.classList.toggle("current-stage",current);el.classList.toggle("new-stage",celebrate&&state.growth.ready&&index+1===stage&&stage>state.growth.stage)});
+  const shownStage=Math.max(1,stage);$("growthStages").innerHTML=`<div class="growth-stage active current-stage ${celebrate&&state.growth.ready&&stage>state.growth.stage?"new-stage":""}" data-stage="${shownStage}"><span>${shownStage} / 7</span><img src="../../assets/star-growth/stage-${String(shownStage).padStart(2,"0")}.png" alt="공동성장 ${shownStage}단계"></div>`;
   $("growthScore").textContent=goal?`⭐ ${total} / ${goal}`:"⭐ 0 / 목표 미정";$("growthMeterFill").style.width=goal?`${Math.min(100,total/goal*100)}%`:"0%";
   if(!goal){$("growthNext").textContent="첫 학생 출석 시 자동 산출됩니다.";$("growthHint").textContent="출석 인원 기준 자동 공동목표 · 출석 대기 중"}
   else if(stage>=7){$("growthNext").textContent=total>goal?`목표 초과 ⭐ +${total-goal}`:"공동 목표를 달성했습니다!";$("growthHint").textContent=`출석 ${attendanceCount}명 · 자동 목표 ${goal} STAR · 완전체 달성`}
@@ -345,18 +344,21 @@ async function deleteNotice(id){const r=await db.from("kmt_class_notices").updat
 async function login(){location.replace("../")}
 async function boot(){const{data:{session},error}=await db.auth.getSession();if(error){toast(`로그인 확인 실패: ${error.message}`);return}if(!session||!isSingleOwner(session)){location.replace("../");return}$("loginScreen").hidden=true;$("app").hidden=false;startClock();await loadBase();await inspectMicrophonePermission();renderVoiceDebug()}
 function startClock(){const tick=()=>{$("dateLabel").textContent=new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,year:"numeric",month:"long",day:"numeric",weekday:"short"}).format(new Date());$("clockLabel").textContent=localTime()};tick();setInterval(tick,15000)}
-async function loadBase(){const [p,s,c]=await Promise.all([db.from("class_periods").select("*").eq("is_active",true).order("sort_order"),db.from("students").select("id,student_code,name,photo_url,enrollments(class_period_id,status),kmt_student_voice_aliases(id,alias,alias_key)").order("student_code"),db.from("star_categories").select("*").eq("is_active",true).order("sort_order")]);const error=p.error||s.error||c.error;if(error){toast(error.message);return}state.periods=p.data||[];state.students=(s.data||[]).filter(x=>enrollment(x).status==="재원");state.categories=c.data||[];state.category=state.categories[0]||null;syncSparkRoster({db,students:state.students}).catch(e=>console.warn("[GLOBAL SPARK ROSTER]",e));await openIntegratedStarRoom()}
+async function loadBase(){const [p,s,c]=await Promise.all([db.from("class_periods").select("*").eq("is_active",true).order("sort_order"),db.from("students").select("id,student_code,name,photo_url,enrollments(class_period_id,status),kmt_student_voice_aliases(id,alias,alias_key)").order("student_code"),db.from("star_categories").select("*").eq("is_active",true).order("sort_order")]);const error=p.error||s.error||c.error;if(error){toast(error.message);return}state.periods=p.data||[];state.students=(s.data||[]).filter(x=>enrollment(x).status==="재원");state.categories=c.data||[];state.category=state.categories.find(x=>x.code==="POSTURE")||state.categories[0]||null;syncSparkRoster({db,students:state.students}).catch(e=>console.warn("[GLOBAL SPARK ROSTER]",e));await openIntegratedStarRoom()}
 function integratedStarPeriod(){return state.periods.find(p=>clean(p.name).includes("기타")||clean(p.code).toUpperCase()==="ETC")||state.periods.at(-1)||state.periods[0]||null}
 async function openIntegratedStarRoom(){const p=integratedStarPeriod();if(!p){$("periodScreen").hidden=false;$("starScreen").hidden=true;$("periodGrid").innerHTML='<div class="empty">활성 수업부가 없어 STAR ROOM을 열 수 없습니다.</div>';toast("활성 수업부를 확인해 주세요.");return}await openPeriod(p)}
 function renderPeriods(){}
-async function openPeriod(p){state.period=p;let {data,error}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",p.id).maybeSingle();if(error){toast(error.message);return}if(!data){const created=await db.from("class_sessions").insert({session_date:localDate(),class_period_id:p.id,status:"open"}).select().single();if(created.error){toast(created.error.message);return}data=created.data}state.session=data;state.growth.goal=0;state.growth.stage=0;state.growth.ready=false;await loadRecords();syncGrowthCycle();await loadNotices();startRealtime();startLiveFallback();$("periodScreen").hidden=true;$("starScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent="오늘의 통합 STAR ROOM";$("sessionTitle").dataset.desktopTitle="오늘 ⭐ STAR ROOM";renderCategories();renderStudents();renderGrowth({celebrate:false});setTimeout(playStarRoomEntrySound,80)}
+async function openPeriod(p){state.period=p;let {data,error}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",p.id).maybeSingle();if(error){toast(error.message);return}if(!data){const created=await db.from("class_sessions").insert({session_date:localDate(),class_period_id:p.id,status:"open"}).select().single();if(created.error){toast(created.error.message);return}data=created.data}state.session=data;state.selectedIds.clear();state.category=state.categories.find(x=>x.code==="POSTURE")||state.categories[0]||null;state.growth.goal=0;state.growth.stage=0;state.growth.ready=false;await loadRecords();syncGrowthCycle();await loadNotices();startRealtime();startLiveFallback();$("periodScreen").hidden=true;$("starScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent="오늘의 통합 STAR ROOM";$("sessionTitle").dataset.desktopTitle="오늘 ⭐ STAR ROOM";renderCategories();renderStudents();renderGrowth({celebrate:false});setTimeout(playStarRoomEntrySound,80)}
 async function loadRecords(){const [a,e,p,c]=await Promise.all([db.from("attendance").select("id,session_id,student_id,status,checked_at,checked_out_at").eq("attendance_date",localDate()),db.from("star_events").select("*").eq("session_id",state.session.id).order("awarded_at"),db.from("praise_events").select("*").eq("session_id",state.session.id).order("praised_at"),db.from("champions").select("*,star_categories(name,icon)").eq("session_id",state.session.id).order("selected_at")]);const error=a.error||e.error||p.error||c.error;if(error){toast(error.message);return}state.attendance=a.data||[];state.events=e.data||[];state.praises=p.data||[];state.champions=c.data||[]}
 function renderCategories(){
   const primary=state.categories[0];if(!primary){$("categoryBar").innerHTML="";return}
   const preferred=["인사","자세","배려","정리","도전"],rank=c=>{const i=preferred.findIndex(v=>clean(c.name).includes(v));return i<0?preferred.length:i};
   const details=[...state.categories].sort((a,b)=>rank(a)-rank(b)||Number(a.sort_order||0)-Number(b.sort_order||0));
   $("categoryBar").innerHTML=`<button class="category praise-primary ${primary.id===state.category?.id?"active":""}" data-id="${primary.id}">⭐ 칭찬별</button><details class="category-more"><summary>더보기 ▾</summary><div class="category-more-list">${details.map(c=>`<button class="category ${c.id===state.category?.id?"active":""}" data-id="${c.id}">${c.icon} ${escapeHtml(categoryDisplayName(c))}</button>`).join("")}</div></details><label class="mobile-sort-control"><span>↕</span><select id="mobileSortSelect" aria-label="학생카드 정렬"><option value="stars">별순</option><option value="period">부별</option><option value="name">이름순</option><option value="attendance">출석순</option></select></label>`;
-  document.querySelectorAll(".category").forEach(b=>b.onclick=()=>{state.category=state.categories.find(c=>c.id===b.dataset.id);$("categoryName").textContent=b.classList.contains("praise-primary")?"⭐ 칭찬별 선택됨":`${state.category.icon} ${categoryDisplayName(state.category)} 선택됨`;renderCategories()});
+  const selectCategory=id=>{state.category=state.categories.find(c=>String(c.id)===String(id))||state.category;$("categoryName").textContent=`${state.category.icon||"⭐"} ${categoryDisplayName(state.category)} 선택됨`;$("categoryPickerButton").textContent=`${state.category.icon||"⭐"} ${categoryDisplayName(state.category)} ▼`;renderSelectionToolbar();renderCategories()};
+  document.querySelectorAll("#categoryBar .category").forEach(b=>b.onclick=()=>selectCategory(b.dataset.id));
+  const grid=$("categoryDialogGrid");if(grid){grid.innerHTML=details.map(c=>`<button type="button" class="${c.id===state.category?.id?"active":""}" data-category-choice="${c.id}">${c.icon||"⭐"} ${escapeHtml(categoryDisplayName(c))}${c.id===state.category?.id?" ✓":""}</button>`).join("");grid.querySelectorAll("[data-category-choice]").forEach(b=>b.onclick=()=>{selectCategory(b.dataset.categoryChoice);$("categoryDialog").close()})}
+  if(state.category){$("categoryPickerButton").textContent=`${state.category.icon||"⭐"} ${categoryDisplayName(state.category)} ▼`;$("categoryName").textContent=`${state.category.icon||"⭐"} ${categoryDisplayName(state.category)} 선택됨`}
   const sortSelect=$("mobileSortSelect");sortSelect.value=["stars","period","name","attendance"].includes(state.mobileSort)?state.mobileSort:"stars";sortSelect.onchange=()=>{state.mobileSort=sortSelect.value;localStorage.setItem("kmt-star-mobile-sort",state.mobileSort);renderStudents()}
 }
 function scoreReachedAt(studentId){
@@ -365,8 +367,8 @@ function scoreReachedAt(studentId){
 function sortedAttendedStudents(){
   const rows=attendedStudents().map((s,index)=>({s,index,count:eventsFor(s.id).length,reached:scoreReachedAt(s.id)}));
   const starSort=(a,b)=>b.count-a.count||a.reached-b.reached||a.index-b.index||a.s.name.localeCompare(b.s.name,"ko");
-  if(!matchMedia("(max-width:760px), (max-width:1024px) and (pointer:coarse)").matches)return rows.sort(starSort).map(x=>x.s);
   const attendanceAt=studentId=>{const records=state.attendance.filter(a=>a.student_id===studentId);const latest=records.sort((a,b)=>new Date(b.checked_at||b.updated_at||0)-new Date(a.checked_at||a.updated_at||0))[0];const time=Date.parse(latest?.checked_at||"");return Number.isFinite(time)?time:Number.MAX_SAFE_INTEGER};
+  if(!matchMedia("(max-width:760px), (max-width:1024px) and (pointer:coarse)").matches)return rows.sort((a,b)=>attendanceAt(a.s.id)-attendanceAt(b.s.id)||a.index-b.index).map(x=>x.s);
   const periodRank=student=>{const id=enrollment(student).class_period_id,index=state.periods.findIndex(p=>p.id===id);return index<0?Number.MAX_SAFE_INTEGER:index};
   const sorter=state.mobileSort==="period"?(a,b)=>periodRank(a.s)-periodRank(b.s)||a.s.name.localeCompare(b.s.name,"ko"):state.mobileSort==="name"?(a,b)=>a.s.name.localeCompare(b.s.name,"ko"):state.mobileSort==="attendance"?(a,b)=>attendanceAt(a.s.id)-attendanceAt(b.s.id)||a.s.name.localeCompare(b.s.name,"ko"):starSort;
   return rows.sort(sorter).map(x=>x.s)
@@ -376,15 +378,28 @@ function animateCardMoves(before){requestAnimationFrame(()=>document.querySelect
 function showLeaderChanged(student){
   const old=document.getElementById("leaderChangeEffect");if(old)old.remove();const layer=document.createElement("div");layer.id="leaderChangeEffect";layer.className="leader-change-effect";layer.innerHTML=`<div><span>👑</span><strong>새로운 1위!</strong><b>${escapeHtml(student.name)}</b></div>`;document.body.appendChild(layer);playLeaderChangeSound();setTimeout(()=>layer.classList.add("out"),1200);setTimeout(()=>layer.remove(),1800)
 }
+function usesMobileStarControls(){return matchMedia("(max-width:760px), (max-width:1024px) and (pointer:coarse)").matches}
+function gridColumns(count){if(count<=1)return 1;if(count<=3)return count;if(count<=6)return 3;if(count<=8)return 4;return 5}
+function renderSelectionToolbar(){
+  const count=state.selectedIds.size,label=state.category?categoryDisplayName(state.category):"STAR";
+  if($("selectionCount"))$("selectionCount").textContent=`선택 ${count}명`;
+  if($("clearSelectionButton"))$("clearSelectionButton").disabled=!count;
+  if($("awardSelectedButton")){$("awardSelectedButton").disabled=!count;$("awardSelectedButton").textContent=count?`⭐ 선택 ${count}명에게 ${label} +1`:"학생을 선택하세요"}
+}
+function toggleStudentSelection(id){
+  const key=String(id);if(state.selectedIds.has(key))state.selectedIds.delete(key);else state.selectedIds.add(key);renderStudents()
+}
 function renderStudents(){
-  const before=captureCardPositions(),list=sortedAttendedStudents(),leader=attendedStudents().map((s,index)=>({s,index,count:eventsFor(s.id).length,reached:scoreReachedAt(s.id)})).sort((a,b)=>b.count-a.count||a.reached-b.reached||a.index-b.index||a.s.name.localeCompare(b.s.name,"ko"))[0]?.s||null,previousLeader=state.leaderId;
+  const before=captureCardPositions(),list=sortedAttendedStudents(),maxScore=Math.max(0,...attendedStudents().map(s=>eventsFor(s.id).length)),leaders=new Set(maxScore>0?attendedStudents().filter(s=>eventsFor(s.id).length===maxScore).map(s=>String(s.id)):[]),leader=list.find(s=>leaders.has(String(s.id)))||null,previousLeader=state.leaderId;
+  const presentIds=new Set(list.map(s=>String(s.id)));state.selectedIds.forEach(id=>{if(!presentIds.has(id))state.selectedIds.delete(id)});
   $("emptyMessage").hidden=!!list.length;$("totalStars").textContent=currentRoomEvents().length;
-  $("studentGrid").innerHTML=list.map(s=>{const count=eventsFor(s.id).length,photo=clean(s.photo_url),perfect=count>=cfg.perfectStar,isLeader=s.id===leader?.id&&count>0;return `<article class="student ${perfect?"perfect":""} ${isLeader?"current-leader":""}" data-student="${s.id}">${isLeader?'<div class="leader-badge">👑 현재 1위</div>':""}<button class="star-main" data-star="${s.id}">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="">`:`<div class="photo fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<h2>${escapeHtml(s.name)}</h2><div class="star-count">⭐ × ${count}</div><div class="meter"><i style="width:${Math.min(100,count/cfg.perfectStar*100)}%"></i></div><small>${perfect?"PERFECT STAR":isLeader?"🔥 챔피언 후보":"카드를 눌러 +1"}</small></button><div class="card-actions"><button data-detail="${s.id}">상세</button><button class="praise" data-praise="${s.id}">👏 칭찬</button><button class="undo" data-undo="${s.id}">UNDO</button></div></article>`}).join("");
+  const columns=gridColumns(list.length);$("studentGrid").dataset.count=list.length;$("studentGrid").style.setProperty("--grid-columns",columns);$("studentGrid").style.setProperty("--grid-rows",Math.max(1,Math.ceil(list.length/columns)));$("studentGrid").style.setProperty("--card-width",`${100/columns}%`);
+  $("studentGrid").innerHTML=list.map(s=>{const count=eventsFor(s.id).length,photo=clean(s.photo_url),perfect=count>=cfg.perfectStar,isLeader=leaders.has(String(s.id)),selected=state.selectedIds.has(String(s.id));return `<article class="student ${perfect?"perfect":""} ${isLeader?"current-leader":""} ${selected?"selected":""}" data-student="${s.id}">${isLeader?'<div class="leader-badge" aria-label="현재 공동 1등">👑</div>':""}${selected?'<div class="selection-badge">✓</div>':""}<div class="star-main" data-star="${s.id}" role="button" tabindex="0" aria-pressed="${selected}">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="${escapeHtml(s.name)} 사진">`:`<div class="photo fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<div class="student-line"><h2>${escapeHtml(s.name)}</h2><strong class="star-count">⭐${count}</strong><button class="undo card-undo" type="button" data-undo="${s.id}" aria-label="${escapeHtml(s.name)} 마지막 STAR 취소">↶</button></div></div></article>`}).join("");
   animateCardMoves(before);
   state.leaderId=leader&&eventsFor(leader.id).length>0?leader.id:null;
   if(state.leaderReady&&state.leaderId&&state.leaderId!==previousLeader){document.querySelector(`[data-student="${state.leaderId}"]`)?.classList.add("leader-changed");showLeaderChanged(leader)}
   state.leaderReady=true;
-  document.querySelectorAll("[data-star]").forEach(b=>b.onclick=()=>award(state.students.find(s=>s.id===b.dataset.star)));document.querySelectorAll("[data-undo]").forEach(b=>b.onclick=()=>undo(state.students.find(s=>s.id===b.dataset.undo)));document.querySelectorAll("[data-detail]").forEach(b=>b.onclick=()=>showDetail(state.students.find(s=>s.id===b.dataset.detail)));document.querySelectorAll("[data-praise]").forEach(b=>b.onclick=()=>showPraise(state.students.find(s=>s.id===b.dataset.praise)));renderGrowth()
+  document.querySelectorAll("[data-star]").forEach(b=>b.onclick=()=>{const student=state.students.find(s=>String(s.id)===String(b.dataset.star));if(usesMobileStarControls())award(student);else toggleStudentSelection(b.dataset.star)});document.querySelectorAll("[data-undo]").forEach(b=>b.onclick=e=>{e.stopPropagation();undo(state.students.find(s=>String(s.id)===String(b.dataset.undo)))});renderSelectionToolbar();renderGrowth()
 }
 
 async function awardAdvancedBadges(studentId){
@@ -409,6 +424,7 @@ async function awardAll(){
   if(state.session.status==="closed"){toast("종료된 수업입니다.");return}
   if(!students.length){toast("현재 STAR ROOM에 출석 중인 학생이 없습니다.");return}
   const label=categoryDisplayName(state.category)||"별";
+  if(!confirm(`현재 출석학생 ${students.length}명 모두에게 ${label} +1을 지급합니다.`))return;
   const button=$("awardAllButton"),category=state.category;
   button.disabled=true;state.localAwardPending++;$("saveStatus").textContent=`전체 ${students.length}명 저장 중...`;
   try{
@@ -429,6 +445,22 @@ async function awardAll(){
     toast(`⭐ ${students.length}명 모두에게 ${label} +1!`);
     setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장 · LIVE",1400);
   }finally{state.localAwardPending=Math.max(0,state.localAwardPending-1);button.disabled=false}
+}
+
+async function awardSelected(){
+  if(!state.category){toast("STAR 종류를 먼저 선택해 주세요.");return}
+  if(state.session.status==="closed"){toast("종료된 수업입니다.");return}
+  const students=attendedStudents().filter(s=>state.selectedIds.has(String(s.id)));if(!students.length){toast("학생을 먼저 선택해 주세요.");return}
+  const category=state.category,label=categoryDisplayName(category)||"별",button=$("awardSelectedButton");button.disabled=true;state.localAwardPending++;$("saveStatus").textContent=`선택 ${students.length}명 저장 중...`;
+  try{
+    const payload=students.map(s=>({session_id:state.session.id,student_id:s.id,category_id:category.id})),{data,error}=await db.from("star_events").insert(payload).select();
+    if(error){toast(`선택 STAR 저장 실패: ${error.message}`);return}
+    const rows=data||[];state.events.push(...rows);
+    await Promise.allSettled(rows.map(event=>{const student=students.find(s=>String(s.id)===String(event.student_id));return student?syncSparkAward({db,student,category,event}):Promise.resolve({skipped:true})}));
+    await Promise.allSettled(students.map(s=>awardAdvancedBadges(s.id)));
+    state.selectedIds.clear();renderStudents();students.forEach(s=>highlightStudent(s));playStarSound();playGrowthSound(false);
+    $("saveStatus").textContent=`선택 ${students.length}명 ${label} +1 완료`;toast(`⭐ 선택 ${students.length}명에게 ${label} +1!`);setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장 · LIVE",1400)
+  }finally{state.localAwardPending=Math.max(0,state.localAwardPending-1);renderSelectionToolbar()}
 }
 
 async function award(s,{source="click"}={}){if(!state.category){toast("STAR 카테고리를 먼저 선택해 주세요.");return}if(state.session.status==="closed"){toast("종료된 수업입니다.");return}$("saveStatus").textContent=`${s.name} 저장 중...`;const category=state.category;state.localAwardPending++;try{const {data,error}=await db.from("star_events").insert({session_id:state.session.id,student_id:s.id,category_id:category.id}).select().single();if(error){toast(error.message);return}state.events.push(data);syncSparkAward({db,student:s,category,event:data}).then(result=>{if(result?.ok)console.info("[GLOBAL SPARK AWARD]",result)}).catch(e=>console.warn("[GLOBAL SPARK AWARD]",e));state.voice.lastVoiceStarId=source==="voice"?data.id:state.voice.lastVoiceStarId;const total=eventsFor(s.id).length;const newBadges=await awardAdvancedBadges(s.id);renderStudents();showBurst(s,category,total,newBadges);highlightStudent(s);playStarSound();$("saveStatus").textContent=advancedRewardText(s,total,newBadges);setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장",900)}finally{state.localAwardPending=Math.max(0,state.localAwardPending-1)}}
@@ -509,6 +541,12 @@ async function deleteChampion(id){const {error}=await db.from("champions").delet
 
 
 $("awardAllButton").onclick=awardAll;
+$("awardAllDialogButton").onclick=async()=>{$("categoryDialog").close();await awardAll()};
+$("awardSelectedButton").onclick=awardSelected;
+$("clearSelectionButton").onclick=()=>{state.selectedIds.clear();renderStudents()};
+$("categoryPickerButton").onclick=()=>{$("categoryDialog").showModal()};
+$("systemMenuButton").onclick=()=>{const menu=$("systemMenu"),open=menu.hidden;menu.hidden=!open;$("systemMenuButton").setAttribute("aria-expanded",String(open))};
+$("noticeMenuButton").onclick=()=>{$("systemMenu").hidden=true;renderNoticeList();$("noticeDialog").showModal()};
 $("voiceAttendanceButton").onclick=()=>startOneShotVoice("attendance");
 $("voiceStarButton").onclick=()=>startOneShotVoice("star");
 $("mobileVoiceRemote").onclick=()=>startOneShotVoice(null);
@@ -520,5 +558,6 @@ $("noticeManageButton").onclick=()=>{renderNoticeList();$("noticeDialog").showMo
 $("noticeForm").onsubmit=async e=>{e.preventDefault();try{await addNotice($("noticeType").value,$("noticeText").value);$("noticeText").value="";toast("전광판 공지를 추가했습니다.")}catch(err){toast(err.message)}};
 ["pointerdown","touchstart","keydown"].forEach(type=>document.addEventListener(type,unlockStarAudio,{once:true,passive:true}));
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&state.voice.listening)stopOneShotVoice()});
+document.addEventListener("keydown",e=>{const card=e.target.closest?.("[data-star]");if(card&&(e.key==="Enter"||e.key===" ")){e.preventDefault();card.click()}});
 
 $("loginButton").onclick=login;$("logoutButton").onclick=async()=>{await db.auth.signOut();location.reload()};$("backButton").onclick=()=>{window.open("../attendance/","_blank","noopener")};$("praiseForm").onsubmit=savePraise;$("championButton").onclick=showChampions;document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>$(b.dataset.close).close());$("starBurst").onclick=()=>$("starBurst").hidden=true;db.auth.onAuthStateChange((_e,s)=>{if(s&&$("app").hidden)setTimeout(boot,0)});boot();
