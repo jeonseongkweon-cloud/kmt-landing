@@ -9,6 +9,7 @@ const patched = source
   .replace('const SINGLE_OWNER_EMAIL="class-admin@ipma.kr";', 'const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";')
   .replace('from "./spark-connector.js?v=102";', `from "${connectorUrl}";`)
   .replace('from "./smart-name-voice.js?v=100";', `from "${smartNameVoiceUrl}";`)
+  .replace('$("mobileVoiceRemote").onclick=()=>startOneShotVoice(null);', '$("mobileVoiceRemote").onclick=()=>startOneShotVoice("star");')
   .replace('$("backButton").onclick=()=>{window.open("../attendance/","_blank","noopener")};', '$("backButton").onclick=()=>{location.href="../attendance/"};');
 const blob = new Blob([patched], { type: 'text/javascript' });
 const url = URL.createObjectURL(blob);
