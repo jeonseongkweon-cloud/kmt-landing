@@ -1,9 +1,10 @@
-// SMART MULTI STAR v1.0.2 — isolated remote
+// SMART MULTI STAR v1.0.3 — isolated remote
 // 기존 1인 음성 STAR 로직은 수정하지 않는다.
 import { compact, decomposeHangul, levenshtein } from "./smart-name-voice.js?v=101";
 
 const $=id=>document.getElementById(id);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let multiActive=false;
 function similarity(a,b){a=String(a??"");b=String(b??"");return 1-levenshtein(a,b)/Math.max(a.length,b.length,1)}
 function nameScore(spoken,registered){
   spoken=compact(spoken);registered=compact(registered);if(!spoken||!registered)return 0;if(spoken===registered)return 1;
@@ -23,7 +24,7 @@ function stripCommand(raw){
 }
 function exactContained(text,cards){
   const compactText=compact(text),hits=[];
-  for(const card of cards){const name=compact(card.name),index=compactText.indexOf(name);if(index>=0)hits.push({...card,index,score:1})}
+  for(const card of cards){const name=compact(card.name),index=compactText.indexOf(name);if(index>=0)hits.push({...card,index,score:1,spoken:card.name})}
   hits.sort((a,b)=>a.index-b.index);return hits
 }
 function fuzzyTokens(text,cards){
@@ -36,12 +37,37 @@ function fuzzyTokens(text,cards){
   return out
 }
 function resolveNames(alternatives,cards){
-  let best=[];
-  for(const raw of alternatives){let rows=exactContained(raw,cards);if(rows.length<2)rows=fuzzyTokens(raw,cards);const seen=new Set();rows=rows.filter(x=>!seen.has(x.id)&&seen.add(x.id));if(rows.length>best.length)best=rows}
+  const exactMap=new Map();
+  for(const raw of alternatives){for(const row of exactContained(raw,cards)){if(!exactMap.has(row.id))exactMap.set(row.id,row)}}
+  if(exactMap.size>=2)return [...exactMap.values()];
+  const support=new Map();
+  for(const raw of alternatives){
+    for(const row of fuzzyTokens(raw,cards)){
+      const prev=support.get(row.id);if(!prev||row.score>prev.score)support.set(row.id,row)
+    }
+  }
+  return [...support.values()].sort((a,b)=>b.score-a.score)
+}
+function expectedNameCount(alternatives,cards){
+  let best=0;
+  for(const raw of alternatives){
+    const exact=exactContained(raw,cards).length;
+    const tokens=stripCommand(raw).split(/\s+/).filter(Boolean).length;
+    best=Math.max(best,exact,Math.min(tokens,cards.length));
+  }
   return best
 }
 function showFeedback(label,text){
   const l=$('voiceFeedbackLabel'),t=$('voiceTranscript');if(l)l.textContent=label;if(t)t.textContent=text
+}
+function closeSingleVoiceChoice(){
+  const d=$('voiceChoiceDialog');if(d?.open){try{d.close()}catch{}}
+}
+function stopExistingSingleVoice(){
+  const star=$('voiceStarButton'),mobile=$('mobileVoiceRemote');
+  if(star?.classList.contains('active')){try{star.click()}catch{}}
+  if(mobile?.classList.contains('listening')){try{mobile.click()}catch{}}
+  closeSingleVoiceChoice()
 }
 function showGroupEffect(rows){
   const old=document.getElementById('isolatedMultiStarEffect');if(old)old.remove();
@@ -64,14 +90,22 @@ function setup(){
   const host=$('voiceStarButton')?.parentElement;if(!host||$('multiStarVoiceButton'))return;injectStyle();
   const btn=document.createElement('button');btn.id='multiStarVoiceButton';btn.type='button';btn.className='voice-start multi-star-remote';btn.textContent='👥 다중 STAR';
   $('voiceStarButton').insertAdjacentElement('afterend',btn);
-  btn.onclick=()=>{
+  const observer=new MutationObserver(()=>{if(multiActive)closeSingleVoiceChoice()});observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:['open']});
+  btn.onclick=async()=>{
     const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){showFeedback('⚠ 다중 음성 미지원','이 브라우저는 음성인식을 지원하지 않습니다.');return}
     const cards=currentCards();if(cards.length<2){showFeedback('⚠ 출석 학생 부족','현재 STAR ROOM에 2명 이상 있어야 합니다.');return}
+    stopExistingSingleVoice();await sleep(180);multiActive=true;closeSingleVoiceChoice();
     const r=new SR();r.lang='ko-KR';r.continuous=false;r.interimResults=false;r.maxAlternatives=5;btn.classList.add('active');showFeedback('👥 다중 STAR 듣는 중…','예: 김나라 김강민 김시율 별');
-    r.onresult=async e=>{const alternatives=[];for(let i=0;i<e.results.length;i++)for(const item of Array.from(e.results[i]||[]))if(item?.transcript)alternatives.push(item.transcript.trim());const rows=resolveNames(alternatives,cards);if(rows.length<2){showFeedback('⚠ 두 명 이상을 찾지 못했습니다.',`인식: ${alternatives[0]||'-'}`);return}await awardRows(rows)};
+    r.onresult=async e=>{
+      const alternatives=[];for(let i=0;i<e.results.length;i++)for(const item of Array.from(e.results[i]||[]))if(item?.transcript)alternatives.push(item.transcript.trim());
+      const rows=resolveNames(alternatives,cards),expected=expectedNameCount(alternatives,cards);
+      if(rows.length<2){showFeedback('⚠ 두 명 이상을 찾지 못했습니다.',`인식: ${alternatives[0]||'-'} · 다시 말씀해 주세요.`);return}
+      if(expected>=3&&rows.length<expected){showFeedback('⚠ 일부 이름만 확인했습니다.',`인식: ${alternatives[0]||'-'} · ${rows.map(x=>x.name).join(' · ')}만 확인됨. 다시 말씀해 주세요.`);return}
+      await awardRows(rows)
+    };
     r.onerror=e=>showFeedback('⚠ 다중 음성 오류',e.error||'다시 시도해 주세요.');
-    r.onend=()=>btn.classList.remove('active');
-    try{r.start()}catch{btn.classList.remove('active');showFeedback('⚠ 마이크 시작 실패','잠시 후 다시 눌러 주세요.')}
+    r.onend=()=>{btn.classList.remove('active');setTimeout(()=>{multiActive=false},250)};
+    try{r.start()}catch{btn.classList.remove('active');multiActive=false;showFeedback('⚠ 마이크 시작 실패','잠시 후 다시 눌러 주세요.')}
   }
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(setup,300));else setTimeout(setup,300);
