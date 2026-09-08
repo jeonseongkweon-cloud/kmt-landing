@@ -3,9 +3,13 @@ const CHOSEONG=["ㄱ","ㄲ","ㄴ","ㄷ","ㄸ","ㄹ","ㅁ","ㅂ","ㅃ","ㅅ","ㅆ
 const JUNGSEONG=["ㅏ","ㅐ","ㅑ","ㅒ","ㅓ","ㅔ","ㅕ","ㅖ","ㅗ","ㅘ","ㅙ","ㅚ","ㅛ","ㅜ","ㅝ","ㅞ","ㅟ","ㅠ","ㅡ","ㅢ","ㅣ"];
 const JONGSEONG=["","ㄱ","ㄲ","ㄳ","ㄴ","ㄵ","ㄶ","ㄷ","ㄹ","ㄺ","ㄻ","ㄼ","ㄽ","ㄾ","ㄿ","ㅀ","ㅁ","ㅂ","ㅄ","ㅅ","ㅆ","ㅇ","ㅈ","ㅊ","ㅋ","ㅌ","ㅍ","ㅎ"];
 
-export const AUTO_THRESHOLD=.84;
-export const AMBIGUOUS_THRESHOLD=.76;
-export const AUTO_MARGIN=.075;
+// SMART NAME VOICE v1.1
+// STAR mode already supplies only currently attended students. In that small roster,
+// accept a clearly unique phonetic winner more aggressively while still rejecting
+// unrelated speech and keeping genuinely similar names ambiguous.
+export const AUTO_THRESHOLD=.72;
+export const AMBIGUOUS_THRESHOLD=.66;
+export const AUTO_MARGIN=.10;
 
 export function compact(value){return String(value??"").normalize("NFC").toLowerCase().replace(/[^0-9a-z가-힣ㄱ-ㅎㅏ-ㅣ]/gi,"")}
 export function decomposeHangul(value){
