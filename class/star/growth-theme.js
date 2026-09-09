@@ -121,6 +121,15 @@
         #studentGrid.student-grid:has(>.student:nth-child(7):last-child),
         #studentGrid.student-grid:has(>.student:nth-child(8):last-child){grid-template-columns:repeat(4,minmax(0,1fr))!important}
         #studentGrid.student-grid:has(>.student:nth-child(n+9)){grid-template-columns:repeat(5,minmax(0,1fr))!important}
+
+        /* 사진 비율만 핀셋 조정: 가로폭은 그대로, 세로만 조금 더 확보 */
+        #studentGrid.student-grid .photo{
+          width:100%!important;
+          height:clamp(185px,18vw,285px)!important;
+          border-radius:14px!important;
+          object-fit:cover!important;
+          object-position:center 32%!important;
+        }
       }
 
       @media(max-width:760px){#growthPanel{min-height:380px!important}#growthPanel .growth-hero{min-height:285px!important}#growthPanel .growth-hero-image-wrap{min-height:255px!important}#growthPanel #growthHeroImage{max-height:300px!important}}
