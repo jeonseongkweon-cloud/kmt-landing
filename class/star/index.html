@@ -11,6 +11,28 @@
   header .pc-star-toolbar #saveStatus{display:none!important}
   header .pc-star-toolbar .award-selected:disabled{display:none!important}
   header .pc-star-toolbar .award-selected:not(:disabled){display:inline-flex!important;align-items:center;justify-content:center}
+
+  /* 학생 카드 핀셋 수정: PC는 최대 5열, 인원수별 균형배치 */
+  #studentGrid.student-grid{gap:12px!important;justify-content:center!important}
+  #studentGrid.student-grid>.student{max-width:240px!important}
+  #studentGrid.student-grid:has(>.student:nth-child(1):last-child)>.student{flex:0 1 min(420px,100%)!important}
+  #studentGrid.student-grid:has(>.student:nth-child(2):last-child)>.student{flex:0 1 calc(50% - 12px)!important}
+  #studentGrid.student-grid:has(>.student:nth-child(3):last-child)>.student{flex:0 1 calc(33.333% - 12px)!important}
+  #studentGrid.student-grid:has(>.student:nth-child(4):last-child)>.student{flex:0 1 calc(25% - 12px)!important}
+  #studentGrid.student-grid:has(>.student:nth-child(5):last-child)>.student{flex:0 1 calc(20% - 12px)!important}
+  #studentGrid.student-grid:has(>.student:nth-child(6):last-child)>.student{flex:0 1 calc(33.333% - 12px)!important}
+  #studentGrid.student-grid:has(>.student:nth-child(7):last-child)>.student,
+  #studentGrid.student-grid:has(>.student:nth-child(8):last-child)>.student{flex:0 1 calc(25% - 12px)!important}
+  #studentGrid.student-grid:has(>.student:nth-child(n+9))>.student{flex:0 1 calc(20% - 12px)!important}
+
+  /* 사진은 얼굴만 확대되지 않도록 카드 전체와 함께 세로형으로 확대 */
+  #studentGrid.student-grid .photo{
+    width:100%!important;
+    height:clamp(150px,14vw,245px)!important;
+    border-radius:14px!important;
+    object-fit:cover!important;
+    object-position:center 35%!important;
+  }
 }
 @media (max-width:760px){header .pc-star-toolbar{display:none!important}}
 </style></head><body>
