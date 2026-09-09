@@ -18,7 +18,11 @@
 
     applying = true;
     try {
-      cards.forEach(card => card.querySelector('.rank-one-label')?.remove());
+      cards.forEach(card => {
+        card.querySelectorAll('.leader-badge').forEach(el => el.remove());
+        card.querySelectorAll('.rank-one-label').forEach(el => el.remove());
+        card.classList.remove('rank-one');
+      });
 
       const indexed = cards.map((card, index) => ({ card, index, score: scoreOf(card) }));
       indexed.sort((a, b) => b.score - a.score || a.index - b.index);
@@ -28,21 +32,17 @@
       if (current !== target) indexed.forEach(({ card }) => grid.appendChild(card));
 
       const ordered = [...grid.querySelectorAll(':scope > .student')];
-      ordered.forEach(card => {
-        card.querySelector('.leader-badge')?.setAttribute('hidden', '');
-        card.classList.remove('rank-one');
-      });
-
       const first = ordered[0];
       if (first && scoreOf(first) > 0) {
         first.classList.add('rank-one');
         const line = first.querySelector('.student-line');
-        if (line) {
+        const name = line?.querySelector('h2');
+        if (line && name) {
           const badge = document.createElement('span');
           badge.className = 'rank-one-label';
           badge.textContent = '1등';
           badge.setAttribute('aria-label', '현재 1등');
-          line.insertBefore(badge, line.firstChild);
+          name.insertAdjacentElement('afterend', badge);
         }
       }
     } finally {
@@ -72,33 +72,34 @@
       style.textContent = `
         #studentGrid .leader-badge{display:none!important}
         #studentGrid .rank-one-label{
-          flex:0 0 auto;
-          display:inline-flex;
-          align-items:center;
-          justify-content:center;
-          min-width:34px;
-          height:24px;
-          padding:0 7px;
-          margin-right:3px;
-          border:1px solid rgba(246,196,81,.72);
-          border-radius:999px;
-          background:rgba(246,196,81,.16);
-          color:#ffe18c;
-          font-size:11px;
-          line-height:1;
-          font-weight:1000;
-          white-space:nowrap;
-          box-shadow:0 0 10px rgba(246,196,81,.10);
+          flex:0 0 auto!important;
+          display:inline-flex!important;
+          align-items:center!important;
+          justify-content:center!important;
+          min-width:38px!important;
+          height:24px!important;
+          padding:0 8px!important;
+          margin-left:7px!important;
+          border:1px solid rgba(246,196,81,.9)!important;
+          border-radius:999px!important;
+          background:#7a5600!important;
+          color:#fff3a6!important;
+          font-size:12px!important;
+          line-height:1!important;
+          font-weight:1000!important;
+          white-space:nowrap!important;
+          box-shadow:0 0 12px rgba(246,196,81,.3)!important;
         }
-        #studentGrid .rank-one{border-color:rgba(246,196,81,.75)!important}
+        #studentGrid .rank-one{border-color:rgba(246,196,81,.85)!important;box-shadow:0 0 0 1px rgba(246,196,81,.25),0 0 18px rgba(246,196,81,.12)!important}
         @media(max-width:760px), (max-width:1024px) and (pointer:coarse){
           #studentGrid .rank-one-label{
-            min-width:30px;
-            height:22px;
-            padding:0 6px;
-            font-size:10px;
+            min-width:36px!important;
+            height:24px!important;
+            padding:0 7px!important;
+            margin-left:6px!important;
+            font-size:12px!important;
           }
-          #studentGrid .student-line{min-width:0}
+          #studentGrid .student-line{min-width:0!important;display:flex!important;align-items:center!important}
           #studentGrid .student-line h2{display:block!important;min-width:0!important}
         }
       `;
