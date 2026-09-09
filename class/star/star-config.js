@@ -136,7 +136,7 @@ window.KMT_STAR_CONFIG = Object.freeze({
 // 카드 표시 순서와 PC 1등 강조만 보정하며 STAR 저장/음성/Supabase 로직은 건드리지 않는다.
 (()=>{
   const script=document.createElement("script");
-  script.src="rank-order-patch.js?v=101";
+  script.src="rank-order-patch.js?v=102";
   script.defer=true;
   document.head.appendChild(script);
 })();
