@@ -131,3 +131,12 @@ window.KMT_STAR_CONFIG = Object.freeze({
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",mountPcStarPatch,{once:true});
   else mountPcStarPatch();
 })();
+
+// STAR RANK ORDER PINPOINT PATCH loader
+// 카드 표시 순서와 1등 표기만 보정하며 STAR 저장/음성/Supabase 로직은 건드리지 않는다.
+(()=>{
+  const script=document.createElement("script");
+  script.src="rank-order-patch.js?v=100";
+  script.defer=true;
+  document.head.appendChild(script);
+})();
