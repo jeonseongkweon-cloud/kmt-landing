@@ -19,14 +19,14 @@
   <div class="growth-toolbar"><div><strong>🔥 우리 반 공동성장</strong><span id="growthHint">출석 인원 기준으로 공동목표가 자동 산출됩니다.</span></div><div class="growth-actions"><button id="goalButton" type="button" hidden>🎯 자동 목표</button><button id="goalResetButton" type="button" hidden>목표 다시 산출</button></div></div>
   <div id="growthStages" class="growth-stages"></div>
   <div class="growth-progress"><strong id="growthScore">⭐ 0 / 출석 대기</strong><div class="growth-meter" aria-hidden="true"><i id="growthMeterFill"></i></div><span id="growthNext">첫 학생 출석 시 자동 산출됩니다.</span></div>
-</article><article class="info-panel mission-panel"><div class="info-head"><strong>🎯 오늘의 미션</strong></div><div id="missionInfo" class="info-content"></div></article></aside></div>
+</article><article class="info-panel mission-panel"><div class="info-head"><strong>🎯 오늘의 미션</strong><button id="noticeManageButton" class="info-manage" type="button">입력</button></div><div id="missionInfo" class="info-content"></div></article></aside></div>
 <section class="voice-feedback" aria-live="polite">
   <span id="voiceFeedbackLabel">🎤 버튼을 누르고 명령해 주세요.</span>
   <strong id="voiceTranscript">예: 김나라 출석 / 김강민 인성별</strong>
 </section>
 <aside id="voiceDebugPanel" class="voice-debug-panel" hidden><div class="voice-debug-head"><strong>VOICE DEBUG</strong><button id="voiceDebugClose" type="button">닫기</button></div><div class="voice-debug-grid"><span>브라우저</span><b id="voiceDebugSupport">-</b><span>마이크 권한</span><b id="voiceDebugPermission">-</b><span>세션</span><b id="voiceDebugSession">-</b><span>RAW</span><b id="voiceDebugRaw">-</b><span>ALT</span><b id="voiceDebugAlt">-</b><span>SMART MATCH</span><b id="voiceDebugMatch">-</b><span>최종 학생</span><b id="voiceDebugFinal">-</b><span>COMMAND</span><b id="voiceDebugCommand">-</b><span>RESULT</span><b id="voiceDebugResult">-</b></div><pre id="voiceDebugEvents"></pre></aside>
 <section class="info-board" aria-label="STAR 수업 정보판" hidden>
-  <article class="info-panel mission-panel"><div class="info-head"><strong>🎯 오늘의 수련 미션</strong><button id="noticeManageButton" class="info-manage" type="button">⚙ 관리</button></div><div class="info-content"></div></article>
+  <article class="info-panel mission-panel"><div class="info-head"><strong>🎯 오늘의 수련 미션</strong><button class="info-manage" type="button">⚙ 관리</button></div><div class="info-content"></div></article>
   <article class="info-panel notice-panel"><div class="info-head"><strong>📢 공지사항</strong></div><div id="noticeInfo" class="info-content"></div></article>
   <article class="info-panel personal-panel"><div class="info-head"><strong>👤 개인 전달사항</strong></div><div id="personalInfo" class="info-content"></div></article>
 </section>
