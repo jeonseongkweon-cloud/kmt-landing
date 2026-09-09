@@ -107,6 +107,22 @@
       #growthPanel .growth-progress #growthNext{display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;min-height:24px!important;font-size:11px!important;text-align:center!important}
       #growthPanel .growth-progress #growthNext small{font-size:10px!important}
       #growthPanel .growth-progress #growthNext b{font-size:15px!important;color:#ffe18c!important}
+
+      /* 학생카드 핀셋: PC에서 최대 5열 고정. 6명=3x2, 7~8명=4열, 9명 이상=5열 */
+      @media(min-width:761px){
+        #studentGrid.student-grid{display:grid!important;gap:12px!important;justify-content:stretch!important;align-items:start!important;grid-template-columns:repeat(5,minmax(0,1fr))!important}
+        #studentGrid.student-grid>.student{width:auto!important;max-width:none!important;min-width:0!important;flex:none!important}
+        #studentGrid.student-grid:has(>.student:nth-child(1):last-child){grid-template-columns:1fr!important}
+        #studentGrid.student-grid:has(>.student:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))!important}
+        #studentGrid.student-grid:has(>.student:nth-child(3):last-child){grid-template-columns:repeat(3,minmax(0,1fr))!important}
+        #studentGrid.student-grid:has(>.student:nth-child(4):last-child){grid-template-columns:repeat(4,minmax(0,1fr))!important}
+        #studentGrid.student-grid:has(>.student:nth-child(5):last-child){grid-template-columns:repeat(5,minmax(0,1fr))!important}
+        #studentGrid.student-grid:has(>.student:nth-child(6):last-child){grid-template-columns:repeat(3,minmax(0,1fr))!important}
+        #studentGrid.student-grid:has(>.student:nth-child(7):last-child),
+        #studentGrid.student-grid:has(>.student:nth-child(8):last-child){grid-template-columns:repeat(4,minmax(0,1fr))!important}
+        #studentGrid.student-grid:has(>.student:nth-child(n+9)){grid-template-columns:repeat(5,minmax(0,1fr))!important}
+      }
+
       @media(max-width:760px){#growthPanel{min-height:380px!important}#growthPanel .growth-hero{min-height:285px!important}#growthPanel .growth-hero-image-wrap{min-height:255px!important}#growthPanel #growthHeroImage{max-height:300px!important}}
     `;
     document.head.appendChild(style);
