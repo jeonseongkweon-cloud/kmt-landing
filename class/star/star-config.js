@@ -133,10 +133,10 @@ window.KMT_STAR_CONFIG = Object.freeze({
 })();
 
 // STAR RANK ORDER PINPOINT PATCH loader
-// 카드 표시 순서와 1등 표기만 보정하며 STAR 저장/음성/Supabase 로직은 건드리지 않는다.
+// 카드 표시 순서와 PC 1등 강조만 보정하며 STAR 저장/음성/Supabase 로직은 건드리지 않는다.
 (()=>{
   const script=document.createElement("script");
-  script.src="rank-order-patch.js?v=100";
+  script.src="rank-order-patch.js?v=101";
   script.defer=true;
   document.head.appendChild(script);
 })();
