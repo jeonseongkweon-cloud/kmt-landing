@@ -10,7 +10,7 @@
   };
 
   function clearRankMarks(card) {
-    card.querySelectorAll('.leader-badge,.rank-one-label,.rank-one-crown').forEach(el => el.remove());
+    card.querySelectorAll('.leader-badge,.rank-one-label,.rank-one-crown,.rank-one-star').forEach(el => el.remove());
     card.classList.remove('rank-one');
   }
 
@@ -32,25 +32,32 @@
       const target = indexed.map(x => x.card.dataset.student || '').join('|');
       if (current !== target) indexed.forEach(({ card }) => grid.appendChild(card));
 
-      /* 모바일은 순위대로 정렬만 하고 왕관/1등 표시는 전혀 넣지 않는다. */
+      /* 모바일은 점수순 정렬만 유지하고 순위 시각효과는 전혀 넣지 않는다. */
       if (mobileQuery.matches) return;
 
-      /* PC/노트북에서만 1등을 확실하게 표시한다. */
+      /* PC/노트북에서만 1등을 강하게 강조한다. */
       const first = grid.querySelector(':scope > .student');
       if (first && scoreOf(first) > 0) {
         first.classList.add('rank-one');
+
+        const crown = document.createElement('span');
+        crown.className = 'rank-one-crown';
+        crown.textContent = '👑';
+        crown.setAttribute('aria-label', '현재 1등');
+        first.appendChild(crown);
+
+        const star = document.createElement('span');
+        star.className = 'rank-one-star';
+        star.textContent = '⭐';
+        star.setAttribute('aria-hidden', 'true');
+        first.appendChild(star);
+
         const line = first.querySelector('.student-line');
         const name = line?.querySelector('h2');
         if (line && name) {
-          const crown = document.createElement('span');
-          crown.className = 'rank-one-crown';
-          crown.textContent = '👑';
-          crown.setAttribute('aria-label', '현재 1등');
-          name.insertAdjacentElement('beforebegin', crown);
-
           const badge = document.createElement('span');
           badge.className = 'rank-one-label';
-          badge.textContent = '1등';
+          badge.textContent = '👑 1등';
           badge.setAttribute('aria-label', '현재 1등');
           name.insertAdjacentElement('afterend', badge);
         }
@@ -80,82 +87,117 @@
       const style = document.createElement('style');
       style.id = 'starRankOrderStyle';
       style.textContent = `
-        /* 기존 렌더러가 만드는 왕관은 모든 화면에서 제거 */
         #studentGrid .leader-badge{display:none!important}
 
-        /* 모바일: 아이 이름/별만 보이고 순위 표시는 완전히 숨김 */
+        /* 모바일: 정렬만. 왕관/1등/금빛 효과 모두 없음. */
         @media(max-width:760px), (max-width:1024px) and (pointer:coarse){
           #studentGrid .rank-one-label,
-          #studentGrid .rank-one-crown{display:none!important}
-          #studentGrid .rank-one{border-color:inherit!important;box-shadow:inherit!important;animation:none!important}
+          #studentGrid .rank-one-crown,
+          #studentGrid .rank-one-star{display:none!important}
+          #studentGrid .rank-one{
+            border-color:inherit!important;
+            box-shadow:inherit!important;
+            animation:none!important;
+            filter:none!important;
+          }
+          #studentGrid .rank-one::after{display:none!important}
         }
 
-        /* PC/노트북: 1등을 왕관 + 1등 라벨 + 금빛 테두리로 확실하게 표시 */
+        /* PC/노트북 전용 1등 챔피언 효과 */
         @media(min-width:761px) and (pointer:fine){
-          #studentGrid .rank-one{
+          #studentGrid .student.rank-one{
             position:relative!important;
-            z-index:4!important;
-            border-color:#ffd84d!important;
-            box-shadow:0 0 0 2px rgba(255,216,77,.88),0 0 24px rgba(255,203,55,.55),0 0 46px rgba(255,164,32,.20)!important;
-            animation:rankOneGlow 1.35s ease-in-out infinite!important;
+            z-index:30!important;
+            overflow:visible!important;
+            border:4px solid #ffd83d!important;
+            outline:2px solid rgba(255,246,174,.95)!important;
+            outline-offset:3px!important;
+            box-shadow:0 0 10px #fff7a8,0 0 28px #ffd633,0 0 56px rgba(255,170,0,.9),0 0 90px rgba(255,129,0,.42)!important;
+            animation:rankOneChampionGlow .82s ease-in-out infinite alternate!important;
+          }
+          #studentGrid .student.rank-one::after{
+            content:"";
+            position:absolute!important;
+            inset:-8px!important;
+            z-index:-1!important;
+            border-radius:inherit!important;
+            pointer-events:none!important;
+            border:3px solid rgba(255,224,74,.85)!important;
+            box-shadow:0 0 24px rgba(255,230,86,.85)!important;
+            animation:rankOneChampionRing 1.05s ease-in-out infinite!important;
+          }
+          #studentGrid .rank-one-crown{
+            position:absolute!important;
+            top:-31px!important;
+            left:50%!important;
+            transform:translateX(-50%)!important;
+            z-index:50!important;
+            display:block!important;
+            font-size:42px!important;
+            line-height:1!important;
+            pointer-events:none!important;
+            filter:drop-shadow(0 0 5px #fff6a5) drop-shadow(0 0 14px #ffbf00)!important;
+            animation:rankCrownChampion 1s ease-in-out infinite!important;
+          }
+          #studentGrid .rank-one-star{
+            position:absolute!important;
+            top:10px!important;
+            right:10px!important;
+            z-index:50!important;
+            display:block!important;
+            font-size:27px!important;
+            line-height:1!important;
+            pointer-events:none!important;
+            text-shadow:0 0 8px #fff,0 0 18px #ffd52d,0 0 28px #ff9d00!important;
+            animation:rankStarChampion .62s ease-in-out infinite alternate!important;
           }
           #studentGrid .rank-one .student-line{
             display:flex!important;
             align-items:center!important;
             min-width:0!important;
           }
-          #studentGrid .rank-one-crown{
-            flex:0 0 auto!important;
-            display:inline-flex!important;
-            align-items:center!important;
-            justify-content:center!important;
-            margin-right:6px!important;
-            font-size:24px!important;
-            line-height:1!important;
-            filter:drop-shadow(0 0 7px rgba(255,210,59,.85))!important;
-            animation:rankCrownPulse 1.05s ease-in-out infinite!important;
-          }
           #studentGrid .rank-one-label{
             flex:0 0 auto!important;
             display:inline-flex!important;
             align-items:center!important;
             justify-content:center!important;
-            min-width:42px!important;
-            height:26px!important;
-            padding:0 9px!important;
-            margin-left:7px!important;
-            border:1px solid rgba(255,226,103,.98)!important;
+            min-width:60px!important;
+            height:29px!important;
+            padding:0 10px!important;
+            margin-left:8px!important;
+            border:2px solid #ffe16b!important;
             border-radius:999px!important;
-            background:linear-gradient(135deg,#8b6200,#5b3d00)!important;
-            color:#fff7bb!important;
-            font-size:12px!important;
+            background:linear-gradient(135deg,#b97800,#6b3f00)!important;
+            color:#fffbd1!important;
+            font-size:13px!important;
             line-height:1!important;
             font-weight:1000!important;
             white-space:nowrap!important;
-            box-shadow:0 0 14px rgba(255,210,59,.42)!important;
-          }
-          #studentGrid .rank-one::after{
-            content:"";
-            position:absolute!important;
-            inset:-3px!important;
-            border-radius:inherit!important;
-            pointer-events:none!important;
-            border:2px solid rgba(255,232,126,.0)!important;
-            animation:rankOneRing 1.35s ease-in-out infinite!important;
+            text-shadow:0 1px 2px #4b2b00!important;
+            box-shadow:0 0 9px #ffe36c,0 0 18px rgba(255,180,0,.65)!important;
+            animation:rankBadgeChampion .82s ease-in-out infinite alternate!important;
           }
         }
 
-        @keyframes rankOneGlow{
-          0%,100%{filter:brightness(1);box-shadow:0 0 0 2px rgba(255,216,77,.78),0 0 18px rgba(255,203,55,.38),0 0 36px rgba(255,164,32,.14)}
-          50%{filter:brightness(1.10);box-shadow:0 0 0 3px rgba(255,235,137,.98),0 0 34px rgba(255,216,77,.82),0 0 64px rgba(255,164,32,.32)}
+        @keyframes rankOneChampionGlow{
+          from{filter:brightness(1.02) saturate(1.05);box-shadow:0 0 8px #fff7a8,0 0 20px #ffd633,0 0 42px rgba(255,170,0,.72),0 0 68px rgba(255,129,0,.30)}
+          to{filter:brightness(1.16) saturate(1.18);box-shadow:0 0 16px #fffbd0,0 0 38px #ffe24c,0 0 72px rgba(255,175,0,1),0 0 105px rgba(255,116,0,.55)}
         }
-        @keyframes rankOneRing{
-          0%,100%{opacity:.15;transform:scale(1)}
-          50%{opacity:.9;transform:scale(1.018);border-color:rgba(255,236,145,.9)}
+        @keyframes rankOneChampionRing{
+          0%,100%{opacity:.38;transform:scale(1)}
+          50%{opacity:1;transform:scale(1.025)}
         }
-        @keyframes rankCrownPulse{
-          0%,100%{transform:scale(1) rotate(-2deg);filter:drop-shadow(0 0 5px rgba(255,210,59,.60))}
-          50%{transform:scale(1.12) rotate(2deg);filter:drop-shadow(0 0 12px rgba(255,226,93,1))}
+        @keyframes rankCrownChampion{
+          0%,100%{transform:translateX(-50%) scale(1) rotate(-3deg)}
+          50%{transform:translateX(-50%) scale(1.16) rotate(3deg)}
+        }
+        @keyframes rankStarChampion{
+          from{transform:scale(.86) rotate(-8deg);opacity:.72}
+          to{transform:scale(1.22) rotate(8deg);opacity:1}
+        }
+        @keyframes rankBadgeChampion{
+          from{filter:brightness(1)}
+          to{filter:brightness(1.28)}
         }
       `;
       document.head.appendChild(style);
