@@ -2,13 +2,13 @@ import { loadClassTuitionSource, buildOneStudentHouseholds } from './class-data-
 
 const confirmed = {
   paused: new Set(['김태은','강민준','이준범']),
-  withdrawn: new Set(['김예성','김예담','윤유은','윤우진','한정민','한지아','이승재']),
+  // 과거 퇴관자료는 보존하되 최신 회비대장의 비회색 수련생이 우선한다.
+  withdrawn: new Set(['김예성','김예담','윤유은','윤우진','이승재']),
   dueDay: new Map([['김태은',28]]),
   extension: new Set(['김태은'])
 };
 
 // 회비대장은 학생 수가 아니라 '가정' 단위로 관리한다.
-// 사용자 확정 가족 + 기존 회비대장에 한 칸으로 기록된 가족을 반영한다.
 const familyGroups = [
   ['김우리','김나라','김사랑'],
   ['이해찬','이정빈'],
@@ -21,9 +21,9 @@ const familyGroups = [
   ['박서우','박연우'],
   ['박재희','박윤아'],
   ['이수형','이주형'],
+  ['한정민','한지아'],
   ['김예성','김예담'],
-  ['윤유은','윤우진'],
-  ['한정민','한지아']
+  ['윤유은','윤우진']
 ];
 
 const ledgerAliases = new Map([
@@ -39,12 +39,16 @@ const ledgerAliases = new Map([
   ['유강령,가령',['유강령','유가령']],
   ['오승윤,연서',['오승윤','오연서']],
   ['박서우,연우',['박서우','박연우']],
+  ['박연우,서우',['박연우','박서우']],
   ['박재희,윤아',['박재희','박윤아']],
-  ['이수형,주형',['이수형','이주형']]
+  ['이수형,주형',['이수형','이주형']],
+  ['이주형,수형',['이주형','이수형']]
 ]);
 
 // 테스트를 위해 만든 가상 원생. CLASS에는 남겨두되 회비 대상에서는 완전히 제외한다.
 const excludedTuitionStudents = new Set(['아리아']);
+const latestRoster = window.KMT_TUITION_LATEST_ROSTER_2026 || null;
+const latestActiveNames = new Set(latestRoster?.activeStudents || []);
 
 function applyConfirmed(h){
   const names=h.students||[];
@@ -116,6 +120,21 @@ function attachLegacyLedger(households){
     return h;
   });
 }
+function makeRosterOnlyStudent(row){
+  return {
+    studentId:`latest-roster-${row.name}`,
+    studentCode:'',
+    name:row.name,
+    tuitionStatus:'active',
+    rawEnrollmentStatus:'최신 회비대장',
+    statusChangedOn:null,
+    monthlyFee:0,
+    dueDay:row.dueDay ?? null,
+    classPeriodId:null,
+    classLabel:'최신 회비대장',
+    guardians:[]
+  };
+}
 
 (async()=>{
   try{
@@ -124,7 +143,18 @@ function attachLegacyLedger(households){
       setBadge('demo',result.reason==='no-session'?'샘플 데이터 · CLASS 로그인 필요':'샘플 데이터 · CLASS 연결 대기');
       return;
     }
-    const tuitionStudents=(result.students||[]).filter(s=>!excludedTuitionStudents.has(s.name));
+
+    const classStudents=(result.students||[]).filter(s=>{
+      if(excludedTuitionStudents.has(s.name)) return false;
+      if(latestActiveNames.size && !latestActiveNames.has(s.name)) return false;
+      return true;
+    });
+    const classNameSet=new Set(classStudents.map(s=>s.name));
+    const rosterOnly=(latestRoster?.rosterOnlyNotClass||[])
+      .filter(r=>latestActiveNames.has(r.name) && !classNameSet.has(r.name))
+      .map(makeRosterOnlyStudent);
+    const tuitionStudents=[...classStudents,...rosterOnly];
+
     let households=buildOneStudentHouseholds(tuitionStudents).map(applyConfirmed);
     households=mergeFamilies(households).map(applyConfirmed);
     households=attachLegacyLedger(households);
@@ -134,9 +164,13 @@ function attachLegacyLedger(households){
     }
     window.KMT_TUITION_LOAD_HOUSEHOLDS(households);
     const ledgerCount=households.filter(h=>(h.legacyLedger||[]).length).length;
-    const excludedCount=(result.students||[]).length-tuitionStudents.length;
-    const excludedText=excludedCount?` · 가상원생 제외 ${excludedCount}명`:'';
-    setBadge('live',`CLASS 실데이터 읽기전용 · ${tuitionStudents.length}명 · 장부연결 ${ledgerCount}가정${excludedText}`);
+    if(latestActiveNames.size){
+      setBadge('live',`최신 회비대장 기준 · ${tuitionStudents.length}명 · CLASS연결 ${classStudents.length}명 · 장부연결 ${ledgerCount}가정${rosterOnly.length?` · 명단보조 ${rosterOnly.length}명`:''}`);
+    }else{
+      const excludedCount=(result.students||[]).length-tuitionStudents.length;
+      const excludedText=excludedCount?` · 가상원생 제외 ${excludedCount}명`:'';
+      setBadge('live',`CLASS 실데이터 읽기전용 · ${tuitionStudents.length}명 · 장부연결 ${ledgerCount}가정${excludedText}`);
+    }
   }catch(err){
     console.error('[TUITION] CLASS readonly load failed',err);
     setBadge('demo','샘플 데이터 · CLASS 연결 오류');
