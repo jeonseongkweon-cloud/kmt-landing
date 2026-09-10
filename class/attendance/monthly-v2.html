@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f7fbff">
+  <meta name="robots" content="noindex,nofollow">
+  <title>월간출석내역 | 계명태권도 CLASS</title>
+  <link rel="icon" href="../../assets/icons/kmt_favicon_48.png">
+  <link rel="stylesheet" href="monthly.css?v=200">
+</head>
+<body>
+  <main class="monthly-app" id="monthlyApp" hidden>
+    <header class="monthly-topbar">
+      <a class="back-button" href="./" aria-label="오늘 출석판으로 돌아가기">‹</a>
+      <h1>월간출석내역</h1>
+      <div class="month-navigation" aria-label="월 이동">
+        <button id="prevMonth" type="button" aria-label="이전 달">‹</button>
+        <strong id="monthTitle"></strong>
+        <button id="nextMonth" type="button" aria-label="다음 달">›</button>
+      </div>
+    </header>
+
+    <section class="student-summary">
+      <div class="student-picker-wrap">
+        <label for="studentPicker">원생</label>
+        <select id="studentPicker" aria-label="원생 선택"></select>
+      </div>
+      <div class="student-meta">
+        <strong id="studentName">원생</strong>
+        <span id="studentInfo"></span>
+      </div>
+      <div class="month-counts" aria-label="월간 출결 요약">
+        <span class="present">출석 <strong id="presentCount">0</strong></span>
+        <span class="late">지각 <strong id="lateCount">0</strong></span>
+        <span class="checkout">귀가 <strong id="checkoutCount">0</strong></span>
+        <span class="absent">결석 <strong id="absentCount">0</strong></span>
+      </div>
+    </section>
+
+    <section class="calendar-shell" aria-label="월간 출석 달력">
+      <div class="weekday-row" aria-hidden="true">
+        <span class="sun">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="sat">토</span>
+      </div>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </section>
+
+    <section class="legend" aria-label="출결 표시 안내">
+      <span><i class="legend-mark present">✓</i> 출석</span>
+      <span><i class="legend-mark absent">×</i> 결석</span>
+      <span><i class="legend-mark late">◷</i> 지각</span>
+      <span><i class="legend-mark checkout">→</i> 귀가</span>
+    </section>
+
+    <p class="calendar-note" id="calendarNote">정규 수련일 가운데 실제 수업이 열린 과거 날짜에 출석 기록이 없으면 달력에서 결석으로 표시합니다.</p>
+  </main>
+
+  <section class="state-screen" id="stateScreen">
+    <div class="state-card">
+      <img src="../../assets/icons/192로고.png" alt="계명태권도 로고">
+      <strong id="stateTitle">월간 출석기록을 불러오는 중입니다</strong>
+      <span id="stateMessage">잠시만 기다려 주세요.</span>
+      <a href="./" id="stateBack" hidden>오늘 출석판으로 돌아가기</a>
+    </div>
+  </section>
+
+  <script src="attendance-config.js?v=200"></script>
+  <script type="module" src="monthly.js?v=200"></script>
+</body>
+</html>
