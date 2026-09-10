@@ -63,4 +63,8 @@
   s.src='./migration-entry-helper-v1.js?v=1';
   s.defer=true;
   document.head.appendChild(s);
+  const v=document.createElement('script');
+  v.src='./migration-verification-helper-v1.js?v=1';
+  v.defer=true;
+  document.head.appendChild(v);
 })();
