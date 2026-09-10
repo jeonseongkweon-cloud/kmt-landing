@@ -165,7 +165,9 @@ function observeRows(){
 
 document.addEventListener('change',e=>{
   const input=e.target.closest?.('#ledgerGridCard input[data-k]');
-  if(input) setTimeout(()=>saveInline(input),0);
+  // PC 직접입력 모드는 ledger-pc-inline-v1.js가 실제 저장 성공/실패 UI까지 담당한다.
+  // 여기서 다시 저장하면 동일 값이 Supabase에 두 번 기록될 수 있으므로 중복 저장을 막는다.
+  if(input && input.dataset.pcInlineOwnSave!=='1') setTimeout(()=>saveInline(input),0);
 },true);
 
 document.addEventListener('submit',e=>{
