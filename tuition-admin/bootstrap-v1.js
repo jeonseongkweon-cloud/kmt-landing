@@ -1,4 +1,4 @@
-import './tuition-master-v1.js?v=2';
+import './tuition-master-v1.js?v=3';
 import { loadClassTuitionSource, buildOneStudentHouseholds } from './class-data-adapter-v1.js';
 
 const confirmed = {
