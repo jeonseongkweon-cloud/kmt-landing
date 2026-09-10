@@ -1,5 +1,5 @@
 {
-  "version": "1.2",
+  "version": "1.3",
   "rules": {
     "withdrawn_student_policy": "retain_history",
     "withdrawn_students_visible_in_search": true,
@@ -58,9 +58,9 @@
     {
       "household_display": "이준범",
       "members": ["이준범"],
-      "status": "active",
-      "student_group": "대건생",
-      "retain_history": true
+      "status": "paused",
+      "retain_history": true,
+      "note": "휴원 중"
     },
     {
       "household_display": "김예성 · 김예담 가정",
