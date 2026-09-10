@@ -1,5 +1,5 @@
 // 계명태권도 CLASS 회비관리 SYSTEM
-// PC INLINE EDIT v1.5 — 이름 + 납부일 숫자를 한 줄 중앙정렬
+// PC INLINE EDIT v1.6 — 이름/납부일 고정 + 12개월 한 화면 맞춤
 (function(){
   const DUE_KEY='kmt_tuition_ledger_due_edits_v1';
   const isPc=()=>window.matchMedia('(pointer:fine)').matches && window.innerWidth>=1000;
@@ -29,6 +29,34 @@
     s.id='ledgerPcInlineStyle';
     s.textContent=`
       @media (min-width:1000px) and (pointer:fine){
+        body.tuition-pc-inline #ledgerGridCard .ledger-scroll,
+        body.tuition-pc-inline #ledgerGridCard .ledger-table-wrap,
+        body.tuition-pc-inline #ledgerGridCard .lg-wrap{
+          overflow-x:hidden!important;
+        }
+        body.tuition-pc-inline #ledgerGridCard table{
+          width:100%!important;
+          min-width:0!important;
+          max-width:100%!important;
+          table-layout:fixed!important;
+        }
+        body.tuition-pc-inline #ledgerGridCard th,
+        body.tuition-pc-inline #ledgerGridCard td{
+          min-width:0!important;
+          padding-left:3px!important;
+          padding-right:3px!important;
+        }
+        body.tuition-pc-inline #ledgerGridCard th:nth-child(1),
+        body.tuition-pc-inline #ledgerGridCard td:nth-child(1){width:3.5%!important}
+        body.tuition-pc-inline #ledgerGridCard th:nth-child(2),
+        body.tuition-pc-inline #ledgerGridCard td:nth-child(2){width:13.5%!important}
+        body.tuition-pc-inline #ledgerGridCard th:nth-child(n+3),
+        body.tuition-pc-inline #ledgerGridCard td:nth-child(n+3){width:6.92%!important}
+        body.tuition-pc-inline #ledgerGridCard thead th{
+          font-size:11px!important;
+          white-space:nowrap!important;
+          text-align:center!important;
+        }
         body.tuition-pc-inline #ledgerGridCard .lg-name>span:not(.pc-due-wrap){display:none!important}
         body.tuition-pc-inline #ledgerGridCard .lg-name{
           display:table-cell!important;
@@ -42,10 +70,10 @@
           display:inline-block!important;
           vertical-align:middle!important;
           white-space:nowrap!important;
-          font-size:15px!important;
-          line-height:1.2!important;
+          font-size:13px!important;
+          line-height:1.15!important;
           font-weight:800!important;
-          margin:0 8px 0 0!important;
+          margin:0 5px 0 0!important;
         }
         body.tuition-pc-inline .pc-due-wrap{
           display:inline-flex!important;
@@ -57,17 +85,17 @@
         }
         body.tuition-pc-inline .pc-due-input{
           display:inline-block!important;
-          width:38px!important;
-          height:28px!important;
+          width:30px!important;
+          height:24px!important;
           border:1px solid transparent!important;
-          border-radius:6px!important;
+          border-radius:5px!important;
           background:transparent!important;
-          padding:2px 3px!important;
+          padding:1px 2px!important;
           margin:0!important;
           text-align:center!important;
           font:inherit!important;
-          font-size:15px!important;
-          line-height:1.2!important;
+          font-size:13px!important;
+          line-height:1.15!important;
           font-weight:800!important;
           color:var(--text)!important;
           cursor:text!important;
@@ -81,14 +109,29 @@
         body.tuition-pc-inline #ledgerGridCard .lg-month button,
         body.tuition-pc-inline #ledgerGridCard .ledger-month-edit-btn,
         body.tuition-pc-inline #ledgerGridCard [data-ledger-month-edit]{display:none!important}
+        body.tuition-pc-inline #ledgerGridCard .lg-month{
+          cursor:text;
+          padding:3px 2px!important;
+        }
         body.tuition-pc-inline #ledgerGridCard .lg-month input[data-k]{
-          display:block!important;width:100%!important;min-width:0;border:1px solid transparent!important;
-          border-radius:6px;background:transparent!important;padding:3px 4px!important;margin:0!important;
-          text-align:center;font:inherit;color:var(--text);cursor:text;pointer-events:auto!important;
+          display:block!important;
+          width:100%!important;
+          min-width:0!important;
+          height:23px!important;
+          border:1px solid transparent!important;
+          border-radius:5px!important;
+          background:transparent!important;
+          padding:1px 2px!important;
+          margin:0!important;
+          text-align:center!important;
+          font-size:10.5px!important;
+          line-height:1.15!important;
+          color:var(--text)!important;
+          cursor:text!important;
+          pointer-events:auto!important;
         }
         body.tuition-pc-inline #ledgerGridCard .lg-month input[data-k]:hover{background:#f8fafc!important;box-shadow:inset 0 0 0 1px #d0d5dd}
         body.tuition-pc-inline #ledgerGridCard .lg-month input[data-k]:focus{background:#fff!important;outline:2px solid #9db7ff!important;box-shadow:none!important}
-        body.tuition-pc-inline #ledgerGridCard .lg-month{cursor:text}
 
         body.tuition-pc-inline .pc-save-status{display:inline-flex;align-items:center;min-height:28px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:11px;font-weight:800;color:var(--muted)}
         body.tuition-pc-inline .pc-save-status[data-kind="saving"]{background:var(--warn);color:#7a4f01}
@@ -195,6 +238,12 @@
     document.querySelectorAll('#ledgerGridCard .lg-month button, #ledgerGridCard .ledger-month-edit-btn, #ledgerGridCard [data-ledger-month-edit], #ledgerGridCard .ledger-due-edit-btn').forEach(btn=>btn.remove());
   }
 
+  function resetHorizontalScroll(root){
+    [root,...root.querySelectorAll('*')].forEach(el=>{
+      if(el.scrollWidth>el.clientWidth+2 && el.scrollLeft) el.scrollLeft=0;
+    });
+  }
+
   function enhance(){
     if(!isPc())return;
     document.body.classList.add('tuition-pc-inline');
@@ -203,7 +252,8 @@
     removeEditButtons();
     root.querySelectorAll('tbody tr').forEach(enhanceDue);
     enhanceMonthInputs();
-    const desired='※ PC 직접입력: 이름 옆 납부일 숫자와 월별 날짜·금액을 클릭해 바로 수정합니다. Enter 또는 다른 칸 클릭 시 Supabase 중앙DB에 자동저장되며, Esc는 취소입니다.';
+    resetHorizontalScroll(root);
+    const desired='※ PC 직접입력: 이름 옆 납부일 숫자와 월별 날짜·금액을 클릭해 바로 수정합니다. 1월~12월을 한 화면에서 확인하며 Enter 또는 다른 칸 클릭 시 Supabase 중앙DB에 자동저장됩니다.';
     const note=root.querySelector('.ledger-note');
     if(note && note.textContent!==desired) note.textContent=desired;
     if(!document.getElementById('ledgerPcSaveStatus')) status('자동저장 준비','idle');
