@@ -16,7 +16,7 @@ const demoHouseholds = [
   {id:'h13',name:'이해찬 · 이정빈',students:['이해찬','이정빈'],parents:[],payers:[],dueDay:20,status:'active',payments:{},messages:[],siblingDiscount:true}
 ];
 
-const state = {households: demoHouseholds, filter:'all', sort:'due', query:''};
+const state = {households: demoHouseholds, filter:'all', sort:'due', query:'', paymentHouseholdId:null};
 const $ = sel => document.querySelector(sel);
 const $$ = sel => [...document.querySelectorAll(sel)];
 
@@ -33,14 +33,14 @@ function overdueMonths(h){
   const months=[];
   for(let offset=5;offset>=0;offset--){
     const m=new Date(today.getFullYear(),today.getMonth()-offset,1);
-    const key=ym(m); const due=dueDateFor(m,h.dueDay);
+    const key=ym(m),due=dueDateFor(m,h.dueDay);
     if(due && due < today && !h.payments[key]) months.push(key);
   }
   return months;
 }
 function daysAfterDue(h){
   if(!h.dueDay) return -999;
-  const m=firstOfMonth(today); const due=dueDateFor(m,h.dueDay);
+  const due=dueDateFor(firstOfMonth(today),h.dueDay);
   return Math.floor((today-due)/86400000);
 }
 function statusOf(h){
@@ -57,7 +57,7 @@ function statusOf(h){
 function smsReady(h){
   if(h.status!=='active') return false;
   const miss=overdueMonths(h); if(!miss.length) return false;
-  const oldest=new Date(`${miss[0]}-01T00:00:00`); const due=dueDateFor(oldest,h.dueDay);
+  const oldest=new Date(`${miss[0]}-01T00:00:00`),due=dueDateFor(oldest,h.dueDay);
   return due ? Math.floor((today-due)/86400000)>=7 : false;
 }
 function money(v){return new Intl.NumberFormat('ko-KR').format(v)+'원'}
@@ -73,10 +73,11 @@ function summary(){
   $('#sumLate').textContent=counts.late;
   $('#sumBad').textContent=counts.bad;
   $('#sumSms').textContent=state.households.filter(smsReady).length;
-  const buckets=[1,2].map(n=>state.households.filter(h=>overdueMonths(h).length===n).length);
-  $('#sumBadNote').textContent=`1회 ${buckets[0]} · 2회 ${buckets[1]} · 3회+ ${state.households.filter(h=>overdueMonths(h).length>=3).length}`;
+  const one=state.households.filter(h=>overdueMonths(h).length===1).length;
+  const two=state.households.filter(h=>overdueMonths(h).length===2).length;
+  const three=state.households.filter(h=>overdueMonths(h).length>=3).length;
+  $('#sumBadNote').textContent=`1회 ${one} · 2회 ${two} · 3회+ ${three}`;
 }
-
 function match(h,q){
   if(!q) return true;
   const hay=[h.name,...h.students,...h.parents,...h.payers,h.note||''].join(' ').replace(/\s+/g,'').toLowerCase();
@@ -97,18 +98,17 @@ function filtered(){
 function renderRows(){
   const box=$('#householdRows'); box.innerHTML='';
   filtered().forEach(h=>{
-    const s=statusOf(h); const tr=document.createElement('div'); tr.className='row';
+    const s=statusOf(h),tr=document.createElement('div'); tr.className='row';
     const lastMsg=h.messages.at(-1)?.sentOn;
     const msg=smsReady(h)?(lastMsg?`💬 ${lastMsg.slice(5).replace('-','/')} 발송`:'💬 문자대상'):(h.status==='paused'?'미납·문자 제외':h.status==='withdrawn'?'과거자료 보존':'-');
-    const dueText=h.dueDay?`기준일 ${h.dueDay}일`:'기준일 확인필요';
-    const extra=h.extensionInProgress?' · 연장 진행중':'';
+    const dueText=h.dueDay?`기준일 ${h.dueDay}일`:'기준일 확인필요',extra=h.extensionInProgress?' · 연장 진행중':'';
     tr.innerHTML=`<div><strong>${h.name}</strong><div class="mini">${dueText}${extra} · 결제자 ${h.payers.join(', ')||'-'}</div></div><span class="badge ${s.kind}">${s.label}</span><span>${msg}</span><button class="btn" data-open="${h.id}">상세</button>`;
     box.appendChild(tr);
   });
   if(!filtered().length) box.innerHTML='<div class="empty">검색 결과가 없습니다.</div>';
 }
 function renderUlsan(){
-  const q=$('#ulsanInput').value.trim(); const out=$('#ulsanResult');
+  const q=$('#ulsanInput').value.trim(),out=$('#ulsanResult');
   if(!q){out.innerHTML='';return}
   const rows=state.households.filter(h=>match(h,q));
   if(!rows.length){out.innerHTML='<div class="mini">등록된 결제자 후보가 없습니다.</div>';return}
@@ -116,10 +116,9 @@ function renderUlsan(){
 }
 function openHousehold(id){
   const h=state.households.find(x=>x.id===id); if(!h)return;
-  const s=statusOf(h); const miss=overdueMonths(h);
+  const s=statusOf(h),miss=overdueMonths(h);
   $('#modalTitle').textContent=h.name;
-  $('#modalBody').innerHTML=`
-    <div class="detail-grid">
+  $('#modalBody').innerHTML=`<div class="detail-grid">
       <div><span>현재 상태</span><b class="badge ${s.kind}">${s.label}</b></div>
       <div><span>기준 납부일</span><b>${h.dueDay?`매월 ${h.dueDay}일`:'확인 필요'}</b></div>
       <div><span>보호자</span><b>${h.parents.join(', ')||'-'}</b></div>
@@ -127,23 +126,61 @@ function openHousehold(id){
     </div>
     ${h.note?`<div class="detail-section"><strong>메모</strong><div>${h.note}</div></div>`:''}
     <div class="detail-section"><strong>미납 월</strong><div>${h.status==='active'?(miss.length?miss.map(x=>`<span class="month-chip bad">${x.slice(5)}월</span>`).join(' '):'없음'):'현재 미납 계산 제외'}</div></div>
-    <div class="modal-actions"><button class="btn primary" id="demoPay">💰 회비 받음</button><button class="btn">📅 납부일 변경</button><button class="btn">💬 문자</button></div>`;
+    <div class="modal-actions"><button class="btn primary" id="openPay">💰 회비 받음</button><button class="btn">📅 납부일 변경</button><button class="btn">💬 문자</button></div>`;
   $('#modal').hidden=false;
-  $('#demoPay')?.addEventListener('click',()=>alert('다음 단계에서 실제 회비등록 폼과 Supabase 저장을 연결합니다.'));
+  $('#openPay')?.addEventListener('click',()=>openPayment(h.id));
+}
+function openPayment(id){
+  const h=state.households.find(x=>x.id===id); if(!h)return;
+  state.paymentHouseholdId=id;
+  $('#modal').hidden=true;
+  $('#paymentTitle').textContent=`💰 ${h.name} 회비 등록`;
+  $('#billingMonth').value=ym(today);
+  $('#paidOn').value='2026-09-10';
+  $('#amount').value='';
+  $('#paymentMethod').value='울산페이';
+  $('#paymentMemo').value='';
+  const miss=overdueMonths(h),quick=$('#quickMonths');
+  quick.innerHTML=miss.length?miss.map(m=>`<button type="button" class="btn" data-month="${m}">${Number(m.slice(5))}월 미납</button>`).join(''):'<span class="mini">현재 미납월 없음</span>';
+  quick.querySelectorAll('[data-month]').forEach(b=>b.addEventListener('click',()=>{$('#billingMonth').value=b.dataset.month}));
+  $('#paymentModal').hidden=false;
+}
+function closePayment(){
+  $('#paymentModal').hidden=true;
+  state.paymentHouseholdId=null;
+}
+function saveDemoPayment(e){
+  e.preventDefault();
+  const h=state.households.find(x=>x.id===state.paymentHouseholdId); if(!h)return;
+  const month=$('#billingMonth').value,paidOn=$('#paidOn').value,amount=Number($('#amount').value),method=$('#paymentMethod').value,memo=$('#paymentMemo').value.trim();
+  if(!month||!paidOn||!amount){alert('적용월, 실제 납부일, 금액을 확인해 주세요.');return}
+  if(h.payments[month] && !confirm(`${month.slice(0,4)}년 ${Number(month.slice(5))}월분 기록이 이미 있습니다. 프로토타입에서 덮어쓸까요?`)) return;
+  h.payments[month]={paidOn,amount,method,memo};
+  closePayment();
+  summary(); renderRows(); todayPayments();
+  alert(`${h.name}\n${Number(month.slice(5))}월분 ${money(amount)} 등록 완료\n실제 납부일 ${paidOn}\n※ 운영 DB에는 아직 저장되지 않았습니다.`);
 }
 function todayPayments(){
   const list=[]; state.households.forEach(h=>Object.entries(h.payments).forEach(([month,p])=>{if(p.paidOn==='2026-09-10')list.push({h,month,...p})}));
-  const total=list.reduce((a,b)=>a+b.amount,0); $('#todayTotal').textContent=`${list.length}가정 · ${money(total)}`;
-  $('#todayList').innerHTML=list.length?list.map(x=>`<p>${x.h.name} · ${money(x.amount)} · ${x.method}</p>`).join(''):'<p class="mini">오늘 등록된 회비가 없습니다.</p>';
+  const total=list.reduce((a,b)=>a+b.amount,0);
+  $('#todayTotal').textContent=`${list.length}가정 · ${money(total)}`;
+  $('#todayList').innerHTML=list.length?list.map(x=>`<p>${x.h.name} · ${Number(x.month.slice(5))}월분 · ${money(x.amount)} · ${x.method}</p>`).join(''):'<p class="mini">오늘 등록된 회비가 없습니다.</p>';
+}
+function setFilterButton(){
+  $$('[data-filter]').forEach(b=>b.classList.toggle('active-filter',b.dataset.filter===state.filter));
 }
 
 $('#searchInput').addEventListener('input',e=>{state.query=e.target.value;renderRows()});
 $('#ulsanInput').addEventListener('input',renderUlsan);
 $('#ulsanFind').addEventListener('click',renderUlsan);
-$$('[data-filter]').forEach(b=>b.addEventListener('click',()=>{state.filter=b.dataset.filter;renderRows()}));
+$$('[data-filter]').forEach(b=>b.addEventListener('click',()=>{state.filter=b.dataset.filter;setFilterButton();renderRows()}));
 $$('[data-sort]').forEach(b=>b.addEventListener('click',()=>{state.sort=b.dataset.sort;renderRows()}));
 document.addEventListener('click',e=>{const id=e.target.closest('[data-open]')?.dataset.open;if(id)openHousehold(id)});
 $('#modalClose').addEventListener('click',()=>$('#modal').hidden=true);
 $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')$('#modal').hidden=true});
+$('#paymentClose').addEventListener('click',closePayment);
+$('#paymentCancel').addEventListener('click',closePayment);
+$('#paymentModal').addEventListener('click',e=>{if(e.target.id==='paymentModal')closePayment()});
+$('#paymentForm').addEventListener('submit',saveDemoPayment);
 
-summary(); renderRows(); todayPayments();
+summary(); setFilterButton(); renderRows(); todayPayments();
