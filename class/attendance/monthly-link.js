@@ -11,7 +11,9 @@
       if(!studentId||!actions)return;
       const link=document.createElement("a");
       link.className="monthly-history-link";
-      link.href=`monthly.html?student=${encodeURIComponent(studentId)}`;
+      const monthlyUrl=new URL("monthly-v2.html",location.href);
+      monthlyUrl.searchParams.set("student",studentId);
+      link.href=monthlyUrl.toString();
       link.textContent="📅 월간출석";
       link.setAttribute("aria-label","이 원생의 월간 출석내역 보기");
       link.addEventListener("click",e=>e.stopPropagation());
