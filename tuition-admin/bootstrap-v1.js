@@ -38,6 +38,7 @@ const ledgerAliases = new Map([
   ['오승윤,연서',['오승윤','오연서']]
 ]);
 
+// 테스트를 위해 만든 가상 원생. CLASS에는 남겨두되 회비 대상에서는 완전히 제외한다.
 const excludedTuitionStudents = new Set(['아리아']);
 
 function applyConfirmed(h){
@@ -129,7 +130,7 @@ function attachLegacyLedger(households){
     window.KMT_TUITION_LOAD_HOUSEHOLDS(households);
     const ledgerCount=households.filter(h=>(h.legacyLedger||[]).length).length;
     const excludedCount=(result.students||[]).length-tuitionStudents.length;
-    const excludedText=excludedCount?` · 회비제외 ${excludedCount}명`:'';
+    const excludedText=excludedCount?` · 가상원생 제외 ${excludedCount}명`:'';
     setBadge('live',`CLASS 실데이터 읽기전용 · ${tuitionStudents.length}명 · 장부연결 ${ledgerCount}가정${excludedText}`);
   }catch(err){
     console.error('[TUITION] CLASS readonly load failed',err);
