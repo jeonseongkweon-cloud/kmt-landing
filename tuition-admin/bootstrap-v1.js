@@ -16,6 +16,17 @@ const familyGroups = [
   ['한정민','한지아']
 ];
 
+const ledgerAliases = new Map([
+  ['우,나,사',['김우리','김나라','김사랑']],
+  ['해찬,정빈',['이해찬','이정빈']],
+  ['윤우준,이현',['윤우준','윤이현']],
+  ['김예성,예담',['김예성','김예담']],
+  ['윤유은,우진',['윤유은','윤우진']],
+  ['한정민,지아',['한정민','한지아']],
+  ['김도영,도훈',['김도영','김도훈']],
+  ['김시율,건하',['김시율','김건하']]
+]);
+
 function applyConfirmed(h){
   const names=h.students||[];
   if(names.some(n=>confirmed.withdrawn.has(n))) h.status='withdrawn';
@@ -59,6 +70,33 @@ function setBadge(kind,text){
   const el=document.getElementById('dataSourceBadge');
   if(!el)return; el.className=`source ${kind}`; el.textContent=text;
 }
+function ledgerNames(record){
+  const alias=ledgerAliases.get(record.nameRaw);
+  if(alias) return alias;
+  return String(record.nameRaw||'').split(',').map(x=>x.trim()).filter(Boolean);
+}
+function ledgerSummary(record){
+  const entries=Object.entries(record.months||{}).map(([month,v])=>{
+    const m=Number(month.slice(5));
+    const amount=v.amount?` ${new Intl.NumberFormat('ko-KR').format(v.amount)}원`:'';
+    return `${m}월 ${v.entry||'기록'}${amount}`;
+  });
+  return `2026 장부원본 · 기준일 ${record.dueDay||'-'}일${entries.length?' · '+entries.join(' · '):' · 월별 기록 없음'}`;
+}
+function attachLegacyLedger(households){
+  const ledger=Array.isArray(window.KMT_LEGACY_LEDGER_2026)?window.KMT_LEGACY_LEDGER_2026:[];
+  if(!ledger.length) return households;
+  return households.map(h=>{
+    const students=h.students||[];
+    const matches=ledger.filter(r=>ledgerNames(r).some(n=>students.includes(n)));
+    if(!matches.length) return h;
+    h.legacyLedger=matches;
+    const summaries=matches.map(ledgerSummary);
+    const baseNote=(h.note||'').trim();
+    h.note=[baseNote,...summaries].filter(Boolean).join(' | ');
+    return h;
+  });
+}
 
 (async()=>{
   try{
@@ -69,12 +107,14 @@ function setBadge(kind,text){
     }
     let households=buildOneStudentHouseholds(result.students).map(applyConfirmed);
     households=mergeFamilies(households).map(applyConfirmed);
+    households=attachLegacyLedger(households);
     if(typeof window.KMT_TUITION_LOAD_HOUSEHOLDS!=='function'){
       setBadge('demo','샘플 데이터 · 화면 연결 대기');
       return;
     }
     window.KMT_TUITION_LOAD_HOUSEHOLDS(households);
-    setBadge('live',`CLASS 실데이터 읽기전용 · ${result.students.length}명`);
+    const ledgerCount=households.filter(h=>(h.legacyLedger||[]).length).length;
+    setBadge('live',`CLASS 실데이터 읽기전용 · ${result.students.length}명 · 장부연결 ${ledgerCount}가정`);
   }catch(err){
     console.error('[TUITION] CLASS readonly load failed',err);
     setBadge('demo','샘플 데이터 · CLASS 연결 오류');
