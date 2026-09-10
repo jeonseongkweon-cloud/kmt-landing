@@ -1,5 +1,5 @@
 // 계명태권도 CLASS 회비관리 SYSTEM
-// PC INLINE EDIT v1.2 — PC 전용 엑셀형 직접수정 / 실제 중앙DB 자동저장 확인
+// PC INLINE EDIT v1.3 — 이름 옆 납부일 숫자만 직접수정
 (function(){
   const DUE_KEY='kmt_tuition_ledger_due_edits_v1';
   const isPc=()=>window.matchMedia('(pointer:fine)').matches && window.innerWidth>=1000;
@@ -29,14 +29,15 @@
     s.id='ledgerPcInlineStyle';
     s.textContent=`
       @media (min-width:1000px) and (pointer:fine){
-        body.tuition-pc-inline #ledgerGridCard .lg-name>span{display:none}
-        body.tuition-pc-inline .pc-due-wrap{display:flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;color:var(--muted)}
-        body.tuition-pc-inline .pc-due-input{width:52px;border:1px solid transparent;border-radius:6px;background:transparent;padding:3px 4px;text-align:center;font:inherit;font-weight:800;color:var(--text);cursor:text}
+        body.tuition-pc-inline #ledgerGridCard .lg-name>span{display:none!important}
+        body.tuition-pc-inline #ledgerGridCard .lg-name{display:flex;align-items:center;gap:10px;flex-wrap:nowrap}
+        body.tuition-pc-inline #ledgerGridCard .lg-name>b{display:inline-block;white-space:nowrap}
+        body.tuition-pc-inline .pc-due-wrap{display:inline-flex;align-items:center;margin:0;padding:0}
+        body.tuition-pc-inline .pc-due-input{width:38px;border:1px solid transparent;border-radius:6px;background:transparent;padding:2px 3px;text-align:center;font:inherit;font-weight:800;color:var(--text);cursor:text}
         body.tuition-pc-inline .pc-due-input:hover{border-color:#cbd5e1;background:#fff}
         body.tuition-pc-inline .pc-due-input:focus{outline:2px solid #9db7ff;border-color:#9db7ff;background:#fff}
-        body.tuition-pc-inline .ledger-due-edit-btn{font-size:9px;padding:2px 5px;margin:0}
+        body.tuition-pc-inline .ledger-due-edit-btn{display:none!important}
 
-        /* PC 월별 칸은 직접 입력만 사용: 수정 버튼/팝업 진입 버튼 제거 */
         body.tuition-pc-inline #ledgerGridCard .lg-month button,
         body.tuition-pc-inline #ledgerGridCard .ledger-month-edit-btn,
         body.tuition-pc-inline #ledgerGridCard [data-ledger-month-edit]{display:none!important}
@@ -65,13 +66,14 @@
   function enhanceDue(row){
     const nameCell=row.querySelector('.lg-name');
     if(!nameCell || nameCell.querySelector('.pc-due-wrap'))return;
-    const oldButton=nameCell.querySelector('.ledger-due-edit-btn');
     const current=dueFromRow(row);
-    const wrap=document.createElement('div');
+    const oldButton=nameCell.querySelector('.ledger-due-edit-btn');
+    if(oldButton) oldButton.remove();
+
+    const wrap=document.createElement('span');
     wrap.className='pc-due-wrap';
-    wrap.innerHTML=`<span>납부일</span><input class="pc-due-input" type="number" min="1" max="31" value="${current||1}" aria-label="기준 납부일"><span>일</span>`;
+    wrap.innerHTML=`<input class="pc-due-input" type="number" min="1" max="31" value="${current||1}" aria-label="납부일">`;
     const input=wrap.querySelector('input');
-    if(oldButton){oldButton.textContent='상세';oldButton.title='변경 사유·메모를 포함한 상세 수정';wrap.appendChild(oldButton)}
     nameCell.appendChild(wrap);
 
     input.addEventListener('focus',()=>{input.dataset.before=input.value;input.select()});
@@ -90,10 +92,10 @@
       const master=window.KMTTuitionMaster;
       if(!master?.ok){due[key]=before;save(DUE_KEY,due);input.value=before;status('중앙DB 연결 실패 · 원래 값 복원','error');return}
       try{
-        const ok=await master.saveDue({row,householdKey:key,displayName:row.querySelector('.lg-name b')?.textContent?.trim()||key,studentsCsv:row.dataset.students||'',day,reason:'PC 인라인 수정',memo:''});
+        const ok=await master.saveDue({row,householdKey:key,displayName:nameCell.querySelector('b')?.textContent?.trim()||key,studentsCsv:row.dataset.students||'',day,reason:'PC 인라인 수정',memo:''});
         if(ok){
           input.dataset.before=String(day);
-          const hidden=nameCell.querySelector(':scope>span');
+          const hidden=nameCell.querySelector(':scope>span:not(.pc-due-wrap)');
           if(hidden) hidden.textContent=`납부일 ${day}일`;
           status('✓ 납부일 중앙DB 저장됨','ok');
         }else{
@@ -140,9 +142,7 @@
           if(ok){
             input.dataset.before=input.value;
             status('✓ 중앙DB 저장됨','ok');
-          }else{
-            status('중앙DB 저장 실패 · 다시 확인','error');
-          }
+          }else status('중앙DB 저장 실패 · 다시 확인','error');
         }catch(err){
           console.error('[TUITION PC INLINE] month save failed',err);
           status('중앙DB 저장 실패 · 다시 확인','error');
@@ -151,8 +151,8 @@
     });
   }
 
-  function removeMonthEditButtons(){
-    document.querySelectorAll('#ledgerGridCard .lg-month button, #ledgerGridCard .ledger-month-edit-btn, #ledgerGridCard [data-ledger-month-edit]').forEach(btn=>btn.remove());
+  function removeEditButtons(){
+    document.querySelectorAll('#ledgerGridCard .lg-month button, #ledgerGridCard .ledger-month-edit-btn, #ledgerGridCard [data-ledger-month-edit], #ledgerGridCard .ledger-due-edit-btn').forEach(btn=>btn.remove());
   }
 
   function enhance(){
@@ -160,10 +160,10 @@
     document.body.classList.add('tuition-pc-inline');
     const root=document.getElementById('ledgerGridCard');
     if(!root)return;
-    removeMonthEditButtons();
+    removeEditButtons();
     root.querySelectorAll('tbody tr').forEach(enhanceDue);
     enhanceMonthInputs();
-    const desired='※ PC 직접입력: 월별 날짜·금액을 클릭해 바로 수정합니다. Enter 또는 다른 칸 클릭 시 Supabase 중앙DB에 자동저장되며, Esc는 취소입니다.';
+    const desired='※ PC 직접입력: 이름 옆 납부일 숫자와 월별 날짜·금액을 클릭해 바로 수정합니다. Enter 또는 다른 칸 클릭 시 Supabase 중앙DB에 자동저장되며, Esc는 취소입니다.';
     const note=root.querySelector('.ledger-note');
     if(note && note.textContent!==desired) note.textContent=desired;
     if(!document.getElementById('ledgerPcSaveStatus')) status('자동저장 준비','idle');
