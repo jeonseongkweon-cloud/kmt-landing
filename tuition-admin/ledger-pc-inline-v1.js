@@ -1,5 +1,5 @@
 // 계명태권도 CLASS 회비관리 SYSTEM
-// PC INLINE EDIT v1.4 — 이름 옆 납부일 숫자만 직접수정
+// PC INLINE EDIT v1.5 — 이름 + 납부일 숫자를 한 줄 중앙정렬
 (function(){
   const DUE_KEY='kmt_tuition_ledger_due_edits_v1';
   const isPc=()=>window.matchMedia('(pointer:fine)').matches && window.innerWidth>=1000;
@@ -30,12 +30,52 @@
     s.textContent=`
       @media (min-width:1000px) and (pointer:fine){
         body.tuition-pc-inline #ledgerGridCard .lg-name>span:not(.pc-due-wrap){display:none!important}
-        body.tuition-pc-inline #ledgerGridCard .lg-name{display:flex;align-items:center;gap:10px;flex-wrap:nowrap}
-        body.tuition-pc-inline #ledgerGridCard .lg-name>b{display:inline-block;white-space:nowrap}
-        body.tuition-pc-inline .pc-due-wrap{display:inline-flex!important;align-items:center;margin:0;padding:0;visibility:visible!important}
-        body.tuition-pc-inline .pc-due-input{display:inline-block!important;width:38px;border:1px solid transparent;border-radius:6px;background:transparent;padding:2px 3px;text-align:center;font:inherit;font-weight:800;color:var(--text);cursor:text;visibility:visible!important;opacity:1!important}
-        body.tuition-pc-inline .pc-due-input:hover{border-color:#cbd5e1;background:#fff}
-        body.tuition-pc-inline .pc-due-input:focus{outline:2px solid #9db7ff;border-color:#9db7ff;background:#fff}
+        body.tuition-pc-inline #ledgerGridCard .lg-name{
+          display:table-cell!important;
+          vertical-align:middle!important;
+          text-align:center!important;
+          white-space:nowrap!important;
+          padding-top:0!important;
+          padding-bottom:0!important;
+        }
+        body.tuition-pc-inline #ledgerGridCard .lg-name>b{
+          display:inline-block!important;
+          vertical-align:middle!important;
+          white-space:nowrap!important;
+          font-size:15px!important;
+          line-height:1.2!important;
+          font-weight:800!important;
+          margin:0 8px 0 0!important;
+        }
+        body.tuition-pc-inline .pc-due-wrap{
+          display:inline-flex!important;
+          vertical-align:middle!important;
+          align-items:center!important;
+          margin:0!important;
+          padding:0!important;
+          visibility:visible!important;
+        }
+        body.tuition-pc-inline .pc-due-input{
+          display:inline-block!important;
+          width:38px!important;
+          height:28px!important;
+          border:1px solid transparent!important;
+          border-radius:6px!important;
+          background:transparent!important;
+          padding:2px 3px!important;
+          margin:0!important;
+          text-align:center!important;
+          font:inherit!important;
+          font-size:15px!important;
+          line-height:1.2!important;
+          font-weight:800!important;
+          color:var(--text)!important;
+          cursor:text!important;
+          visibility:visible!important;
+          opacity:1!important;
+        }
+        body.tuition-pc-inline .pc-due-input:hover{border-color:#cbd5e1!important;background:#fff!important}
+        body.tuition-pc-inline .pc-due-input:focus{outline:2px solid #9db7ff!important;border-color:#9db7ff!important;background:#fff!important}
         body.tuition-pc-inline .ledger-due-edit-btn{display:none!important}
 
         body.tuition-pc-inline #ledgerGridCard .lg-month button,
