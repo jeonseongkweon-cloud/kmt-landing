@@ -1,80 +1,10 @@
 <!doctype html>
-<html lang="ko">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>계명태권도 CLASS 회비관리 SYSTEM</title>
-<style>
-:root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#667085;--line:#e5e7eb;--ok:#e8f7ee;--warn:#fff7df;--late:#fff0e6;--bad:#fdecec;--info:#eaf2ff;--mutedbg:#f2f4f7}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}.wrap{max-width:1280px;margin:auto;padding:20px}.top{position:sticky;top:0;z-index:10;background:rgba(245,247,251,.96);padding:12px 0}.head{display:flex;justify-content:space-between;gap:16px;align-items:end;flex-wrap:wrap}.title{font-size:24px;font-weight:900}.sub{color:var(--muted);font-size:13px}.search{width:100%;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:#fff;font-size:17px;box-shadow:0 4px 18px rgba(15,23,42,.05)}.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin:14px 0}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}.metric b{display:block;font-size:28px;margin-top:4px}.ok{background:var(--ok)}.warn{background:var(--warn)}.late{background:var(--late)}.bad{background:var(--bad)}.info{background:var(--info)}.muted{background:var(--mutedbg)}.layout{display:grid;grid-template-columns:1.4fr .8fr;gap:14px}.section-title{font-size:18px;font-weight:900;margin:0 0 12px}.row{display:grid;grid-template-columns:1.4fr .9fr .9fr auto;gap:10px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}.row:first-of-type{border-top:0}.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}.badge.bad{background:#fbd5d5}.badge.info{background:#dbeafe}.badge.warn{background:#ffedb5}.badge.late{background:#ffd8bf}.badge.ok{background:#d7f3e0}.badge.muted{background:#e5e7eb}.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;font-weight:800;cursor:pointer}.btn.primary{background:#172033;color:#fff;border-color:#172033}.btn.active-filter{outline:2px solid #172033}.paybox{display:flex;gap:8px}.paybox input{flex:1;min-width:0;padding:12px;border:1px solid var(--line);border-radius:12px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.mini{font-size:13px;color:var(--muted)}.empty{padding:20px;text-align:center;color:var(--muted)}.candidate{display:flex;flex-direction:column;align-items:flex-start;width:100%;padding:12px;margin-top:8px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer}.candidate span{font-size:12px;color:var(--muted);margin-top:3px}.modal{position:fixed;inset:0;background:rgba(15,23,42,.38);display:grid;place-items:center;padding:16px;z-index:50}.modal[hidden]{display:none}.modal-card{width:min(680px,100%);background:#fff;border-radius:20px;border:1px solid var(--line);box-shadow:0 25px 70px rgba(15,23,42,.24);overflow:hidden}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px;border-bottom:1px solid var(--line)}.modal-body{padding:18px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail-grid>div{border:1px solid var(--line);border-radius:14px;padding:12px}.detail-grid span{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.detail-section{margin-top:16px}.month-chip{display:inline-block;border-radius:999px;padding:5px 8px;margin-top:8px;font-size:12px}.modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;color:var(--muted);font-weight:700}.field input,.field select,.field textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit}.field.full{grid-column:1/-1}.quick-months{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}.wrap{padding:12px}.detail-grid,.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="top">
-    <div class="head"><div><div class="title">계명태권도 CLASS 회비관리 SYSTEM</div><div class="sub">독립 회비관리 프로토타입 · STAR CLASS와 완전 분리</div></div><div class="mini">tuition-system-v1 전용 브랜치</div></div>
-    <input id="searchInput" class="search" placeholder="🔎 학생 · 형제 · 부모 · 울산페이 결제자 검색" autocomplete="off" />
-  </div>
-
-  <div class="grid">
-    <div class="card metric"><span>회비관리</span><b id="sumHouseholds">0가정</b><small id="sumActive">0가정</small></div>
-    <div class="card metric ok"><span>정상</span><b id="sumOk">0</b><small>가정</small></div>
-    <div class="card metric warn"><span>납부 임박</span><b id="sumWarn">0</b><small>가정</small></div>
-    <div class="card metric late"><span>납부일 경과</span><b id="sumLate">0</b><small>7일 미만</small></div>
-    <div class="card metric bad"><span>미납</span><b id="sumBad">0</b><small id="sumBadNote">1회 0 · 2회 0 · 3회+ 0</small></div>
-    <div class="card metric info"><span>문자 확인</span><b id="sumSms">0</b><small>7일 경과 가정</small></div>
-  </div>
-
-  <div class="layout">
-    <div class="card">
-      <h2 class="section-title">🔴 회비관리 가정 목록</h2>
-      <div id="householdRows"></div>
-      <div class="toolbar" id="statusFilters"><button class="btn active-filter" data-filter="all">전체</button><button class="btn" data-filter="active">재원</button><button class="btn" data-filter="paused">휴원</button><button class="btn" data-filter="withdrawn">퇴관</button><button class="btn" data-filter="bad">미납만</button><button class="btn" data-filter="sms">문자대상</button></div>
-    </div>
-
-    <div class="card">
-      <h2 class="section-title">💳 울산페이 빠른찾기</h2>
-      <p class="mini">휴대폰 앱에 보이는 가려진 이름을 그대로 입력</p>
-      <div class="paybox"><input id="ulsanInput" placeholder="예: 박*영" /><button id="ulsanFind" class="btn">찾기</button></div>
-      <div id="ulsanResult"></div>
-      <hr style="border:0;border-top:1px solid var(--line);margin:16px 0" />
-      <h2 class="section-title">💰 오늘 받은 회비</h2>
-      <div id="todayTotal" class="mini">0가정 · 0원</div>
-      <div id="todayList"></div>
-    </div>
-  </div>
-
-  <div class="toolbar">
-    <button class="btn" data-sort="name">이름순</button><button class="btn" data-sort="due">납부일순</button><button class="btn" data-sort="bad">미납순</button><button class="btn">수업부순</button><button class="btn">📒 연간 회비대장</button>
-  </div>
-</div>
-
-<div id="modal" class="modal" hidden>
-  <div class="modal-card">
-    <div class="modal-head"><strong id="modalTitle">가정 상세</strong><button id="modalClose" class="btn">닫기</button></div>
-    <div id="modalBody" class="modal-body"></div>
-  </div>
-</div>
-
-<div id="paymentModal" class="modal" hidden>
-  <div class="modal-card">
-    <div class="modal-head"><strong id="paymentTitle">💰 회비 등록</strong><button id="paymentClose" class="btn">닫기</button></div>
-    <div class="modal-body">
-      <form id="paymentForm">
-        <div class="form-grid">
-          <div class="field"><label>적용월</label><input id="billingMonth" type="month" required /></div>
-          <div class="field"><label>실제 납부일</label><input id="paidOn" type="date" required /></div>
-          <div class="field"><label>받은 금액</label><input id="amount" type="number" min="0" step="1000" inputmode="numeric" placeholder="예: 165000" required /></div>
-          <div class="field"><label>결제방법</label><select id="paymentMethod" required><option value="울산페이">울산페이</option><option value="카드">카드</option><option value="계좌">계좌</option><option value="현금">현금</option><option value="기타">기타</option></select></div>
-          <div class="field full"><label>미납월 빠른선택</label><div id="quickMonths" class="quick-months"></div></div>
-          <div class="field full"><label>메모</label><textarea id="paymentMemo" rows="3" placeholder="필요할 때만 입력"></textarea></div>
-        </div>
-        <div class="modal-actions"><button type="submit" class="btn primary">✓ 회비 등록</button><button type="button" id="paymentCancel" class="btn">취소</button></div>
-        <p class="mini">프로토타입 단계: 현재 입력은 화면의 데모 데이터에만 반영되며 운영 Supabase에는 저장하지 않습니다.</p>
-      </form>
-    </div>
-  </div>
-</div>
-<script src="./app.js"></script>
-</body>
-</html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>계명태권도 CLASS 회비관리 SYSTEM</title><style>
+:root{--bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#667085;--line:#e5e7eb;--ok:#e8f7ee;--warn:#fff7df;--late:#fff0e6;--bad:#fdecec;--info:#eaf2ff;--mutedbg:#f2f4f7}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif}.wrap{max-width:1280px;margin:auto;padding:20px}.top{position:sticky;top:0;z-index:10;background:rgba(245,247,251,.96);padding:12px 0}.head{display:flex;justify-content:space-between;gap:16px;align-items:end;flex-wrap:wrap}.title{font-size:24px;font-weight:900}.sub,.mini{color:var(--muted);font-size:13px}.search{width:100%;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:#fff;font-size:17px}.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin:14px 0}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}.metric b{display:block;font-size:28px;margin-top:4px}.ok{background:var(--ok)}.warn{background:var(--warn)}.late{background:var(--late)}.bad{background:var(--bad)}.info{background:var(--info)}.muted{background:var(--mutedbg)}.layout{display:grid;grid-template-columns:1.4fr .8fr;gap:14px}.section-title{font-size:18px;font-weight:900;margin:0 0 12px}.row{display:grid;grid-template-columns:1.4fr .9fr .9fr auto;gap:10px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}.btn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;font-weight:800;cursor:pointer}.btn.primary,.btn.active-filter{background:#172033;color:#fff;border-color:#172033}.toolbar,.modal-actions,.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.paybox{display:flex;gap:8px}.paybox input,.field input,.field select,.field textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;font:inherit}.candidate{display:flex;flex-direction:column;align-items:flex-start;width:100%;padding:12px;margin-top:8px;border:1px solid var(--line);border-radius:12px;background:#fff}.modal{position:fixed;inset:0;background:rgba(15,23,42,.38);display:grid;place-items:center;padding:16px;z-index:50}.modal[hidden]{display:none}.modal-card{width:min(680px,100%);background:#fff;border-radius:20px;overflow:hidden}.modal-head{display:flex;justify-content:space-between;align-items:center;padding:18px;border-bottom:1px solid var(--line)}.modal-body{padding:18px}.detail-grid,.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail-grid>div{border:1px solid var(--line);border-radius:14px;padding:12px}.detail-grid span,.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.detail-section{margin-top:16px}.month-chip{display:inline-block;border-radius:999px;padding:5px 8px;margin-top:8px;font-size:12px}.status-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.layout,.detail-grid,.form-grid{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}.wrap{padding:12px}}
+</style></head><body><div class="wrap"><div class="top"><div class="head"><div><div class="title">계명태권도 CLASS 회비관리 SYSTEM</div><div class="sub">독립 회비관리 프로토타입 · STAR CLASS와 완전 분리</div></div><div class="mini">tuition-system-v1</div></div><input id="searchInput" class="search" placeholder="🔎 학생 · 형제 · 부모 · 울산페이 결제자 검색"></div>
+<div class="grid"><div class="card metric"><span>회비관리</span><b id="sumHouseholds">0가정</b><small id="sumActive">0가정</small></div><div class="card metric ok"><span>정상</span><b id="sumOk">0</b></div><div class="card metric warn"><span>납부 임박</span><b id="sumWarn">0</b></div><div class="card metric late"><span>납부일 경과</span><b id="sumLate">0</b><small>7일 미만</small></div><div class="card metric bad"><span>미납</span><b id="sumBad">0</b><small id="sumBadNote"></small></div><div class="card metric info"><span>문자 확인</span><b id="sumSms">0</b><small>7일 경과</small></div></div>
+<div class="layout"><div class="card"><h2 class="section-title">회비관리 가정 목록</h2><div id="householdRows"></div><div class="toolbar"><button class="btn" data-filter="all">전체</button><button class="btn" data-filter="active">재원</button><button class="btn" data-filter="paused">휴원</button><button class="btn" data-filter="withdrawn">퇴관</button><button class="btn" data-filter="bad">미납만</button><button class="btn" data-filter="sms">문자대상</button></div></div><div class="card"><h2 class="section-title">💳 울산페이 빠른찾기</h2><div class="paybox"><input id="ulsanInput" placeholder="예: 박*영"><button id="ulsanFind" class="btn">찾기</button></div><div id="ulsanResult"></div><hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><h2 class="section-title">💰 오늘 받은 회비</h2><div id="todayTotal" class="mini"></div><div id="todayList"></div></div></div><div class="toolbar"><button class="btn" data-sort="name">이름순</button><button class="btn" data-sort="due">납부일순</button><button class="btn" data-sort="bad">미납순</button><button class="btn">📒 연간 회비대장</button></div></div>
+<div id="modal" class="modal" hidden><div class="modal-card"><div class="modal-head"><strong id="modalTitle"></strong><button id="modalClose" class="btn">닫기</button></div><div id="modalBody" class="modal-body"></div></div></div>
+<div id="paymentModal" class="modal" hidden><div class="modal-card"><div class="modal-head"><strong id="paymentTitle">회비 등록</strong><button id="paymentClose" class="btn">닫기</button></div><form id="paymentForm" class="modal-body"><div class="quick" id="quickMonths"></div><div class="form-grid"><div class="field"><label>적용월</label><input id="billingMonth" type="month" required></div><div class="field"><label>실제 납부일</label><input id="paidOn" type="date" required></div><div class="field"><label>받은 금액</label><input id="amount" type="number" min="1" required></div><div class="field"><label>결제방법</label><select id="paymentMethod"><option>울산페이</option><option>카드</option><option>계좌</option><option>현금</option><option>기타</option></select></div></div><div class="field" style="margin-top:10px"><label>메모</label><textarea id="paymentMemo" rows="2"></textarea></div><div class="modal-actions"><button class="btn primary" type="submit">등록</button><button id="paymentCancel" class="btn" type="button">취소</button></div></form></div></div>
+<div id="dueModal" class="modal" hidden><div class="modal-card"><div class="modal-head"><strong id="dueTitle">납부일 변경</strong><button id="dueClose" class="btn">닫기</button></div><form id="dueForm" class="modal-body"><div class="field"><label>새 기준 납부일</label><input id="newDueDay" type="number" min="1" max="31" required></div><div class="field" style="margin-top:10px"><label>변경 사유</label><select id="dueReason"><option>여행</option><option>휴원</option><option>휴관</option><option>기타</option></select></div><div class="field" style="margin-top:10px"><label>메모</label><textarea id="dueMemo" rows="2"></textarea></div><p class="mini">변경된 날짜는 다음 달에도 계속 적용됩니다. 늦게 납부했다는 이유만으로 자동 변경되지 않습니다.</p><div class="modal-actions"><button class="btn primary" type="submit">변경 저장</button><button id="dueCancel" class="btn" type="button">취소</button></div></form></div></div>
+<div id="statusModal" class="modal" hidden><div class="modal-card"><div class="modal-head"><strong id="statusTitle">상태 변경</strong><button id="statusClose" class="btn">닫기</button></div><div class="modal-body"><p class="mini">상태를 바꿔도 과거 회비기록은 삭제하지 않습니다.</p><div class="status-buttons"><button class="btn" data-status-choice="active">🟢 재원</button><button class="btn" data-status-choice="paused">🔵 휴원</button><button class="btn" data-status-choice="withdrawn">⚪ 퇴관</button></div><div class="field" style="margin-top:12px"><label>상태 메모</label><textarea id="statusMemo" rows="2"></textarea></div></div></div></div><script src="./app.js"></script></body></html>
