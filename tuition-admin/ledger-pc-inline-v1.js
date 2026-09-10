@@ -1,11 +1,11 @@
 // 계명태권도 CLASS 회비관리 SYSTEM
-// PC INLINE EDIT v1.0 — PC 전용 마우스/키보드 직접수정
+// PC INLINE EDIT v1.1 — PC 전용 엑셀형 직접수정 / 팝업 없는 일상입력
 (function(){
   const DUE_KEY='kmt_tuition_ledger_due_edits_v1';
   const isPc=()=>window.matchMedia('(pointer:fine)').matches && window.innerWidth>=1000;
   const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'{}')}catch{return {}}};
   const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
-  let observer=null, statusTimer=null;
+  let observer=null, statusTimer=null, enhanceTimer=null;
 
   function status(text,kind='info'){
     let el=document.getElementById('ledgerPcSaveStatus');
@@ -31,12 +31,22 @@
       @media (min-width:1000px) and (pointer:fine){
         body.tuition-pc-inline #ledgerGridCard .lg-name>span{display:none}
         body.tuition-pc-inline .pc-due-wrap{display:flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;color:var(--muted)}
-        body.tuition-pc-inline .pc-due-input{width:52px;border:1px solid transparent;border-radius:6px;background:transparent;padding:3px 4px;text-align:center;font:inherit;font-weight:800;color:var(--text)}
+        body.tuition-pc-inline .pc-due-input{width:52px;border:1px solid transparent;border-radius:6px;background:transparent;padding:3px 4px;text-align:center;font:inherit;font-weight:800;color:var(--text);cursor:text}
         body.tuition-pc-inline .pc-due-input:hover{border-color:#cbd5e1;background:#fff}
         body.tuition-pc-inline .pc-due-input:focus{outline:2px solid #9db7ff;border-color:#9db7ff;background:#fff}
         body.tuition-pc-inline .ledger-due-edit-btn{font-size:9px;padding:2px 5px;margin:0}
-        body.tuition-pc-inline #ledgerGridCard .lg-month input{cursor:text}
-        body.tuition-pc-inline #ledgerGridCard .lg-month input:hover{background:#f8fafc;box-shadow:inset 0 0 0 1px #d0d5dd}
+
+        /* PC에서는 월별 '수정' 버튼을 숨기고 날짜/금액 칸을 직접 편집한다. */
+        body.tuition-pc-inline #ledgerGridCard .ledger-month-edit-btn{display:none!important}
+        body.tuition-pc-inline #ledgerGridCard .lg-month input[data-k]{
+          display:block!important;width:100%!important;min-width:0;border:1px solid transparent!important;
+          border-radius:6px;background:transparent!important;padding:3px 4px!important;margin:0!important;
+          text-align:center;font:inherit;color:var(--text);cursor:text;pointer-events:auto!important;
+        }
+        body.tuition-pc-inline #ledgerGridCard .lg-month input[data-k]:hover{background:#f8fafc!important;box-shadow:inset 0 0 0 1px #d0d5dd}
+        body.tuition-pc-inline #ledgerGridCard .lg-month input[data-k]:focus{background:#fff!important;outline:2px solid #9db7ff!important;box-shadow:none!important}
+        body.tuition-pc-inline #ledgerGridCard .lg-month{cursor:text}
+
         body.tuition-pc-inline .pc-save-status{display:inline-flex;align-items:center;min-height:28px;padding:4px 8px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:11px;font-weight:800;color:var(--muted)}
         body.tuition-pc-inline .pc-save-status[data-kind="saving"]{background:var(--warn);color:#7a4f01}
         body.tuition-pc-inline .pc-save-status[data-kind="ok"]{background:var(--ok);color:#176b3a}
@@ -96,13 +106,26 @@
 
   function enhanceMonthInputs(){
     document.querySelectorAll('#ledgerGridCard .lg-month input[data-k]').forEach(input=>{
+      input.readOnly=false;
+      input.disabled=false;
       if(input.dataset.pcReady)return;
       input.dataset.pcReady='1';
-      input.title='클릭 후 바로 수정 · Enter 저장 · Esc 취소';
-      input.addEventListener('focus',()=>{input.dataset.before=input.value});
+      input.title='클릭 후 바로 입력 · Enter/다른 칸 클릭 저장 · Esc 취소';
+      input.setAttribute('autocomplete','off');
+      input.addEventListener('focus',()=>{
+        input.dataset.before=input.value;
+        requestAnimationFrame(()=>input.select());
+      });
       input.addEventListener('keydown',e=>{
-        if(e.key==='Enter'){e.preventDefault();input.blur()}
-        if(e.key==='Escape'){e.preventDefault();input.value=input.dataset.before??input.value;input.blur()}
+        if(e.key==='Enter'){
+          e.preventDefault();
+          input.blur();
+        }
+        if(e.key==='Escape'){
+          e.preventDefault();
+          input.value=input.dataset.before??input.value;
+          input.blur();
+        }
       });
       input.addEventListener('change',()=>{
         status('월 회비 중앙DB 자동저장 중…','saving');
@@ -118,18 +141,24 @@
     if(!root)return;
     root.querySelectorAll('tbody tr').forEach(enhanceDue);
     enhanceMonthInputs();
-    const desired='※ PC 전용: 납부일·월별 날짜·금액을 표에서 바로 수정할 수 있습니다. Enter 또는 다른 칸 클릭 시 저장되며, 상세 버튼은 사유·메모가 필요한 경우에만 사용합니다.';
+    const desired='※ PC 직접입력: 월별 날짜·금액을 클릭해 바로 수정합니다. Enter 또는 다른 칸 클릭 시 자동저장, Esc는 취소입니다. 상세 수정이 필요할 때만 상세 기능을 사용합니다.';
     const note=root.querySelector('.ledger-note');
     if(note && note.textContent!==desired) note.textContent=desired;
     if(!document.getElementById('ledgerPcSaveStatus')) status('자동저장 준비','idle');
+  }
+
+  function scheduleEnhance(){
+    clearTimeout(enhanceTimer);
+    enhanceTimer=setTimeout(()=>{enhanceTimer=null;enhance()},80);
   }
 
   function mount(){
     if(!isPc())return;
     addStyle();
     enhance();
-    const target=document.getElementById('ledgerGridCard')||document.body;
-    observer=new MutationObserver(()=>enhance());
+    const target=document.getElementById('ledgerGridCard');
+    if(!target)return;
+    observer=new MutationObserver(()=>scheduleEnhance());
     observer.observe(target,{childList:true,subtree:true});
   }
 
