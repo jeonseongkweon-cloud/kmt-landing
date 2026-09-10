@@ -1,5 +1,11 @@
 {
-  "version": "1.0",
+  "version": "1.1",
+  "rules": {
+    "withdrawn_student_policy": "retain_history",
+    "withdrawn_students_visible_in_search": true,
+    "withdrawn_students_excluded_from_current_tuition_alerts": true,
+    "payment_amount_entry": "manual"
+  },
   "families": [
     {
       "source_label": "우,나,사(15)",
@@ -8,7 +14,8 @@
       "due_day": 15,
       "sibling_discount": true,
       "auto_fee_calculation": false,
-      "payment_amount_entry": "manual"
+      "payment_amount_entry": "manual",
+      "status": "active"
     },
     {
       "source_label": "해찬,정빈(20)",
@@ -17,7 +24,42 @@
       "due_day": 20,
       "sibling_discount": true,
       "auto_fee_calculation": false,
-      "payment_amount_entry": "manual"
+      "payment_amount_entry": "manual",
+      "status": "active"
+    },
+    {
+      "source_label": "윤우준,이현(30)",
+      "household_display": "윤우준 · 윤이현 가정",
+      "members": ["윤우준", "윤이현"],
+      "due_day": 30,
+      "sibling_discount": true,
+      "auto_fee_calculation": false,
+      "payment_amount_entry": "manual",
+      "status": "active"
+    },
+    {
+      "household_display": "김예성 · 김예담 가정",
+      "members": ["김예성", "김예담"],
+      "status": "withdrawn",
+      "retain_history": true
+    },
+    {
+      "household_display": "윤유은 · 윤우진 가정",
+      "members": ["윤유은", "윤우진"],
+      "status": "withdrawn",
+      "retain_history": true
+    },
+    {
+      "household_display": "한정민 · 한지아 가정",
+      "members": ["한정민", "한지아"],
+      "status": "withdrawn",
+      "retain_history": true
+    },
+    {
+      "household_display": "이승재",
+      "members": ["이승재"],
+      "status": "withdrawn",
+      "retain_history": true
     }
   ]
 }
