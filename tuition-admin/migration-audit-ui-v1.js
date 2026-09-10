@@ -10,15 +10,17 @@
     box.className='card';
     box.id='migrationAuditPanel';
     box.style.margin='14px 0';
+    const latest=window.KMT_TUITION_LATEST_ROSTER_2026||{};
     const current=audit.currentWithoutLegacyLedger||[];
-    const review=audit.legacyNotInCurrentReview||[];
+    const rosterOnly=audit.latestRosterOnlyNotClass||[];
     const virtual=audit.excludedVirtualStudents||[];
-    const withdrawn=audit.legacyKnownWithdrawn||[];
     const groups=audit.currentGapGroups||{};
     const likely=groups.likely2026NewOrLedgerGap||[];
     const existing=groups.existingBefore2026||[];
     const autoReview=groups.autoMatchedNeedReview||[];
     const evidence=audit.currentGapEvidence||{};
+    const latestCount=(latest.activeStudents||[]).length;
+    const classLinked=Math.max(0,latestCount-rosterOnly.length);
     const fmt=e=>{
       const bits=[];
       if(e?.match) bits.push(e.match);
@@ -33,15 +35,15 @@
       <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
         <div>
           <h2 class="section-title" style="margin-bottom:4px">🔎 회비자료 이관 점검</h2>
-          <div class="mini">미납 판정과 문자발송에는 아직 사용하지 않는 검토용 정보입니다.</div>
+          <div class="mini">최신 2026 회비대장의 비회색 수련생만 기준으로 합니다. 회색 글자는 현재 관리대상에 반영하지 않습니다.</div>
         </div>
         <span class="badge info">이관 안전모드</span>
       </div>
       <div class="grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:0">
-        <div class="card"><span class="mini">현재 CLASS · 기존장부 미연결</span><b style="display:block;font-size:24px;margin-top:4px">${current.length}명</b></div>
-        <div class="card"><span class="mini">과거장부 · 현재 CLASS 확인필요</span><b style="display:block;font-size:24px;margin-top:4px">${review.length}명</b></div>
-        <div class="card"><span class="mini">퇴관 확정 과거가정</span><b style="display:block;font-size:24px;margin-top:4px">${withdrawn.length}가정</b></div>
-        <div class="card"><span class="mini">가상 원생 제외</span><b style="display:block;font-size:24px;margin-top:4px">${virtual.length}명</b></div>
+        <div class="card ok"><span class="mini">최신 회비대장 수련생</span><b style="display:block;font-size:24px;margin-top:4px">${latestCount}명</b></div>
+        <div class="card"><span class="mini">CLASS 연결</span><b style="display:block;font-size:24px;margin-top:4px">${classLinked}명</b></div>
+        <div class="card warn"><span class="mini">현재 장부 미연결</span><b style="display:block;font-size:24px;margin-top:4px">${current.length}명</b></div>
+        <div class="card info"><span class="mini">최신명단 · CLASS 미등록</span><b style="display:block;font-size:24px;margin-top:4px">${rosterOnly.length}명</b></div>
       </div>
       <div class="grid" style="grid-template-columns:repeat(3,1fr);margin:10px 0 0">
         <div class="card warn"><span class="mini">2026 신규/장부누락 후보</span><b style="display:block;font-size:22px;margin-top:4px">${likely.length}명</b></div>
@@ -51,9 +53,9 @@
       <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:800">2026 신규/장부누락 후보 ${likely.length}명</summary><div style="margin-top:8px">${rows(likely)}</div></details>
       <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:800">2026 이전 등록인데 기존 장부 미연결 ${existing.length}명</summary><div style="margin-top:8px">${rows(existing)}</div></details>
       <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:800">자동일치지만 기존 장부 확인필요 ${autoReview.length}명</summary><div style="margin-top:8px">${rows(autoReview)}</div></details>
-      <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:800">기존 장부에는 있으나 현재 CLASS에서 확인이 필요한 ${review.length}명</summary><div class="mini" style="line-height:1.8;margin-top:8px">${review.join(' · ')}</div></details>
+      <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:800">최신명단에는 있으나 CLASS에 없는 ${rosterOnly.length}명</summary><div style="margin-top:8px">${rows(rosterOnly)}</div></details>
       <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:800">가상 원생 제외 내역</summary><div class="mini" style="line-height:1.8;margin-top:8px">${virtual.map(v=>`${v.name} — ${v.reason}`).join('<br>')}</div></details>
-      <div class="mini" style="margin-top:12px">※ ‘신규/장부누락 후보’는 자동 확정이 아니라 통합원생DB의 매칭상태와 등록일을 기준으로 좁힌 검토 분류입니다.</div>
+      <div class="mini" style="margin-top:12px">※ 회색 글자와 최신 명단에 없는 학생은 현재 회비관리 대상에서 제외하지만 과거 장부 원본 자체는 삭제하지 않습니다.</div>
     `;
     layout.parentNode.insertBefore(box,layout);
   });
