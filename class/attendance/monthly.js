@@ -6,7 +6,7 @@ const $=id=>document.getElementById(id);
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
 const WEEKDAY_KO=["일","월","화","수","목","금","토"];
 const params=new URLSearchParams(location.search);
-const state={students:[],student:null,records:[],sessionDates:new Set(),month:parseInitialMonth()};
+const state={students:[],student:null,records:[],sessionStatusByDate:new Map(),month:parseInitialMonth()};
 
 function clean(v){return v==null?"":String(v).trim()}
 function escapeHtml(v){return clean(v).replace(/[&<>'\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'\"':"&quot;"}[c]))}
@@ -60,7 +60,13 @@ async function loadMonth(){
   if(aRes.error)throw aRes.error;
   if(sRes.error)throw sRes.error;
   state.records=aRes.data||[];
-  state.sessionDates=new Set((sRes.data||[]).map(r=>r.session_date));
+  state.sessionStatusByDate=new Map();
+  (sRes.data||[]).forEach(r=>{
+    const date=clean(r.session_date),status=clean(r.status).toLowerCase();
+    if(!date)return;
+    // 실제로 수업판이 열린 날(open) 또는 종료된 날(closed)만 수업일로 인정한다.
+    if(status==="open"||status==="closed")state.sessionStatusByDate.set(date,status);
+  });
   render();
   updateUrl();
 }
@@ -77,13 +83,18 @@ function recordMap(){
 
 function dayInfo(key,weekday,records){
   const r=records.get(key);
+  // 실제 저장된 출결 기록이 있으면 그 기록을 최우선으로 사용한다.
   if(r){
     if(r.status==="present")return {status:"present",record:r,auto:false};
     if(r.status==="late")return {status:"late",record:r,auto:false};
     if(r.status==="absent")return {status:"absent",record:r,auto:false};
   }
+
+  // 자동 결석은 오판을 막기 위해 아래 세 조건을 모두 만족할 때만 화면에 표시한다.
+  // 1) 이미 지난 날짜, 2) 학생의 등록 수련요일, 3) 실제 CLASS 수업판이 열린 날.
   const scheduled=trainingDays(state.student).has(WEEKDAY_KO[weekday]);
-  if(key<localDate()&&scheduled&&state.sessionDates.has(key))return {status:"absent",record:null,auto:true};
+  const actualClassDay=state.sessionStatusByDate.has(key);
+  if(key<localDate()&&scheduled&&actualClassDay)return {status:"absent",record:null,auto:true};
   return {status:"",record:null,auto:false};
 }
 
@@ -130,6 +141,8 @@ function render(){
   $("lateCount").textContent=counts.late;
   $("checkoutCount").textContent=counts.checkout;
   $("absentCount").textContent=counts.absent;
+  const note=$("calendarNote");
+  if(note)note.textContent="실제 저장된 출결기록을 우선 표시합니다. 기록이 없는 과거 날짜는 등록 수련요일이면서 실제 CLASS 수업판이 열린 날에만 미출석(결석)으로 표시합니다.";
 }
 
 async function moveMonth(delta){state.month=new Date(state.month.getFullYear(),state.month.getMonth()+delta,1);await loadMonth()}
