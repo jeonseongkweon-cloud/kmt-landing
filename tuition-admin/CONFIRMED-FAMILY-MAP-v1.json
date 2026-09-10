@@ -1,9 +1,11 @@
 {
-  "version": "1.1",
+  "version": "1.2",
   "rules": {
     "withdrawn_student_policy": "retain_history",
     "withdrawn_students_visible_in_search": true,
     "withdrawn_students_excluded_from_current_tuition_alerts": true,
+    "paused_students_visible_in_search": true,
+    "paused_students_excluded_from_overdue_and_sms": true,
     "payment_amount_entry": "manual"
   },
   "families": [
@@ -36,6 +38,29 @@
       "auto_fee_calculation": false,
       "payment_amount_entry": "manual",
       "status": "active"
+    },
+    {
+      "household_display": "김태은",
+      "members": ["김태은"],
+      "due_day": 28,
+      "status": "paused",
+      "extension_in_progress": true,
+      "retain_history": true,
+      "note": "휴원 중, 납부일 연장 진행 중. 새 납부일은 확정 시 직접 입력."
+    },
+    {
+      "household_display": "강민준",
+      "members": ["강민준"],
+      "status": "paused",
+      "retain_history": true,
+      "note": "휴원 중"
+    },
+    {
+      "household_display": "이준범",
+      "members": ["이준범"],
+      "status": "active",
+      "student_group": "대건생",
+      "retain_history": true
     },
     {
       "household_display": "김예성 · 김예담 가정",
