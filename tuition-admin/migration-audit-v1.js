@@ -59,3 +59,12 @@ window.KMT_TUITION_MIGRATION_AUDIT = {
     confirmedHouseholdsMayMerge: true
   }
 };
+
+// 이관 입력판의 보조기능은 별도 파일로 분리해 로드한다.
+(function(){
+  if(document.querySelector('script[data-kmt-migration-bulk-helper]')) return;
+  const s=document.createElement('script');
+  s.src='./migration-bulk-helper-v1.js?v=1';
+  s.dataset.kmtMigrationBulkHelper='1';
+  document.head.appendChild(s);
+})();
