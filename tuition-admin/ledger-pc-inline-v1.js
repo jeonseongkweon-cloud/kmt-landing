@@ -1,5 +1,5 @@
 // 계명태권도 CLASS 회비관리 SYSTEM
-// PC INLINE EDIT v1.3 — 이름 옆 납부일 숫자만 직접수정
+// PC INLINE EDIT v1.4 — 이름 옆 납부일 숫자만 직접수정
 (function(){
   const DUE_KEY='kmt_tuition_ledger_due_edits_v1';
   const isPc=()=>window.matchMedia('(pointer:fine)').matches && window.innerWidth>=1000;
@@ -29,11 +29,11 @@
     s.id='ledgerPcInlineStyle';
     s.textContent=`
       @media (min-width:1000px) and (pointer:fine){
-        body.tuition-pc-inline #ledgerGridCard .lg-name>span{display:none!important}
+        body.tuition-pc-inline #ledgerGridCard .lg-name>span:not(.pc-due-wrap){display:none!important}
         body.tuition-pc-inline #ledgerGridCard .lg-name{display:flex;align-items:center;gap:10px;flex-wrap:nowrap}
         body.tuition-pc-inline #ledgerGridCard .lg-name>b{display:inline-block;white-space:nowrap}
-        body.tuition-pc-inline .pc-due-wrap{display:inline-flex;align-items:center;margin:0;padding:0}
-        body.tuition-pc-inline .pc-due-input{width:38px;border:1px solid transparent;border-radius:6px;background:transparent;padding:2px 3px;text-align:center;font:inherit;font-weight:800;color:var(--text);cursor:text}
+        body.tuition-pc-inline .pc-due-wrap{display:inline-flex!important;align-items:center;margin:0;padding:0;visibility:visible!important}
+        body.tuition-pc-inline .pc-due-input{display:inline-block!important;width:38px;border:1px solid transparent;border-radius:6px;background:transparent;padding:2px 3px;text-align:center;font:inherit;font-weight:800;color:var(--text);cursor:text;visibility:visible!important;opacity:1!important}
         body.tuition-pc-inline .pc-due-input:hover{border-color:#cbd5e1;background:#fff}
         body.tuition-pc-inline .pc-due-input:focus{outline:2px solid #9db7ff;border-color:#9db7ff;background:#fff}
         body.tuition-pc-inline .ledger-due-edit-btn{display:none!important}
@@ -59,7 +59,7 @@
   }
 
   function dueFromRow(row){
-    const text=row.querySelector('.lg-name>span')?.textContent||'';
+    const text=row.querySelector('.lg-name>span:not(.pc-due-wrap)')?.textContent||'';
     return Number((text.match(/(\d+)일/)||[])[1]||0);
   }
 
