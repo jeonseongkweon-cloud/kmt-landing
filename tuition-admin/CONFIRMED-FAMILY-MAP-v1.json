@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "families": [
+    {
+      "source_label": "우,나,사(15)",
+      "household_display": "김우리 · 김나라 · 김사랑 가정",
+      "members": ["김우리", "김나라", "김사랑"],
+      "due_day": 15,
+      "sibling_discount": true,
+      "auto_fee_calculation": false,
+      "payment_amount_entry": "manual"
+    },
+    {
+      "source_label": "해찬,정빈(20)",
+      "household_display": "이해찬 · 이정빈 가정",
+      "members": ["이해찬", "이정빈"],
+      "due_day": 20,
+      "sibling_discount": true,
+      "auto_fee_calculation": false,
+      "payment_amount_entry": "manual"
+    }
+  ]
+}
