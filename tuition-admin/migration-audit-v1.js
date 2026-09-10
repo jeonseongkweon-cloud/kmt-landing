@@ -1,5 +1,5 @@
 // 계명태권도 CLASS 회비관리 SYSTEM
-// MIGRATION AUDIT v1.1
+// MIGRATION AUDIT v1.2
 // 실제 회비 이관 전 대조용 메타데이터. 미납 판정/문자발송에는 사용하지 않는다.
 window.KMT_TUITION_MIGRATION_AUDIT = {
   excludedVirtualStudents: [
@@ -20,8 +20,8 @@ window.KMT_TUITION_MIGRATION_AUDIT = {
     '김관우': { match:'자동일치', joined:'2026-03-03', feeDueDay:30 },
     '김서호': { match:'신규/누락', joined:'2026-03-11', feeDueDay:30 },
     '민서준': { match:'자동일치', joined:'2026-03-06', feeDueDay:30 },
-    '박서우': { match:'신규/누락', joined:'2026-04-27', feeDueDay:7 },
-    '박연우': { match:'신규/누락', joined:'2026-04-27', feeDueDay:30 },
+    '박서우': { match:'신규/누락', joined:'2026-04-27', feeDueDay:7, householdHint:'박연우와 보호자·주소·등록일 동일' },
+    '박연우': { match:'신규/누락', joined:'2026-04-27', feeDueDay:30, householdHint:'박서우와 보호자·주소·등록일 동일' },
     '박윤아': { match:'신규/누락', joined:'2026-04-02', feeDueDay:30 },
     '박이도': { match:'신규/누락', joined:'2026-05-19', feeDueDay:19, monthlyFee:165000 },
     '박준우': { match:'신규/누락', joined:'2021-11-09', feeDueDay:9, monthlyFee:140000 },
@@ -39,6 +39,9 @@ window.KMT_TUITION_MIGRATION_AUDIT = {
     '최태오': { match:'신규/누락', joined:'2026-04-08', feeDueDay:30 },
     '황성운': { match:'신규/누락', joined:'2026-03-27', feeDueDay:30 }
   },
+  householdHints: [
+    { members:['박서우','박연우'], confidence:'high', reason:'보호자 2명·주소·등록일이 동일한 자료 확인', action:'한 가정 후보로 표시하되 최종 확정 전 자동 병합 금지' }
+  ],
   legacyKnownWithdrawn: [
     ['김예성','김예담'],['윤유은','윤우진'],['한정민','한지아'],['이승재']
   ],
@@ -50,6 +53,7 @@ window.KMT_TUITION_MIGRATION_AUDIT = {
     noAutoArrears: true,
     noAutoSms: true,
     historicalRowsPreserved: true,
-    candidateLabelsAreNotFinal: true
+    candidateLabelsAreNotFinal: true,
+    householdHintsDoNotAutoMerge: true
   }
 };
