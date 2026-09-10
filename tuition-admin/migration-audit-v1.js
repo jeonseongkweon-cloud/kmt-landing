@@ -1,5 +1,5 @@
 // 계명태권도 CLASS 회비관리 SYSTEM
-// MIGRATION AUDIT v1.2
+// MIGRATION AUDIT v1.3
 // 실제 회비 이관 전 대조용 메타데이터. 미납 판정/문자발송에는 사용하지 않는다.
 window.KMT_TUITION_MIGRATION_AUDIT = {
   excludedVirtualStudents: [
@@ -22,14 +22,14 @@ window.KMT_TUITION_MIGRATION_AUDIT = {
     '민서준': { match:'자동일치', joined:'2026-03-06', feeDueDay:30 },
     '박서우': { match:'신규/누락', joined:'2026-04-27', feeDueDay:7, householdHint:'박연우와 보호자·주소·등록일 동일' },
     '박연우': { match:'신규/누락', joined:'2026-04-27', feeDueDay:30, householdHint:'박서우와 보호자·주소·등록일 동일' },
-    '박윤아': { match:'신규/누락', joined:'2026-04-02', feeDueDay:30 },
+    '박윤아': { match:'신규/누락', joined:'2026-04-02', feeDueDay:30, householdHint:'박재희와 보호자 2명 연락처 동일' },
     '박이도': { match:'신규/누락', joined:'2026-05-19', feeDueDay:19, monthlyFee:165000 },
     '박준우': { match:'신규/누락', joined:'2021-11-09', feeDueDay:9, monthlyFee:140000 },
     '서연재': { match:'신규/누락', joined:'2026-03-27', feeDueDay:30 },
     '송정현': { match:'자동일치', joined:'2026-03-03', feeDueDay:3, review:'생년월일 충돌' },
     '이서준': { match:'신규/누락', joined:'2026-03-30', feeDueDay:30 },
     '이서휘': { match:'신규/누락', joined:'2026-05-12', feeDueDay:30 },
-    '이수형': { match:'자동일치', joined:'2026-03-03', feeDueDay:30 },
+    '이수형': { match:'자동일치', joined:'2026-03-03', feeDueDay:30, householdHint:'이주형과 보호자 연락처 1건 동일(보호자 이름 표기 상이) — 가족관계 확인 필요' },
     '이승우': { match:'자동일치', joined:'2026-03-03', feeDueDay:30 },
     '이시호': { match:'신규/누락', joined:'2026-03-31', feeDueDay:30 },
     '이유준': { match:'신규/누락', joined:'2026-05-29', feeDueDay:30 },
@@ -40,7 +40,9 @@ window.KMT_TUITION_MIGRATION_AUDIT = {
     '황성운': { match:'신규/누락', joined:'2026-03-27', feeDueDay:30 }
   },
   householdHints: [
-    { members:['박서우','박연우'], confidence:'high', reason:'보호자 2명·주소·등록일이 동일한 자료 확인', action:'한 가정 후보로 표시하되 최종 확정 전 자동 병합 금지' }
+    { members:['박서우','박연우'], confidence:'high', reason:'보호자 2명·주소·등록일이 동일한 자료 확인', action:'한 가정 후보로 표시하되 최종 확정 전 자동 병합 금지' },
+    { members:['박윤아','박재희'], confidence:'high', reason:'보호자 2명 이름과 연락처가 동일', action:'한 가정 후보로 표시하되 최종 확정 전 자동 병합 금지' },
+    { members:['이수형','이주형'], confidence:'medium', reason:'보호자 연락처 1건이 동일하나 보호자 이름 표기가 주은혜/추은혜로 달라 확인 필요', action:'가족 후보만 표시하고 자동 병합 금지' }
   ],
   legacyKnownWithdrawn: [
     ['김예성','김예담'],['윤유은','윤우진'],['한정민','한지아'],['이승재']
