@@ -1,116 +1,26 @@
 // 계명태권도 CLASS 회비관리 SYSTEM
-// LEDGER DIRECT EDIT v1.0
-// 연간 회비대장에서 납부일/월별 납부기록을 확실하게 직접 입력·수정하기 위한 보강 컨트롤.
-// 현재 저장은 브라우저 localStorage 전용이며 Supabase에는 쓰지 않는다.
+// LEDGER DIRECT EDIT v1.1 — localStorage 전용, Supabase 쓰기 없음
 (function(){
-  const LEDGER_KEY='kmt_tuition_ledger_grid_edits_v1';
-  const DUE_KEY='kmt_tuition_ledger_due_edits_v1';
-  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const load=(key,fallback={})=>{try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))}catch{return fallback}};
-  const save=(key,v)=>localStorage.setItem(key,JSON.stringify(v));
-
-  function rowName(tr){return (tr.querySelector('.lg-name b')?.textContent||'').trim();}
-  function studentKeyFromCell(td){
-    const input=td?.querySelector('input[data-k]');
-    const key=input?.dataset.k||'';
-    const parts=key.split('|');
-    return parts.length>=3?{students:parts[0],month:Number(parts[1]),field:parts[2]}:null;
-  }
-  function monthLabel(m){return `${m+1}월`;}
-
-  function ensureModal(){
-    if(document.getElementById('ledgerDirectModal'))return;
-    const modal=document.createElement('div');
-    modal.id='ledgerDirectModal'; modal.className='modal'; modal.hidden=true;
-    modal.innerHTML=`<div class="modal-card"><div class="modal-head"><strong id="ledgerDirectTitle">회비 입력/수정</strong><button class="btn" id="ledgerDirectClose" type="button">닫기</button></div><div class="modal-body"><input type="hidden" id="ledgerDirectEntryKey"><input type="hidden" id="ledgerDirectAmountKey"><div class="field"><label>납부 날짜 / 결제표시</label><input id="ledgerDirectEntry" placeholder="예: 9/10페이, 9/10카드, 연장"></div><div class="field" style="margin-top:10px"><label>금액</label><input id="ledgerDirectAmount" placeholder="예: 16.5, 30만"></div><div class="mini" style="margin-top:8px">날짜는 실제 받은 날짜를 입력합니다. 예: 8월분을 9월 10일에 받았다면 8월 칸에 9/10을 기록합니다.</div><div class="modal-actions"><button class="btn primary" id="ledgerDirectSave" type="button">저장</button><button class="btn" id="ledgerDirectClear" type="button">이 월 기록 비우기</button><button class="btn" id="ledgerDirectCancel" type="button">취소</button></div><div id="ledgerDirectSaved" class="mini"></div></div></div>`;
-    document.body.appendChild(modal);
-    const close=()=>{modal.hidden=true};
-    document.getElementById('ledgerDirectClose').onclick=close;
-    document.getElementById('ledgerDirectCancel').onclick=close;
-    modal.addEventListener('click',e=>{if(e.target===modal)close()});
-    document.getElementById('ledgerDirectSave').onclick=()=>{
-      const ek=document.getElementById('ledgerDirectEntryKey').value;
-      const ak=document.getElementById('ledgerDirectAmountKey').value;
-      const data=load(LEDGER_KEY,{});
-      data[ek]=document.getElementById('ledgerDirectEntry').value.trim();
-      data[ak]=document.getElementById('ledgerDirectAmount').value.trim();
-      save(LEDGER_KEY,data);
-      syncVisibleCell(ek,ak,data[ek],data[ak]);
-      document.getElementById('ledgerDirectSaved').textContent='✓ 이 브라우저에 임시저장했습니다.';
-      setTimeout(close,350);
-    };
-    document.getElementById('ledgerDirectClear').onclick=()=>{
-      if(!confirm('이 월의 날짜/표시와 금액을 모두 비울까요?'))return;
-      const ek=document.getElementById('ledgerDirectEntryKey').value;
-      const ak=document.getElementById('ledgerDirectAmountKey').value;
-      const data=load(LEDGER_KEY,{}); data[ek]=''; data[ak]=''; save(LEDGER_KEY,data);
-      syncVisibleCell(ek,ak,'',''); close();
-    };
-  }
-  function syncVisibleCell(ek,ak,entry,amount){
-    document.querySelectorAll('#ledgerGridBody input[data-k]').forEach(i=>{
-      if(i.dataset.k===ek)i.value=entry;
-      if(i.dataset.k===ak)i.value=amount;
-    });
-  }
-  function openMonth(td){
-    ensureModal();
-    const info=studentKeyFromCell(td); if(!info)return;
-    const inputs=td.querySelectorAll('input[data-k]'); if(inputs.length<2)return;
-    const tr=td.closest('tr'); const name=rowName(tr);
-    document.getElementById('ledgerDirectTitle').textContent=`💰 ${name} · ${monthLabel(info.month)} 회비 입력/수정`;
-    document.getElementById('ledgerDirectEntryKey').value=inputs[0].dataset.k;
-    document.getElementById('ledgerDirectAmountKey').value=inputs[1].dataset.k;
-    document.getElementById('ledgerDirectEntry').value=inputs[0].value||'';
-    document.getElementById('ledgerDirectAmount').value=inputs[1].value||'';
-    document.getElementById('ledgerDirectSaved').textContent='';
-    document.getElementById('ledgerDirectModal').hidden=false;
-    setTimeout(()=>document.getElementById('ledgerDirectEntry').focus(),0);
-  }
-
-  function editDue(tr){
-    const name=rowName(tr); if(!name)return;
-    const span=tr.querySelector('.lg-name span');
-    const dueDb=load(DUE_KEY,{});
-    const shown=Number((span?.textContent.match(/(\d+)일/)||[])[1]||'');
-    const old=Number(dueDb[name]||shown||'');
-    const val=prompt(`${name} 기준 납부일 변경\n\n현재: ${old||'-'}일\n새 납부일(1~31)을 입력하세요.\n※ 늦게 납부한 날짜와 기준 납부일은 별개입니다.`,old||'');
-    if(val===null)return;
-    const day=Number(val);
-    if(!Number.isInteger(day)||day<1||day>31){alert('납부일은 1~31 사이 숫자로 입력해주세요.');return;}
-    dueDb[name]=day; save(DUE_KEY,dueDb);
-    if(span)span.textContent=`납부일 ${day}일`;
-    alert(`${name} 기준 납부일을 ${day}일로 임시저장했습니다.`);
-  }
-
-  function enhance(){
-    const card=document.getElementById('ledgerGridCard'); if(!card)return;
-    if(!document.getElementById('ledgerEditGuide')){
-      const bar=document.createElement('div'); bar.id='ledgerEditGuide'; bar.className='toolbar'; bar.style.margin='0 16px 12px';
-      bar.innerHTML='<span class="mini"><b>입력방법:</b> 월 칸의 <b>수정</b> 버튼 → 날짜/금액 저장 · 이름 아래 <b>납부일 변경</b> 버튼 → 기준 납부일 수정</span>';
-      const sort=document.getElementById('ledgerSortBar'); (sort||card.querySelector('.ledger-head'))?.insertAdjacentElement('afterend',bar);
-    }
-    document.querySelectorAll('#ledgerGridBody tr').forEach(tr=>{
-      const nameCell=tr.querySelector('.lg-name');
-      if(nameCell && !nameCell.querySelector('.ledger-due-edit-btn')){
-        const b=document.createElement('button'); b.type='button'; b.className='btn ledger-due-edit-btn'; b.textContent='납부일 변경'; b.style.cssText='padding:3px 6px;margin-top:4px;font-size:10px';
-        b.onclick=e=>{e.preventDefault();e.stopPropagation();editDue(tr)}; nameCell.appendChild(b);
-      }
-      tr.querySelectorAll('.lg-month').forEach(td=>{
-        if(td.querySelector('.ledger-month-edit-btn'))return;
-        td.style.position='relative';
-        const b=document.createElement('button');b.type='button';b.className='ledger-month-edit-btn';b.textContent='수정';b.title='이 월 회비 입력/수정';
-        b.style.cssText='position:absolute;right:2px;top:2px;border:1px solid #d0d5dd;border-radius:5px;background:#fff;padding:1px 4px;font-size:9px;cursor:pointer;opacity:.72';
-        b.onclick=e=>{e.preventDefault();e.stopPropagation();openMonth(td)};td.appendChild(b);
-        td.querySelectorAll('input[data-k]').forEach(i=>{
-          i.addEventListener('input',()=>{const data=load(LEDGER_KEY,{});data[i.dataset.k]=i.value;save(LEDGER_KEY,data)});
-        });
-      });
-    });
-    const dueDb=load(DUE_KEY,{});
-    document.querySelectorAll('#ledgerGridBody tr').forEach(tr=>{const n=rowName(tr),sp=tr.querySelector('.lg-name span');if(sp&&dueDb[n])sp.textContent=`납부일 ${dueDb[n]}일`;});
-  }
-  const obs=new MutationObserver(()=>setTimeout(enhance,0));
-  obs.observe(document.documentElement,{childList:true,subtree:true});
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(enhance,100));else setTimeout(enhance,100);
+const LEDGER_KEY='kmt_tuition_ledger_grid_edits_v1',DETAIL_KEY='kmt_tuition_ledger_month_details_v1',DUE_KEY='kmt_tuition_ledger_due_edits_v1';
+const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'{}')}catch{return {}}},save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const key=(students,month,field)=>`${students}|${month}|${field}`,norm=s=>String(s||'').replace(/\s/g,'');
+const toEntry=v=>{if(!v)return '';const p=v.split('-');return p.length===3?`${+p[1]}/${+p[2]}`:''};
+const toDate=v=>{const m=String(v||'').match(/(\d{1,2})\/(\d{1,2})/);return m?`2026-${String(m[1]).padStart(2,'0')}-${String(m[2]).padStart(2,'0')}`:''};
+function ensureModals(){if(document.getElementById('ledgerMonthModal'))return;document.body.insertAdjacentHTML('beforeend',`
+<div id="ledgerMonthModal" class="modal" hidden><div class="modal-card"><div class="modal-head"><strong id="ledgerMonthTitle">월별 회비 입력/수정</strong><button type="button" class="btn" data-ledger-close="month">닫기</button></div><form id="ledgerMonthForm" class="modal-body">
+<input type="hidden" id="ledgerMonthStudents"><input type="hidden" id="ledgerMonthOriginal">
+<div class="form-grid"><div class="field"><label>가정명 / 학생명</label><input id="ledgerMonthHousehold" readonly></div><div class="field"><label>적용월</label><select id="ledgerMonthApplied">${Array.from({length:12},(_,i)=>`<option value="${i}">${i+1}월</option>`).join('')}</select></div><div class="field"><label>실제 납부일</label><input id="ledgerMonthPaidOn" type="date"></div><div class="field"><label>금액</label><input id="ledgerMonthAmount" inputmode="decimal" placeholder="예: 165,000원 또는 16.5"></div><div class="field"><label>결제방법</label><select id="ledgerMonthMethod"><option value="">선택</option><option>울산페이</option><option>카드</option><option>계좌/통장</option><option>현금</option><option>스포츠바우처</option><option>기타</option></select></div><div class="field"><label>상태/특이사항</label><select id="ledgerMonthStatus"><option>정상납부</option><option>연장</option><option>휴원</option><option>납부대상아님</option><option>미확인</option></select></div></div>
+<div class="field" style="margin-top:10px"><label>메모</label><textarea id="ledgerMonthMemo" rows="3"></textarea></div><p class="mini">늦게 받은 회비도 선택한 적용월에만 기록되며, 기준 납부일과 다른 달의 기록은 바뀌지 않습니다.</p><div class="modal-actions"><button class="btn primary" type="submit">저장</button><button class="btn" type="button" data-ledger-close="month">취소</button></div></form></div></div>
+<div id="ledgerDueModal" class="modal" hidden><div class="modal-card"><div class="modal-head"><strong>납부일 변경</strong><button type="button" class="btn" data-ledger-close="due">닫기</button></div><form id="ledgerDueForm" class="modal-body">
+<input type="hidden" id="ledgerDueKey"><div class="detail-grid"><div><span>가정명 / 학생명</span><b id="ledgerDueHousehold"></b></div><div><span>현재 기준 납부일</span><b id="ledgerDueCurrent"></b></div></div><div class="field" style="margin-top:12px"><label>새 기준 납부일</label><input id="ledgerDueNew" type="number" min="1" max="31" required></div><div class="field" style="margin-top:10px"><label>변경 사유</label><input id="ledgerDueReason" placeholder="예: 보호자 요청"></div><div class="field" style="margin-top:10px"><label>변경 메모</label><textarea id="ledgerDueMemo" rows="3"></textarea></div><p class="mini">기존 월별 실제 납부기록은 변경되지 않습니다.</p><div class="modal-actions"><button class="btn primary" type="submit">저장</button><button class="btn" type="button" data-ledger-close="due">취소</button></div></form></div></div>`);
+document.querySelectorAll('[data-ledger-close]').forEach(b=>b.addEventListener('click',()=>close(b.dataset.ledgerClose)));
+['ledgerMonthModal','ledgerDueModal'].forEach(id=>document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)e.target.hidden=true}));
+document.getElementById('ledgerMonthForm').addEventListener('submit',saveMonth);document.getElementById('ledgerDueForm').addEventListener('submit',saveDue)}
+function close(kind){document.getElementById(kind==='due'?'ledgerDueModal':'ledgerMonthModal').hidden=true}
+function openDue(row){ensureModals();const label=row.querySelector('.lg-name b')?.textContent.trim()||'',houseKey=row.dataset.householdKey||norm(label),current=+(row.querySelector('.lg-name span')?.textContent.match(/(\d+)일/)||[])[1],d=load(DUE_KEY+'_details')[houseKey]||{};ledgerDueKey.value=houseKey;ledgerDueHousehold.textContent=`${label} / ${row.dataset.students||label}`;ledgerDueCurrent.textContent=`${current}일`;ledgerDueNew.value=current;ledgerDueReason.value=d.reason||'';ledgerDueMemo.value=d.memo||'';ledgerDueModal.hidden=false;ledgerDueNew.focus()}
+function saveDue(e){e.preventDefault();const day=+ledgerDueNew.value;if(!Number.isInteger(day)||day<1||day>31){alert('납부일은 1~31 사이 숫자로 입력해주세요.');return}const due=load(DUE_KEY);due[ledgerDueKey.value]=day;save(DUE_KEY,due);const d=load(DUE_KEY+'_details');d[ledgerDueKey.value]={reason:ledgerDueReason.value.trim(),memo:ledgerDueMemo.value.trim(),updatedAt:new Date().toISOString()};save(DUE_KEY+'_details',d);close('due');window.KMTTuitionLedger?.refresh()}
+function openMonth(cell){ensureModals();const row=cell.closest('tr'),label=row.querySelector('.lg-name b')?.textContent.trim()||'',inputs=cell.querySelectorAll('input[data-k]'),students=(inputs[0]?.dataset.k||'').split('|')[0],month=+cell.dataset.month,d=load(DETAIL_KEY)[key(students,month,'detail')]||{},entry=inputs[0]?.value||'',amount=inputs[1]?.value||'';ledgerMonthTitle.textContent=`${label} · ${month+1}월 회비 입력/수정`;ledgerMonthHousehold.value=`${label} / ${row.dataset.students||label}`;ledgerMonthStudents.value=students;ledgerMonthOriginal.value=month;ledgerMonthApplied.value=month;ledgerMonthPaidOn.value=d.paidOn||toDate(entry);ledgerMonthAmount.value=d.amount||String(amount).replace(/,/g,'').trim();ledgerMonthMethod.value=d.method||(/페이/.test(entry)?'울산페이':/카드|카$/.test(entry)?'카드':/통장|계좌|통$/.test(entry)?'계좌/통장':/바우처/.test(entry)?'스포츠바우처':'');ledgerMonthStatus.value=d.status||(/연장/.test(entry)?'연장':entry?'정상납부':'미확인');ledgerMonthMemo.value=d.memo||'';ledgerMonthModal.hidden=false;ledgerMonthPaidOn.focus()}
+function saveMonth(e){e.preventDefault();const students=ledgerMonthStudents.value,original=+ledgerMonthOriginal.value,applied=+ledgerMonthApplied.value,paidOn=ledgerMonthPaidOn.value,amount=ledgerMonthAmount.value.trim(),method=ledgerMonthMethod.value,status=ledgerMonthStatus.value,memo=ledgerMonthMemo.value.trim();if(status==='정상납부'&&(!paidOn||!amount||!method)){alert('정상납부는 실제 납부일, 금액, 결제방법을 모두 입력해주세요.');return}const ledger=load(LEDGER_KEY),details=load(DETAIL_KEY);if(applied!==original){ledger[key(students,original,'entry')]='';ledger[key(students,original,'amount')]='';delete details[key(students,original,'detail')]}const suffix=method==='울산페이'?'페이':method==='카드'?'카드':method==='계좌/통장'?'통장':method==='현금'?'현금':method==='스포츠바우처'?'바우처':method==='기타'?'기타':'';ledger[key(students,applied,'entry')]=status==='정상납부'?`${toEntry(paidOn)}${suffix}`:status==='미확인'?'':status;ledger[key(students,applied,'amount')]=amount;details[key(students,applied,'detail')]={appliedMonth:applied,paidOn,amount,method,status,memo,updatedAt:new Date().toISOString()};save(LEDGER_KEY,ledger);save(DETAIL_KEY,details);close('month');window.KMTTuitionLedger?.refresh()}
+function bind(){ensureModals();document.addEventListener('click',e=>{const due=e.target.closest('#ledgerGridCard .ledger-due-edit-btn');if(due){e.preventDefault();e.stopPropagation();openDue(due.closest('tr'));return}const month=e.target.closest('#ledgerGridCard .ledger-month-edit-btn');if(month){e.preventDefault();e.stopPropagation();openMonth(month.closest('.lg-month'))}})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind,{once:true});else bind();
 })();
