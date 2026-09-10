@@ -5,7 +5,7 @@
   const isPc=()=>window.matchMedia('(pointer:fine)').matches && window.innerWidth>=1000;
   const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'{}')}catch{return {}}};
   const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
-  let root=null, observer=null, statusTimer=null;
+  let observer=null, statusTimer=null;
 
   function status(text,kind='info'){
     let el=document.getElementById('ledgerPcSaveStatus');
@@ -18,9 +18,9 @@
     }
     if(!el)return;
     el.dataset.kind=kind;
-    el.textContent=text;
+    if(el.textContent!==text) el.textContent=text;
     clearTimeout(statusTimer);
-    if(kind==='ok') statusTimer=setTimeout(()=>{el.textContent='자동저장 준비';el.dataset.kind='idle'},1800);
+    if(kind==='ok') statusTimer=setTimeout(()=>{if(el.textContent!=='자동저장 준비')el.textContent='자동저장 준비';el.dataset.kind='idle'},1800);
   }
 
   function addStyle(){
@@ -29,7 +29,7 @@
     s.id='ledgerPcInlineStyle';
     s.textContent=`
       @media (min-width:1000px) and (pointer:fine){
-        body.tuition-pc-inline #ledgerGridCard .lg-name span{display:none}
+        body.tuition-pc-inline #ledgerGridCard .lg-name>span{display:none}
         body.tuition-pc-inline .pc-due-wrap{display:flex;align-items:center;gap:4px;margin-top:4px;font-size:11px;color:var(--muted)}
         body.tuition-pc-inline .pc-due-input{width:52px;border:1px solid transparent;border-radius:6px;background:transparent;padding:3px 4px;text-align:center;font:inherit;font-weight:800;color:var(--text)}
         body.tuition-pc-inline .pc-due-input:hover{border-color:#cbd5e1;background:#fff}
@@ -46,7 +46,7 @@
   }
 
   function dueFromRow(row){
-    const text=row.querySelector('.lg-name span')?.textContent||'';
+    const text=row.querySelector('.lg-name>span')?.textContent||'';
     return Number((text.match(/(\d+)일/)||[])[1]||0);
   }
 
@@ -76,7 +76,7 @@
       const due=load(DUE_KEY);due[key]=day;save(DUE_KEY,due);
       status('납부일 저장 중…','saving');
       const master=window.KMTTuitionMaster;
-      if(!master?.ok){status('중앙DB 연결 후 저장 필요','error');return}
+      if(!master?.ok){due[key]=before;save(DUE_KEY,due);input.value=before;status('중앙DB 연결 실패 · 원래 값 복원','error');return}
       const ok=await master.saveDue({
         row,householdKey:key,
         displayName:row.querySelector('.lg-name b')?.textContent?.trim()||key,
@@ -84,7 +84,7 @@
       });
       if(ok){
         input.dataset.before=String(day);
-        const hidden=nameCell.querySelector('span');
+        const hidden=nameCell.querySelector(':scope>span');
         if(hidden) hidden.textContent=`납부일 ${day}일`;
         status('✓ 납부일 저장됨','ok');
       }else{
@@ -114,13 +114,14 @@
   function enhance(){
     if(!isPc())return;
     document.body.classList.add('tuition-pc-inline');
-    root=document.getElementById('ledgerGridCard');
+    const root=document.getElementById('ledgerGridCard');
     if(!root)return;
     root.querySelectorAll('tbody tr').forEach(enhanceDue);
     enhanceMonthInputs();
+    const desired='※ PC 전용: 납부일·월별 날짜·금액을 표에서 바로 수정할 수 있습니다. Enter 또는 다른 칸 클릭 시 저장되며, 상세 버튼은 사유·메모가 필요한 경우에만 사용합니다.';
     const note=root.querySelector('.ledger-note');
-    if(note) note.textContent='※ PC 전용: 납부일·월별 날짜·금액을 표에서 바로 수정할 수 있습니다. Enter 또는 다른 칸 클릭 시 저장되며, 상세 버튼은 사유·메모가 필요한 경우에만 사용합니다.';
-    status('자동저장 준비','idle');
+    if(note && note.textContent!==desired) note.textContent=desired;
+    if(!document.getElementById('ledgerPcSaveStatus')) status('자동저장 준비','idle');
   }
 
   function mount(){
