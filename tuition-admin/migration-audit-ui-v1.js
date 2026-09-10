@@ -58,3 +58,9 @@
     layout.parentNode.insertBefore(box,layout);
   });
 })();
+(function(){
+  const s=document.createElement('script');
+  s.src='./migration-entry-helper-v1.js?v=1';
+  s.defer=true;
+  document.head.appendChild(s);
+})();
