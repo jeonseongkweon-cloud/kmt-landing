@@ -3,8 +3,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const cfg=window.KMT_ATTENDANCE_CONFIG;
 const db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
 const $=id=>document.getElementById(id);
-// 출석판 auth-loader.js에서 실제 운영 관리자 계정을 jeonseongkweon@gmail.com 으로 사용하고 있으므로
-// 월간출석도 동일한 계정 기준을 사용한다. 서로 다른 이메일 기준을 사용하면 월간출석 진입 즉시 ../ (CLASS 메인)으로 튕긴다.
 const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
 const WEEKDAY_KO=["일","월","화","수","목","금","토"];
 const params=new URLSearchParams(location.search);
@@ -19,11 +17,9 @@ function parseInitialMonth(){const q=params.get("month");if(/^\d{4}-\d{2}$/.test
 function enrollment(s){return Array.isArray(s?.enrollments)?(s.enrollments[0]||{}):(s?.enrollments||{})}
 function trainingDays(s){return new Set((Array.isArray(enrollment(s).training_days)?enrollment(s).training_days:[]).map(v=>clean(v).replace(/요일$/,"")).filter(Boolean))}
 function trainingDaysText(s){const days=trainingDays(s);return ["월","화","수","목","금","토","일"].filter(d=>days.has(d)).join(" · ")}
-function statusForRecord(r){if(!r||r.status==="cancelled")return "";if(r.status==="late")return "late";if(r.status==="present")return r.checked_out_at?"checkout":"present";if(r.status==="absent")return "absent";return ""}
 function timeText(value){if(!value)return "";return new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(value))}
 function monthBounds(){const y=state.month.getFullYear(),m=state.month.getMonth()+1;const last=new Date(y,m,0).getDate();return {start:dateKey(y,m,1),end:dateKey(y,m,last)}}
 function updateUrl(){const p=new URLSearchParams(location.search);if(state.student?.id)p.set("student",state.student.id);p.set("month",monthKey(state.month));history.replaceState(null,"",`${location.pathname}?${p.toString()}`)}
-
 function showError(title,message){$("monthlyApp").hidden=true;$("stateScreen").hidden=false;$("stateTitle").textContent=title;$("stateMessage").textContent=message;$("stateBack").hidden=false}
 
 async function boot(){
@@ -49,7 +45,8 @@ async function loadStudents(){
 }
 
 function fillStudentPicker(){
-  const picker=$("studentPicker");picker.innerHTML=state.students.map(s=>`<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)}</option>`).join("");
+  const picker=$("studentPicker");
+  picker.innerHTML=state.students.map(s=>`<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)}</option>`).join("");
   picker.value=state.student.id;
   picker.onchange=async()=>{state.student=state.students.find(s=>s.id===picker.value)||state.students[0];await loadMonth()};
 }
@@ -60,31 +57,46 @@ async function loadMonth(){
     db.from("attendance").select("id,student_id,attendance_date,status,checked_at,checked_out_at").eq("student_id",state.student.id).gte("attendance_date",start).lte("attendance_date",end).order("checked_at"),
     db.from("class_sessions").select("session_date,status").gte("session_date",start).lte("session_date",end)
   ]);
-  if(aRes.error)throw aRes.error;if(sRes.error)throw sRes.error;
+  if(aRes.error)throw aRes.error;
+  if(sRes.error)throw sRes.error;
   state.records=aRes.data||[];
   state.sessionDates=new Set((sRes.data||[]).map(r=>r.session_date));
-  render();updateUrl();
+  render();
+  updateUrl();
 }
 
 function recordMap(){
   const map=new Map();
-  state.records.forEach(r=>{if(r.status==="cancelled")return;const old=map.get(r.attendance_date);if(!old||new Date(r.checked_at)>=new Date(old.checked_at))map.set(r.attendance_date,r)});
+  state.records.forEach(r=>{
+    if(r.status==="cancelled")return;
+    const old=map.get(r.attendance_date);
+    if(!old||new Date(r.checked_at)>=new Date(old.checked_at))map.set(r.attendance_date,r);
+  });
   return map;
 }
 
-function dayStatus(key,weekday,records){
-  const r=records.get(key);const explicit=statusForRecord(r);if(explicit)return {status:explicit,record:r,auto:false};
-  const today=localDate();
+function dayInfo(key,weekday,records){
+  const r=records.get(key);
+  if(r){
+    if(r.status==="present")return {status:"present",record:r,auto:false};
+    if(r.status==="late")return {status:"late",record:r,auto:false};
+    if(r.status==="absent")return {status:"absent",record:r,auto:false};
+  }
   const scheduled=trainingDays(state.student).has(WEEKDAY_KO[weekday]);
-  if(key<today&&scheduled&&state.sessionDates.has(key))return {status:"absent",record:null,auto:true};
+  if(key<localDate()&&scheduled&&state.sessionDates.has(key))return {status:"absent",record:null,auto:true};
   return {status:"",record:null,auto:false};
 }
 
 function badgeHtml(info){
   const r=info.record;
-  if(info.status==="present")return `<span class="attendance-badge present"><b>✓</b> 출석${r?` <small>${escapeHtml(timeText(r.checked_at))}</small>`:""}</span>`;
-  if(info.status==="late")return `<span class="attendance-badge late"><b>◷</b> 지각${r?` <small>${escapeHtml(timeText(r.checked_at))}</small>`:""}</span>`;
-  if(info.status==="checkout")return `<span class="attendance-badge checkout"><b>→</b> 귀가${r?.checked_out_at?` <small>${escapeHtml(timeText(r.checked_out_at))}</small>`:""}</span>`;
+  if(info.status==="present"){
+    const checkout=r?.checked_out_at?`<span class="attendance-badge checkout"><b>→</b> 귀가 <small>${escapeHtml(timeText(r.checked_out_at))}</small></span>`:"";
+    return `<span class="attendance-badge present"><b>✓</b> 출석 <small>${escapeHtml(timeText(r.checked_at))}</small></span>${checkout}`;
+  }
+  if(info.status==="late"){
+    const checkout=r?.checked_out_at?`<span class="attendance-badge checkout"><b>→</b> 귀가 <small>${escapeHtml(timeText(r.checked_out_at))}</small></span>`:"";
+    return `<span class="attendance-badge late"><b>◷</b> 지각 <small>${escapeHtml(timeText(r.checked_at))}</small></span>${checkout}`;
+  }
   if(info.status==="absent")return `<span class="attendance-badge absent"><b>×</b> 결석${info.auto?` <small>미출석</small>`:""}</span>`;
   return "";
 }
@@ -97,18 +109,24 @@ function render(){
   $("studentInfo").textContent=meta.join(" | ");
   $("studentPicker").value=state.student.id;
 
-  const records=recordMap();const first=new Date(y,m-1,1),lastDay=new Date(y,m,0).getDate(),leading=first.getDay();
-  const cells=[];const counts={present:0,late:0,checkout:0,absent:0};
+  const records=recordMap();
+  const first=new Date(y,m-1,1),lastDay=new Date(y,m,0).getDate(),leading=first.getDay();
+  const cells=[];
+  const counts={present:0,late:0,checkout:0,absent:0};
   for(let i=0;i<leading;i++)cells.push('<div class="calendar-day outside" aria-hidden="true"></div>');
   for(let day=1;day<=lastDay;day++){
-    const d=new Date(y,m-1,day),weekday=d.getDay(),key=dateKey(y,m,day),info=dayStatus(key,weekday,records);
-    if(info.status)counts[info.status]++;
+    const d=new Date(y,m-1,day),weekday=d.getDay(),key=dateKey(y,m,day),info=dayInfo(key,weekday,records);
+    if(info.status==="present")counts.present++;
+    if(info.status==="late")counts.late++;
+    if(info.status==="absent")counts.absent++;
+    if(info.record?.checked_out_at&&["present","late"].includes(info.status))counts.checkout++;
     const classes=["calendar-day",weekday===0?"sunday":"",weekday===6?"saturday":"",key===localDate()?"today":""].filter(Boolean).join(" ");
     cells.push(`<div class="${classes}" data-date="${key}"><span class="day-number">${day}</span>${badgeHtml(info)}</div>`);
   }
-  const total=leading+lastDay,trailing=(7-total%7)%7;for(let i=0;i<trailing;i++)cells.push('<div class="calendar-day outside" aria-hidden="true"></div>');
+  const total=leading+lastDay,trailing=(7-total%7)%7;
+  for(let i=0;i<trailing;i++)cells.push('<div class="calendar-day outside" aria-hidden="true"></div>');
   $("calendarGrid").innerHTML=cells.join("");
-  $("presentCount").textContent=counts.present+counts.checkout;
+  $("presentCount").textContent=counts.present;
   $("lateCount").textContent=counts.late;
   $("checkoutCount").textContent=counts.checkout;
   $("absentCount").textContent=counts.absent;
