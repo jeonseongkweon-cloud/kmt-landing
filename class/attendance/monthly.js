@@ -3,13 +3,15 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const cfg=window.KMT_ATTENDANCE_CONFIG;
 const db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
 const $=id=>document.getElementById(id);
-const SINGLE_OWNER_EMAIL=String(cfg.allowedAdminEmail||"class-admin@ipma.kr").trim().toLowerCase();
+// 출석판 auth-loader.js에서 실제 운영 관리자 계정을 jeonseongkweon@gmail.com 으로 사용하고 있으므로
+// 월간출석도 동일한 계정 기준을 사용한다. 서로 다른 이메일 기준을 사용하면 월간출석 진입 즉시 ../ (CLASS 메인)으로 튕긴다.
+const SINGLE_OWNER_EMAIL="jeonseongkweon@gmail.com";
 const WEEKDAY_KO=["일","월","화","수","목","금","토"];
 const params=new URLSearchParams(location.search);
 const state={students:[],student:null,records:[],sessionDates:new Set(),month:parseInitialMonth()};
 
 function clean(v){return v==null?"":String(v).trim()}
-function escapeHtml(v){return clean(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]))}
+function escapeHtml(v){return clean(v).replace(/[&<>'\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'\"':"&quot;"}[c]))}
 function localDate(){return new Intl.DateTimeFormat("en-CA",{timeZone:cfg.timezone,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())}
 function dateKey(year,month,day){return `${year}-${String(month).padStart(2,"0")}-${String(day).padStart(2,"0")}`}
 function monthKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`}
@@ -28,7 +30,8 @@ async function boot(){
   try{
     const {data:{session},error}=await db.auth.getSession();
     if(error)throw error;
-    if(!session||String(session.user?.email||"").trim().toLowerCase()!==SINGLE_OWNER_EMAIL){location.replace("../");return}
+    if(!session){showError("로그인이 필요합니다","CLASS 출석판에 로그인한 뒤 다시 월간출석을 열어 주세요.");return}
+    if(String(session.user?.email||"").trim().toLowerCase()!==SINGLE_OWNER_EMAIL){showError("관리자 계정 확인이 필요합니다","현재 CLASS 운영 관리자 계정으로 로그인되어 있지 않습니다.");return}
     await loadStudents();
     if(!state.students.length){showError("재원생이 없습니다","원생관리에서 재원 상태를 확인해 주세요.");return}
     const requested=params.get("student");
