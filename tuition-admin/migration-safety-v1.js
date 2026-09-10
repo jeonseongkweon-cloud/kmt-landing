@@ -1,9 +1,10 @@
 // 계명태권도 CLASS 회비관리 SYSTEM
-// MIGRATION SAFETY GATE v1.1
+// MIGRATION SAFETY GATE v1.2
 // 목적: 기존 회비자료 이관 완료 전 과거 월을 미납으로 계산하거나 문자대상으로 올리지 않는다.
 (function(){
   const originalLoader = window.KMT_TUITION_LOAD_HOUSEHOLDS;
   const originalOpenSms = window.openSms;
+  let currentRows = [];
 
   // CLASS 실데이터는 기본적으로 '이관 전' 상태로 로딩한다.
   if (typeof originalLoader === 'function') {
@@ -15,7 +16,11 @@
         messages: h.messages || [],
         dueHistory: h.dueHistory || []
       }));
+      currentRows = safeRows;
       return originalLoader(safeRows);
+    };
+    window.KMT_TUITION_GET_HOUSEHOLDS = function(){
+      return currentRows.slice();
     };
   }
 
@@ -29,7 +34,7 @@
     };
   }
 
-  // 이관 전 가정은 대시보드에서 '이관대기'로 명확히 표시한다.
+  // 이관 전 가정은 대시보드/목록에서 '이관대기'로 명확히 표시한다.
   if (typeof window.statusOf === 'function') {
     const originalStatusOf = window.statusOf;
     window.statusOf = function(h){
@@ -52,13 +57,11 @@
   // 상세화면의 문자 버튼을 직접 눌러도 이관 전에는 열리지 않게 차단한다.
   if (typeof originalOpenSms === 'function') {
     window.openSms = function(id){
-      try {
-        const h = (window.KMT_TUITION_GET_HOUSEHOLDS?.() || []).find(x => x.id === id);
-        if (h && h.migrationReady !== true) {
-          alert('회비자료 이관이 완료되기 전에는 회비 안내 문자를 준비할 수 없습니다.');
-          return;
-        }
-      } catch (_) {}
+      const h = currentRows.find(x => x.id === id);
+      if (h && h.migrationReady !== true) {
+        alert('회비자료 이관이 완료되기 전에는 회비 안내 문자를 준비할 수 없습니다.');
+        return;
+      }
       return originalOpenSms(id);
     };
   }
