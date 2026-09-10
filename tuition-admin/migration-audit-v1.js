@@ -1,19 +1,19 @@
 // 계명태권도 CLASS 회비관리 SYSTEM
-// MIGRATION AUDIT v1.3
-// 실제 회비 이관 전 대조용 메타데이터. 미납 판정/문자발송에는 사용하지 않는다.
+// MIGRATION AUDIT v1.4
+// 최신 기준: 2026-09-10 사용자가 제공한 2026년 회비대장.xlsx의 비회색 수련생만 현재 관리대상.
+// 회색 글자/최신명단 외 학생은 현재 미납 판정·문자·이관 점검 대상에서 제외한다.
 window.KMT_TUITION_MIGRATION_AUDIT = {
   excludedVirtualStudents: [
     { name:'아리아', reason:'테스트용 가상 원생 · 회비 납부 대상 아님' }
   ],
   currentWithoutLegacyLedger: [
-    '김관우','김서호','민서준','박서우','박연우','박윤아','박이도','박준우','서연재','송정현',
-    '이서준','이서휘','이수형','이승우','이시호','이유준','이유하','이주안','이지안','최태오','황성운'
+    '김관우','김서호','민서준','박서우','박연우','박윤아','박이도','박준우','서연재','송정현','이수형','이승우','황성운'
   ],
   currentGapGroups: {
     likely2026NewOrLedgerGap: [
-      '김서호','박서우','박연우','박윤아','박이도','서연재','이서준','이서휘','이시호','이유준','이주안','이지안','최태오','황성운'
+      '김서호','박서우','박연우','박윤아','박이도','서연재','황성운'
     ],
-    existingBefore2026: ['박준우','이유하'],
+    existingBefore2026: ['박준우'],
     autoMatchedNeedReview: ['김관우','민서준','송정현','이수형','이승우']
   },
   currentGapEvidence: {
@@ -27,28 +27,25 @@ window.KMT_TUITION_MIGRATION_AUDIT = {
     '박준우': { match:'신규/누락', joined:'2021-11-09', feeDueDay:9, monthlyFee:140000 },
     '서연재': { match:'신규/누락', joined:'2026-03-27', feeDueDay:30 },
     '송정현': { match:'자동일치', joined:'2026-03-03', feeDueDay:3, review:'생년월일 충돌' },
-    '이서준': { match:'신규/누락', joined:'2026-03-30', feeDueDay:30 },
-    '이서휘': { match:'신규/누락', joined:'2026-05-12', feeDueDay:30 },
     '이수형': { match:'자동일치', joined:'2026-03-03', feeDueDay:30, householdHint:'이주형과 한 가정 확정' },
     '이승우': { match:'자동일치', joined:'2026-03-03', feeDueDay:30 },
-    '이시호': { match:'신규/누락', joined:'2026-03-31', feeDueDay:30 },
-    '이유준': { match:'신규/누락', joined:'2026-05-29', feeDueDay:30 },
-    '이유하': { match:'신규/누락', joined:'2022-12-01', feeDueDay:17, monthlyFee:165000 },
-    '이주안': { match:'신규/누락', joined:'2026-03-27', feeDueDay:30 },
-    '이지안': { match:'신규/누락', joined:'2026-08-26', feeDueDay:30 },
-    '최태오': { match:'신규/누락', joined:'2026-04-08', feeDueDay:30 },
-    '황성운': { match:'신규/누락', joined:'2026-03-27', feeDueDay:30 }
+    '황성운': { match:'신규/누락', joined:'2026-03-27', feeDueDay:30 },
+    '홍나경': { match:'최신 회비대장', feeDueDay:11, review:'현재 CLASS students 테이블에는 없음' },
+    '한정민': { match:'최신 회비대장', feeDueDay:8, householdHint:'한지아와 한 가정' },
+    '한지아': { match:'최신 회비대장', feeDueDay:8, householdHint:'한정민과 한 가정' }
   },
+  latestRosterOnlyNotClass: ['홍나경','한정민','한지아'],
   confirmedHouseholds: [
     { members:['박서우','박연우'], source:'user-confirmed' },
     { members:['박재희','박윤아'], source:'user-confirmed' },
-    { members:['이수형','이주형'], source:'user-confirmed' }
+    { members:['이수형','이주형'], source:'user-confirmed' },
+    { members:['한정민','한지아'], source:'latest-roster' }
   ],
-  legacyKnownWithdrawn: [
-    ['김예성','김예담'],['윤유은','윤우진'],['한정민','한지아'],['이승재']
-  ],
-  legacyNotInCurrentReview: [
-    '김규민','김민준','김재윤','박정민','백지운','윤희성','이서안','홍나경'
+  // 회색 글자와 최신명단 외 과거 행은 현재 이관판에는 올리지 않는다. 원본 장부자료 자체는 삭제하지 않는다.
+  legacyKnownWithdrawn: [],
+  legacyNotInCurrentReview: [],
+  ignoredLatestWorkbookGray: [
+    '김규민','김예성','김예담','김재윤','김민준','백지운','윤유은','윤우진','윤희성','이서안','이승재','최태오'
   ],
   rules: {
     migrationSafety: '확정 전 이관대기 유지',
@@ -56,7 +53,9 @@ window.KMT_TUITION_MIGRATION_AUDIT = {
     noAutoSms: true,
     historicalRowsPreserved: true,
     candidateLabelsAreNotFinal: true,
-    confirmedHouseholdsMayMerge: true
+    confirmedHouseholdsMayMerge: true,
+    latestRosterOnly: true,
+    ignoreGrayWorkbookRows: true
   }
 };
 
@@ -64,7 +63,7 @@ window.KMT_TUITION_MIGRATION_AUDIT = {
 (function(){
   if(document.querySelector('script[data-kmt-migration-bulk-helper]')) return;
   const s=document.createElement('script');
-  s.src='./migration-bulk-helper-v1.js?v=1';
+  s.src='./migration-bulk-helper-v1.js?v=2';
   s.dataset.kmtMigrationBulkHelper='1';
   document.head.appendChild(s);
 })();
