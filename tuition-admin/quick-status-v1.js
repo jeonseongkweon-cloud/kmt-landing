@@ -60,7 +60,7 @@
       const name=householdName(row),saved=db[name]?.status;
       if(saved&&saved!==currentStatus(row)){
         openAndApply(row,saved,true);
-        return; // 한 번에 하나씩 적용. render 후 observer가 다음 항목을 이어서 처리한다.
+        return;
       }
     }
   }
@@ -75,4 +75,13 @@
   else document.addEventListener('DOMContentLoaded',()=>obs.observe(document.body,{childList:true,subtree:true}));
   document.addEventListener('DOMContentLoaded',()=>setTimeout(enhance,200));
   setTimeout(enhance,300);
+})();
+
+// 울산페이 결제자 가려진 이름 ↔ 실제 수련생 연결표를 함께 로드한다.
+(function(){
+  if(document.querySelector('script[data-kmt-payer-alias]')) return;
+  const s=document.createElement('script');
+  s.src='./payer-alias-v1.js?v=1';
+  s.dataset.kmtPayerAlias='1';
+  document.head.appendChild(s);
 })();
