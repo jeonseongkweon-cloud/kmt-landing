@@ -7,10 +7,18 @@ const confirmed = {
   extension: new Set(['김태은'])
 };
 
+// 회비대장은 학생 수가 아니라 '가정' 단위로 관리한다.
+// 사용자 확정 가족 + 기존 회비대장에 한 칸으로 기록된 가족을 반영한다.
+// 추가 가족은 반드시 기존 장부 표기와 CLASS 보호자 전화번호 중복으로 재확인한다.
 const familyGroups = [
   ['김우리','김나라','김사랑'],
   ['이해찬','이정빈'],
   ['윤우준','윤이현'],
+  ['김도영','김도훈'],
+  ['김시율','김건하'],
+  ['백다현','백동훈'],
+  ['유강령','유가령'],
+  ['오승윤','오연서'],
   ['김예성','김예담'],
   ['윤유은','윤우진'],
   ['한정민','한지아']
@@ -24,8 +32,13 @@ const ledgerAliases = new Map([
   ['윤유은,우진',['윤유은','윤우진']],
   ['한정민,지아',['한정민','한지아']],
   ['김도영,도훈',['김도영','김도훈']],
-  ['김시율,건하',['김시율','김건하']]
+  ['김시율,건하',['김시율','김건하']],
+  ['백다현,동훈',['백다현','백동훈']],
+  ['유강령,가령',['유강령','유가령']],
+  ['오승윤,연서',['오승윤','오연서']]
 ]);
+
+const excludedTuitionStudents = new Set(['아리아']);
 
 function applyConfirmed(h){
   const names=h.students||[];
@@ -105,7 +118,8 @@ function attachLegacyLedger(households){
       setBadge('demo',result.reason==='no-session'?'샘플 데이터 · CLASS 로그인 필요':'샘플 데이터 · CLASS 연결 대기');
       return;
     }
-    let households=buildOneStudentHouseholds(result.students).map(applyConfirmed);
+    const tuitionStudents=(result.students||[]).filter(s=>!excludedTuitionStudents.has(s.name));
+    let households=buildOneStudentHouseholds(tuitionStudents).map(applyConfirmed);
     households=mergeFamilies(households).map(applyConfirmed);
     households=attachLegacyLedger(households);
     if(typeof window.KMT_TUITION_LOAD_HOUSEHOLDS!=='function'){
@@ -114,7 +128,9 @@ function attachLegacyLedger(households){
     }
     window.KMT_TUITION_LOAD_HOUSEHOLDS(households);
     const ledgerCount=households.filter(h=>(h.legacyLedger||[]).length).length;
-    setBadge('live',`CLASS 실데이터 읽기전용 · ${result.students.length}명 · 장부연결 ${ledgerCount}가정`);
+    const excludedCount=(result.students||[]).length-tuitionStudents.length;
+    const excludedText=excludedCount?` · 회비제외 ${excludedCount}명`:'';
+    setBadge('live',`CLASS 실데이터 읽기전용 · ${tuitionStudents.length}명 · 장부연결 ${ledgerCount}가정${excludedText}`);
   }catch(err){
     console.error('[TUITION] CLASS readonly load failed',err);
     setBadge('demo','샘플 데이터 · CLASS 연결 오류');
