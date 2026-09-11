@@ -270,3 +270,142 @@
     if (!menu.hidden && !menu.contains(e.target) && e.target !== quickButton) menu.hidden = true;
   });
 })();
+
+// LIVE STAR BOARD v1.0 — PHASE 1
+// Display-only random classroom animation controller.
+// Does not change STAR, attendance, Supabase, UNDO, voice or SPARK logic.
+(() => {
+  const grid = document.getElementById("studentGrid");
+  const starScreen = document.getElementById("starScreen");
+  if (!grid || !starScreen) return;
+
+  const LIVE_EFFECT_CONFIG = Object.freeze({
+    cardEventMin: 12000,
+    cardEventMax: 25000,
+    cardEventDuration: 2400,
+    leaderEventMin: 15000,
+    leaderEventMax: 25000,
+    leaderEventDuration: 2500,
+    screenGlowMin: 60000,
+    screenGlowMax: 120000,
+    screenGlowDuration: 3000,
+    awardHitDuration: 900
+  });
+  window.LIVE_EFFECT_CONFIG = LIVE_EFFECT_CONFIG;
+
+  const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+  if (reduceMotion) return;
+
+  let lastCard = null;
+  let cardTimer = null;
+  let leaderTimer = null;
+  let screenTimer = null;
+  let effectBusy = false;
+
+  const randomMs = (min, max) => Math.floor(min + Math.random() * (max - min + 1));
+  const visible = () => !document.hidden && !starScreen.hidden;
+  const cards = () => [...grid.querySelectorAll(":scope > .student")].filter(card => card.isConnected);
+
+  const clearLiveClasses = card => {
+    card?.classList.remove("live-gold-run", "live-star-dance", "live-card-pop", "live-tilt");
+  };
+
+  const scheduleCardEvent = () => {
+    clearTimeout(cardTimer);
+    cardTimer = setTimeout(runCardEvent, randomMs(LIVE_EFFECT_CONFIG.cardEventMin, LIVE_EFFECT_CONFIG.cardEventMax));
+  };
+
+  const runCardEvent = () => {
+    if (!visible() || effectBusy) {
+      scheduleCardEvent();
+      return;
+    }
+    const list = cards();
+    if (!list.length) {
+      scheduleCardEvent();
+      return;
+    }
+    let pool = list.filter(card => card !== lastCard && !card.classList.contains("current-leader"));
+    if (!pool.length) pool = list.filter(card => card !== lastCard);
+    if (!pool.length) pool = list;
+    const card = pool[Math.floor(Math.random() * pool.length)];
+    const effects = ["live-gold-run", "live-star-dance", "live-card-pop", "live-tilt"];
+    const effect = effects[Math.floor(Math.random() * effects.length)];
+    effectBusy = true;
+    lastCard = card;
+    clearLiveClasses(card);
+    void card.offsetWidth;
+    card.classList.add(effect);
+    setTimeout(() => {
+      clearLiveClasses(card);
+      effectBusy = false;
+    }, LIVE_EFFECT_CONFIG.cardEventDuration);
+    scheduleCardEvent();
+  };
+
+  const scheduleLeaderEvent = () => {
+    clearTimeout(leaderTimer);
+    leaderTimer = setTimeout(runLeaderEvent, randomMs(LIVE_EFFECT_CONFIG.leaderEventMin, LIVE_EFFECT_CONFIG.leaderEventMax));
+  };
+
+  const runLeaderEvent = () => {
+    if (visible()) {
+      const leaders = [...grid.querySelectorAll(":scope > .student.current-leader")];
+      leaders.forEach(card => {
+        card.classList.remove("leader-live-event");
+        void card.offsetWidth;
+        card.classList.add("leader-live-event");
+        setTimeout(() => card.classList.remove("leader-live-event"), LIVE_EFFECT_CONFIG.leaderEventDuration);
+      });
+    }
+    scheduleLeaderEvent();
+  };
+
+  const scheduleScreenSweep = () => {
+    clearTimeout(screenTimer);
+    screenTimer = setTimeout(runScreenSweep, randomMs(LIVE_EFFECT_CONFIG.screenGlowMin, LIVE_EFFECT_CONFIG.screenGlowMax));
+  };
+
+  const runScreenSweep = () => {
+    if (visible() && !document.querySelector(".live-screen-sweep")) {
+      const sweep = document.createElement("div");
+      sweep.className = "live-screen-sweep";
+      sweep.setAttribute("aria-hidden", "true");
+      document.body.appendChild(sweep);
+      setTimeout(() => sweep.remove(), LIVE_EFFECT_CONFIG.screenGlowDuration);
+    }
+    scheduleScreenSweep();
+  };
+
+  // STAR +1 feedback appears inside the awarded card. Add a short local sparkle only there.
+  new MutationObserver(mutations => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (!(node instanceof Element)) continue;
+        const plus = node.matches?.(".voice-plus") ? node : node.querySelector?.(".voice-plus");
+        if (!plus || !/⭐\s*\+1/.test(plus.textContent || "")) continue;
+        const card = plus.closest(".student");
+        if (!card) continue;
+        card.classList.remove("live-award-hit");
+        void card.offsetWidth;
+        card.classList.add("live-award-hit");
+        setTimeout(() => card.classList.remove("live-award-hit"), LIVE_EFFECT_CONFIG.awardHitDuration);
+      }
+    }
+  }).observe(grid, { childList:true, subtree:true });
+
+  // Old continuous animation classes from an earlier experiment are not used in PHASE 1.
+  grid.querySelectorAll(":scope > .student").forEach(clearLiveClasses);
+
+  scheduleCardEvent();
+  scheduleLeaderEvent();
+  scheduleScreenSweep();
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      scheduleCardEvent();
+      scheduleLeaderEvent();
+      scheduleScreenSweep();
+    }
+  });
+})();
