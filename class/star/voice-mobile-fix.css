@@ -181,3 +181,191 @@
   from{filter:drop-shadow(0 0 3px rgba(255,220,70,.65));transform:translateX(-50%) scale(1)}
   to{filter:drop-shadow(0 0 10px rgba(255,238,130,1));transform:translateX(-50%) scale(1.08)}
 }
+
+/* v3.5 LIVE MOTION — STAR 화면을 계속 살아 움직이게 하는 표시 전용 효과 */
+@media(min-width:761px){
+  body #starScreen{
+    position:relative!important;
+    isolation:isolate!important;
+    overflow:visible!important;
+  }
+
+  /* 화면 전체를 천천히 떠다니는 빛무리 */
+  body #starScreen::before,
+  body #starScreen::after{
+    content:"";
+    position:fixed;
+    z-index:-1;
+    width:260px;
+    height:260px;
+    border-radius:50%;
+    pointer-events:none;
+    opacity:.24;
+    filter:blur(16px);
+    background:radial-gradient(circle,rgba(255,221,94,.32) 0 5%,rgba(45,132,255,.14) 28%,transparent 68%);
+    animation:starRoomDrift 14s linear infinite;
+  }
+  body #starScreen::before{left:-80px;top:28%;}
+  body #starScreen::after{right:-70px;top:58%;animation-duration:18s;animation-direction:reverse;}
+
+  /* 모든 학생 카드에 은은한 호흡감 */
+  body #starScreen .student{
+    position:relative!important;
+    overflow:hidden!important;
+    animation:studentCardBreath 5.8s ease-in-out infinite!important;
+    animation-delay:calc(var(--card-seq,0) * -.35s)!important;
+  }
+
+  /* 카드 위를 가끔 지나가는 빛줄기 */
+  body #starScreen .student::before{
+    content:"";
+    position:absolute;
+    z-index:6;
+    top:-20%;
+    left:-75%;
+    width:42%;
+    height:145%;
+    pointer-events:none;
+    transform:skewX(-18deg);
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),rgba(255,232,150,.22),rgba(255,255,255,.07),transparent);
+    animation:cardLightSweep 7.4s ease-in-out infinite;
+    animation-delay:calc(var(--card-seq,0) * .46s);
+  }
+
+  /* 카드 모서리의 작은 반짝임 */
+  body #starScreen .student::after{
+    content:"✦";
+    position:absolute;
+    z-index:7;
+    right:8px;
+    top:7px;
+    color:#ffe783;
+    font-size:13px;
+    pointer-events:none;
+    opacity:.22;
+    text-shadow:0 0 10px rgba(255,226,104,.85);
+    animation:cornerSparkle 3.2s ease-in-out infinite;
+    animation-delay:calc(var(--card-seq,0) * .22s);
+  }
+
+  /* 별 행도 번갈아 미세하게 반짝인다 */
+  body #starScreen .star-count .star-row{
+    animation:starRowTwinkle 2.8s ease-in-out infinite!important;
+  }
+  body #starScreen .star-count .star-row:nth-child(2){animation-delay:.45s!important}
+  body #starScreen .star-count .star-row:nth-child(3){animation-delay:.9s!important}
+
+  /* 1등은 다른 카드보다 훨씬 강하게 번쩍이게 */
+  body #starScreen .student.current-leader{
+    overflow:visible!important;
+    animation:leaderCardFlash .9s ease-in-out infinite alternate!important;
+  }
+  body #starScreen .student.current-leader::before{
+    width:60%;
+    left:-90%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),rgba(255,239,122,.68),rgba(255,255,255,.18),transparent);
+    animation:leaderSweep 1.65s ease-in-out infinite!important;
+  }
+  body #starScreen .student.current-leader::after{
+    content:"✦ ✧ ✦";
+    right:10px;
+    top:10px;
+    color:#fff2a5;
+    font-size:16px;
+    opacity:1;
+    animation:leaderSparkles .72s ease-in-out infinite alternate!important;
+  }
+  body #starScreen .student.current-leader .leader-badge{
+    animation:leaderCrownSuperGlow .62s ease-in-out infinite alternate!important;
+  }
+
+  /* 각 카드마다 움직임 타이밍을 달리해 한꺼번에 움직이는 느낌을 피한다 */
+  body #starScreen .student:nth-child(1){--card-seq:1}
+  body #starScreen .student:nth-child(2){--card-seq:2}
+  body #starScreen .student:nth-child(3){--card-seq:3}
+  body #starScreen .student:nth-child(4){--card-seq:4}
+  body #starScreen .student:nth-child(5){--card-seq:5}
+  body #starScreen .student:nth-child(6){--card-seq:6}
+  body #starScreen .student:nth-child(7){--card-seq:7}
+  body #starScreen .student:nth-child(8){--card-seq:8}
+  body #starScreen .student:nth-child(9){--card-seq:9}
+  body #starScreen .student:nth-child(10){--card-seq:10}
+  body #starScreen .student:nth-child(11){--card-seq:11}
+  body #starScreen .student:nth-child(12){--card-seq:12}
+  body #starScreen .student:nth-child(13){--card-seq:13}
+  body #starScreen .student:nth-child(14){--card-seq:14}
+  body #starScreen .student:nth-child(15){--card-seq:15}
+  body #starScreen .student:nth-child(16){--card-seq:16}
+  body #starScreen .student:nth-child(17){--card-seq:17}
+  body #starScreen .student:nth-child(18){--card-seq:18}
+  body #starScreen .student:nth-child(19){--card-seq:19}
+  body #starScreen .student:nth-child(20){--card-seq:20}
+}
+
+@keyframes studentCardBreath{
+  0%,100%{transform:translateY(0);box-shadow:0 0 0 rgba(0,0,0,0)}
+  50%{transform:translateY(-1px);box-shadow:0 8px 20px rgba(34,108,171,.12)}
+}
+@keyframes cardLightSweep{
+  0%,56%{left:-75%;opacity:0}
+  61%{opacity:.7}
+  73%{left:135%;opacity:.45}
+  78%,100%{left:135%;opacity:0}
+}
+@keyframes cornerSparkle{
+  0%,100%{opacity:.16;transform:scale(.78) rotate(0deg)}
+  45%{opacity:.85;transform:scale(1.18) rotate(18deg)}
+  62%{opacity:.28;transform:scale(.92) rotate(28deg)}
+}
+@keyframes starRowTwinkle{
+  0%,100%{filter:drop-shadow(0 2px 4px rgba(0,0,0,.35));transform:scale(1)}
+  48%{filter:drop-shadow(0 0 8px rgba(255,220,80,.5));transform:scale(1.018)}
+  55%{filter:drop-shadow(0 0 13px rgba(255,238,137,.92));transform:scale(1.04)}
+  64%{filter:drop-shadow(0 0 7px rgba(255,220,80,.45));transform:scale(1.015)}
+}
+@keyframes leaderCardFlash{
+  0%{
+    filter:brightness(1.02);
+    transform:translateY(0) scale(1);
+    box-shadow:0 0 0 2px rgba(255,241,164,.65),0 0 18px rgba(255,214,64,.88),0 0 36px rgba(255,178,0,.42)
+  }
+  100%{
+    filter:brightness(1.24);
+    transform:translateY(-2px) scale(1.012);
+    box-shadow:0 0 0 4px rgba(255,248,186,.9),0 0 30px rgba(255,231,105,1),0 0 62px rgba(255,170,0,.88)
+  }
+}
+@keyframes leaderSweep{
+  0%{left:-90%;opacity:0}
+  18%{opacity:1}
+  58%{left:135%;opacity:.9}
+  100%{left:135%;opacity:0}
+}
+@keyframes leaderSparkles{
+  from{transform:scale(.9) rotate(-4deg);filter:drop-shadow(0 0 3px rgba(255,222,88,.75))}
+  to{transform:scale(1.18) rotate(4deg);filter:drop-shadow(0 0 11px rgba(255,245,176,1))}
+}
+@keyframes leaderCrownSuperGlow{
+  from{filter:drop-shadow(0 0 5px rgba(255,220,70,.82));transform:translateX(-50%) scale(1) rotate(-2deg)}
+  to{filter:drop-shadow(0 0 16px rgba(255,248,176,1));transform:translateX(-50%) scale(1.14) rotate(2deg)}
+}
+@keyframes starRoomDrift{
+  0%{transform:translate3d(0,0,0) scale(.9);opacity:.13}
+  25%{transform:translate3d(24vw,-12vh,0) scale(1.14);opacity:.28}
+  50%{transform:translate3d(52vw,10vh,0) scale(.95);opacity:.2}
+  75%{transform:translate3d(78vw,-8vh,0) scale(1.08);opacity:.3}
+  100%{transform:translate3d(108vw,7vh,0) scale(.9);opacity:.13}
+}
+
+/* 사용자 OS가 동작 줄이기를 요청한 경우 과한 애니메이션을 자동 완화 */
+@media (prefers-reduced-motion: reduce){
+  body #starScreen .student,
+  body #starScreen .student::before,
+  body #starScreen .student::after,
+  body #starScreen .star-count .star-row,
+  body #starScreen::before,
+  body #starScreen::after{
+    animation-duration:10s!important;
+    animation-iteration-count:infinite!important;
+  }
+}
