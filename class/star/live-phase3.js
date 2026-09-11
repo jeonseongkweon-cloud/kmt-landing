@@ -1,3 +1,15 @@
+// STAR PINSET loader — load display refinement first, then ranking refinement.
+(() => {
+  const base = document.currentScript?.src || location.href;
+  const load = (file, done) => {
+    const s = document.createElement('script');
+    s.src = new URL(file, base).href;
+    s.onload = () => done?.();
+    document.head.appendChild(s);
+  };
+  load('./star-display-pinset.js?v=130', () => load('./star-rank-pinset.js?v=100'));
+})();
+
 // LIVE STAR BOARD v1.0 — PHASE 3
 // Fun display-only events for young students: mini drone fly-by + rare comet surprise.
 // Never changes STAR totals, attendance, Supabase, UNDO, voice, growth calculation or SPARK data.
