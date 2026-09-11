@@ -8,6 +8,24 @@
     document.head.appendChild(s);
   };
   load('./star-display-pinset.js?v=130', () => load('./star-rank-pinset.js?v=100'));
+
+  // PHOTO SLOT PINSET v1.1 — taller portrait window only. No data/STAR logic changes.
+  const style = document.createElement('style');
+  style.id = 'starPhotoSlotTallPinsetV11';
+  style.textContent = `
+    @media (min-width:761px){
+      #studentGrid.student-grid > .student .photo{
+        width:100%!important;
+        height:auto!important;
+        aspect-ratio:1 / 1.12!important;
+        min-height:0!important;
+        max-height:none!important;
+        object-fit:cover!important;
+        object-position:center 32%!important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
 })();
 
 // LIVE STAR BOARD v1.0 — PHASE 3
