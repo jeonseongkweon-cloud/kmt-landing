@@ -102,5 +102,39 @@
   else mount();
 })();
 
+// 회비관리 상단 빠른 복귀 버튼
+(function(){
+  function mountClassReturnButtons(){
+    if(document.getElementById('tuitionClassReturnNav')) return;
+    const head=document.querySelector('.top .head');
+    if(!head) return;
+    const oldRight=head.querySelector('.mini');
+    const nav=document.createElement('div');
+    nav.id='tuitionClassReturnNav';
+    nav.style.display='flex';
+    nav.style.gap='8px';
+    nav.style.alignItems='center';
+    nav.style.flexWrap='wrap';
+    nav.innerHTML=`
+      <a href="../class/admin/" class="btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:5px">👥 원생관리</a>
+      <a href="../class/attendance/" class="btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:5px">✅ 출석</a>
+    `;
+    if(oldRight){
+      const box=document.createElement('div');
+      box.style.display='flex';
+      box.style.flexDirection='column';
+      box.style.alignItems='flex-end';
+      box.style.gap='6px';
+      oldRight.parentNode.insertBefore(box,oldRight);
+      box.appendChild(nav);
+      box.appendChild(oldRight);
+    }else{
+      head.appendChild(nav);
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mountClassReturnButtons,{once:true});
+  else mountClassReturnButtons();
+})();
+
 // payer-alias-v1.js는 index.html에서 한 번만 명시적으로 로드한다.
 // QUICK STATUS가 같은 스크립트를 다시 삽입하면 중복 이벤트/렌더링이 생길 수 있으므로 재삽입하지 않는다.
