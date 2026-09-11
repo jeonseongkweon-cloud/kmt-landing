@@ -169,13 +169,30 @@
   body #starScreen .student.live-card-pop{animation:liveCardPop 1.8s cubic-bezier(.18,.88,.24,1.25) both!important;z-index:6!important}
   body #starScreen .student.live-tilt{animation:liveCardTilt 1.9s ease-in-out both!important;z-index:6!important;transform-style:preserve-3d}
 
-  body #starScreen .student.live-star-dance .star-row{animation:liveStarRowDance .65s ease-in-out both!important}
-  body #starScreen .student.live-star-dance .star-row:nth-child(2){animation-delay:.16s!important}
-  body #starScreen .student.live-star-dance .star-row:nth-child(3){animation-delay:.32s!important}
+  body #starScreen .student.live-star-dance .star-item{display:inline-block;animation:liveStarRowDance .55s ease-in-out both!important}
+  body #starScreen .student.live-star-dance .star-row:nth-child(1) .star-item:nth-child(1){animation-delay:0s!important}
+  body #starScreen .student.live-star-dance .star-row:nth-child(1) .star-item:nth-child(2){animation-delay:.08s!important}
+  body #starScreen .student.live-star-dance .star-row:nth-child(1) .star-item:nth-child(3){animation-delay:.16s!important}
+  body #starScreen .student.live-star-dance .star-row:nth-child(1) .star-item:nth-child(4){animation-delay:.24s!important}
+  body #starScreen .student.live-star-dance .star-row:nth-child(1) .star-item:nth-child(5){animation-delay:.32s!important}
+  body #starScreen .student.live-star-dance .star-row:nth-child(2) .star-item:nth-child(1){animation-delay:.40s!important}
+  body #starScreen .student.live-star-dance .star-row:nth-child(2) .star-item:nth-child(2){animation-delay:.48s!important}
+  body #starScreen .student.live-star-dance .star-row:nth-child(2) .star-item:nth-child(3){animation-delay:.56s!important}
+  body #starScreen .student.live-star-dance .star-row:nth-child(2) .star-item:nth-child(4){animation-delay:.64s!important}
+  body #starScreen .student.live-star-dance .star-row:nth-child(2) .star-item:nth-child(5){animation-delay:.72s!important}
   body #starScreen .student.live-star-dance .student-line h2{animation:liveNameGlow 1.5s ease both!important}
+  body #starScreen .student.live-name-glow .student-line h2{position:relative;animation:liveNameGlow 1.65s ease both!important}
+  body #starScreen .student.live-name-glow .student-line h2::after{
+    content:"";position:absolute;inset:-3px -10px;pointer-events:none;border-radius:10px;
+    background:linear-gradient(105deg,transparent 18%,rgba(125,221,255,.08) 34%,rgba(255,239,157,.72) 50%,rgba(125,221,255,.10) 66%,transparent 82%);
+    transform:translateX(-120%);animation:liveNameSweep 1.35s ease-out both;mix-blend-mode:screen
+  }
 
   /* STAR 지급 직후 추가 별은 짧고 강하게 반응 */
-  body #starScreen .student.live-award-hit .star-count{animation:liveAwardStars .75s ease-out both!important}
+  body #starScreen .student.live-award-hit{z-index:8!important;animation:liveAwardCard 1s cubic-bezier(.18,.88,.24,1.2) both!important}
+  body #starScreen .student.live-award-hit::before{content:"";position:absolute;z-index:14;inset:-3px;border:3px solid #fff0a0;border-radius:20px;pointer-events:none;animation:liveAwardBorder 1s ease-out both}
+  body #starScreen .student.live-award-hit .star-count{animation:liveAwardStars .85s ease-out both!important}
+  body #starScreen .student.live-award-hit .student-line h2{animation:liveNameGlow .9s ease-out both!important}
 
   /* 1등은 15~25초 사이 이벤트가 올 때만 왕관/테두리가 크게 반응 */
   body #starScreen .student.current-leader.leader-live-event{animation:leaderLiveEvent 2.3s ease-in-out both!important}
@@ -200,6 +217,9 @@
 @keyframes liveCardTilt{0%,100%{transform:perspective(700px) rotateY(0) rotateX(0)}28%{transform:perspective(700px) rotateY(-7deg) rotateX(2deg)}58%{transform:perspective(700px) rotateY(7deg) rotateX(-1deg)}78%{transform:perspective(700px) rotateY(-3deg)}}
 @keyframes liveStarRowDance{0%,100%{transform:translateY(0) scale(1);filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))}45%{transform:translateY(-7px) scale(1.1);filter:drop-shadow(0 0 12px rgba(255,239,136,.95))}}
 @keyframes liveNameGlow{0%,100%{color:inherit;text-shadow:none}46%{color:#fff2a0;text-shadow:0 0 12px rgba(255,218,76,.9);transform:scale(1.04)}}
+@keyframes liveNameSweep{0%{opacity:0;transform:translateX(-120%)}20%{opacity:1}100%{opacity:0;transform:translateX(120%)}}
+@keyframes liveAwardCard{0%,100%{transform:scale(1)}38%{transform:scale(1.04) translateY(-3px)}68%{transform:scale(1.018)}}
+@keyframes liveAwardBorder{0%{opacity:0;box-shadow:0 0 0 rgba(255,220,75,0)}35%{opacity:1;box-shadow:0 0 28px rgba(255,220,75,.9)}100%{opacity:0;box-shadow:0 0 8px rgba(255,220,75,0)}}
 @keyframes liveAwardStars{0%{transform:scale(.92);filter:brightness(1)}45%{transform:scale(1.12);filter:brightness(1.45) drop-shadow(0 0 12px rgba(255,225,86,.9))}100%{transform:scale(1);filter:none}}
 @keyframes leaderLiveEvent{0%,100%{transform:scale(1);box-shadow:0 0 0 2px rgba(255,241,164,.55),0 0 18px rgba(255,214,64,.82),0 0 36px rgba(255,178,0,.42)}35%{transform:scale(1.025) translateY(-3px);box-shadow:0 0 0 4px rgba(255,249,194,.95),0 0 30px rgba(255,230,95,1),0 0 64px rgba(255,166,0,.75)}65%{transform:scale(1.012) translateY(-1px)}}
 @keyframes leaderCrownEvent{0%,100%{transform:translateX(-50%) translateY(0) rotate(0) scale(1)}32%{transform:translateX(-50%) translateY(-10px) rotate(-5deg) scale(1.18);filter:drop-shadow(0 0 12px rgba(255,244,161,1))}58%{transform:translateX(-50%) translateY(-6px) rotate(5deg) scale(1.12)}78%{transform:translateX(-50%) translateY(-2px) rotate(-2deg) scale(1.05)}}
@@ -210,7 +230,9 @@
   body #starScreen .student.live-gold-run,
   body #starScreen .student.live-card-pop,
   body #starScreen .student.live-tilt,
-  body #starScreen .student.live-star-dance .star-row,
+  body #starScreen .student.live-star-dance .star-item,
+  body #starScreen .student.live-name-glow .student-line h2,
+  body #starScreen .student.live-award-hit,
   body #starScreen .student.current-leader.leader-live-event,
   .live-screen-sweep{animation:none!important}
 }

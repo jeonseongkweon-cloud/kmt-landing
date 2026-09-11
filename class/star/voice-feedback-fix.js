@@ -135,20 +135,36 @@
   const grid=document.getElementById("studentGrid");
   const starScreen=document.getElementById("starScreen");
   if(!grid||!starScreen)return;
-  const LIVE_EFFECT_CONFIG=Object.freeze({cardEventMin:7000,cardEventMax:10000,cardEventDuration:2400,leaderEventMin:10000,leaderEventMax:14000,leaderEventDuration:2500,screenGlowMin:45000,screenGlowMax:75000,screenGlowDuration:3000,awardHitDuration:900});
+  const LIVE_EFFECT_CONFIG=Object.freeze({
+    mode:"class",
+    cardMin:5000,cardMax:10000,cardDuration:2200,
+    leaderMin:8000,leaderMax:12000,leaderDuration:2500,
+    screenSweepMin:30000,screenSweepMax:45000,screenSweepDuration:3000,
+    growthPopupMin:90000,growthPopupMax:120000,growthPopupDuration:4000,
+    levelUpDuration:6500,
+    droneMin:30000,droneMax:50000,droneDuration:7200,
+    cometMin:40000,cometMax:70000,cometDuration:2600,
+    awardHitDuration:1000
+  });
   window.LIVE_EFFECT_CONFIG=LIVE_EFFECT_CONFIG;
   const reduceMotion=window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;if(reduceMotion)return;
   let lastCard=null,cardTimer=null,leaderTimer=null,screenTimer=null,effectBusy=false;
   const randomMs=(min,max)=>Math.floor(min+Math.random()*(max-min+1));
   const visible=()=>!document.hidden&&!starScreen.hidden;
   const cards=()=>[...grid.querySelectorAll(":scope > .student")].filter(card=>card.isConnected);
-  const clearLiveClasses=card=>card?.classList.remove("live-gold-run","live-star-dance","live-card-pop","live-tilt");
-  const scheduleCardEvent=()=>{clearTimeout(cardTimer);cardTimer=setTimeout(runCardEvent,randomMs(LIVE_EFFECT_CONFIG.cardEventMin,LIVE_EFFECT_CONFIG.cardEventMax))};
-  const runCardEvent=()=>{if(!visible()||effectBusy){scheduleCardEvent();return}const list=cards();if(!list.length){scheduleCardEvent();return}let pool=list.filter(card=>card!==lastCard&&!card.classList.contains("current-leader"));if(!pool.length)pool=list.filter(card=>card!==lastCard);if(!pool.length)pool=list;const card=pool[Math.floor(Math.random()*pool.length)];const effects=["live-gold-run","live-star-dance","live-card-pop","live-tilt"];const effect=effects[Math.floor(Math.random()*effects.length)];effectBusy=true;lastCard=card;clearLiveClasses(card);void card.offsetWidth;card.classList.add(effect);setTimeout(()=>{clearLiveClasses(card);effectBusy=false},LIVE_EFFECT_CONFIG.cardEventDuration);scheduleCardEvent()};
-  const scheduleLeaderEvent=()=>{clearTimeout(leaderTimer);leaderTimer=setTimeout(runLeaderEvent,randomMs(LIVE_EFFECT_CONFIG.leaderEventMin,LIVE_EFFECT_CONFIG.leaderEventMax))};
-  const runLeaderEvent=()=>{if(visible()){const leaders=[...grid.querySelectorAll(":scope > .student.current-leader")];leaders.forEach(card=>{card.classList.remove("leader-live-event");void card.offsetWidth;card.classList.add("leader-live-event");setTimeout(()=>card.classList.remove("leader-live-event"),LIVE_EFFECT_CONFIG.leaderEventDuration)})}scheduleLeaderEvent()};
-  const scheduleScreenSweep=()=>{clearTimeout(screenTimer);screenTimer=setTimeout(runScreenSweep,randomMs(LIVE_EFFECT_CONFIG.screenGlowMin,LIVE_EFFECT_CONFIG.screenGlowMax))};
-  const runScreenSweep=()=>{if(visible()&&!document.querySelector(".live-screen-sweep")){const sweep=document.createElement("div");sweep.className="live-screen-sweep";sweep.setAttribute("aria-hidden","true");document.body.appendChild(sweep);setTimeout(()=>sweep.remove(),LIVE_EFFECT_CONFIG.screenGlowDuration)}scheduleScreenSweep()};
+  const blocked=()=>effectBusy||document.hidden||starScreen.hidden||
+    !document.getElementById("starBurst")?.hidden||!document.getElementById("growthCelebration")?.hidden||
+    !document.getElementById("classShowOverlay")?.hidden||!document.getElementById("liveGrowthOverlay")?.hidden||
+    !document.getElementById("systemMenu")?.hidden||!!document.querySelector("dialog[open]")||
+    document.body.dataset.liveScenicBusy==="on";
+  window.KMTLiveBoard={config:LIVE_EFFECT_CONFIG,isBlocked:blocked};
+  const clearLiveClasses=card=>card?.classList.remove("live-gold-run","live-star-dance","live-card-pop","live-tilt","live-name-glow");
+  const scheduleCardEvent=()=>{clearTimeout(cardTimer);cardTimer=setTimeout(runCardEvent,randomMs(LIVE_EFFECT_CONFIG.cardMin,LIVE_EFFECT_CONFIG.cardMax))};
+  const runCardEvent=()=>{if(!visible()||blocked()){scheduleCardEvent();return}const list=cards();if(!list.length){scheduleCardEvent();return}let pool=list.filter(card=>card!==lastCard&&!card.classList.contains("current-leader"));if(!pool.length)pool=list.filter(card=>card!==lastCard);if(!pool.length)pool=list;const card=pool[Math.floor(Math.random()*pool.length)];const effects=["live-gold-run","live-star-dance","live-card-pop","live-tilt","live-name-glow"];const effect=effects[Math.floor(Math.random()*effects.length)];effectBusy=true;lastCard=card;clearLiveClasses(card);void card.offsetWidth;card.classList.add(effect);document.dispatchEvent(new CustomEvent("kmt:live-card",{detail:{studentId:card.dataset.student,effect}}));setTimeout(()=>{clearLiveClasses(card);effectBusy=false},LIVE_EFFECT_CONFIG.cardDuration);scheduleCardEvent()};
+  const scheduleLeaderEvent=()=>{clearTimeout(leaderTimer);leaderTimer=setTimeout(runLeaderEvent,randomMs(LIVE_EFFECT_CONFIG.leaderMin,LIVE_EFFECT_CONFIG.leaderMax))};
+  const runLeaderEvent=()=>{if(visible()&&!blocked()){const card=grid.querySelector(":scope > .student.current-leader");if(card){card.classList.remove("leader-live-event");void card.offsetWidth;card.classList.add("leader-live-event");document.dispatchEvent(new CustomEvent("kmt:live-leader"));setTimeout(()=>card.classList.remove("leader-live-event"),LIVE_EFFECT_CONFIG.leaderDuration)}}scheduleLeaderEvent()};
+  const scheduleScreenSweep=()=>{clearTimeout(screenTimer);screenTimer=setTimeout(runScreenSweep,randomMs(LIVE_EFFECT_CONFIG.screenSweepMin,LIVE_EFFECT_CONFIG.screenSweepMax))};
+  const runScreenSweep=()=>{if(visible()&&!blocked()&&!document.querySelector(".live-screen-sweep")){const sweep=document.createElement("div");sweep.className="live-screen-sweep";sweep.setAttribute("aria-hidden","true");document.body.appendChild(sweep);document.dispatchEvent(new CustomEvent("kmt:live-sweep"));setTimeout(()=>sweep.remove(),LIVE_EFFECT_CONFIG.screenSweepDuration)}scheduleScreenSweep()};
   new MutationObserver(mutations=>{for(const mutation of mutations){for(const node of mutation.addedNodes){if(!(node instanceof Element))continue;const plus=node.matches?.(".voice-plus")?node:node.querySelector?.(".voice-plus");if(!plus||!/⭐\s*\+1/.test(plus.textContent||""))continue;const card=plus.closest(".student");if(!card)continue;card.classList.remove("live-award-hit");void card.offsetWidth;card.classList.add("live-award-hit");setTimeout(()=>card.classList.remove("live-award-hit"),LIVE_EFFECT_CONFIG.awardHitDuration)}}}).observe(grid,{childList:true,subtree:true});
   grid.querySelectorAll(":scope > .student").forEach(clearLiveClasses);
   scheduleCardEvent();scheduleLeaderEvent();scheduleScreenSweep();
@@ -164,7 +180,8 @@
   const growthStages=document.getElementById("growthStages");
   if(!starScreen||!growthStages)return;
 
-  const CONFIG=Object.freeze({autoInterval:180000,autoDuration:4000,levelUpDuration:6500});
+  const LIVE=window.LIVE_EFFECT_CONFIG||{};
+  const CONFIG=Object.freeze({autoMin:LIVE.growthPopupMin||90000,autoMax:LIVE.growthPopupMax||120000,autoDuration:LIVE.growthPopupDuration||4000,levelUpDuration:LIVE.levelUpDuration||6500});
   window.LIVE_PHASE2_CONFIG=CONFIG;
 
   const style=document.createElement("style");
@@ -220,7 +237,7 @@
   };
   const stageLabel=()=>growthStages.querySelector(".growth-stage span")?.textContent?.trim()||`${Math.max(1,currentStage())} / 7`;
   const nextText=()=>document.getElementById("growthNext")?.textContent?.replace(/\s+/g," ")?.trim()||"다음 성장까지 확인 중";
-  const popupBusy=()=>!document.getElementById("classShowOverlay")?.hidden||!document.getElementById("starBurst")?.hidden||!document.getElementById("growthCelebration")?.hidden;
+  const popupBusy=()=>window.KMTLiveBoard?.isBlocked?.()||!document.getElementById("classShowOverlay")?.hidden||!document.getElementById("starBurst")?.hidden||!document.getElementById("growthCelebration")?.hidden;
 
   const close=()=>{clearTimeout(closeTimer);clearInterval(countTimer);overlay.hidden=true;overlay.classList.remove("level-up");overlay.innerHTML=""};
   const show=(mode="auto",duration=CONFIG.autoDuration)=>{
@@ -232,7 +249,7 @@
     const seconds=Math.ceil(duration/1000);
     overlay.classList.toggle("level-up",mode==="level-up");
     overlay.innerHTML=`<div class="live-growth-card"><div class="live-growth-countdown">${seconds}</div><div class="live-growth-particles"><i>⭐</i><i>✨</i><i>🌟</i><i>✨</i><i>⭐</i><i>🌟</i></div><div class="live-growth-kicker">🔥 우리 반 공동성장</div><div class="live-growth-title">${mode==="level-up"?"LEVEL UP!":"성장 캐릭터"}</div>${img?`<img class="live-growth-character" src="${img}" alt="공동성장 ${stage}단계 캐릭터">`:""}<div class="live-growth-stage">${mode==="level-up"?`${stage}단계 달성!`:`현재 ${stageLabel()}`}</div><div class="live-growth-score">${progress.goal?`⭐ ${progress.total} / ${progress.goal} STAR`:"출석 후 공동성장이 시작됩니다"}</div><div class="live-growth-next">${nextText()}</div><div class="live-growth-meter"><i style="width:${percent}%"></i></div></div>`;
-    overlay.hidden=false;
+    overlay.hidden=false;document.dispatchEvent(new CustomEvent(mode==="level-up"?"kmt:live-level-up":"kmt:live-growth"));
     clearTimeout(closeTimer);clearInterval(countTimer);
     let left=seconds;
     const counter=overlay.querySelector(".live-growth-countdown");
@@ -241,7 +258,9 @@
     return true;
   };
 
-  const scheduleAuto=()=>{clearTimeout(autoTimer);autoTimer=setTimeout(()=>{if(!show("auto",CONFIG.autoDuration)){setTimeout(()=>show("auto",CONFIG.autoDuration),10000)}scheduleAuto()},CONFIG.autoInterval)};
+  const randomMs=(min,max)=>Math.floor(min+Math.random()*(max-min+1));
+  const scheduleAuto=()=>{clearTimeout(autoTimer);autoTimer=setTimeout(()=>{if(!show("auto",CONFIG.autoDuration)){setTimeout(()=>show("auto",CONFIG.autoDuration),10000)}scheduleAuto()},randomMs(CONFIG.autoMin,CONFIG.autoMax))};
+  const showLevelUpWhenFree=(attempt=0)=>{if(show("level-up",CONFIG.levelUpDuration))return;if(attempt<10)setTimeout(()=>showLevelUpWhenFree(attempt+1),700)};
 
   const syncStage=()=>{
     const stage=currentStage();
@@ -250,7 +269,7 @@
     if(stage>lastStage){
       const newStage=stage;
       lastStage=stage;
-      setTimeout(()=>show("level-up",CONFIG.levelUpDuration),120);
+      setTimeout(()=>showLevelUpWhenFree(),2200);
       return;
     }
     lastStage=stage;

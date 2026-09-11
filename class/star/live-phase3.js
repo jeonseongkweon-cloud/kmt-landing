@@ -7,7 +7,7 @@
     s.onload = () => done?.();
     document.head.appendChild(s);
   };
-  load('./star-display-pinset.js?v=130', () => load('./star-rank-pinset.js?v=100'));
+  load('./star-display-pinset.js?v=131', () => load('./star-rank-pinset.js?v=100'));
 
   // PHOTO SLOT PINSET v1.1 — taller portrait window only. No data/STAR logic changes.
   const style = document.createElement('style');
@@ -36,14 +36,15 @@
   const grid = document.getElementById("studentGrid");
   if (!starScreen || !grid) return;
 
+  const LIVE = window.LIVE_EFFECT_CONFIG || {};
   const CONFIG = Object.freeze({
-    droneMin: 45000,
-    droneMax: 90000,
-    droneDuration: 7600,
-    dronePauseAtCard: 1500,
-    surpriseMin: 70000,
-    surpriseMax: 130000,
-    surpriseDuration: 2600
+    droneMin: LIVE.droneMin || 30000,
+    droneMax: LIVE.droneMax || 50000,
+    droneDuration: LIVE.droneDuration || 7200,
+    dronePauseAtCard: 1000,
+    surpriseMin: LIVE.cometMin || 40000,
+    surpriseMax: LIVE.cometMax || 70000,
+    surpriseDuration: LIVE.cometDuration || 2600
   });
   window.LIVE_PHASE3_CONFIG = CONFIG;
 
@@ -52,20 +53,22 @@
   const style = document.createElement("style");
   style.id = "livePhase3Style";
   style.textContent = `
-.live-drone-wrap{position:fixed;z-index:4200;left:0;top:0;width:90px;height:64px;pointer-events:none;will-change:transform,opacity;filter:drop-shadow(0 10px 10px rgba(0,0,0,.35))}
-.live-drone{position:relative;width:86px;height:58px;transform-origin:center;animation:droneBob .7s ease-in-out infinite alternate}
-.live-drone-body{position:absolute;left:27px;top:22px;width:34px;height:20px;border:2px solid #bfe8ff;border-radius:13px 13px 17px 17px;background:linear-gradient(180deg,#2d719d,#0e3652);box-shadow:0 0 12px rgba(116,210,255,.35)}
-.live-drone-eye{position:absolute;left:39px;top:29px;width:10px;height:7px;border-radius:50%;background:#7df4ff;box-shadow:0 0 11px #5deeff;animation:droneEye 1s ease-in-out infinite alternate}
-.live-drone-arm{position:absolute;left:12px;top:26px;width:64px;height:4px;border-radius:4px;background:#91bed5}
-.live-drone-rotor{position:absolute;width:28px;height:5px;border-radius:50%;background:rgba(209,245,255,.92);box-shadow:0 0 8px rgba(158,231,255,.7);animation:droneRotor .11s linear infinite}
-.live-drone-rotor.r1{left:2px;top:12px}.live-drone-rotor.r2{right:0;top:12px}.live-drone-rotor.r3{left:4px;top:40px}.live-drone-rotor.r4{right:2px;top:40px}
-.live-drone-light{position:absolute;left:43px;top:45px;width:5px;height:5px;border-radius:50%;background:#ffd95d;box-shadow:0 0 9px #ffd95d;animation:droneLight .45s steps(2,end) infinite}
-.live-drone-label{position:absolute;left:50%;top:57px;transform:translateX(-50%);white-space:nowrap;padding:3px 8px;border-radius:999px;background:rgba(4,24,40,.86);border:1px solid rgba(147,221,255,.38);color:#dff7ff;font-size:11px;font-weight:900;opacity:.88}
-.live-drone-spark{position:fixed;z-index:4210;pointer-events:none;font-size:30px;will-change:transform,opacity;animation:droneSparkDrop 1.15s ease-out both}
+.live-drone-wrap{position:fixed;z-index:20;left:0;top:0;width:132px;height:92px;pointer-events:none;will-change:transform,opacity;filter:drop-shadow(0 12px 13px rgba(0,0,0,.48))}
+.live-drone{position:relative;width:124px;height:84px;transform-origin:center;animation:droneBob .7s ease-in-out infinite alternate}
+.live-drone-body{position:absolute;left:39px;top:32px;width:49px;height:29px;border:3px solid #d8f4ff;border-radius:17px 17px 23px 23px;background:linear-gradient(180deg,#3a8fc2,#0e3652);box-shadow:0 0 18px rgba(116,210,255,.62)}
+.live-drone-eye{position:absolute;left:57px;top:42px;width:14px;height:10px;border-radius:50%;background:#8fffff;box-shadow:0 0 15px #5deeff;animation:droneEye 1s ease-in-out infinite alternate}
+.live-drone-arm{position:absolute;left:17px;top:38px;width:93px;height:6px;border-radius:5px;background:#b3dced}
+.live-drone-rotor{position:absolute;width:41px;height:7px;border-radius:50%;background:rgba(226,249,255,.96);box-shadow:0 0 12px rgba(158,231,255,.9);animation:droneRotor .11s linear infinite}
+.live-drone-rotor.r1{left:2px;top:17px}.live-drone-rotor.r2{right:0;top:17px}.live-drone-rotor.r3{left:5px;top:58px}.live-drone-rotor.r4{right:3px;top:58px}
+.live-drone-light{position:absolute;left:62px;top:65px;width:8px;height:8px;border-radius:50%;background:#ffd95d;box-shadow:0 0 13px #ffd95d;animation:droneLight .45s steps(2,end) infinite}
+.live-drone-label{position:absolute;left:50%;top:82px;transform:translateX(-50%);white-space:nowrap;padding:4px 10px;border-radius:999px;background:rgba(4,24,40,.92);border:1px solid rgba(147,221,255,.55);color:#ecfbff;font-size:13px;font-weight:1000;opacity:.96}
+.live-drone-spark{position:fixed;z-index:21;pointer-events:none;font-size:34px;will-change:transform,opacity;animation:droneSparkDrop 1.15s ease-out both}
 .live-drone-target{animation:droneTargetGlow 1.8s ease-in-out both!important;z-index:8!important}
-.live-surprise-comet{position:fixed;z-index:4100;left:-130px;top:15vh;width:120px;height:30px;pointer-events:none;will-change:transform,opacity;animation:cometFly 2.6s cubic-bezier(.12,.65,.25,1) both}
+.live-surprise-comet{position:fixed;z-index:19;left:-130px;top:15vh;width:120px;height:30px;pointer-events:none;will-change:transform,opacity;animation:cometFly 2.6s cubic-bezier(.12,.65,.25,1) both}
 .live-surprise-comet::before{content:"🌟";position:absolute;right:0;top:-8px;font-size:38px;filter:drop-shadow(0 0 12px rgba(255,224,93,.9))}
 .live-surprise-comet::after{content:"";position:absolute;right:24px;top:8px;width:95px;height:7px;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),rgba(255,223,104,.75));filter:blur(2px)}
+.live-surprise-comet.rocket::before{content:"🚀";filter:drop-shadow(0 0 12px rgba(109,220,255,.9))}
+.live-surprise-comet.rocket::after{background:linear-gradient(90deg,transparent,rgba(84,196,255,.45),rgba(255,190,74,.85))}
 @keyframes droneBob{from{transform:translateY(-2px) rotate(-1deg)}to{transform:translateY(3px) rotate(1deg)}}
 @keyframes droneRotor{to{transform:rotate(360deg)}}
 @keyframes droneEye{from{opacity:.45}to{opacity:1}}
@@ -85,7 +88,7 @@
 
   const randomMs = (min, max) => Math.floor(min + Math.random() * (max - min + 1));
   const visible = () => !document.hidden && !starScreen.hidden && window.innerWidth > 760;
-  const busy = () => droneActive || surpriseActive ||
+  const busy = () => droneActive || surpriseActive || window.KMTLiveBoard?.isBlocked?.() ||
     !document.getElementById("classShowOverlay")?.hidden ||
     !document.getElementById("liveGrowthOverlay")?.hidden ||
     !document.getElementById("starBurst")?.hidden ||
@@ -129,14 +132,14 @@
     const target = chooseTarget();
     if (!target) { scheduleDrone(); return; }
 
-    droneActive = true;
+    droneActive = true;document.body.dataset.liveScenicBusy="on";
     lastTarget = target;
     const drone = makeDrone();
     const rect = target.getBoundingClientRect();
     const fromLeft = Math.random() < .5;
     const startX = fromLeft ? -120 : window.innerWidth + 120;
-    const targetX = Math.max(24, Math.min(window.innerWidth - 110, rect.left + rect.width * .5 - 45));
-    const targetY = Math.max(90, Math.min(window.innerHeight - 150, rect.top - 54));
+    const targetX = Math.max(24, Math.min(window.innerWidth - 148, rect.left + rect.width * .5 - 66));
+    const targetY = Math.max(92, Math.min(window.innerHeight - 175, rect.top - 78));
     const exitX = fromLeft ? window.innerWidth + 140 : -140;
     const startY = Math.max(90, Math.min(window.innerHeight - 160, targetY + (Math.random() * 120 - 60)));
 
@@ -150,25 +153,26 @@
       { opacity:0, offset:1 }
     ], { duration: CONFIG.droneDuration, easing:"cubic-bezier(.2,.7,.2,1)", fill:"forwards" });
 
+    document.dispatchEvent(new CustomEvent("kmt:live-drone",{detail:{studentId:target.dataset.student}}));
     setTimeout(() => dropSpark(target), Math.round(CONFIG.droneDuration * .52));
     animation.finished.finally(() => {
       drone.remove();
-      droneActive = false;
+      droneActive = false;delete document.body.dataset.liveScenicBusy;
       scheduleDrone();
     });
   };
 
   const runSurprise = () => {
     if (!visible() || busy()) { scheduleSurprise(); return; }
-    surpriseActive = true;
+    surpriseActive = true;document.body.dataset.liveScenicBusy="on";
     const comet = document.createElement("div");
-    comet.className = "live-surprise-comet";
+    const rocket=Math.random()<.28;comet.className = `live-surprise-comet${rocket?" rocket":""}`;
     comet.style.top = `${12 + Math.random() * 28}vh`;
     comet.setAttribute("aria-hidden", "true");
-    document.body.appendChild(comet);
+    document.body.appendChild(comet);document.dispatchEvent(new CustomEvent(rocket?"kmt:live-rocket":"kmt:live-comet"));
     setTimeout(() => {
       comet.remove();
-      surpriseActive = false;
+      surpriseActive = false;delete document.body.dataset.liveScenicBusy;
       scheduleSurprise();
     }, CONFIG.surpriseDuration + 150);
   };

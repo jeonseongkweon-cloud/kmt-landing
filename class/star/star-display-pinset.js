@@ -63,7 +63,13 @@
       for (let start = 0; start < visible; start += 5) {
         const row = document.createElement('span');
         row.className = 'star-row';
-        row.textContent = '⭐'.repeat(Math.min(5, visible - start));
+        const rowSize = Math.min(5, visible - start);
+        for (let index = 0; index < rowSize; index += 1) {
+          const star = document.createElement('span');
+          star.className = 'star-item';
+          star.textContent = '⭐';
+          row.appendChild(star);
+        }
         el.appendChild(row);
       }
     });
