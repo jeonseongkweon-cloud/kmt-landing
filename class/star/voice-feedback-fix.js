@@ -154,3 +154,110 @@
   scheduleCardEvent();scheduleLeaderEvent();scheduleScreenSweep();
   document.addEventListener("visibilitychange",()=>{if(!document.hidden){scheduleCardEvent();scheduleLeaderEvent();scheduleScreenSweep()}});
 })();
+
+// LIVE STAR BOARD v1.0 — PHASE 2
+// Every 3 minutes, briefly show the current shared-growth character.
+// When the real growth stage rises, show a stronger LEVEL UP celebration.
+// Display-only: growth calculation/storage remains owned by star.js.
+(() => {
+  const starScreen=document.getElementById("starScreen");
+  const growthStages=document.getElementById("growthStages");
+  if(!starScreen||!growthStages)return;
+
+  const CONFIG=Object.freeze({autoInterval:180000,autoDuration:4000,levelUpDuration:6500});
+  window.LIVE_PHASE2_CONFIG=CONFIG;
+
+  const style=document.createElement("style");
+  style.id="liveGrowthPhase2Style";
+  style.textContent=`
+.live-growth-overlay{position:fixed;inset:0;z-index:5600;display:grid;place-items:center;padding:22px;pointer-events:none;background:radial-gradient(circle at center,rgba(27,79,119,.48),rgba(0,8,18,.88));backdrop-filter:blur(5px);animation:liveGrowthOverlayIn .28s ease-out}
+.live-growth-overlay[hidden]{display:none!important}
+.live-growth-card{position:relative;width:min(880px,92vw);max-height:90vh;overflow:hidden;padding:22px 32px 26px;border:3px solid rgba(255,221,91,.9);border-radius:32px;background:linear-gradient(155deg,#10395f,#061727);box-shadow:0 0 0 7px rgba(255,255,255,.045),0 0 80px rgba(255,205,55,.34),0 30px 90px rgba(0,0,0,.62);text-align:center;animation:liveGrowthCardPop .42s cubic-bezier(.18,.9,.25,1.28)}
+.live-growth-kicker{font-size:clamp(18px,2vw,28px);font-weight:1000;color:#bfe4ff;letter-spacing:.02em}
+.live-growth-title{margin:2px 0 6px;font-size:clamp(38px,5.5vw,76px);line-height:1;color:#ffe36d;text-shadow:0 0 24px rgba(255,211,68,.42)}
+.live-growth-character{display:block;width:auto;max-width:min(580px,72vw);height:min(49vh,490px);margin:2px auto 8px;object-fit:contain;filter:drop-shadow(0 18px 34px rgba(0,0,0,.5));animation:liveGrowthCharacterFloat 2.1s ease-in-out infinite alternate}
+.live-growth-stage{font-size:clamp(28px,3.2vw,44px);font-weight:1000;color:#fff}
+.live-growth-score{margin-top:5px;font-size:clamp(21px,2.4vw,32px);font-weight:1000;color:#ffd85e}
+.live-growth-next{margin-top:5px;font-size:clamp(18px,2vw,28px);font-weight:900;color:#bfe4ff}
+.live-growth-meter{width:min(620px,82%);height:13px;margin:13px auto 0;border-radius:99px;overflow:hidden;background:rgba(255,255,255,.11);box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.live-growth-meter>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#f6c451,#fff1a5);box-shadow:0 0 16px rgba(255,215,82,.6)}
+.live-growth-countdown{position:absolute;right:20px;top:17px;width:50px;height:50px;display:grid;place-items:center;border:1px solid rgba(255,231,137,.48);border-radius:50%;background:rgba(255,211,76,.13);color:#ffe36d;font-size:22px;font-weight:1000}
+.live-growth-overlay.level-up{background:radial-gradient(circle at center,rgba(255,185,26,.26),rgba(0,8,18,.93))}
+.live-growth-overlay.level-up .live-growth-card{border-width:5px;box-shadow:0 0 0 9px rgba(255,255,255,.055),0 0 110px rgba(255,196,36,.72),0 34px 100px rgba(0,0,0,.7);animation:liveLevelCardBang .62s cubic-bezier(.15,.9,.22,1.3)}
+.live-growth-overlay.level-up .live-growth-title{font-size:clamp(54px,7vw,98px);animation:liveLevelTitlePulse .8s ease-in-out infinite alternate}
+.live-growth-overlay.level-up .live-growth-character{animation:liveLevelCharacter 1s ease-in-out infinite alternate}
+.live-growth-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.live-growth-particles i{position:absolute;font-style:normal;font-size:clamp(22px,2.5vw,38px);animation:liveGrowthParticle 2.6s ease-out infinite}
+.live-growth-particles i:nth-child(1){left:7%;top:15%;animation-delay:0s}.live-growth-particles i:nth-child(2){left:18%;top:70%;animation-delay:.3s}.live-growth-particles i:nth-child(3){left:35%;top:9%;animation-delay:.7s}.live-growth-particles i:nth-child(4){right:34%;top:14%;animation-delay:.15s}.live-growth-particles i:nth-child(5){right:17%;top:67%;animation-delay:.55s}.live-growth-particles i:nth-child(6){right:6%;top:20%;animation-delay:.85s}
+@keyframes liveGrowthOverlayIn{from{opacity:0}to{opacity:1}}@keyframes liveGrowthCardPop{from{opacity:0;transform:scale(.72)}to{opacity:1;transform:scale(1)}}
+@keyframes liveGrowthCharacterFloat{from{transform:translateY(2px) scale(1)}to{transform:translateY(-8px) scale(1.025)}}
+@keyframes liveLevelCardBang{0%{opacity:0;transform:scale(.55) rotate(-2deg)}65%{opacity:1;transform:scale(1.045) rotate(1deg)}100%{transform:scale(1)}}
+@keyframes liveLevelTitlePulse{from{filter:brightness(1);transform:scale(1)}to{filter:brightness(1.28);transform:scale(1.045);text-shadow:0 0 36px rgba(255,227,98,.9)}}
+@keyframes liveLevelCharacter{from{transform:translateY(2px) scale(1);filter:drop-shadow(0 18px 34px rgba(0,0,0,.5))}to{transform:translateY(-10px) scale(1.045);filter:drop-shadow(0 0 28px rgba(255,216,72,.55))}}
+@keyframes liveGrowthParticle{0%{opacity:0;transform:translateY(20px) scale(.5) rotate(0)}25%{opacity:1}100%{opacity:0;transform:translateY(-90px) scale(1.2) rotate(70deg)}}
+@media(max-width:760px){.live-growth-overlay{display:none!important}}
+@media(prefers-reduced-motion:reduce){.live-growth-card,.live-growth-character,.live-growth-title,.live-growth-particles i{animation:none!important}}
+`;
+  document.head.appendChild(style);
+
+  const overlay=document.createElement("div");
+  overlay.className="live-growth-overlay";
+  overlay.id="liveGrowthOverlay";
+  overlay.hidden=true;
+  document.body.appendChild(overlay);
+
+  let autoTimer=null,closeTimer=null,countTimer=null,lastStage=0,baselineReady=false;
+  const isVisible=()=>!document.hidden&&!starScreen.hidden&&window.innerWidth>760;
+  const currentStage=()=>{
+    const n=Number(growthStages.querySelector(".growth-stage")?.dataset?.stage||0);
+    return Number.isFinite(n)?Math.max(0,Math.min(7,n)):0;
+  };
+  const currentImage=()=>document.getElementById("growthHeroImage")?.src||growthStages.querySelector(".growth-stage img")?.src||"";
+  const parseProgress=()=>{
+    const text=document.getElementById("growthScore")?.textContent||"";
+    const m=text.match(/(\d+)\s*\/\s*(\d+)/);
+    return m?{total:Number(m[1]),goal:Number(m[2])}:{total:0,goal:0};
+  };
+  const stageLabel=()=>growthStages.querySelector(".growth-stage span")?.textContent?.trim()||`${Math.max(1,currentStage())} / 7`;
+  const nextText=()=>document.getElementById("growthNext")?.textContent?.replace(/\s+/g," ")?.trim()||"다음 성장까지 확인 중";
+  const popupBusy=()=>!document.getElementById("classShowOverlay")?.hidden||!document.getElementById("starBurst")?.hidden||!document.getElementById("growthCelebration")?.hidden;
+
+  const close=()=>{clearTimeout(closeTimer);clearInterval(countTimer);overlay.hidden=true;overlay.classList.remove("level-up");overlay.innerHTML=""};
+  const show=(mode="auto",duration=CONFIG.autoDuration)=>{
+    if(!isVisible()||popupBusy())return false;
+    const stage=Math.max(1,currentStage());
+    const img=currentImage();
+    const progress=parseProgress();
+    const percent=progress.goal?Math.min(100,Math.max(0,progress.total/progress.goal*100)):0;
+    const seconds=Math.ceil(duration/1000);
+    overlay.classList.toggle("level-up",mode==="level-up");
+    overlay.innerHTML=`<div class="live-growth-card"><div class="live-growth-countdown">${seconds}</div><div class="live-growth-particles"><i>⭐</i><i>✨</i><i>🌟</i><i>✨</i><i>⭐</i><i>🌟</i></div><div class="live-growth-kicker">🔥 우리 반 공동성장</div><div class="live-growth-title">${mode==="level-up"?"LEVEL UP!":"성장 캐릭터"}</div>${img?`<img class="live-growth-character" src="${img}" alt="공동성장 ${stage}단계 캐릭터">`:""}<div class="live-growth-stage">${mode==="level-up"?`${stage}단계 달성!`:`현재 ${stageLabel()}`}</div><div class="live-growth-score">${progress.goal?`⭐ ${progress.total} / ${progress.goal} STAR`:"출석 후 공동성장이 시작됩니다"}</div><div class="live-growth-next">${nextText()}</div><div class="live-growth-meter"><i style="width:${percent}%"></i></div></div>`;
+    overlay.hidden=false;
+    clearTimeout(closeTimer);clearInterval(countTimer);
+    let left=seconds;
+    const counter=overlay.querySelector(".live-growth-countdown");
+    countTimer=setInterval(()=>{left-=1;if(counter)counter.textContent=String(Math.max(0,left));if(left<=0)clearInterval(countTimer)},1000);
+    closeTimer=setTimeout(close,duration);
+    return true;
+  };
+
+  const scheduleAuto=()=>{clearTimeout(autoTimer);autoTimer=setTimeout(()=>{if(!show("auto",CONFIG.autoDuration)){setTimeout(()=>show("auto",CONFIG.autoDuration),10000)}scheduleAuto()},CONFIG.autoInterval)};
+
+  const syncStage=()=>{
+    const stage=currentStage();
+    if(!stage)return;
+    if(!baselineReady){lastStage=stage;baselineReady=true;return}
+    if(stage>lastStage){
+      const newStage=stage;
+      lastStage=stage;
+      setTimeout(()=>show("level-up",CONFIG.levelUpDuration),120);
+      return;
+    }
+    lastStage=stage;
+  };
+
+  new MutationObserver(()=>syncStage()).observe(growthStages,{childList:true,subtree:true,attributes:true,attributeFilter:["data-stage"]});
+  syncStage();
+  scheduleAuto();
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)scheduleAuto()});
+})();
