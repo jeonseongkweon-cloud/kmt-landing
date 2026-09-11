@@ -158,6 +158,32 @@
   /* LIVE STAR BOARD PHASE 1: 이벤트가 걸린 한 카드만 움직인다. */
   body #starScreen .student{position:relative!important;transition:box-shadow .3s ease,border-color .3s ease,transform .3s ease!important}
 
+  /* LIVE STAR BOARD v1.1 PINSET: 출석 학생 이름과 실제 STAR의 상시 생동감. */
+  body #starScreen .student .student-line h2{
+    animation:liveAmbientName 3.8s ease-in-out infinite;
+  }
+  body #starScreen .student:nth-child(7n+1) .student-line h2{animation-delay:-.31s}
+  body #starScreen .student:nth-child(7n+2) .student-line h2{animation-delay:-.62s}
+  body #starScreen .student:nth-child(7n+3) .student-line h2{animation-delay:-.93s}
+  body #starScreen .student:nth-child(7n+4) .student-line h2{animation-delay:-1.24s}
+  body #starScreen .student:nth-child(7n+5) .student-line h2{animation-delay:-1.55s}
+  body #starScreen .student:nth-child(7n+6) .student-line h2{animation-delay:-1.86s}
+  body #starScreen .student:nth-child(7n+7) .student-line h2{animation-delay:-2.17s}
+  body #starScreen .student .star-item{
+    display:inline-block;
+    animation:liveAmbientStar 2.4s ease-in-out infinite;
+  }
+  body #starScreen .student .star-row:nth-child(1) .star-item:nth-child(1){animation-delay:-.15s}
+  body #starScreen .student .star-row:nth-child(1) .star-item:nth-child(2){animation-delay:-.38s}
+  body #starScreen .student .star-row:nth-child(1) .star-item:nth-child(3){animation-delay:-.61s}
+  body #starScreen .student .star-row:nth-child(1) .star-item:nth-child(4){animation-delay:-.84s}
+  body #starScreen .student .star-row:nth-child(1) .star-item:nth-child(5){animation-delay:-1.07s}
+  body #starScreen .student .star-row:nth-child(2) .star-item:nth-child(1){animation-delay:-1.30s}
+  body #starScreen .student .star-row:nth-child(2) .star-item:nth-child(2){animation-delay:-1.53s}
+  body #starScreen .student .star-row:nth-child(2) .star-item:nth-child(3){animation-delay:-1.76s}
+  body #starScreen .student .star-row:nth-child(2) .star-item:nth-child(4){animation-delay:-1.99s}
+  body #starScreen .student .star-row:nth-child(2) .star-item:nth-child(5){animation-delay:-2.22s}
+
   body #starScreen .student.live-gold-run{overflow:visible!important;animation:liveGoldCard 2.2s ease both!important}
   body #starScreen .student.live-gold-run::before{
     content:"";position:absolute;z-index:12;inset:-3px;border-radius:19px;padding:3px;pointer-events:none;
@@ -212,6 +238,8 @@
 }
 
 @keyframes liveGoldCard{0%,100%{box-shadow:none}45%{box-shadow:0 0 20px rgba(255,214,76,.58),0 0 42px rgba(255,181,0,.22)}}
+@keyframes liveAmbientName{0%,100%{color:#f8fbff;text-shadow:0 0 3px rgba(125,210,255,.20)}50%{color:#fff4b0;text-shadow:0 0 8px rgba(255,220,92,.62),0 0 15px rgba(93,198,255,.28)}}
+@keyframes liveAmbientStar{0%,100%{opacity:.82;transform:scale(.94);filter:brightness(.92) drop-shadow(0 0 2px rgba(255,205,55,.28))}50%{opacity:1;transform:scale(1.08);filter:brightness(1.3) drop-shadow(0 0 7px rgba(255,224,91,.88))}}
 @keyframes liveBorderSpin{to{transform:rotate(360deg)}}
 @keyframes liveCardPop{0%,100%{transform:scale(1)}42%{transform:scale(1.055) translateY(-4px)}62%{transform:scale(1.035) translateY(-2px)}}
 @keyframes liveCardTilt{0%,100%{transform:perspective(700px) rotateY(0) rotateX(0)}28%{transform:perspective(700px) rotateY(-7deg) rotateX(2deg)}58%{transform:perspective(700px) rotateY(7deg) rotateX(-1deg)}78%{transform:perspective(700px) rotateY(-3deg)}}
@@ -227,6 +255,8 @@
 @keyframes liveScreenSweep{0%{left:-28vw;opacity:0}18%{opacity:.72}72%{opacity:.5}100%{left:112vw;opacity:0}}
 
 @media (prefers-reduced-motion: reduce){
+  body #starScreen .student .student-line h2,
+  body #starScreen .student .star-item,
   body #starScreen .student.live-gold-run,
   body #starScreen .student.live-card-pop,
   body #starScreen .student.live-tilt,
