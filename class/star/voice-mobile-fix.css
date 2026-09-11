@@ -14,13 +14,13 @@
   .voice-debug-panel:not([hidden]) ~ .mobile-voice-remote{display:none!important}
 }
 
-/* PC STAR student cards — fixed 6-column left-aligned layout.
+/* PC STAR student cards — fixed 7-column, portrait-oriented layout.
    Keep every card the same size regardless of attendance count. */
 @media(min-width:761px){
   body #starScreen #studentGrid.student-grid{
     display:grid!important;
-    grid-template-columns:repeat(6,minmax(0,1fr))!important;
-    gap:10px!important;
+    grid-template-columns:repeat(7,minmax(0,1fr))!important;
+    gap:9px!important;
     justify-content:start!important;
     align-items:start!important;
   }
@@ -45,14 +45,14 @@
     display:none!important;
   }
 
-  /* 사진은 확대 크롭하지 않고 원본 전체가 최대한 보이도록 표시한다. */
+  /* 7열에 맞춰 카드는 가로를 줄이고 세로 비율을 확보한다. */
   body #starScreen .student-grid .star-main{
-    padding:8px 7px 10px!important;
+    padding:8px 7px 11px!important;
   }
   body #starScreen #studentGrid.student-grid .photo{
     display:block!important;
     width:100%!important;
-    height:clamp(132px,14.5vh,168px)!important;
+    height:clamp(165px,18vh,205px)!important;
     margin:0 auto!important;
     border-radius:12px!important;
     object-fit:contain!important;
@@ -67,10 +67,10 @@
     grid-template-areas:
       "name undo"
       "stars stars"!important;
-    column-gap:6px!important;
-    row-gap:4px!important;
-    min-height:66px!important;
-    padding:7px 4px 0!important;
+    column-gap:5px!important;
+    row-gap:5px!important;
+    min-height:72px!important;
+    padding:8px 3px 0!important;
     align-items:center!important;
   }
   body #starScreen .student-line h2{
@@ -81,7 +81,7 @@
     text-overflow:ellipsis!important;
     white-space:nowrap!important;
     text-align:center!important;
-    font-size:clamp(18px,1.25vw,22px)!important;
+    font-size:clamp(17px,1.12vw,21px)!important;
     line-height:1.15!important;
   }
   body #starScreen .student-line .card-undo{
@@ -89,16 +89,16 @@
     display:inline-flex!important;
     align-items:center!important;
     justify-content:center!important;
-    width:30px!important;
-    height:30px!important;
-    min-width:30px!important;
+    width:28px!important;
+    height:28px!important;
+    min-width:28px!important;
     margin:0!important;
     padding:0!important;
     border:1px solid rgba(255,116,126,.35)!important;
     border-radius:9px!important;
     background:rgba(255,116,126,.08)!important;
     color:#ff9da4!important;
-    font-size:20px!important;
+    font-size:19px!important;
     line-height:1!important;
     cursor:pointer!important;
   }
@@ -111,15 +111,15 @@
     grid-area:stars!important;
     display:block!important;
     width:100%!important;
-    min-height:23px!important;
-    max-height:46px!important;
+    min-height:24px!important;
+    max-height:48px!important;
     margin:0!important;
     overflow:hidden!important;
     white-space:normal!important;
     overflow-wrap:anywhere!important;
     text-align:center!important;
     letter-spacing:-2px!important;
-    font-size:clamp(16px,1.05vw,20px)!important;
+    font-size:clamp(15px,.95vw,19px)!important;
     line-height:1.08!important;
     color:var(--gold)!important;
   }
