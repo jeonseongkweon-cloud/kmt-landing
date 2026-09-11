@@ -60,3 +60,34 @@
     }).observe(toast, { childList: true, characterData: true, subtree: true });
   }
 })();
+
+// STAR VISUAL COUNT v1.0 — show one visible star per earned STAR.
+// The core STAR data/rendering stays untouched; this is display-only.
+(() => {
+  const grid = document.getElementById("studentGrid");
+  if (!grid) return;
+
+  const syncVisualStars = root => {
+    const scope = root instanceof Element ? root : grid;
+    const targets = scope.matches?.(".star-count") ? [scope] : [...scope.querySelectorAll?.(".star-count") || []];
+    targets.forEach(el => {
+      const raw = String(el.textContent || "").trim();
+      const match = raw.match(/^⭐\s*(\d+)$/);
+      if (!match) return;
+      const count = Math.max(0, Number(match[1]) || 0);
+      el.dataset.starCount = String(count);
+      el.setAttribute("aria-label", `STAR ${count}개`);
+      el.title = `STAR ${count}개`;
+      el.textContent = count > 0 ? "⭐".repeat(count) : "";
+    });
+  };
+
+  syncVisualStars(grid);
+  new MutationObserver(mutations => {
+    for (const mutation of mutations) {
+      for (const node of mutation.addedNodes) {
+        if (node instanceof Element) syncVisualStars(node);
+      }
+    }
+  }).observe(grid, { childList: true, subtree: true });
+})();
