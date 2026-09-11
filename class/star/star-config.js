@@ -1,5 +1,33 @@
+// OVERNIGHT CAMP EMERGENCY BRIDGE — 2026-09-12
+// 9/11 합숙훈련이 자정을 넘어 계속되는 동안 STAR ROOM의 localDate()만 9/11로 유지한다.
+// 적용 범위: 2026-09-12 00:00~11:59 KST, en-CA/Asia-Seoul 날짜 포맷 전용. 이후 자동 비활성화.
+(()=>{
+  const NativeDateTimeFormat=Intl.DateTimeFormat;
+  const kstNowParts=()=>{
+    const parts=new NativeDateTimeFormat("en-CA",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
+    const out={};parts.forEach(p=>{if(p.type!=="literal")out[p.type]=p.value});return out;
+  };
+  const bridgeActive=()=>{const p=kstNowParts();return `${p.year}-${p.month}-${p.day}`==="2026-09-12"&&Number(p.hour)<12};
+  function WrappedDateTimeFormat(locales,options){
+    const fmt=new NativeDateTimeFormat(locales,options);
+    const localeText=Array.isArray(locales)?locales.join(","):String(locales||"");
+    const o=options||{};
+    const target=localeText.toLowerCase().includes("en-ca")&&o.timeZone==="Asia/Seoul"&&o.year==="numeric"&&o.month==="2-digit"&&o.day==="2-digit"&&!o.hour;
+    if(!target)return fmt;
+    return new Proxy(fmt,{
+      get(obj,prop){
+        if(prop==="format")return value=>{const formatted=obj.format(value);return bridgeActive()&&formatted==="2026-09-12"?"2026-09-11":formatted};
+        const v=Reflect.get(obj,prop,obj);return typeof v==="function"?v.bind(obj):v;
+      }
+    });
+  }
+  Object.setPrototypeOf(WrappedDateTimeFormat,NativeDateTimeFormat);
+  WrappedDateTimeFormat.prototype=NativeDateTimeFormat.prototype;
+  Intl.DateTimeFormat=WrappedDateTimeFormat;
+})();
+
 window.KMT_STAR_CONFIG = Object.freeze({
-  version:"1.5.3",
+  version:"1.5.4-overnight",
   supabaseUrl: "https://ojxarsfaewehwjidwgac.supabase.co",
   supabasePublishableKey: "sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",
   allowedAdminEmail: "class-admin@ipma.kr",
