@@ -1,4 +1,4 @@
-// STAR DISPLAY PINSET v1.4 — display-only refinements.
+// STAR DISPLAY PINSET v1.4.1 — display-only refinements.
 // PC: show up to 10 STARs as 5 + 5 and keep tall portrait photo frame.
 // Mobile: show numeric STAR count only so 3-letter names remain fully readable.
 (() => {
@@ -8,7 +8,7 @@
   const mobileQuery = window.matchMedia('(max-width:760px), (max-width:1024px) and (pointer:coarse)');
 
   const style = document.createElement('style');
-  style.id = 'starDisplayPinsetV14';
+  style.id = 'starDisplayPinsetV141';
   style.textContent = `
     #studentGrid .star-count{
       display:flex!important;
@@ -41,26 +41,39 @@
       #studentGrid .star-main{
         padding:14px 12px!important;
       }
+      #studentGrid .student-line{
+        display:grid!important;
+        grid-template-columns:minmax(0,1fr) auto!important;
+        grid-template-rows:auto auto!important;
+        column-gap:8px!important;
+        row-gap:4px!important;
+        align-items:center!important;
+        width:100%!important;
+      }
       #studentGrid .star-main h2,
       #studentGrid .student-name{
+        grid-column:1!important;
+        grid-row:1!important;
         display:block!important;
         width:100%!important;
         min-width:0!important;
-        margin:0 0 8px!important;
+        margin:0!important;
         overflow:visible!important;
         text-overflow:clip!important;
         white-space:nowrap!important;
         font-size:20px!important;
-        line-height:1.15!important;
+        line-height:1.2!important;
         text-align:left!important;
       }
       #studentGrid .star-count{
+        grid-column:1!important;
+        grid-row:2!important;
         min-height:0!important;
         padding:0!important;
         display:block!important;
         width:auto!important;
         color:#f6c451!important;
-        font-size:24px!important;
+        font-size:22px!important;
         font-weight:1000!important;
         line-height:1!important;
         text-align:left!important;
@@ -68,10 +81,17 @@
       }
       #studentGrid .star-count::before{
         content:'STAR ';
-        font-size:12px!important;
+        font-size:11px!important;
         color:#9db2c9!important;
         font-weight:900!important;
         vertical-align:middle;
+      }
+      #studentGrid .student-line .undo,
+      #studentGrid .student-line [data-undo],
+      #studentGrid .student-line button:last-child{
+        grid-column:2!important;
+        grid-row:1 / span 2!important;
+        align-self:center!important;
       }
       #studentGrid .leader-badge,
       #studentGrid .rank-one-label,
