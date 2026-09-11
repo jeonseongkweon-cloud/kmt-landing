@@ -14,12 +14,12 @@
   .voice-debug-panel:not([hidden]) ~ .mobile-voice-remote{display:none!important}
 }
 
-/* PC STAR student cards — fixed 5-column left-aligned layout.
+/* PC STAR student cards — fixed 6-column left-aligned layout.
    Keep every card the same size regardless of attendance count. */
 @media(min-width:761px){
   body #starScreen #studentGrid.student-grid{
     display:grid!important;
-    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    grid-template-columns:repeat(6,minmax(0,1fr))!important;
     gap:10px!important;
     justify-content:start!important;
     align-items:stretch!important;
@@ -44,48 +44,48 @@
     display:none!important;
   }
 
-  /* 20명(5열 x 4줄)도 한 화면에 최대한 들어오도록 카드 높이를 압축한다. */
+  /* 20명은 6+6+6+2로 배치. 넓어진 화면을 사용해 사진/이름/별을 충분히 보여준다. */
   body #starScreen .student-grid .student{
     border-radius:16px!important;
   }
   body #starScreen .student-grid .star-main{
-    padding:7px 7px 8px!important;
+    padding:8px 7px 9px!important;
   }
   body #starScreen #studentGrid.student-grid .photo{
     width:100%!important;
-    height:clamp(82px,9.2vh,108px)!important;
+    height:clamp(118px,14vh,158px)!important;
     border-radius:12px!important;
     object-fit:cover!important;
     object-position:center 35%!important;
   }
   body #starScreen .student-line{
-    min-height:48px!important;
-    padding-top:4px!important;
+    min-height:52px!important;
+    padding-top:5px!important;
     align-items:center!important;
   }
   body #starScreen .student-line h2{
     margin:0!important;
-    font-size:clamp(17px,1.25vw,21px)!important;
+    font-size:clamp(17px,1.2vw,21px)!important;
     line-height:1.15!important;
   }
 
-  /* 숫자 대신 실제 별들이 카드 안에서 2줄 정도로 자연스럽게 감긴다. */
+  /* 숫자 대신 실제 별들이 카드 안에서 자연스럽게 감긴다. */
   body #starScreen .star-count{
     display:block!important;
     width:100%!important;
-    min-height:20px!important;
-    max-height:43px!important;
+    min-height:22px!important;
+    max-height:45px!important;
     margin-top:3px!important;
     overflow:hidden!important;
     white-space:normal!important;
     overflow-wrap:anywhere!important;
     letter-spacing:-2px!important;
-    font-size:clamp(16px,1.15vw,20px)!important;
+    font-size:clamp(16px,1.05vw,20px)!important;
     line-height:1.05!important;
     color:var(--gold)!important;
   }
 
-  /* 카드 영역을 확보하기 위해 상단 여백도 조금 줄인다. */
+  /* 카드 영역을 확보하기 위해 상단 여백은 작게 유지한다. */
   body #starScreen .class-head h1{
     font-size:clamp(28px,3vw,40px)!important;
   }
