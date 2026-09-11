@@ -13,3 +13,22 @@
   .voice-choice-dialog[open] ~ .mobile-voice-remote{display:none!important}
   .voice-debug-panel:not([hidden]) ~ .mobile-voice-remote{display:none!important}
 }
+
+/* PC STAR student cards — fixed 5-column left-aligned layout.
+   Keep every card the same size regardless of attendance count. */
+@media(min-width:761px){
+  body #starScreen #studentGrid.student-grid{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:12px!important;
+    justify-content:start!important;
+    align-items:stretch!important;
+  }
+
+  body #starScreen #studentGrid.student-grid>.student{
+    width:auto!important;
+    max-width:none!important;
+    min-width:0!important;
+    flex:none!important;
+  }
+}
