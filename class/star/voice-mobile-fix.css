@@ -20,7 +20,7 @@
   body #starScreen #studentGrid.student-grid{
     display:grid!important;
     grid-template-columns:repeat(5,minmax(0,1fr))!important;
-    gap:12px!important;
+    gap:10px!important;
     justify-content:start!important;
     align-items:stretch!important;
   }
@@ -30,5 +30,70 @@
     max-width:none!important;
     min-width:0!important;
     flex:none!important;
+  }
+
+  /* 수업 중에는 학생카드를 최우선으로 사용한다. */
+  body #starScreen .star-main-layout{
+    display:block!important;
+  }
+  body #starScreen .student-zone{
+    width:100%!important;
+    min-width:0!important;
+  }
+  body #starScreen .pc-side-panel{
+    display:none!important;
+  }
+
+  /* 20명(5열 x 4줄)도 한 화면에 최대한 들어오도록 카드 높이를 압축한다. */
+  body #starScreen .student-grid .student{
+    border-radius:16px!important;
+  }
+  body #starScreen .student-grid .star-main{
+    padding:7px 7px 8px!important;
+  }
+  body #starScreen #studentGrid.student-grid .photo{
+    width:100%!important;
+    height:clamp(82px,9.2vh,108px)!important;
+    border-radius:12px!important;
+    object-fit:cover!important;
+    object-position:center 35%!important;
+  }
+  body #starScreen .student-line{
+    min-height:48px!important;
+    padding-top:4px!important;
+    align-items:center!important;
+  }
+  body #starScreen .student-line h2{
+    margin:0!important;
+    font-size:clamp(17px,1.25vw,21px)!important;
+    line-height:1.15!important;
+  }
+
+  /* 숫자 대신 실제 별들이 카드 안에서 2줄 정도로 자연스럽게 감긴다. */
+  body #starScreen .star-count{
+    display:block!important;
+    width:100%!important;
+    min-height:20px!important;
+    max-height:43px!important;
+    margin-top:3px!important;
+    overflow:hidden!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    letter-spacing:-2px!important;
+    font-size:clamp(16px,1.15vw,20px)!important;
+    line-height:1.05!important;
+    color:var(--gold)!important;
+  }
+
+  /* 카드 영역을 확보하기 위해 상단 여백도 조금 줄인다. */
+  body #starScreen .class-head h1{
+    font-size:clamp(28px,3vw,40px)!important;
+  }
+  body #starScreen .categories{
+    padding:7px 0 6px!important;
+  }
+  body #starScreen .notice.category-live-inline{
+    margin-bottom:8px!important;
+    padding:7px 11px!important;
   }
 }
