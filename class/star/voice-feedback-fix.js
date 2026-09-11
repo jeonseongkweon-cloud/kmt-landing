@@ -132,6 +132,7 @@
 
 // LIVE STAR BOARD v1.0 — PHASE 1
 (() => {
+  if(window.LIVE_WORLD_V2_ACTIVE)return;
   const grid=document.getElementById("studentGrid");
   const starScreen=document.getElementById("starScreen");
   if(!grid||!starScreen)return;
@@ -176,6 +177,7 @@
 // When the real growth stage rises, show a stronger LEVEL UP celebration.
 // Display-only: growth calculation/storage remains owned by star.js.
 (() => {
+  if(window.LIVE_WORLD_V2_ACTIVE)return;
   const starScreen=document.getElementById("starScreen");
   const growthStages=document.getElementById("growthStages");
   if(!starScreen||!growthStages)return;

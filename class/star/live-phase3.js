@@ -32,6 +32,7 @@
 // Fun display-only events for young students: mini drone fly-by + rare comet surprise.
 // Never changes STAR totals, attendance, Supabase, UNDO, voice, growth calculation or SPARK data.
 (() => {
+  if(window.LIVE_WORLD_V2_ACTIVE)return;
   const starScreen = document.getElementById("starScreen");
   const grid = document.getElementById("studentGrid");
   if (!starScreen || !grid) return;
