@@ -11,11 +11,11 @@
   });
   const LIVE_CONFIG = Object.freeze({
     mode: "normal",
-    cardEventMin: 5000, cardEventMax: 8000,
-    leaderEventMin: 8000, leaderEventMax: 12000,
-    droneMin: 25000, droneMax: 40000,
-    rocketMin: 35000, rocketMax: 60000,
-    cometMin: 30000, cometMax: 60000,
+    cardEventMin: 3000, cardEventMax: 6000,
+    leaderEventMin: 6000, leaderEventMax: 10000,
+    droneMin: 12000, droneMax: 20000,
+    rocketMin: 15000, rocketMax: 25000,
+    cometMin: 18000, cometMax: 30000,
     characterPeekMin: 60000, characterPeekMax: 90000,
     growthPopupMin: 90000, growthPopupMax: 120000
   });
@@ -31,11 +31,14 @@
     style.id = "liveWorldV2Style";
     style.textContent = `
 #starScreen .student{--live-glow-strength:1;isolation:isolate}
-#starScreen .student .student-line h2{position:relative;animation:lwv2NameShimmer 5.4s ease-in-out infinite!important}
-#starScreen .student:nth-child(7n+1) h2{animation-delay:-.5s!important}#starScreen .student:nth-child(7n+2) h2{animation-delay:-1.8s!important}#starScreen .student:nth-child(7n+3) h2{animation-delay:-3.2s!important}#starScreen .student:nth-child(7n+4) h2{animation-delay:-4.4s!important}#starScreen .student:nth-child(7n+5) h2{animation-delay:-2.5s!important}#starScreen .student:nth-child(7n+6) h2{animation-delay:-5.1s!important}#starScreen .student:nth-child(7n+7) h2{animation-delay:-3.8s!important}
-#starScreen .student .star-item{display:inline-block;animation:lwv2StarSparkle 4.1s ease-in-out infinite!important}
-#starScreen .student .star-row:nth-child(1) .star-item:nth-child(1){animation-delay:-.2s!important}#starScreen .student .star-row:nth-child(1) .star-item:nth-child(2){animation-delay:-1.1s!important}#starScreen .student .star-row:nth-child(1) .star-item:nth-child(3){animation-delay:-2s!important}#starScreen .student .star-row:nth-child(1) .star-item:nth-child(4){animation-delay:-2.9s!important}#starScreen .student .star-row:nth-child(1) .star-item:nth-child(5){animation-delay:-3.8s!important}
-#starScreen .student .star-row:nth-child(2) .star-item:nth-child(1){animation-delay:-2.45s!important}#starScreen .student .star-row:nth-child(2) .star-item:nth-child(2){animation-delay:-3.35s!important}#starScreen .student .star-row:nth-child(2) .star-item:nth-child(3){animation-delay:-.65s!important}#starScreen .student .star-row:nth-child(2) .star-item:nth-child(4){animation-delay:-1.55s!important}#starScreen .student .star-row:nth-child(2) .star-item:nth-child(5){animation-delay:-3.05s!important}
+#starScreen .student .student-line h2{position:relative;color:#f8fbff;isolation:isolate;animation:none!important}
+#starScreen .student .student-line h2::after{content:attr(data-live-name);position:absolute;z-index:1;inset:0;pointer-events:none;color:transparent;background:linear-gradient(105deg,transparent 12%,#fff 37%,#ffe16f 49%,#8de7ff 55%,transparent 78%);background-size:260% 100%;background-position:150% 0;-webkit-background-clip:text;background-clip:text;filter:brightness(1.18) drop-shadow(0 0 5px #ffd95f99);animation:lwv21NameShimmer 3.2s ease-in-out infinite}
+#starScreen .student:nth-child(7n+1) h2::after{animation-duration:2.7s;animation-delay:-.5s}#starScreen .student:nth-child(7n+2) h2::after{animation-duration:3.4s;animation-delay:-1.8s}#starScreen .student:nth-child(7n+3) h2::after{animation-duration:2.9s;animation-delay:-2.4s}#starScreen .student:nth-child(7n+4) h2::after{animation-duration:3.8s;animation-delay:-.9s}#starScreen .student:nth-child(7n+5) h2::after{animation-duration:3.1s;animation-delay:-2.1s}#starScreen .student:nth-child(7n+6) h2::after{animation-duration:3.6s;animation-delay:-3s}#starScreen .student:nth-child(7n+7) h2::after{animation-duration:2.6s;animation-delay:-1.3s}
+#starScreen .student .star-item{position:relative;display:inline-block;isolation:isolate;animation:none!important}
+#starScreen .student .star-item::after{content:"⭐";position:absolute;z-index:1;inset:0;pointer-events:none;transform-origin:center;animation:lwv21StarSparkle 3.1s ease-in-out infinite}
+#starScreen .student:nth-child(odd) .star-item::after{animation-duration:2.8s}#starScreen .student:nth-child(3n) .star-item::after{animation-duration:3.5s}
+#starScreen .student .star-row:nth-child(1) .star-item:nth-child(1)::after{animation-delay:-.2s}#starScreen .student .star-row:nth-child(1) .star-item:nth-child(2)::after{animation-delay:-.75s}#starScreen .student .star-row:nth-child(1) .star-item:nth-child(3)::after{animation-delay:-1.3s}#starScreen .student .star-row:nth-child(1) .star-item:nth-child(4)::after{animation-delay:-1.85s}#starScreen .student .star-row:nth-child(1) .star-item:nth-child(5)::after{animation-delay:-2.4s}
+#starScreen .student .star-row:nth-child(2) .star-item:nth-child(1)::after{animation-delay:-1.05s}#starScreen .student .star-row:nth-child(2) .star-item:nth-child(2)::after{animation-delay:-1.6s}#starScreen .student .star-row:nth-child(2) .star-item:nth-child(3)::after{animation-delay:-2.15s}#starScreen .student .star-row:nth-child(2) .star-item:nth-child(4)::after{animation-delay:-2.7s}#starScreen .student .star-row:nth-child(2) .star-item:nth-child(5)::after{animation-delay:-.5s}
 #starScreen .student .photo{animation:lwv2PhotoAura 6.3s ease-in-out infinite!important}
 #starScreen .student:nth-child(3n+2) .photo{animation-delay:-2.1s!important}#starScreen .student:nth-child(3n+3) .photo{animation-delay:-4.2s!important}
 #starScreen .student.lwv2-pop .star-main{animation:lwv2CardPop 1.85s cubic-bezier(.2,.82,.2,1.16)!important}
@@ -53,8 +56,8 @@
 .lwv2-sky{z-index:28;font-size:48px;will-change:transform,opacity;filter:drop-shadow(0 0 13px #ffe371cc)}.lwv2-sky::after{content:"";position:absolute;right:30px;top:23px;width:125px;height:7px;background:linear-gradient(90deg,transparent,#aeeaff66,#ffd76ccc);filter:blur(2px)}
 .lwv2-peek{z-index:36;right:14px;bottom:12px;width:220px;padding:10px;border:2px solid #ffe17aaa;border-radius:24px;background:#071c30ee;text-align:center;transform:translateX(125%);animation:lwv2Peek 3s ease-in-out both}.lwv2-peek img{display:block;width:100%;height:185px;object-fit:contain}.lwv2-peek strong{display:block;color:#ffe47d;font-size:24px}
 .lwv2-overlay{inset:0;z-index:5700;display:grid;place-items:center;background:radial-gradient(circle,#244f7a77,#020914e8);animation:lwv2OverlayIn .25s ease-out}.lwv2-overlay-card{position:relative;width:min(850px,92vw);padding:24px 32px;border:4px solid #ffe274;border-radius:30px;background:#08223a;box-shadow:0 0 70px #ffc83f77;text-align:center}.lwv2-overlay-card h2{margin:0;color:#ffe36e;font-size:clamp(46px,6vw,86px)}.lwv2-overlay-card img{display:block;width:auto;max-width:65vw;height:min(47vh,460px);margin:auto;object-fit:contain}.lwv2-overlay-card strong{display:block;font-size:clamp(25px,3vw,42px)}.lwv2-overlay-card p{margin:8px;color:#cceaff;font-size:22px;font-weight:900}.lwv2-overlay-card.milestone{animation:lwv2Milestone .55s cubic-bezier(.2,.9,.2,1.25)}
-@keyframes lwv2NameShimmer{0%,68%,100%{color:#f8fbff;text-shadow:0 0 3px #7ed7ff33}78%{color:#fff8ce;text-shadow:0 0 8px #ffe16fbf,0 0 15px #7ed7ff66}}
-@keyframes lwv2StarSparkle{0%,70%,100%{opacity:.88;transform:scale(1);filter:brightness(1)}80%{opacity:1;transform:scale(1.23);filter:brightness(1.4) drop-shadow(0 0 7px #ffe36f)}90%{transform:scale(1.04)}}
+@keyframes lwv21NameShimmer{0%,18%{opacity:0;background-position:150% 0}35%,62%{opacity:1}82%,100%{opacity:0;background-position:-75% 0}}
+@keyframes lwv21StarSparkle{0%,67%,100%{opacity:0;transform:translateY(0) scale(1) rotate(0);filter:brightness(1)}76%{opacity:1;transform:translateY(-2px) scale(1.23) rotate(5deg);filter:brightness(1.55) drop-shadow(0 0 8px #ffe36f)}86%{opacity:.22;transform:scale(1.05)}}
 @keyframes lwv2PhotoAura{0%,100%{box-shadow:0 0 0 1px #8fdcff22,0 0 7px #69caff18}50%{box-shadow:0 0 0 2px #ffe37b77,0 0 15px #65ccff4f}}
 @keyframes lwv2CardPop{0%,100%{transform:scale(1)}42%{transform:scale(1.04) translateY(-3px)}65%{transform:scale(1.018)}}@keyframes lwv2CardTilt{0%,100%{transform:perspective(850px) rotateY(0)}30%{transform:perspective(850px) rotateY(-6deg)}62%{transform:perspective(850px) rotateY(6deg)}}
 @keyframes lwv2NameEvent{0%,100%{color:inherit;text-shadow:none;transform:scale(1)}45%{color:#fff5aa;text-shadow:0 0 16px #ffdf54,0 0 25px #63d4ff;transform:scale(1.06)}}@keyframes lwv2PhotoEvent{0%,100%{box-shadow:0 0 5px #5dcfff33}45%{box-shadow:0 0 0 3px #fff1a7dd,0 0 30px #69d7ffbb}}
@@ -64,7 +67,7 @@
 @keyframes lwv2Search{0%,100%{opacity:0;transform:scale(.7)}30%,72%{opacity:1;transform:scale(1)}}@keyframes lwv2Particle{0%{opacity:0;transform:translateY(-12px) scale(.5)}28%{opacity:1;transform:scale(1.25)}100%{opacity:0;transform:translateY(62px) rotate(50deg)}}
 @keyframes lwv2Peek{0%,100%{transform:translateX(125%);opacity:0}18%,78%{transform:translateX(0);opacity:1}}@keyframes lwv2OverlayIn{from{opacity:0}to{opacity:1}}@keyframes lwv2Milestone{from{opacity:0;transform:scale(.55)}70%{transform:scale(1.06)}to{transform:scale(1)}}
 @media(max-width:760px){.lwv2-drone,.lwv2-sky,.lwv2-peek,.lwv2-overlay,.lwv2-searchlight,.lwv2-particle{display:none!important}}
-@media(prefers-reduced-motion:reduce){#starScreen .student h2,#starScreen .student .star-item,#starScreen .student .photo{animation:none!important}}
+@media(prefers-reduced-motion:reduce){#starScreen .student h2::after,#starScreen .student .star-item::after,#starScreen .student .photo{animation:none!important}}
 `;
     document.head.appendChild(style);
 
@@ -119,11 +122,13 @@
       state.timer=setTimeout(tick,250);
     };
 
-    new MutationObserver(mutations => { for(const mutation of mutations){ for(const node of mutation.addedNodes){ if(!(node instanceof Element))continue; const plus=node.matches?.(".voice-plus")?node:node.querySelector?.(".voice-plus"); if(!plus||!/⭐\s*\+1/.test(plus.textContent||""))continue; const card=plus.closest(".student"); if(!card)continue; runCardClass(card,"lwv2-award",1400);record("award",{studentId:card.dataset.student});setTimeout(()=>{const total=Number(card.querySelector(".star-count")?.dataset.starCount||0);if(total===5||total===10)state.queue.push({card,total});},120); } } }).observe(grid,{childList:true,subtree:true});
+    const prepareAlwaysOn = root => { const scope=root instanceof Element?root:grid; const names=scope.matches?.(".student-line h2")?[scope]:[...(scope.querySelectorAll?.(".student-line h2")||[])]; names.forEach(name=>name.dataset.liveName=name.textContent.trim()); };
+    prepareAlwaysOn(grid);
+    new MutationObserver(mutations => { for(const mutation of mutations){ for(const node of mutation.addedNodes){ if(!(node instanceof Element))continue; prepareAlwaysOn(node); const plus=node.matches?.(".voice-plus")?node:node.querySelector?.(".voice-plus"); if(!plus||!/⭐\s*\+1/.test(plus.textContent||""))continue; const card=plus.closest(".student"); if(!card)continue; runCardClass(card,"lwv2-award",1400);record("award",{studentId:card.dataset.student});setTimeout(()=>{const total=Number(card.querySelector(".star-count")?.dataset.starCount||0);if(total===5||total===10)state.queue.push({card,total});},120); } } }).observe(grid,{childList:true,subtree:true});
 
     const snapshot = () => { const times=state.events.map(e=>e.at), gaps=times.slice(1).map((t,i)=>t-times[i]); return { config:LIVE_CONFIG, mode:LIVE_CONFIG.mode, busyType:state.busyType, cardCount:cards().length, eventCount:state.events.length, events:[...state.events], longestEventStartGapMs:gaps.length?Math.max(...gaps):0, running:!!state.timer }; };
-    window.LIVE_EVENT_MANAGER = { version:"2.0.0", config:LIVE_CONFIG, modes:LIVE_MODES, snapshot, testEvent(type){const card=cards()[0];if(type==="milestone5"||type==="milestone10"){state.queue.unshift({card,total:type==="milestone10"?10:5});return true}const runner=runners[type];return runner?runner():false}, stop(){clearTimeout(state.timer);state.timer=null} };
-    record("engine-ready",{version:"2.0.0"});
+    window.LIVE_EVENT_MANAGER = { version:"2.1.0", config:LIVE_CONFIG, modes:LIVE_MODES, snapshot, testEvent(type){const card=cards()[0];if(type==="milestone5"||type==="milestone10"){state.queue.unshift({card,total:type==="milestone10"?10:5});return true}const runner=runners[type];return runner?runner():false}, stop(){clearTimeout(state.timer);state.timer=null} };
+    record("engine-ready",{version:"2.1.0"});
     tick();
   };
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else setTimeout(boot,0);
