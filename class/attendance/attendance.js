@@ -36,12 +36,20 @@ function sharedPhoneStudents(student){
 
 function startClock(){const tick=()=>{const d=new Date();$("todayLabel").textContent=new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,year:"numeric",month:"long",day:"numeric",weekday:"short"}).format(d);$("clockLabel").textContent=localTime(d)};tick();setInterval(tick,15000)}
 
-async function login(){ location.replace("../"); }
+async function login(){
+  $("loginMessage").textContent="관장 계정 확인 화면으로 이동합니다...";
+  const {error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.href}});
+  if(error) $("loginMessage").textContent=error.message;
+}
 
 async function boot(){
   const {data:{session},error}=await db.auth.getSession();
   if(error){ toast(`로그인 확인 실패: ${error.message}`); return; }
-  if(!session || !isSingleOwner(session)){ location.replace("../"); return; }
+  if(!session || !isSingleOwner(session)){
+    $("attendanceApp").hidden=true;
+    $("loginScreen").hidden=false;
+    return;
+  }
   $("loginScreen").hidden=true;
   $("attendanceApp").hidden=false;
   startClock();
