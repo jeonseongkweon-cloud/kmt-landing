@@ -1,6 +1,32 @@
 (function () {
   "use strict";
 
+  /* Keep CLASS laptops on the current root Service Worker.  A controller
+     change reloads only once per tab, so a newly activated worker can replace
+     stale HTML/JS without creating a reload loop. */
+  if ("serviceWorker" in navigator) {
+    const swRefreshKey = "kmt_class_sw_v18_reloaded";
+    let controllerChanged = false;
+
+    navigator.serviceWorker.addEventListener("controllerchange", function () {
+      if (controllerChanged) return;
+      controllerChanged = true;
+      try {
+        if (sessionStorage.getItem(swRefreshKey) === "1") return;
+        sessionStorage.setItem(swRefreshKey, "1");
+      } catch (e) {
+        return;
+      }
+      window.location.reload();
+    });
+
+    navigator.serviceWorker.register("../service-worker.js").then(function (registration) {
+      return registration.update();
+    }).catch(function () {
+      /* Navigation remains available when SW registration/update is offline. */
+    });
+  }
+
   const config = window.KMT_CLASS_CONFIG || {};
   const appName = document.querySelector("[data-app-name]");
   const version = document.querySelector("[data-version]");
@@ -34,7 +60,11 @@
  const localKey="kmt_class_owner_verified";
 
  function openClass(){
-   if(gate){ gate.style.display="none"; gate.style.pointerEvents="none"; }
+   if(gate){
+     gate.style.display="none";
+     gate.style.pointerEvents="none";
+     gate.setAttribute("aria-hidden","true");
+   }
    try{ localStorage.setItem(localKey,"1"); }catch(e){}
    if(location.search||location.hash) history.replaceState({},document.title,location.pathname);
  }
