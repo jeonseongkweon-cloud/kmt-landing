@@ -7,6 +7,8 @@
   let autoRows=[];
   let attendanceNames=new Set();
   let busy=false;
+  let observer=null;
+  let enhanceTimer=null;
 
   const norm=s=>String(s||'').replace(/\s/g,'');
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -62,11 +64,16 @@
     const search=document.getElementById('ledgerGridSearch');
     if(!body||!count||!search) return;
     busy=true;
+    // 이 모듈이 자동 행을 지우고 다시 붙이는 작업을 자신의 Observer가
+    // 새 외부 변경으로 오인하지 않도록 작업 중에는 감시를 잠시 멈춘다.
+    observer?.disconnect();
     try{
       body.querySelectorAll('tr[data-auto-ledger="1"]').forEach(r=>r.remove());
       const q=norm(search.value).toLowerCase();
       const m=count.textContent.match(/(\d+)가정\s*·\s*(\d+)\/(\d+)페이지/);
-      const baseTotal=m?Number(m[1]):body.querySelectorAll('tr').length;
+      const visibleBaseRows=body.querySelectorAll('tr:not([data-auto-ledger="1"])').length;
+      if(!body.dataset.baseLedgerTotal && m) body.dataset.baseLedgerTotal=String(Number(m[1]));
+      const baseTotal=Number(body.dataset.baseLedgerTotal||visibleBaseRows);
       const page=m?Number(m[2]):1;
       const pages=m?Number(m[3]):1;
       let list=[];
@@ -90,10 +97,16 @@
         note.dataset.attendanceAuto='1';
         note.textContent='※ 기존 회비대장 + 현재 출석부 재원생을 함께 표시합니다. 출석부에 새 원생을 등록하면 회비관리에도 자동으로 추가됩니다.';
       }
-    }finally{busy=false;}
+    }finally{
+      busy=false;
+      observer?.observe(body,{childList:true});
+    }
   }
 
-  function schedule(){setTimeout(enhance,0)}
+  function schedule(){
+    clearTimeout(enhanceTimer);
+    enhanceTimer=setTimeout(()=>{enhanceTimer=null;enhance()},0);
+  }
 
   window.addEventListener('kmt:tuition-households',e=>{
     attendanceNames=new Set(e.detail?.attendanceNames||[]);
@@ -104,8 +117,8 @@
   function mount(){
     const body=document.getElementById('ledgerGridBody');
     if(!body){setTimeout(mount,120);return;}
-    const obs=new MutationObserver(()=>schedule());
-    obs.observe(body,{childList:true});
+    observer=new MutationObserver(()=>schedule());
+    observer.observe(body,{childList:true});
     document.getElementById('ledgerGridSearch')?.addEventListener('input',()=>setTimeout(enhance,0));
     document.getElementById('ledgerGridPages')?.addEventListener('click',()=>setTimeout(enhance,20));
     document.getElementById('ledgerSortBar')?.addEventListener('click',()=>setTimeout(enhance,20));
