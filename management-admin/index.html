@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#0b1730">
+  <title>경영관리 SYSTEM | 계명태권도 CLASS</title>
+  <link rel="icon" href="../assets/icons/kmt_favicon_48.png">
+  <link rel="stylesheet" href="./management.css?v=1">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <img src="../assets/icons/192로고.png" alt="">
+        <div><h1>계명태권도 경영관리 SYSTEM</h1><p>회비는 읽기 전용 · 수입과 지출은 경영관리 전용 DB</p></div>
+      </div>
+      <nav><a href="../tuition-admin/">회비관리</a><a href="../class/admin/">원생관리</a><a href="../class/">CLASS</a></nav>
+    </header>
+
+    <main id="app" hidden>
+      <section class="month-toolbar">
+        <button id="prevMonth" type="button" aria-label="이전 달">‹</button>
+        <label><span>조회 월</span><input id="monthPicker" type="month"></label>
+        <button id="nextMonth" type="button" aria-label="다음 달">›</button>
+        <button id="thisMonth" class="secondary" type="button">이번 달</button>
+        <span id="syncStatus" class="status">불러오는 중…</span>
+      </section>
+
+      <section class="summary" aria-label="월 경영 현황">
+        <article class="income"><span>이번 달 총수입</span><strong id="totalIncome">0원</strong><small id="incomeBreakdown">회비 0원 + 기타 0원</small></article>
+        <article class="expense"><span>이번 달 총지출</span><strong id="totalExpense">0원</strong><small id="expenseBreakdown">일반 0원 + 특별 0원</small></article>
+        <article class="profit"><span>이번 달 수익</span><strong id="totalProfit">0원</strong><small>총수입 − 총지출</small></article>
+      </section>
+
+      <section class="forms">
+        <form id="incomeForm" class="panel" autocomplete="off">
+          <div class="panel-head"><div><h2>수입 입력</h2><p>회비 외 수입만 입력합니다.</p></div><span class="pill green">수입</span></div>
+          <input id="incomeId" type="hidden">
+          <div class="form-grid">
+            <label>날짜<input id="incomeDate" type="date" required></label>
+            <label>항목<select id="incomeCategory" required><option value="other_income">기타수입</option><option value="examination_fee">승단심사비</option></select></label>
+            <label class="wide">내용<input id="incomeTitle" maxlength="80" placeholder="예: 9월 승단심사비" required></label>
+            <label>금액<input id="incomeAmount" type="number" inputmode="numeric" min="1" step="1" placeholder="원" required></label>
+            <label>메모<input id="incomeMemo" maxlength="300" placeholder="선택 입력"></label>
+          </div>
+          <div class="actions"><button class="primary green" type="submit">저장</button><button id="incomeCancel" class="secondary" type="button" hidden>수정 취소</button></div>
+        </form>
+
+        <form id="expenseForm" class="panel" autocomplete="off">
+          <div class="panel-head"><div><h2>지출 입력</h2><p>운영비와 일회성 특별지출을 기록합니다.</p></div><span class="pill red">지출</span></div>
+          <input id="expenseId" type="hidden">
+          <div class="form-grid">
+            <label>날짜<input id="expenseDate" type="date" required></label>
+            <label>항목<select id="expenseCategory" required><option value="regular_expense">일반지출</option><option value="special_expense">특별지출</option></select></label>
+            <label class="wide">내용<input id="expenseTitle" maxlength="80" placeholder="예: 도장 시설 수리" required></label>
+            <label>금액<input id="expenseAmount" type="number" inputmode="numeric" min="1" step="1" placeholder="원" required></label>
+            <label>메모<input id="expenseMemo" maxlength="300" placeholder="선택 입력"></label>
+          </div>
+          <div class="actions"><button class="primary red" type="submit">저장</button><button id="expenseCancel" class="secondary" type="button" hidden>수정 취소</button></div>
+        </form>
+      </section>
+
+      <section class="panel ledger-panel">
+        <div class="panel-head"><div><h2 id="ledgerTitle">월별 내역</h2><p>회비는 합계만 표시되고 이 화면에서는 수정되지 않습니다.</p></div></div>
+        <div class="table-wrap"><table><thead><tr><th>날짜</th><th>구분</th><th>항목</th><th>내용</th><th class="num">금액</th><th>관리</th></tr></thead><tbody id="entryRows"></tbody></table></div>
+        <div id="emptyState" class="empty" hidden>입력된 기타 수입·지출이 없습니다.</div>
+      </section>
+
+      <section class="panel annual-panel">
+        <div class="panel-head"><div><h2><span id="annualYear"></span> 월별 경영 현황</h2><p>1월부터 12월까지 총수입·총지출·수익</p></div></div>
+        <div class="table-wrap"><table><thead><tr><th>월</th><th class="num">회비수입</th><th class="num">기타수입</th><th class="num">총수입</th><th class="num">총지출</th><th class="num">수익</th></tr></thead><tbody id="annualRows"></tbody></table></div>
+      </section>
+    </main>
+
+    <section id="loginRequired" class="login-card" hidden>
+      <h2>관리자 로그인이 필요합니다</h2><p>CLASS 관리자에 로그인한 뒤 다시 열어주세요.</p><a href="../class/admin/">관리자 로그인으로 이동</a>
+    </section>
+    <section id="errorBox" class="error-box" hidden role="alert"></section>
+  </div>
+  <script src="../class/admin/admin-config.js"></script>
+  <script type="module" src="./management.js?v=1"></script>
+</body>
+</html>
+
