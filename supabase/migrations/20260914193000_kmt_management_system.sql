@@ -52,4 +52,3 @@ grant select, insert, update, delete on public.kmt_management_entries to authent
 
 comment on table public.kmt_management_entries is
   '계명태권도 경영관리 수동 수입·지출. 기존 kmt_tuition_monthly_records와 분리.';
-
