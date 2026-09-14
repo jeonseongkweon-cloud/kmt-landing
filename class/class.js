@@ -59,7 +59,6 @@
 
  let locallyVerified=false;
  try{ locallyVerified=localStorage.getItem(localKey)==="1"; }catch(e){}
- if(locallyVerified){ openClass(); return; }
 
  /* Do not let a delayed/failed Supabase CDN leave a stale invisible blocker. */
  if(!window.supabase || typeof window.supabase.createClient!=="function"){
@@ -74,6 +73,10 @@
    if(session && String(session.user?.email||"").toLowerCase()===owner){
      openClass();
    } else if(gate) {
+     if(locallyVerified){
+       try{ localStorage.removeItem(localKey); }catch(e){}
+       if(msg) msg.textContent="안전한 CLASS 이용을 위해 관장 계정을 다시 확인해 주세요.";
+     }
      gate.style.display="grid";
      gate.style.pointerEvents="auto";
    }
