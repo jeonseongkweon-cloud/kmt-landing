@@ -92,4 +92,3 @@ async function handleRowAction(event){
 }
 
 init().catch(err=>showError(`경영관리 SYSTEM 시작 실패: ${err.message}`));
-
