@@ -5,7 +5,7 @@
      change reloads only once per tab, so a newly activated worker can replace
      stale HTML/JS without creating a reload loop. */
   if ("serviceWorker" in navigator) {
-    const swRefreshKey = "kmt_class_sw_v18_reloaded";
+    const swRefreshKey = "kmt_class_sw_v19_reloaded";
     let controllerChanged = false;
 
     navigator.serviceWorker.addEventListener("controllerchange", function () {
@@ -38,19 +38,6 @@
   if (stage) stage.textContent = config.stage || "WORK 9차 · Android 문자 발신기";
   if (homeLink) homeLink.href = config.homeUrl || "../";
 
-  /* Emergency navigation guard: CLASS menu links must always navigate even if
-     another UI module accidentally cancels a click event. */
-  document.addEventListener("click", function (event) {
-    const link = event.target && event.target.closest ? event.target.closest("a[href]") : null;
-    if (!link) return;
-    if (link.target === "_blank" || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    const href = link.getAttribute("href");
-    if (!href || href.charAt(0) === "#" || /^javascript:/i.test(href)) return;
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    window.location.assign(link.href);
-  }, true);
-
   document.documentElement.dataset.classReady = "true";
 })();
 
@@ -64,6 +51,7 @@
      gate.style.display="none";
      gate.style.pointerEvents="none";
      gate.setAttribute("aria-hidden","true");
+     gate.remove();
    }
    try{ localStorage.setItem(localKey,"1"); }catch(e){}
    if(location.search||location.hash) history.replaceState({},document.title,location.pathname);
