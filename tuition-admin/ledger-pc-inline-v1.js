@@ -1,6 +1,7 @@
 // 계명태권도 CLASS 회비관리 SYSTEM
 // PC INLINE EDIT v1.6 — 이름/납부일 고정 + 12개월 한 화면 맞춤
 (function(){
+  const LEDGER_KEY='kmt_tuition_ledger_grid_edits_v1';
   const DUE_KEY='kmt_tuition_ledger_due_edits_v1';
   const isPc=()=>window.matchMedia('(pointer:fine)').matches && window.innerWidth>=1000;
   const load=k=>{try{return JSON.parse(localStorage.getItem(k)||'{}')}catch{return {}}};
@@ -205,6 +206,13 @@
       input.addEventListener('focus',()=>{
         input.dataset.before=input.value;
         requestAnimationFrame(()=>input.select());
+      });
+      // 입력 중 다른 회비 모듈의 안전 갱신이 발생해도 방금 친 숫자가
+      // 사라지지 않도록 매 입력값을 브라우저 원장에 즉시 보존한다.
+      input.addEventListener('input',()=>{
+        const ledger=load(LEDGER_KEY);
+        ledger[input.dataset.k]=input.value;
+        save(LEDGER_KEY,ledger);
       });
       input.addEventListener('keydown',e=>{
         if(e.key==='Enter'){e.preventDefault();input.blur()}

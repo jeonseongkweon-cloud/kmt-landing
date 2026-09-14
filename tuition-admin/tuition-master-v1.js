@@ -146,9 +146,11 @@ async function pullRemoteIntoLocal(){
 }
 
 const NOTE_TEXT='※ 수정값은 브라우저에 안전 백업되며, 관리자 로그인 상태에서는 Supabase 중앙 회비 DB에도 자동 저장됩니다.';
+const PC_NOTE_TEXT='※ PC 직접입력: 이름 옆 납부일 숫자와 월별 날짜·금액을 클릭해 바로 수정합니다. 1월~12월을 한 화면에서 확인하며 Enter 또는 다른 칸 클릭 시 Supabase 중앙DB에 자동저장됩니다.';
 function updateNote(){
   const note=document.querySelector('#ledgerGridCard .ledger-note');
-  if(note && note.textContent!==NOTE_TEXT) note.textContent=NOTE_TEXT;
+  const expected=document.body.classList.contains('tuition-pc-inline')?PC_NOTE_TEXT:NOTE_TEXT;
+  if(note && note.textContent!==expected) note.textContent=expected;
 }
 function observeRows(){
   updateNote();
