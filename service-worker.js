@@ -4,7 +4,7 @@
      2) https://...github.io/kmt-landing/ (BASE="/kmt-landing/")
 */
 
-const CACHE_NAME = "kmt-cache-v19-class-native-nav";
+const CACHE_NAME = "kmt-cache-v20-class-mobile-auth";
 
 /**
  * ✅ BASE 자동 판별
