@@ -12,17 +12,29 @@
   if (stage) stage.textContent = config.stage || "WORK 9차 · Android 문자 발신기";
   if (homeLink) homeLink.href = config.homeUrl || "../";
 
+  /* Emergency navigation guard: CLASS menu links must always navigate even if
+     another UI module accidentally cancels a click event. */
+  document.addEventListener("click", function (event) {
+    const link = event.target && event.target.closest ? event.target.closest("a[href]") : null;
+    if (!link) return;
+    if (link.target === "_blank" || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const href = link.getAttribute("href");
+    if (!href || href.charAt(0) === "#" || /^javascript:/i.test(href)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    window.location.assign(link.href);
+  }, true);
+
   document.documentElement.dataset.classReady = "true";
 })();
 
 (async function(){
  const gate=document.getElementById("classGate"),btn=document.getElementById("gateLogin"),msg=document.getElementById("gateMessage");
- const db=window.supabase.createClient("https://ojxarsfaewehwjidwgac.supabase.co","sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
  const owner="jeonseongkweon@gmail.com";
  const localKey="kmt_class_owner_verified";
 
  function openClass(){
-   gate.style.display="none";
+   if(gate){ gate.style.display="none"; gate.style.pointerEvents="none"; }
    try{ localStorage.setItem(localKey,"1"); }catch(e){}
    if(location.search||location.hash) history.replaceState({},document.title,location.pathname);
  }
@@ -31,16 +43,30 @@
  try{ locallyVerified=localStorage.getItem(localKey)==="1"; }catch(e){}
  if(locallyVerified){ openClass(); return; }
 
- const {data:{session}}=await db.auth.getSession();
- if(session && String(session.user?.email||"").toLowerCase()===owner){
-   openClass();
- } else {
-   gate.style.display="grid";
+ /* Do not let a delayed/failed Supabase CDN leave a stale invisible blocker. */
+ if(!window.supabase || typeof window.supabase.createClient!=="function"){
+   if(msg) msg.textContent="로그인 모듈을 불러오지 못했습니다. 새로고침 후 다시 확인해 주세요.";
+   if(gate){ gate.style.display="grid"; gate.style.pointerEvents="auto"; }
+   return;
  }
 
- btn.onclick=async()=>{
-   msg.textContent="관장 계정을 확인하는 중...";
+ const db=window.supabase.createClient("https://ojxarsfaewehwjidwgac.supabase.co","sb_publishable_ZoAZrV5rDmYDLxhXlnEXCw_lPqJfin0",{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}});
+ try{
+   const {data:{session}}=await db.auth.getSession();
+   if(session && String(session.user?.email||"").toLowerCase()===owner){
+     openClass();
+   } else if(gate) {
+     gate.style.display="grid";
+     gate.style.pointerEvents="auto";
+   }
+  }catch(e){
+   if(msg) msg.textContent="관장 계정 확인 중 오류가 발생했습니다. 새로고침 후 다시 시도해 주세요.";
+   if(gate){ gate.style.display="grid"; gate.style.pointerEvents="auto"; }
+  }
+
+ if(btn) btn.onclick=async()=>{
+   if(msg) msg.textContent="관장 계정을 확인하는 중...";
    const {error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}/class/`}});
-   if(error) msg.textContent=error.message;
+   if(error && msg) msg.textContent=error.message;
  };
 })();
