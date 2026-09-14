@@ -4,7 +4,7 @@
      2) https://...github.io/kmt-landing/ (BASE="/kmt-landing/")
 */
 
-const CACHE_NAME = "kmt-cache-v18-class-nav-hotfix";
+const CACHE_NAME = "kmt-cache-v19-class-native-nav";
 
 /**
  * ✅ BASE 자동 판별
