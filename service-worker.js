@@ -4,7 +4,7 @@
      2) https://...github.io/kmt-landing/ (BASE="/kmt-landing/")
 */
 
-const CACHE_NAME = "kmt-cache-v17-class-262-voice-direct";
+const CACHE_NAME = "kmt-cache-v18-class-nav-hotfix";
 
 /**
  * ✅ BASE 자동 판별
@@ -109,7 +109,11 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)));
+    await Promise.all(
+      keys
+        .filter((key) => key.startsWith("kmt-cache-") && key !== CACHE_NAME)
+        .map((key) => caches.delete(key))
+    );
     await self.clients.claim();
   })());
 });
@@ -131,7 +135,7 @@ self.addEventListener("fetch", (event) => {
     const classPrefix = BASE + "class/";
     if (url.pathname.startsWith(classPrefix)) {
       try {
-        const res = await fetch(req, { cache: "no-cache" });
+        const res = await fetch(req, { cache: "no-store" });
         if (isCacheableResponse(res)) await cache.put(req, res.clone());
         return res;
       } catch (e) {
@@ -142,7 +146,7 @@ self.addEventListener("fetch", (event) => {
     // ✅ HTML: 네트워크 우선(최신) → 실패 시 캐시/홈으로 폴백
     if (isHTMLRequest(req)) {
       try {
-        const res = await fetch(req);
+        const res = await fetch(req, { cache: "no-store" });
         if (isCacheableResponse(res)) {
           cache.put(req, res.clone());
         }
