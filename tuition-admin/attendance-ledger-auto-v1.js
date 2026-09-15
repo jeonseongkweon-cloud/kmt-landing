@@ -41,7 +41,7 @@
     const students=h.students||[h.name];
     return `<tr data-auto-ledger="1" data-household-key="${esc(rowKey(h))}" data-students="${esc(students.join(', '))}">
       <td class="lg-no">${no}</td>
-      <td class="lg-name"><b>${esc(h.name||students.join(' · '))} <small style="color:#2563eb">자동</small></b><span>납부일 ${dueOf(h)}일</span><button type="button" class="btn ledger-due-edit-btn">납부일 변경</button></td>
+      <td class="lg-name"><b>${esc(h.name||students.join(' · '))}</b><span>납부일 ${dueOf(h)}일</span><button type="button" class="btn ledger-due-edit-btn">납부일 변경</button></td>
       ${Array.from({length:12},(_,m)=>{
         const ek=`${studentsKey(h)}|${m}|entry`, ak=`${studentsKey(h)}|${m}|amount`;
         return `<td class="lg-month" data-month="${m}"><input data-k="${esc(ek)}" value="${esc(editValue(h,m,'entry'))}" placeholder="-"><input class="lg-amount" data-k="${esc(ak)}" value="${esc(editValue(h,m,'amount'))}" placeholder="금액"><button type="button" class="ledger-month-edit-btn" title="${m+1}월 회비 입력/수정">수정</button></td>`;
