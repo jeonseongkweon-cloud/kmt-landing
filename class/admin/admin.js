@@ -6,7 +6,7 @@ const db = createClient(cfg.supabaseUrl, cfg.supabasePublishableKey, {
 });
 
 const $ = (id) => document.getElementById(id);
-const state = { students: [], periods: [], filtered: [], editing: null, photoFile: null, photoPreviewUrl: "", photoDelete: false, voiceTestRecognition: null, voiceTestTranscript: "" };
+const state = { students: [], periods: [], filtered: [], editing: null, photoFile: null, photoPreviewUrl: "", photoDelete: false, voiceTestRecognition: null, voiceTestTranscript: "", statusChanging: false, pendingStatus: "" };
 const PHOTO_BUCKET = "kmt-student-photos";
 const loginScreen = $("loginScreen");
 const adminApp = $("adminApp");
@@ -158,6 +158,29 @@ function renderList(){
 }
 
 function setValue(id,value){ $(id).value=value ?? ""; }
+function statusLabel(status){ return status==="퇴원"?"퇴관":status||"재원"; }
+function renderQuickStatus(){
+  const s=state.editing,box=$("quickStatus");
+  if(!s){ box.hidden=true; return; }
+  const status=enrollment(s).status||"재원";box.hidden=false;
+  $("quickStatusCurrent").textContent=`현재 상태: ${statusLabel(status)}`;
+  $("pauseStudent").hidden=status!=="재원";$("withdrawStudent").hidden=status==="퇴원";$("restoreStudent").hidden=status==="재원";
+  [$("pauseStudent"),$("withdrawStudent"),$("restoreStudent")].forEach(button=>button.disabled=state.statusChanging);
+}
+function requestStatusChange(status){
+  const s=state.editing;if(!s||state.statusChanging)return;
+  const messages={"휴원":`${s.name} 학생을 휴원 처리하시겠습니까?\n\n휴원 처리 후 출석 및 STAR 수업의 재원생 목록에서 제외됩니다.\n\n학생의 기존 정보와 기록은 삭제되지 않습니다.`,"퇴원":`${s.name} 학생을 퇴관 처리하시겠습니까?\n\n퇴관 처리해도 학생의 기존 출석기록, STAR 기록, 회원정보 및 과거 데이터는 삭제되지 않습니다.\n\n퇴관 후 현재 재원생 목록에서는 제외됩니다.`,"재원":`${s.name} 학생을 재원 상태로 복귀시키겠습니까?`};
+  state.pendingStatus=status;$("confirmStatusChange").disabled=false;$("cancelStatusChange").disabled=false;$("statusConfirmTitle").textContent=status==="휴원"?"휴원 처리 확인":status==="퇴원"?"퇴관 처리 확인":"재원 복귀 확인";$("statusConfirmMessage").textContent=messages[status];
+  $("confirmStatusChange").textContent=status==="휴원"?"휴원 처리":status==="퇴원"?"퇴관 처리":"재원 복귀";$("confirmStatusChange").classList.toggle("danger",status==="퇴원");$("statusConfirmDialog").showModal();
+}
+async function changeEnrollmentStatus(){
+  const s=state.editing,status=state.pendingStatus,e=s?enrollment(s):null;if(!s||!e?.id||!["재원","휴원","퇴원"].includes(status))return;
+  state.statusChanging=true;renderQuickStatus();$("confirmStatusChange").disabled=true;$("cancelStatusChange").disabled=true;
+  const changedOn=new Date().toISOString().slice(0,10);const {data,error}=await db.from("enrollments").update({status,status_changed_on:changedOn}).eq("id",e.id).select("id,status,status_changed_on").single();
+  if(error){state.statusChanging=false;$("confirmStatusChange").disabled=false;$("cancelStatusChange").disabled=false;renderQuickStatus();$("saveMessage").textContent="상태를 변경하지 못했습니다. 기존 상태는 유지됩니다.";toast("상태 변경 실패");return;}
+  e.status=data.status;e.status_changed_on=data.status_changed_on;setValue("enrollmentStatus",data.status);$("statusConfirmDialog").close();state.pendingStatus="";state.statusChanging=false;
+  const studentId=s.id;await loadData();state.editing=state.students.find(student=>student.id===studentId)||s;renderQuickStatus();$("saveMessage").textContent=`${statusLabel(data.status)} 상태로 변경했습니다.`;toast(`${s.name} 학생을 ${statusLabel(data.status)} 상태로 변경했습니다.`);
+}
 function renderVoiceAliases(){
   const s=state.editing,list=$("voiceAliasList"),aliases=voiceAliases(s);$("voiceRealName").textContent=s?.name||"신규 학생";
   list.innerHTML=aliases.length?aliases.map(a=>`<span class="voice-alias-chip">${escapeHtml(a.alias)}<button type="button" data-delete-voice-alias="${a.id}" aria-label="${escapeHtml(a.alias)} 삭제">×</button></span>`).join(""):'<span class="voice-alias-empty">등록된 음성 별칭이 없습니다.</span>';
@@ -200,6 +223,7 @@ function openStudent(s=null){
   $("sparkLinkMessage").textContent=spark.id?`연결됨 · ${spark.spark_user_id}`:"아직 연결되지 않음";
   $("saveSparkLink").disabled=!s;$("unlinkSpark").hidden=!spark.id;
   renderVoiceAliases();
+  renderQuickStatus();
   resetPhotoEditor(s); $("saveMessage").textContent=""; $("studentDialog").showModal();
 }
 
@@ -285,6 +309,11 @@ $("googleLogin").addEventListener("click",signIn);
 $("logoutButton").addEventListener("click",async()=>{await db.auth.signOut();location.reload();});
 $("addStudentButton").addEventListener("click",()=>openStudent());
 $("studentForm").addEventListener("submit",saveStudent);
+$("pauseStudent").addEventListener("click",()=>requestStatusChange("휴원"));
+$("withdrawStudent").addEventListener("click",()=>requestStatusChange("퇴원"));
+$("restoreStudent").addEventListener("click",()=>requestStatusChange("재원"));
+$("cancelStatusChange").addEventListener("click",()=>{$("statusConfirmDialog").close();state.pendingStatus="";});
+$("confirmStatusChange").addEventListener("click",changeEnrollmentStatus);
 $("cancelEdit").addEventListener("click",()=>{revokePhotoPreview();$("studentDialog").close();});
 $("saveSparkLink").addEventListener("click",saveSparkLink);
 $("unlinkSpark").addEventListener("click",unlinkSpark);
