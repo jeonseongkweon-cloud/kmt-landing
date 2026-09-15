@@ -1,4 +1,4 @@
-const originalUrl = new URL('./tools.js?v=2611', import.meta.url);
+const originalUrl = new URL('./tools.js?v=2613', import.meta.url);
 const source = await fetch(originalUrl, { cache: 'no-store' }).then(r => {
   if (!r.ok) throw new Error(`TOOLS module load failed: ${r.status}`);
   return r.text();

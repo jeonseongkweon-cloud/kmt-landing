@@ -36,6 +36,10 @@ body.random-team-board-mode #controlScreen{display:block!important;height:100%}
 body.random-team-board-mode .tool{display:none!important}
 body.random-team-board-mode #tab-game{display:block!important;height:100%}
 body.random-team-board-mode .game-stage{position:relative;height:100%;min-height:0;margin:0;padding:8px;border:0;border-radius:0;background:transparent;display:block;text-align:initial}
+
+/* v1.7.0 persistent CLASS media upload */
+.media-row small{display:block}.media-register-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.media-register-actions button{margin:0}.media-register-note{margin:8px 2px 0;color:var(--muted);font-size:12px}.media-upload-fields{display:grid;gap:10px}.media-upload-fields input{width:100%}.media-upload-type{color:var(--yellow);font-weight:900}.dialog-body button:disabled{opacity:.55;cursor:wait}
+@media(max-width:480px){.media-register-actions{grid-template-columns:1fr}}
 .random-team-full-board{height:calc(100% - 54px);display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .random-team-side{min-width:0;min-height:0;border:6px solid;border-radius:30px;padding:14px;display:flex;flex-direction:column;overflow:hidden}
 .random-team-blue{border-color:#2d84ff;background:linear-gradient(145deg,rgba(45,132,255,.26),rgba(5,25,48,.96))}
