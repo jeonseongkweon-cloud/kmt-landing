@@ -106,7 +106,38 @@
   grid.dataset.layoutCols = "7";
   const style = document.createElement("style");
   style.id = "pcStarFixedSevenColumnV11";
-  style.textContent = `@media (min-width:761px){#studentGrid.student-grid{display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr))!important;justify-content:start!important;align-items:start!important;gap:9px!important;width:100%!important}#studentGrid.student-grid>.student{width:auto!important;max-width:none!important;min-width:0!important;flex:none!important;aspect-ratio:auto!important}}`;
+  style.textContent = `@media (min-width:761px) and (pointer:fine){
+    body:has(#starScreen:not([hidden])) header{grid-template-columns:auto minmax(0,1fr) auto auto!important;gap:10px!important;padding-top:7px!important;padding-bottom:7px!important}
+    header .pc-star-toolbar{position:static!important;display:none!important;min-width:0!important;align-items:center!important;gap:7px!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important}
+    body:has(#starScreen:not([hidden])) header .pc-star-toolbar{display:flex!important}
+    header .pc-star-toolbar button{min-height:36px!important;height:36px!important;margin:0!important;padding:0 11px!important;border-radius:10px!important;white-space:nowrap!important}
+    header .pc-star-toolbar .category-picker{min-width:0!important;font-size:15px!important}
+    header .pc-star-toolbar .award-all{border-color:rgba(246,196,81,.5)!important;color:#ffe493!important}
+    header .pc-star-toolbar>strong{min-width:58px!important;font-size:13px!important;white-space:nowrap!important}
+    header .pc-star-toolbar #clearSelectionButton{font-size:13px!important}
+    header .pc-star-toolbar .award-selected{min-width:0!important;font-size:14px!important}
+    header .pc-star-toolbar .award-selected:disabled{display:none!important}
+    header .pc-star-toolbar .award-selected:not(:disabled){display:inline-flex!important;align-items:center!important;justify-content:center!important}
+    header .pc-star-toolbar #saveStatus{display:none!important}
+    #classQuickShowButton{display:none!important}
+    #starScreen>.class-head{display:none!important}
+    main{padding-top:7px!important;padding-bottom:10px!important}
+    .star-main-layout{min-height:calc(100vh - 75px)!important}
+    .student-zone{display:flex!important;min-height:calc(100vh - 75px)!important}
+    #studentGrid.student-grid{display:flex!important;flex-wrap:wrap!important;align-content:flex-start!important;justify-content:center!important;align-items:flex-start!important;gap:9px!important;width:100%!important;min-height:0!important;margin:0!important;padding:0!important;--card-gap:9px}
+    #studentGrid.student-grid>.student{flex:0 0 calc((100% - (var(--grid-columns) - 1)*var(--card-gap))/var(--grid-columns))!important;width:auto!important;max-width:none!important;min-width:0!important;aspect-ratio:auto!important}
+    #studentGrid.student-grid[data-count="1"],#studentGrid.student-grid[data-count="2"],#studentGrid.student-grid[data-count="3"],#studentGrid.student-grid[data-count="4"],#studentGrid.student-grid[data-count="5"],#studentGrid.student-grid[data-count="6"],#studentGrid.student-grid[data-count="7"]{align-content:center!important}
+    #studentGrid.student-grid[data-count="1"]>.student{max-width:360px!important}
+    #studentGrid.student-grid[data-count="2"]>.student{max-width:340px!important}
+    #studentGrid.student-grid[data-count="3"]>.student{max-width:315px!important}
+    #studentGrid.student-grid[data-count="4"]>.student{max-width:290px!important}
+    #studentGrid.student-grid[data-count="5"]>.student{max-width:270px!important}
+    #studentGrid.student-grid[data-count="6"]>.student{max-width:250px!important}
+    #studentGrid.student-grid[data-count="7"]>.student{max-width:235px!important}
+    #studentGrid.student-grid .photo{display:block!important;width:100%!important;height:auto!important;aspect-ratio:6/5!important;min-height:0!important;max-height:none!important;border-radius:14px!important;object-fit:cover!important;object-position:center 35%!important}
+    #studentGrid.student-grid .star-main{padding:6px 6px 0!important}
+    #studentGrid.student-grid .student-line{min-height:35px!important;padding:3px 2px!important}
+  }`;
   document.head.appendChild(style);
 })();
 
@@ -119,7 +150,7 @@
   style.id = "classQuickShowStyleV1";
   style.textContent = `.class-quick-show-button{width:44px;height:44px;padding:0;border:1px solid rgba(255,255,255,.16);border-radius:12px;background:#102b47;color:#ffe17a;font-size:23px;font-weight:1000;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 7px 22px rgba(0,0,0,.18)}.class-quick-show-button:hover{filter:brightness(1.12)}.class-quick-menu{position:fixed;z-index:1200;right:84px;top:68px;width:250px;padding:12px;border:1px solid rgba(246,196,81,.35);border-radius:16px;background:rgba(5,22,38,.98);box-shadow:0 20px 60px rgba(0,0,0,.5);backdrop-filter:blur(14px)}.class-quick-menu[hidden]{display:none!important}.class-quick-menu strong{display:block;margin:2px 4px 10px;color:#ffe799;font-size:14px}.class-quick-menu button{width:100%;min-height:52px;margin:5px 0;padding:10px 12px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:#123556;color:#fff;font-size:16px;font-weight:1000;cursor:pointer}.class-quick-menu button:hover{background:#18466f}.class-show-overlay{position:fixed;inset:0;z-index:5000;display:grid;place-items:center;padding:28px;background:radial-gradient(circle at center,rgba(20,62,100,.48),rgba(0,7,17,.88));backdrop-filter:blur(5px);animation:classOverlayIn .2s ease-out}.class-show-overlay[hidden]{display:none!important}.class-show-card{position:relative;width:min(920px,92vw);max-height:88vh;overflow:hidden;padding:28px 34px 30px;border:3px solid rgba(255,221,92,.86);border-radius:30px;background:linear-gradient(155deg,#0d2a47,#061526);box-shadow:0 0 0 6px rgba(255,255,255,.04),0 0 65px rgba(255,204,55,.32),0 28px 85px rgba(0,0,0,.58);text-align:center}.class-show-card h2{margin:0 0 10px;color:#ffe17a;font-size:clamp(30px,4vw,56px)}.class-show-countdown{position:absolute;right:22px;top:18px;min-width:52px;height:52px;padding:0 12px;border-radius:999px;display:grid;place-items:center;background:rgba(255,208,60,.14);border:1px solid rgba(255,224,118,.48);color:#ffe06b;font-size:24px;font-weight:1000}.class-character-image{display:block;width:auto;max-width:min(570px,70vw);height:min(54vh,520px);margin:4px auto 8px;object-fit:contain;filter:drop-shadow(0 16px 30px rgba(0,0,0,.4))}.class-character-stage{font-size:clamp(24px,3vw,40px);font-weight:1000;color:#fff}.class-character-score{margin-top:8px;font-size:clamp(20px,2.2vw,30px);font-weight:950;color:#ffd85c}.class-character-next{margin-top:8px;font-size:clamp(18px,1.9vw,26px);font-weight:900;color:#bfe3ff}.class-character-hint{margin-top:7px;color:#9fc0dc;font-size:15px}.class-mission-body{min-height:200px;display:grid;place-items:center;padding:18px 16px;font-size:clamp(28px,3.3vw,48px);line-height:1.45;font-weight:1000;color:#fff}.class-mission-body:empty::before{content:"오늘의 미션이 아직 입력되지 않았습니다.";color:#9db2c9;font-size:24px}@keyframes classOverlayIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}@media(max-width:760px){.class-quick-show-button{display:none!important}.class-quick-menu{display:none!important}}`;
   document.head.appendChild(style);
-  const quickButton=document.createElement("button");quickButton.id="classQuickShowButton";quickButton.className="class-quick-show-button";quickButton.type="button";quickButton.title="캐릭터 · 오늘의 미션 빠른 보기";quickButton.setAttribute("aria-label","캐릭터와 오늘의 미션 빠른 보기");quickButton.textContent="☰";header.insertBefore(quickButton,systemButton);
+  const quickButton=document.createElement("button");quickButton.id="classQuickShowButton";quickButton.className="class-quick-show-button";quickButton.type="button";quickButton.title="캐릭터 · 오늘의 미션 빠른 보기";quickButton.setAttribute("aria-label","캐릭터와 오늘의 미션 빠른 보기");quickButton.textContent="☰";quickButton.hidden=true;header.insertBefore(quickButton,systemButton);
   const menu=document.createElement("div");menu.id="classQuickShowMenu";menu.className="class-quick-menu";menu.hidden=true;menu.innerHTML=`<strong>수업 빠른 보기</strong><button type="button" data-quick-show="character">🔥 공동성장 캐릭터</button><button type="button" data-quick-show="mission">🎯 오늘의 미션</button>`;document.body.appendChild(menu);
   const overlay=document.createElement("div");overlay.id="classShowOverlay";overlay.className="class-show-overlay";overlay.hidden=true;overlay.innerHTML=`<div class="class-show-card"><div class="class-show-countdown" id="classShowCountdown"></div><div id="classShowContent"></div></div>`;document.body.appendChild(overlay);
   let closeTimer=null,countdownTimer=null;

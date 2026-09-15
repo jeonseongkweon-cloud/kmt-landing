@@ -379,10 +379,10 @@ function showLeaderChanged(student){
   const old=document.getElementById("leaderChangeEffect");if(old)old.remove();const layer=document.createElement("div");layer.id="leaderChangeEffect";layer.className="leader-change-effect";layer.innerHTML=`<div><span>👑</span><strong>새로운 1위!</strong><b>${escapeHtml(student.name)}</b></div>`;document.body.appendChild(layer);playLeaderChangeSound();setTimeout(()=>layer.classList.add("out"),1200);setTimeout(()=>layer.remove(),1800)
 }
 function usesMobileStarControls(){return matchMedia("(max-width:760px), (max-width:1024px) and (pointer:coarse)").matches}
-function gridColumns(count){if(count<=1)return 1;if(count<=3)return count;if(count<=6)return 3;if(count<=8)return 4;return 5}
+function gridColumns(count){if(count<=1)return 1;if(count<=4)return count;if(count<=7)return count;return 7}
 function renderSelectionToolbar(){
   const count=state.selectedIds.size,label=state.category?categoryDisplayName(state.category):"STAR";
-  if($("selectionCount"))$("selectionCount").textContent=`선택 ${count}명`;
+  if($("selectionCount"))$("selectionCount").textContent=`👥 ${count}명`;
   if($("clearSelectionButton"))$("clearSelectionButton").disabled=!count;
   if($("awardSelectedButton")){$("awardSelectedButton").disabled=!count;$("awardSelectedButton").textContent=count?`⭐ 선택 ${count}명에게 ${label} +1`:"학생을 선택하세요"}
 }

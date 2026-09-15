@@ -1,43 +1,6 @@
-<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07111e"><meta name="robots" content="noindex,nofollow"><title>STAR | 계명태권도 CLASS</title><link rel="icon" href="../../assets/icons/kmt_favicon_48.png"><link rel="stylesheet" href="star.css?v=3500"><link rel="stylesheet" href="../effects/effect-manager.css?v=100"><link rel="stylesheet" href="voice-mobile-fix.css?v=101"><style>
-/* PC STAR HEADER TOOLBAR — 핀셋 수정: 기존 기능/ID 유지, 표시 위치만 상단 헤더로 이동 */
-@media (min-width:761px){
-  body:has(#starScreen:not([hidden])) header{grid-template-columns:auto minmax(390px,1fr) auto auto;gap:14px}
-  header .pc-star-toolbar{display:none;min-width:0;align-items:center;gap:8px;margin:0;padding:0;border:0;background:transparent;box-shadow:none}
-  body:has(#starScreen:not([hidden])) header .pc-star-toolbar{display:flex}
-  header .pc-star-toolbar .category-picker,
-  header .pc-star-toolbar #clearSelectionButton,
-  header .pc-star-toolbar .award-selected{height:36px;margin:0;padding:0 12px;border-radius:10px;white-space:nowrap}
-  header .pc-star-toolbar #selectionCount{white-space:nowrap;font-size:13px}
-  header .pc-star-toolbar #saveStatus{display:none!important}
-  header .pc-star-toolbar .award-selected:disabled{display:none!important}
-  header .pc-star-toolbar .award-selected:not(:disabled){display:inline-flex!important;align-items:center;justify-content:center}
-
-  /* 학생 카드 핀셋 수정: PC는 최대 5열, 인원수별 균형배치 */
-  #studentGrid.student-grid{gap:12px!important;justify-content:center!important}
-  #studentGrid.student-grid>.student{max-width:240px!important}
-  #studentGrid.student-grid:has(>.student:nth-child(1):last-child)>.student{flex:0 1 min(420px,100%)!important}
-  #studentGrid.student-grid:has(>.student:nth-child(2):last-child)>.student{flex:0 1 calc(50% - 12px)!important}
-  #studentGrid.student-grid:has(>.student:nth-child(3):last-child)>.student{flex:0 1 calc(33.333% - 12px)!important}
-  #studentGrid.student-grid:has(>.student:nth-child(4):last-child)>.student{flex:0 1 calc(25% - 12px)!important}
-  #studentGrid.student-grid:has(>.student:nth-child(5):last-child)>.student{flex:0 1 calc(20% - 12px)!important}
-  #studentGrid.student-grid:has(>.student:nth-child(6):last-child)>.student{flex:0 1 calc(33.333% - 12px)!important}
-  #studentGrid.student-grid:has(>.student:nth-child(7):last-child)>.student,
-  #studentGrid.student-grid:has(>.student:nth-child(8):last-child)>.student{flex:0 1 calc(25% - 12px)!important}
-  #studentGrid.student-grid:has(>.student:nth-child(n+9))>.student{flex:0 1 calc(20% - 12px)!important}
-
-  /* 사진은 얼굴만 확대되지 않도록 카드 전체와 함께 세로형으로 확대 */
-  #studentGrid.student-grid .photo{
-    width:100%!important;
-    height:clamp(150px,14vw,245px)!important;
-    border-radius:14px!important;
-    object-fit:cover!important;
-    object-position:center 35%!important;
-  }
-}
-@media (max-width:760px){header .pc-star-toolbar{display:none!important}}
-</style></head><body>
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#07111e"><meta name="robots" content="noindex,nofollow"><title>STAR | 계명태권도 CLASS</title><link rel="icon" href="../../assets/icons/kmt_favicon_48.png"><link rel="stylesheet" href="star.css?v=3510"><link rel="stylesheet" href="../effects/effect-manager.css?v=100"><link rel="stylesheet" href="voice-mobile-fix.css?v=101"></head><body>
 <section id="loginScreen" hidden class="login"><div><img src="../../assets/icons/192로고.png" alt=""><p>CLASS v0.9.0</p><h1>STAR 수업판</h1><span>CLASS 관리자 로그인이 필요합니다.</span><button id="loginButton">CLASS 관리자 로그인으로 이동</button><a href="../" target="_blank" rel="noopener">CLASS로 돌아가기</a><em id="loginMessage"></em></div></section>
-<div id="app"><header><a class="brand" href="../" aria-label="CLASS 메인으로 이동" target="_blank" rel="noopener"><img src="../../assets/icons/192로고.png" alt=""><div><strong>계명태권도 STAR CLASS</strong><span>v3.5.0 · PC MAIN v1.0 · SMART MULTI SELECT</span></div></a><section class="pc-star-toolbar"><button id="categoryPickerButton" class="category-picker" type="button">⭐ 자세별 ▼</button><strong id="selectionCount">선택 0명</strong><button id="clearSelectionButton" type="button" disabled>선택 전체해제</button><button id="awardSelectedButton" class="award-selected" type="button" disabled>학생을 선택하세요</button><span id="saveStatus">Supabase 자동저장</span></section><div class="clock"><strong id="dateLabel"></strong><span id="clockLabel"></span></div><button id="systemMenuButton" class="system-menu-button" type="button" aria-expanded="false" aria-controls="systemMenu">☰</button><nav id="systemMenu" class="system-menu" hidden><a href="../spark/" target="_blank" rel="noopener">🔥 SPARK</a><a href="../sms/" target="_blank" rel="noopener">문자대기</a><a href="../../dashboard/" target="_blank" rel="noopener">LIVE</a><a href="../tools/" target="_blank" rel="noopener">수업운영</a><a href="../attendance/" target="_blank" rel="noopener">출석</a><a href="../admin/" target="_blank" rel="noopener">원생관리</a><button id="noticeMenuButton" type="button">오늘의 미션 관리</button><button id="logoutButton">로그아웃</button></nav></header>
+<div id="app"><header><a class="brand" href="../" aria-label="CLASS 메인으로 이동" target="_blank" rel="noopener"><img src="../../assets/icons/192로고.png" alt=""><div><strong>계명태권도 STAR CLASS</strong><span>v3.5.0 · PC MAIN v1.0 · SMART MULTI SELECT</span></div></a><section class="pc-star-toolbar"><button id="categoryPickerButton" class="category-picker" type="button">⭐ 자세별 ▼</button><button id="awardAllHeaderButton" class="award-all" type="button" onclick="document.getElementById('awardAllButton').click()">⭐ 전체별 +1</button><strong id="selectionCount">👥 0명</strong><button id="clearSelectionButton" type="button" disabled>전체해제</button><button id="awardSelectedButton" class="award-selected" type="button" disabled>학생을 선택하세요</button><span id="saveStatus">Supabase 자동저장</span></section><div class="clock"><strong id="dateLabel"></strong><span id="clockLabel"></span></div><button id="systemMenuButton" class="system-menu-button" type="button" aria-expanded="false" aria-controls="systemMenu">☰</button><nav id="systemMenu" class="system-menu" hidden><a href="../spark/" target="_blank" rel="noopener">🔥 SPARK</a><a href="../sms/" target="_blank" rel="noopener">문자대기</a><a href="../../dashboard/" target="_blank" rel="noopener">LIVE</a><a href="../tools/" target="_blank" rel="noopener">수업운영</a><a href="../attendance/" target="_blank" rel="noopener">출석</a><a href="../admin/" target="_blank" rel="noopener">원생관리</a><button id="noticeMenuButton" type="button">오늘의 미션 관리</button><button id="logoutButton">로그아웃</button></nav></header>
 <main><section id="periodScreen" class="period" hidden><div class="title"><p>CLASS STAR</p><h1>STAR ROOM 준비 중</h1><span>오늘 출석했고 아직 귀가하지 않은 학생을 불러옵니다.</span></div><div id="periodGrid" class="period-grid"></div></section>
 <section id="starScreen" hidden><div class="class-head"><div><div class="mobile-star-nav"><a href="../attendance/" target="_blank" rel="noopener">← 출석판</a></div><button id="backButton" class="subtle">← 출석판</button><p id="sessionDate"></p><h1 id="sessionTitle"></h1></div><div class="summary"><strong id="totalStars" hidden>0</strong><button id="championButton" hidden>🏆 챔피언 선정</button></div></div>
 <div class="star-main-layout"><div class="student-zone"><section class="star-growth-dashboard"><div class="category-zone"><div id="categoryBar" class="categories"></div><div class="notice category-live-inline">
@@ -82,4 +45,4 @@
 <dialog id="championDialog"><div class="dialog-body wide"><button class="close" data-close="championDialog">×</button><h2>오늘의 챔피언</h2><p class="muted">STAR 결과를 참고하여 여러 학생을 서로 다른 왕으로 선정할 수 있습니다.</p><div id="championSuggestions"></div><h3>저장된 챔피언</h3><div id="championList"></div></div></dialog>
 <dialog id="voiceChoiceDialog" class="voice-choice-dialog"><div class="dialog-body"><button class="close" data-close="voiceChoiceDialog">×</button><p>SMART NAME VOICE</p><h2>누구를 말씀하셨나요?</h2><div id="voiceChoiceButtons" class="voice-choice-buttons"></div><small>이름을 한 번만 눌러 명령을 계속합니다.</small></div></dialog>
 <button id="mobileVoiceRemote" class="mobile-voice-remote" type="button" aria-label="계명아 음성명령 시작"><span>🎙️</span><strong>계명아</strong><small>눌러서 말하기</small></button><div id="starBurst" class="burst" hidden aria-live="polite"><div class="star-award-stage"><div class="star-award-sparks" aria-hidden="true"><i>⭐</i><i>✨</i><i>⭐</i><i>🌟</i><i>✨</i><i>⭐</i><i>🌟</i><i>⭐</i></div><div class="star-award-card"><div class="star-award-photo-wrap"><img id="burstPhoto" class="star-award-photo" alt=""><div id="burstPhotoFallback" class="star-award-photo star-award-photo-fallback" hidden></div><span id="burstIcon" class="star-award-icon">⭐</span></div><h2 id="burstName"></h2><p id="burstCategory"></p><strong>⭐ STAR +1 ⭐</strong><em id="burstTotal"></em></div></div></div><div id="growthCelebration" class="growth-celebration" hidden aria-live="polite"></div><div id="toast" class="toast"></div>
-<script src="star-config.js?v=2602"></script><script type="module" src="auth-loader.js?v=3501-mobile-auth"></script><script src="growth-theme.js?v=101"></script><script src="../effects/effect-manager.js?v=100"></script><script src="live-world-v2.js?v=210"></script><script src="voice-feedback-fix.js?v=113"></script><script src="live-phase3.js?v=111"></script></body></html>
+<script src="star-config.js?v=2602"></script><script type="module" src="auth-loader.js?v=3501-mobile-auth"></script><script src="growth-theme.js?v=101"></script><script src="../effects/effect-manager.js?v=100"></script><script src="live-world-v2.js?v=210"></script><script src="voice-feedback-fix.js?v=114"></script><script src="live-phase3.js?v=111"></script></body></html>
