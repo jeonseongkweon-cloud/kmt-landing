@@ -1,5 +1,5 @@
 // 계명태권도 CLASS 회비관리 SYSTEM
-// PC INLINE EDIT v1.6 — 이름/납부일 고정 + 12개월 한 화면 맞춤
+// PC INLINE EDIT v1.7 — 이름·납부일 읽기 표시 + 클릭 수정 + 12개월 한 화면 맞춤
 (function(){
   const LEDGER_KEY='kmt_tuition_ledger_grid_edits_v1';
   const DUE_KEY='kmt_tuition_ledger_due_edits_v1';
@@ -63,14 +63,15 @@
           display:table-cell!important;
           vertical-align:middle!important;
           text-align:center!important;
-          white-space:nowrap!important;
+          white-space:normal!important;
           padding-top:0!important;
           padding-bottom:0!important;
         }
         body.tuition-pc-inline #ledgerGridCard .lg-name>b{
           display:inline-block!important;
           vertical-align:middle!important;
-          white-space:nowrap!important;
+          white-space:normal!important;
+          overflow-wrap:anywhere!important;
           font-size:13px!important;
           line-height:1.15!important;
           font-weight:800!important;
@@ -84,6 +85,32 @@
           padding:0!important;
           visibility:visible!important;
         }
+        body.tuition-pc-inline .pc-due-wrap::before{
+          content:'·';
+          margin-right:4px;
+          color:var(--muted);
+          font-weight:800;
+        }
+        body.tuition-pc-inline .pc-due-display{
+          display:inline-block!important;
+          min-width:28px;
+          padding:2px 1px!important;
+          border:0!important;
+          background:transparent!important;
+          color:var(--text)!important;
+          font-size:13px!important;
+          line-height:1.15!important;
+          font-weight:800!important;
+          white-space:nowrap!important;
+          cursor:pointer!important;
+        }
+        body.tuition-pc-inline .pc-due-display:hover,
+        body.tuition-pc-inline .pc-due-display:focus-visible{
+          color:#1d4ed8!important;
+          text-decoration:underline;
+          outline:none;
+        }
+        body.tuition-pc-inline .pc-due-display[hidden]{display:none!important}
         body.tuition-pc-inline .pc-due-input{
           display:inline-block!important;
           width:30px!important;
@@ -103,6 +130,10 @@
           visibility:visible!important;
           opacity:1!important;
         }
+        body.tuition-pc-inline .pc-due-input[hidden]{display:none!important}
+        body.tuition-pc-inline .pc-due-input::-webkit-inner-spin-button,
+        body.tuition-pc-inline .pc-due-input::-webkit-outer-spin-button{-webkit-appearance:none!important;margin:0!important}
+        body.tuition-pc-inline .pc-due-input{-moz-appearance:textfield!important;appearance:textfield!important}
         body.tuition-pc-inline .pc-due-input:hover{border-color:#cbd5e1!important;background:#fff!important}
         body.tuition-pc-inline .pc-due-input:focus{outline:2px solid #9db7ff!important;border-color:#9db7ff!important;background:#fff!important}
         body.tuition-pc-inline .ledger-due-edit-btn{display:none!important}
@@ -156,39 +187,62 @@
 
     const wrap=document.createElement('span');
     wrap.className='pc-due-wrap';
-    wrap.innerHTML=`<input class="pc-due-input" type="number" min="1" max="31" value="${current||1}" aria-label="납부일">`;
+    wrap.innerHTML=`<button class="pc-due-display" type="button" aria-label="납부일 ${current||1}일, 클릭하여 수정">${current||1}일</button><input class="pc-due-input" type="number" min="1" max="31" value="${current||1}" aria-label="납부일 수정" hidden>`;
+    const display=wrap.querySelector('.pc-due-display');
     const input=wrap.querySelector('input');
     nameCell.appendChild(wrap);
 
-    input.addEventListener('focus',()=>{input.dataset.before=input.value;input.select()});
+    const openEditor=()=>{
+      input.dataset.before=input.value;
+      display.hidden=true;
+      input.hidden=false;
+      input.focus();
+      input.select();
+    };
+    const closeEditor=day=>{
+      display.textContent=`${day}일`;
+      display.setAttribute('aria-label',`납부일 ${day}일, 클릭하여 수정`);
+      input.hidden=true;
+      display.hidden=false;
+    };
+    display.addEventListener('click',openEditor);
     input.addEventListener('keydown',e=>{
       if(e.key==='Enter'){e.preventDefault();input.blur()}
-      if(e.key==='Escape'){e.preventDefault();input.value=input.dataset.before||input.value;input.blur()}
+      if(e.key==='Escape'){
+        e.preventDefault();
+        input.dataset.cancelled='1';
+        input.value=input.dataset.before||input.value;
+        input.blur();
+      }
     });
     input.addEventListener('blur',async()=>{
       const before=Number(input.dataset.before||current||1);
       const day=Number(input.value);
-      if(day===before)return;
-      if(!Number.isInteger(day)||day<1||day>31){input.value=before;status('납부일은 1~31만 입력','error');return}
+      if(input.dataset.cancelled==='1'){delete input.dataset.cancelled;closeEditor(before);return}
+      if(day===before){closeEditor(before);return}
+      if(!Number.isInteger(day)||day<1||day>31){input.value=before;closeEditor(before);status('납부일은 1~31만 입력','error');return}
       const key=row.dataset.householdKey||'';
       const due=load(DUE_KEY);due[key]=day;save(DUE_KEY,due);
       status('납부일 저장 중…','saving');
       const master=window.KMTTuitionMaster;
-      if(!master?.ok){due[key]=before;save(DUE_KEY,due);input.value=before;status('중앙DB 연결 실패 · 원래 값 복원','error');return}
+      if(!master?.ok){due[key]=before;save(DUE_KEY,due);input.value=before;closeEditor(before);status('중앙DB 연결 실패 · 원래 값 복원','error');return}
       try{
         const ok=await master.saveDue({row,householdKey:key,displayName:nameCell.querySelector('b')?.textContent?.trim()||key,studentsCsv:row.dataset.students||'',day,reason:'PC 인라인 수정',memo:''});
         if(ok){
           input.dataset.before=String(day);
+          closeEditor(day);
           const hidden=nameCell.querySelector(':scope>span:not(.pc-due-wrap)');
           if(hidden) hidden.textContent=`납부일 ${day}일`;
           status('✓ 납부일 중앙DB 저장됨','ok');
         }else{
           due[key]=before;save(DUE_KEY,due);input.value=before;
+          closeEditor(before);
           status('저장 실패 · 원래 값 복원','error');
         }
       }catch(err){
         console.error('[TUITION PC INLINE] due save failed',err);
         due[key]=before;save(DUE_KEY,due);input.value=before;
+        closeEditor(before);
         status('저장 실패 · 원래 값 복원','error');
       }
     });
@@ -261,7 +315,7 @@
     root.querySelectorAll('tbody tr').forEach(enhanceDue);
     enhanceMonthInputs();
     resetHorizontalScroll(root);
-    const desired='※ PC 직접입력: 이름 옆 납부일 숫자와 월별 날짜·금액을 클릭해 바로 수정합니다. 1월~12월을 한 화면에서 확인하며 Enter 또는 다른 칸 클릭 시 Supabase 중앙DB에 자동저장됩니다.';
+    const desired='※ PC 직접입력: 이름 옆 납부일과 월별 날짜·금액을 클릭해 바로 수정합니다. 1월~12월을 한 화면에서 확인하며 Enter 또는 다른 칸 클릭 시 Supabase 중앙DB에 자동저장됩니다.';
     const note=root.querySelector('.ledger-note');
     if(note && note.textContent!==desired) note.textContent=desired;
     if(!document.getElementById('ledgerPcSaveStatus')) status('자동저장 준비','idle');
