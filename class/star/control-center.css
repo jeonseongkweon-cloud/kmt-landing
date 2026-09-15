@@ -1,0 +1,14 @@
+.control-center-menu{width:min(290px,calc(100vw - 24px));max-height:calc(100vh - 76px);overflow:auto;padding:14px;grid-template-columns:1fr;gap:12px;background:#091b30;border:1px solid rgba(246,196,81,.34);box-shadow:0 20px 60px rgba(0,0,0,.52)}
+.control-center-menu .control-center-title{padding:2px 3px 9px;color:var(--gold);font-size:16px;letter-spacing:.05em}
+.control-center-menu section{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding-top:10px;border-top:1px solid var(--line)}
+.control-center-menu section>span{grid-column:1/-1;color:var(--muted);font-size:11px;font-weight:900;letter-spacing:.08em}
+.control-center-menu section>a,.control-center-menu section>button{display:flex;align-items:center;min-height:42px;padding:9px 10px;text-align:left}
+.control-center-dialog{width:min(1500px,calc(100vw - 24px));height:min(920px,calc(100vh - 24px));max-width:none;max-height:none;border-radius:20px;overflow:hidden}
+.control-center-dialog .control-center-shell{display:grid;grid-template-rows:auto 1fr;height:100%;background:#061321}
+.control-center-dialog .control-center-shell>header{position:static;display:flex;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line);background:#091b30}
+.control-center-dialog .control-center-shell>header small,.control-center-dialog .control-center-shell>header strong{display:block}
+.control-center-dialog .control-center-shell>header small{color:var(--gold);font-size:10px;font-weight:900;letter-spacing:.08em}
+.control-center-dialog .control-center-shell>header strong{margin-top:2px;font-size:20px}
+#controlCenterClose{padding:8px 14px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.07);color:var(--text);font-weight:900}
+#controlCenterFrame{width:100%;height:100%;border:0;background:#061321}
+@media(max-width:760px){.control-center-menu{right:8px;top:62px}.control-center-dialog{width:100vw;height:100dvh;border:0;border-radius:0}.control-center-dialog .control-center-shell>header{padding:8px 10px}.control-center-dialog .control-center-shell>header strong{font-size:17px}}
