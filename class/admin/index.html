@@ -46,7 +46,7 @@
 
       <section class="toolbar">
         <label class="search-box"><span class="sr-only">검색</span><input id="searchInput" type="search" placeholder="이름 또는 KM번호 검색"></label>
-        <select id="statusFilter" aria-label="상태 필터"><option value="all">전체 상태</option><option value="재원" selected>재원</option><option value="휴원">휴원</option><option value="퇴원">퇴원</option></select>
+        <select id="statusFilter" aria-label="상태 필터"><option value="all">전체 상태</option><option value="재원" selected>재원</option><option value="휴원">휴원</option><option value="퇴원">퇴관</option></select>
         <select id="sortOrder" aria-label="정렬"><option value="name">이름 가나다순</option><option value="age-young">나이 어린순</option><option value="age-old">나이 많은순</option><option value="code">회원번호순</option></select>
         <select id="classFilter" aria-label="수업부 필터"><option value="all">전체 수업부</option></select>
         <label class="review-toggle"><input id="reviewOnly" type="checkbox"> 확인 필요만</label>
@@ -94,7 +94,7 @@
         </div></div>
 
         <div class="form-section"><h3>수업·등록정보</h3><div class="form-grid">
-          <label>상태<select id="enrollmentStatus"><option value="재원">재원</option><option value="휴원">휴원</option><option value="퇴원">퇴원</option></select></label>
+          <label>상태<select id="enrollmentStatus"><option value="재원">재원</option><option value="휴원">휴원</option><option value="퇴원">퇴관</option></select></label>
           <label>수업부<select id="classPeriod"><option value="">미확정</option></select></label>
           <label>원본 수업부<input id="classLabelRaw"></label>
           <label>등록일<input id="joinedOn" type="date"></label>
@@ -102,6 +102,7 @@
           <label>회원번호<input id="memberNumber"></label>
           <label>월회비<input id="monthlyFee" type="number" min="0"></label>
           <label>납입일<input id="feeDueDay" type="number" min="1" max="31"></label>
+          <div class="quick-status" id="quickStatus" hidden><div><span>빠른 상태변경</span><strong id="quickStatusCurrent">현재 상태: 재원</strong></div><div class="quick-status-actions"><button class="ghost-button quick-pause" id="pauseStudent" type="button">휴원 처리</button><button class="ghost-button danger" id="withdrawStudent" type="button">퇴관 처리</button><button class="primary-button" id="restoreStudent" type="button">재원 복귀</button></div></div>
         </div></div>
 
         <div class="form-section"><h3>보호자</h3><div class="form-grid">
@@ -129,8 +130,10 @@
     </form>
   </dialog>
 
+  <dialog id="statusConfirmDialog" class="status-confirm-dialog"><div class="status-confirm-card"><h2 id="statusConfirmTitle">상태 변경 확인</h2><p id="statusConfirmMessage"></p><div class="status-confirm-actions"><button class="ghost-button" id="cancelStatusChange" type="button">취소</button><button class="primary-button" id="confirmStatusChange" type="button">확인</button></div></div></dialog>
+
   <div class="toast" id="toast" role="status"></div>
   <script src="admin-config.js"></script>
-  <script type="module" src="admin.js?v=320"></script>
+  <script type="module" src="admin.js?v=321-quick-status"></script>
 </body>
 </html>
