@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#0b1730">
   <title>경영관리 SYSTEM | 계명태권도 CLASS</title>
   <link rel="icon" href="../assets/icons/kmt_favicon_48.png">
-  <link rel="stylesheet" href="./management.css?v=2">
+  <link rel="stylesheet" href="./management.css?v=3">
 </head>
 <body>
   <div class="shell">
@@ -30,14 +30,30 @@
 
       <section class="summary" aria-label="월 경영 현황">
         <article class="income"><span>이번 달 총수입</span><strong id="totalIncome">0원</strong><small id="incomeBreakdown">회비 0원 + 기타 0원</small></article>
-        <article class="expense"><span>이번 달 총지출</span><strong id="totalExpense">0원</strong><small id="expenseBreakdown">임대료 2,000,000원 + 기타 0원</small></article>
+        <article class="expense"><span>이번 달 총지출</span><strong id="totalExpense">0원</strong><small id="expenseBreakdown">고정지출 0원 + 일반 0원 + 특별 0원</small></article>
         <article class="profit"><span>이번 달 수익</span><strong id="totalProfit">0원</strong><small>총수입 − 총지출</small></article>
       </section>
 
       <section class="panel fixed-expense-panel">
-        <div class="panel-head"><div><h2>월 고정 지출</h2><p>임대료는 매월 자동 반영됩니다. 카드와 공과금은 해당 월에 한 번만 저장됩니다.</p></div><span class="pill red">월별</span></div>
+        <div class="panel-head"><div><h2>월 고정 지출</h2><p>임대료는 매월 자동 반영됩니다. 주요 고정비는 해당 월에 한 번만 저장됩니다.</p></div><span class="pill red">월별</span></div>
         <div class="rent-row"><div><strong>임대료</strong><small>매월 1일 자동반영</small></div><b>2,000,000원</b></div>
         <div id="fixedExpenseRows" class="fixed-expense-grid"></div>
+        <div class="subsection-head">
+          <div><h3>기타 고정지출</h3><p>카드단말기·인터넷·정수기·구독료 등 작은 반복 고정비</p></div>
+          <button id="toggleOtherFixed" class="secondary add-button" type="button" aria-expanded="false">＋ 입력하기</button>
+        </div>
+        <form id="otherFixedForm" class="inline-entry-form" autocomplete="off" hidden>
+          <input id="otherFixedId" type="hidden">
+          <div class="form-grid compact">
+            <label>날짜<input id="otherFixedDate" type="date" required></label>
+            <label>지출명<input id="otherFixedTitle" maxlength="80" placeholder="예: 카드단말기" required></label>
+            <label>금액<input id="otherFixedAmount" type="number" inputmode="numeric" min="1" step="1" placeholder="원" required></label>
+            <label>결제방법<select id="otherFixedPayment"><option>자동이체</option><option>카드</option><option>계좌이체</option><option>현금</option><option>기타</option></select></label>
+            <label class="wide">메모<input id="otherFixedMemo" maxlength="300" placeholder="선택 입력"></label>
+          </div>
+          <div class="actions"><button class="primary red" type="submit">저장</button><button id="otherFixedCancel" class="secondary" type="button">취소</button></div>
+        </form>
+        <div id="otherFixedList" class="entry-list"></div>
       </section>
 
       <section class="forms">
@@ -68,6 +84,26 @@
         </form>
       </section>
 
+      <section class="panel regular-expense-panel">
+        <div class="panel-head">
+          <div><h2>일반지출</h2><p>일상적인 도장 운영비를 기록합니다.</p></div>
+          <button id="toggleRegular" class="secondary add-button" type="button" aria-expanded="false">＋ 지출 입력하기</button>
+        </div>
+        <form id="regularForm" class="inline-entry-form" autocomplete="off" hidden>
+          <input id="regularId" type="hidden">
+          <div class="form-grid compact">
+            <label>날짜<input id="regularDate" type="date" required></label>
+            <label>지출항목<select id="regularCategory"><option>소모품</option><option>간식·식비</option><option>교육용품</option><option>차량·교통</option><option>택배·배송</option><option>수리·관리</option><option>사무용품</option><option>행사비</option><option>기타</option><option value="direct">직접입력</option></select></label>
+            <label id="regularDirectWrap" hidden>직접입력<input id="regularDirect" maxlength="80" placeholder="지출항목 입력"></label>
+            <label>금액<input id="regularAmount" type="number" inputmode="numeric" min="1" step="1" placeholder="원" required></label>
+            <label>결제방법<select id="regularPayment"><option>카드</option><option>자동이체</option><option>계좌이체</option><option>현금</option><option>기타</option></select></label>
+            <label class="wide">메모<input id="regularMemo" maxlength="300" placeholder="선택 입력"></label>
+          </div>
+          <div class="actions"><button class="primary red" type="submit">저장</button><button id="regularCancel" class="secondary" type="button">취소</button></div>
+        </form>
+        <div id="regularList" class="entry-list"></div>
+      </section>
+
       <section class="panel ledger-panel">
         <div class="panel-head"><div><h2 id="ledgerTitle">월별 내역</h2><p>회비는 합계만 표시되고 이 화면에서는 수정되지 않습니다.</p></div></div>
         <div class="table-wrap"><table><thead><tr><th>날짜</th><th>구분</th><th>항목</th><th>내용</th><th class="num">금액</th><th>관리</th></tr></thead><tbody id="entryRows"></tbody></table></div>
@@ -86,6 +122,6 @@
     <section id="errorBox" class="error-box" hidden role="alert"></section>
   </div>
   <script src="../class/admin/admin-config.js"></script>
-  <script type="module" src="./management.js?v=2"></script>
+  <script type="module" src="./management.js?v=3"></script>
 </body>
 </html>
