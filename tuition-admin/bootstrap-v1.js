@@ -1,5 +1,5 @@
 import './tuition-master-v1.js?v=3';
-import './attendance-ledger-auto-v1.js?v=1';
+import './attendance-ledger-auto-v1.js?v=2';
 import { loadClassTuitionSource, buildOneStudentHouseholds } from './class-data-adapter-v1.js';
 
 const confirmed={
@@ -152,3 +152,4 @@ function makeRosterOnlyStudent(row){
     setBadge('demo','샘플 데이터 · CLASS 연결 오류');
   }
 })();
+
