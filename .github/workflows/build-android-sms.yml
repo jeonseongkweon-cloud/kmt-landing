@@ -17,11 +17,11 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10.2'
-      - name: Build debug APK
+      - name: Build NO-LOGIN debug APK
         working-directory: android-sms-sender
         run: gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
-          name: KMT-CLASS-SMS-SENDER-v0.9.0
+          name: KMT-CLASS-SMS-SENDER-NO-LOGIN-v0.9.1
           path: android-sms-sender/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
