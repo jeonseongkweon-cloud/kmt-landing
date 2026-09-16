@@ -102,7 +102,7 @@
   else mount();
 })();
 
-// 회비관리 상단 빠른 복귀 버튼
+// 회비관리 상단 빠른 복귀/이동 버튼
 (function(){
   function mountClassReturnButtons(){
     if(document.getElementById('tuitionClassReturnNav')) return;
@@ -118,6 +118,7 @@
     nav.innerHTML=`
       <a href="../class/admin/" class="btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:5px">👥 원생관리</a>
       <a href="../class/attendance/" class="btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:5px">✅ 출석</a>
+      <a href="../management-admin/" class="btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:5px">📊 경영관리</a>
     `;
     if(oldRight){
       const box=document.createElement('div');
