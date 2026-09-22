@@ -7,7 +7,7 @@ const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase
 const cfg=window.KMT_STAR_CONFIG,db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}}),$=id=>document.getElementById(id);
 const VOICE_COMMAND_COOLDOWN_MS=2600;
 const NOTICE_ICONS={focus:"🥋",notice:"📢",personal:"🔔",item:"🎒",event:"📅",praise:"⭐"};
-const state={periods:[],students:[],session:null,period:null,categories:[],category:null,attendance:[],events:[],praises:[],champions:[],notices:[],selectedIds:new Set(),mobileSort:localStorage.getItem("kmt-star-mobile-sort")||"stars",realtimeChannel:null,realtimeTimer:null,livePollTimer:null,livePollBusy:false,monthlyStars:null,monthlyKey:"",localAwardPending:0,leaderId:null,leaderReady:false,growth:{goal:0,stage:0,ready:false,revealTimer:null,celebrationTimers:[]},voice:{recognition:null,listening:false,mode:null,lastCommands:new Map(),lastVoiceStarId:null,pending:null,lastDebug:null,sessionId:0,active:null,retryTimer:null,debug:localStorage.getItem("kmt-voice-debug")==="on",debugEvents:[]}};
+const state={periods:[],students:[],session:null,period:null,categories:[],category:null,attendance:[],events:[],praises:[],champions:[],notices:[],selectedIds:new Set(),mobileSort:localStorage.getItem("kmt-star-mobile-sort")||"stars",realtimeChannel:null,realtimeTimer:null,livePollTimer:null,livePollBusy:false,monthlyStars:null,monthlyKey:"",monthlyAdjustments:null,monthlyAdjustmentKey:"",monthlyAdjustmentStudent:null,monthlyAdjustmentBusy:false,localAwardPending:0,leaderId:null,leaderReady:false,growth:{goal:0,stage:0,ready:false,revealTimer:null,celebrationTimers:[]},voice:{recognition:null,listening:false,mode:null,lastCommands:new Map(),lastVoiceStarId:null,pending:null,lastDebug:null,sessionId:0,active:null,retryTimer:null,debug:localStorage.getItem("kmt-voice-debug")==="on",debugEvents:[]}};
 const praisePresets=["오늘 인사가 아주 좋았어요.","친구를 도와줬어요.","끝까지 포기하지 않았어요.","수업에 집중했어요."];
 const clean=v=>v==null?"":String(v).trim(),escapeHtml=v=>clean(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
 const categoryDisplayName=category=>category?.code==="CARE"?"인성별":category?.code==="KICK"?"효도별":clean(category?.name);
@@ -27,6 +27,50 @@ async function loadMonthlyStars(){
     if((data||[]).length<500)break;
   }
   state.monthlyKey=month;state.monthlyStars=totals;
+}
+async function loadMonthlyAdjustments(){
+  const month=monthlyBounds().month;
+  const {data,error}=await db.from("kmt_star_monthly_adjustments").select("student_id,adjustment").eq("year_month",month);
+  state.monthlyAdjustmentKey=month;
+  if(error){console.warn("[MONTHLY STAR ADJUSTMENT]",error.message);state.monthlyAdjustments=null;return}
+  state.monthlyAdjustments=new Map((data||[]).map(row=>[String(row.student_id),Number(row.adjustment)]));
+}
+async function loadMonthlyView(){await Promise.all([loadMonthlyStars(),loadMonthlyAdjustments()])}
+function monthlyRaw(id){return state.monthlyStars?.get(String(id))||0}
+function monthlyAdjustment(id){return state.monthlyAdjustments?.get(String(id))||0}
+function monthlyDisplay(id){return Math.max(0,monthlyRaw(id)+monthlyAdjustment(id))}
+function monthlyReady(){const month=monthlyBounds().month;return state.monthlyKey===month&&state.monthlyAdjustmentKey===month&&state.monthlyStars!==null&&state.monthlyAdjustments!==null}
+function openMonthlyAdjustment(student){
+  if(!monthlyReady()){toast("월간 STAR를 불러온 뒤 다시 시도해 주세요.");return}
+  state.monthlyAdjustmentStudent=student;
+  const raw=monthlyRaw(student.id),adjustment=monthlyAdjustment(student.id),month=monthlyBounds().month;
+  $("monthlyAdjustmentTitle").textContent=`${student.name} · ${Number(month.slice(0,4))}년 ${Number(month.slice(5))}월 STAR`;
+  $("monthlyAdjustmentRaw").textContent=raw.toLocaleString("ko-KR");
+  $("monthlyAdjustmentDelta").textContent=adjustment.toLocaleString("ko-KR");
+  $("monthlyAdjustmentCurrent").textContent=monthlyDisplay(student.id).toLocaleString("ko-KR");
+  $("monthlyAdjustmentTarget").value=String(monthlyDisplay(student.id));
+  $("monthlyAdjustmentError").textContent="";
+  $("monthlyAdjustmentDialog").showModal();
+}
+async function saveMonthlyAdjustment(target){
+  const student=state.monthlyAdjustmentStudent,month=monthlyBounds().month;
+  if(!student||state.monthlyAdjustmentBusy||!monthlyReady())return;
+  const value=String(target).trim(),number=Number(value),raw=monthlyRaw(student.id);
+  if(!/^(0|[1-9][0-9]*)$/.test(value)||!Number.isSafeInteger(number)||number>2147483647||!Number.isSafeInteger(number-raw)||number-raw< -2147483648){
+    $("monthlyAdjustmentError").textContent="0 이상의 정수를 입력해 주세요.";return;
+  }
+  state.monthlyAdjustmentBusy=true;$("monthlyAdjustmentApply").disabled=true;$("monthlyAdjustmentRestore").disabled=true;
+  try{
+    const {data:{user},error:authError}=await db.auth.getUser();if(authError||!user)throw authError||new Error("관리자 로그인을 확인해 주세요.");
+    const adjustment=number-raw;
+    const {data,error}=await db.from("kmt_star_monthly_adjustments")
+      .upsert({student_id:student.id,year_month:month,adjustment,updated_at:new Date().toISOString(),updated_by:user.id},{onConflict:"student_id,year_month"})
+      .select("student_id,year_month,adjustment").single();
+    if(error)throw error;
+    if(state.monthlyAdjustmentKey===data.year_month){state.monthlyAdjustments.set(String(student.id),Number(data.adjustment));renderStudents()}
+    $("monthlyAdjustmentDialog").close();toast(`${student.name} 이번 달 STAR ${number}개로 보정했습니다.`);
+  }catch(error){$("monthlyAdjustmentError").textContent=error?.message||"보정값을 저장하지 못했습니다."}
+  finally{state.monthlyAdjustmentBusy=false;$("monthlyAdjustmentApply").disabled=false;$("monthlyAdjustmentRestore").disabled=false}
 }
 function updateMonthlyStars(rows,delta){
   if(!state.monthlyStars||state.monthlyKey!==monthlyBounds().month)return;
@@ -366,12 +410,12 @@ async function deleteNotice(id){const r=await db.from("kmt_class_notices").updat
 
 async function login(){const message=$("loginMessage");if(message)message.textContent="관장 계정 확인 화면으로 이동합니다...";const{error}=await db.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.href}});if(error&&message)message.textContent=error.message}
 async function boot(){const{data:{session},error}=await db.auth.getSession();if(error){toast(`로그인 확인 실패: ${error.message}`);return}if(!session||!isSingleOwner(session)){$("app").hidden=true;$("loginScreen").hidden=false;return}$("loginScreen").hidden=true;$("app").hidden=false;startClock();await loadBase();await inspectMicrophonePermission();renderVoiceDebug()}
-function startClock(){const tick=()=>{if(state.session&&state.monthlyKey!==monthlyBounds().month)loadMonthlyStars().then(renderStudents);$("dateLabel").textContent=new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,year:"numeric",month:"long",day:"numeric",weekday:"short"}).format(new Date());$("clockLabel").textContent=localTime()};tick();setInterval(tick,15000)}
+function startClock(){const tick=()=>{if(state.session&&(state.monthlyKey!==monthlyBounds().month||state.monthlyAdjustmentKey!==monthlyBounds().month))loadMonthlyView().then(renderStudents);$("dateLabel").textContent=new Intl.DateTimeFormat("ko-KR",{timeZone:cfg.timezone,year:"numeric",month:"long",day:"numeric",weekday:"short"}).format(new Date());$("clockLabel").textContent=localTime()};tick();setInterval(tick,15000)}
 async function loadBase(){const [p,s,c]=await Promise.all([db.from("class_periods").select("*").eq("is_active",true).order("sort_order"),db.from("students").select("id,student_code,name,photo_url,enrollments(class_period_id,status),kmt_student_voice_aliases(id,alias,alias_key)").order("student_code"),db.from("star_categories").select("*").eq("is_active",true).order("sort_order")]);const error=p.error||s.error||c.error;if(error){toast(error.message);return}state.periods=p.data||[];state.students=(s.data||[]).filter(x=>enrollment(x).status==="재원");state.categories=c.data||[];state.category=state.categories.find(x=>x.code==="POSTURE")||state.categories[0]||null;syncSparkRoster({db,students:state.students}).catch(e=>console.warn("[GLOBAL SPARK ROSTER]",e));await openIntegratedStarRoom()}
 function integratedStarPeriod(){return state.periods.find(p=>clean(p.name).includes("기타")||clean(p.code).toUpperCase()==="ETC")||state.periods.at(-1)||state.periods[0]||null}
 async function openIntegratedStarRoom(){const p=integratedStarPeriod();if(!p){$("periodScreen").hidden=false;$("starScreen").hidden=true;$("periodGrid").innerHTML='<div class="empty">활성 수업부가 없어 STAR ROOM을 열 수 없습니다.</div>';toast("활성 수업부를 확인해 주세요.");return}await openPeriod(p)}
 function renderPeriods(){}
-async function openPeriod(p){state.period=p;let {data,error}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",p.id).maybeSingle();if(error){toast(error.message);return}if(!data){const created=await db.from("class_sessions").insert({session_date:localDate(),class_period_id:p.id,status:"open"}).select().single();if(created.error){toast(created.error.message);return}data=created.data}state.session=data;state.selectedIds.clear();state.category=state.categories.find(x=>x.code==="POSTURE")||state.categories[0]||null;state.growth.goal=0;state.growth.stage=0;state.growth.ready=false;await Promise.all([loadRecords(),loadMonthlyStars()]);syncGrowthCycle();await loadNotices();startRealtime();startLiveFallback();$("periodScreen").hidden=true;$("starScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent="오늘의 통합 STAR ROOM";$("sessionTitle").dataset.desktopTitle="오늘 ⭐ STAR ROOM";renderCategories();renderStudents();renderGrowth({celebrate:false});setTimeout(playStarRoomEntrySound,80)}
+async function openPeriod(p){state.period=p;let {data,error}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",p.id).maybeSingle();if(error){toast(error.message);return}if(!data){const created=await db.from("class_sessions").insert({session_date:localDate(),class_period_id:p.id,status:"open"}).select().single();if(created.error){toast(created.error.message);return}data=created.data}state.session=data;state.selectedIds.clear();state.category=state.categories.find(x=>x.code==="POSTURE")||state.categories[0]||null;state.growth.goal=0;state.growth.stage=0;state.growth.ready=false;await Promise.all([loadRecords(),loadMonthlyView()]);syncGrowthCycle();await loadNotices();startRealtime();startLiveFallback();$("periodScreen").hidden=true;$("starScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent="오늘의 통합 STAR ROOM";$("sessionTitle").dataset.desktopTitle="오늘 ⭐ STAR ROOM";renderCategories();renderStudents();renderGrowth({celebrate:false});setTimeout(playStarRoomEntrySound,80)}
 async function loadRecords(){const [a,e,p,c]=await Promise.all([db.from("attendance").select("id,session_id,student_id,status,checked_at,checked_out_at").eq("attendance_date",localDate()),db.from("star_events").select("*").eq("session_id",state.session.id).order("awarded_at"),db.from("praise_events").select("*").eq("session_id",state.session.id).order("praised_at"),db.from("champions").select("*,star_categories(name,icon)").eq("session_id",state.session.id).order("selected_at")]);const error=a.error||e.error||p.error||c.error;if(error){toast(error.message);return}state.attendance=a.data||[];state.events=e.data||[];state.praises=p.data||[];state.champions=c.data||[]}
 function renderCategories(){
   const primary=state.categories[0];if(!primary){$("categoryBar").innerHTML="";return}
@@ -413,17 +457,17 @@ function toggleStudentSelection(id){
   const key=String(id);if(state.selectedIds.has(key))state.selectedIds.delete(key);else state.selectedIds.add(key);renderStudents()
 }
 function renderStudents(){
-  if(state.monthlyKey!==monthlyBounds().month){state.monthlyStars=null;loadMonthlyStars().then(renderStudents)}
+  if(state.monthlyKey!==monthlyBounds().month||state.monthlyAdjustmentKey!==monthlyBounds().month){state.monthlyStars=null;state.monthlyAdjustments=null;loadMonthlyView().then(renderStudents)}
   const before=captureCardPositions(),list=sortedAttendedStudents(),maxScore=Math.max(0,...attendedStudents().map(s=>eventsFor(s.id).length)),leaders=new Set(maxScore>0?attendedStudents().filter(s=>eventsFor(s.id).length===maxScore).map(s=>String(s.id)):[]),leader=list.find(s=>leaders.has(String(s.id)))||null,previousLeader=state.leaderId;
   const presentIds=new Set(list.map(s=>String(s.id)));state.selectedIds.forEach(id=>{if(!presentIds.has(id))state.selectedIds.delete(id)});
   $("emptyMessage").hidden=!!list.length;$("totalStars").textContent=currentRoomEvents().length;
   const columns=gridColumns(list.length);$("studentGrid").dataset.count=list.length;$("studentGrid").style.setProperty("--grid-columns",columns);$("studentGrid").style.setProperty("--grid-rows",Math.max(1,Math.ceil(list.length/columns)));$("studentGrid").style.setProperty("--card-width",`${100/columns}%`);
-  $("studentGrid").innerHTML=list.map(s=>{const count=eventsFor(s.id).length,photo=clean(s.photo_url),perfect=count>=cfg.perfectStar,isLeader=leaders.has(String(s.id)),selected=state.selectedIds.has(String(s.id));return `<article class="student ${perfect?"perfect":""} ${isLeader?"current-leader":""} ${selected?"selected":""}" data-student="${s.id}">${isLeader?'<div class="leader-badge" aria-label="현재 공동 1등">👑</div>':""}${selected?'<div class="selection-badge">✓</div>':""}<div class="star-main" data-star="${s.id}" role="button" tabindex="0" aria-pressed="${selected}">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="${escapeHtml(s.name)} 사진">`:`<div class="photo fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<button class="undo card-undo" type="button" data-undo="${s.id}" aria-label="${escapeHtml(s.name)} 마지막 STAR 취소">↶</button><div class="student-line"><h2>${escapeHtml(s.name)}</h2><span class="monthly-star" aria-label="이번 달 STAR ${state.monthlyStars?state.monthlyStars.get(String(s.id))||0:"조회 중"}개">⭐ ${state.monthlyStars?(state.monthlyStars.get(String(s.id))||0).toLocaleString("ko-KR"):"—"}</span><strong class="star-count">⭐${count}</strong></div></div></article>`}).join("");
+  $("studentGrid").innerHTML=list.map(s=>{const count=eventsFor(s.id).length,photo=clean(s.photo_url),perfect=count>=cfg.perfectStar,isLeader=leaders.has(String(s.id)),selected=state.selectedIds.has(String(s.id));return `<article class="student ${perfect?"perfect":""} ${isLeader?"current-leader":""} ${selected?"selected":""}" data-student="${s.id}">${isLeader?'<div class="leader-badge" aria-label="현재 공동 1등">👑</div>':""}${selected?'<div class="selection-badge">✓</div>':""}<div class="star-main" data-star="${s.id}" role="button" tabindex="0" aria-pressed="${selected}">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="${escapeHtml(s.name)} 사진">`:`<div class="photo fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<button class="undo card-undo" type="button" data-undo="${s.id}" aria-label="${escapeHtml(s.name)} 마지막 STAR 취소">↶</button><div class="student-line"><h2>${escapeHtml(s.name)}</h2><span class="monthly-star" role="button" tabindex="0" aria-label="이번 달 STAR ${monthlyReady()?monthlyDisplay(s.id):"조회 중"}개">⭐ ${monthlyReady()?monthlyDisplay(s.id).toLocaleString("ko-KR"):"—"}</span><strong class="star-count">⭐${count}</strong></div></div></article>`}).join("");
   animateCardMoves(before);
   state.leaderId=leader&&eventsFor(leader.id).length>0?leader.id:null;
   if(state.leaderReady&&state.leaderId&&state.leaderId!==previousLeader){document.querySelector(`[data-student="${state.leaderId}"]`)?.classList.add("leader-changed");showLeaderChanged(leader)}
   state.leaderReady=true;
-  document.querySelectorAll("[data-star]").forEach(b=>b.onclick=()=>{const student=state.students.find(s=>String(s.id)===String(b.dataset.star));if(usesMobileStarControls())award(student);else toggleStudentSelection(b.dataset.star)});document.querySelectorAll("[data-undo]").forEach(b=>b.onclick=e=>{e.stopPropagation();undo(state.students.find(s=>String(s.id)===String(b.dataset.undo)))});renderSelectionToolbar();renderGrowth()
+  document.querySelectorAll("[data-star]").forEach(b=>b.onclick=()=>{const student=state.students.find(s=>String(s.id)===String(b.dataset.star));if(usesMobileStarControls())award(student);else toggleStudentSelection(b.dataset.star)});document.querySelectorAll("[data-undo]").forEach(b=>b.onclick=e=>{e.stopPropagation();undo(state.students.find(s=>String(s.id)===String(b.dataset.undo)))});document.querySelectorAll(".monthly-star").forEach(b=>{b.onclick=e=>{e.stopPropagation();openMonthlyAdjustment(state.students.find(s=>String(s.id)===String(b.closest("[data-student]").dataset.student)))};b.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();e.stopPropagation();b.click()}}});renderSelectionToolbar();renderGrowth()
 }
 
 async function awardAdvancedBadges(studentId){
@@ -520,14 +564,14 @@ async function pollLiveChanges(){
     ]);
     if(a.error||e.error){console.warn("[STAR LIVE FALLBACK]",a.error?.message||e.error?.message);return}
     const nextAttendance=a.data||[],nextEvents=e.data||[],after=liveSnapshotKey(nextAttendance,nextEvents);
-    if(after!==before){const incoming=incomingStarEvents(beforeIds,nextEvents);state.attendance=nextAttendance;state.events=nextEvents;await loadMonthlyStars();renderStudents();playIncomingStarFeedback(incoming);$("saveStatus").textContent="Supabase 자동저장 · LIVE"}
+    if(after!==before){const incoming=incomingStarEvents(beforeIds,nextEvents);state.attendance=nextAttendance;state.events=nextEvents;await loadMonthlyView();renderStudents();playIncomingStarFeedback(incoming);$("saveStatus").textContent="Supabase 자동저장 · LIVE"}
   }finally{state.livePollBusy=false}
 }
 function startLiveFallback(){
   if(state.livePollTimer)clearInterval(state.livePollTimer);
   state.livePollTimer=setInterval(pollLiveChanges,3000);
 }
-function scheduleRealtimeRefresh(){clearTimeout(state.realtimeTimer);const beforeIds=new Set(state.events.map(x=>String(x.id)));state.realtimeTimer=setTimeout(async()=>{if(!state.session)return;await Promise.all([loadRecords(),loadMonthlyStars()]);const incoming=incomingStarEvents(beforeIds,state.events);renderStudents();playIncomingStarFeedback(incoming);if(!$("championDialog").open)renderChampions();$("saveStatus").textContent="Supabase 자동저장 · LIVE"},250)}
+function scheduleRealtimeRefresh(){clearTimeout(state.realtimeTimer);const beforeIds=new Set(state.events.map(x=>String(x.id)));state.realtimeTimer=setTimeout(async()=>{if(!state.session)return;await Promise.all([loadRecords(),loadMonthlyView()]);const incoming=incomingStarEvents(beforeIds,state.events);renderStudents();playIncomingStarFeedback(incoming);if(!$("championDialog").open)renderChampions();$("saveStatus").textContent="Supabase 자동저장 · LIVE"},250)}
 async function syncSessionState(){if(!state.session)return;const{data,error}=await db.from("class_sessions").select("*").eq("id",state.session.id).maybeSingle();if(!error&&data)state.session=data}
 function startRealtime(){
   stopRealtime();if(!state.session)return;const sid=state.session.id,today=localDate();
@@ -584,4 +628,6 @@ $("noticeForm").onsubmit=async e=>{e.preventDefault();try{await addNotice($("not
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&state.voice.listening)stopOneShotVoice()});
 document.addEventListener("keydown",e=>{const card=e.target.closest?.("[data-star]");if(card&&(e.key==="Enter"||e.key===" ")){e.preventDefault();card.click()}});
 
+$("monthlyAdjustmentForm").onsubmit=e=>{e.preventDefault();saveMonthlyAdjustment($("monthlyAdjustmentTarget").value)};
+$("monthlyAdjustmentRestore").onclick=()=>{if(state.monthlyAdjustmentStudent)saveMonthlyAdjustment(String(monthlyRaw(state.monthlyAdjustmentStudent.id)))};
 $("loginButton").onclick=login;$("logoutButton").onclick=async()=>{await db.auth.signOut();location.reload()};$("backButton").onclick=()=>{window.open("../attendance/","_blank","noopener")};$("praiseForm").onsubmit=savePraise;$("championButton").onclick=showChampions;document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>$(b.dataset.close).close());$("starBurst").onclick=()=>$("starBurst").hidden=true;db.auth.onAuthStateChange((_e,s)=>{if(s&&$("app").hidden)setTimeout(boot,0)});boot();
