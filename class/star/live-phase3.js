@@ -7,7 +7,7 @@
     s.onload = () => done?.();
     document.head.appendChild(s);
   };
-  load('./star-display-pinset.js?v=131', () => load('./star-rank-pinset.js?v=100'));
+  load('./star-display-pinset.js?v=132', () => load('./star-rank-pinset.js?v=100'));
 
   // PHOTO SLOT PINSET v1.1 — taller portrait window only. No data/STAR logic changes.
   const style = document.createElement('style');

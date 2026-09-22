@@ -10,6 +10,21 @@
   const style = document.createElement('style');
   style.id = 'starDisplayPinsetV141';
   style.textContent = `
+    /* Monthly count shares the name row; the existing daily stars stay below it. */
+    #studentGrid .star-main{position:relative!important}
+    #studentGrid .student-line{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto!important;column-gap:3px!important;row-gap:1px!important;min-height:0!important;padding:2px 2px 3px!important;align-items:center!important}
+    #studentGrid .student-line h2{grid-column:1!important;grid-row:1!important;margin:0!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+    #studentGrid .monthly-star{grid-column:2!important;grid-row:1!important;white-space:nowrap!important;color:#f6c451!important;font-weight:900!important;font-size:clamp(13px,1.2vw,19px)!important;line-height:1.2!important}
+    #studentGrid .star-count{grid-column:1/-1!important;grid-row:2!important;min-height:0!important;max-height:none!important;margin:0!important;padding:0!important;justify-self:center!important}
+    #studentGrid .star-main>.card-undo{position:absolute!important;top:12px!important;right:12px!important;z-index:6!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;width:29px!important;height:29px!important;min-width:29px!important;padding:0!important;border:1px solid rgba(255,116,126,.55)!important;border-radius:9px!important;background:rgba(15,26,43,.82)!important;color:#ff9da4!important;font-size:19px!important;cursor:pointer!important}
+    @media (max-width:760px), (max-width:1024px) and (pointer:coarse){
+      #studentGrid .star-main{padding:7px 5px 2px!important}
+      #studentGrid .student-line{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto!important;row-gap:1px!important;min-height:0!important;padding:2px 2px 0!important}
+      #studentGrid .student-line h2{grid-column:1!important;grid-row:1!important;font-size:20px!important;text-align:left!important}
+      #studentGrid .monthly-star{grid-column:2!important;grid-row:1!important;font-size:14px!important}
+      #studentGrid .star-count{grid-column:1/-1!important;grid-row:2!important;text-align:left!important;justify-self:start!important}
+      #studentGrid .star-main>.card-undo{top:10px!important;right:10px!important}
+    }
     #studentGrid .star-count{
       display:flex!important;
       flex-direction:column!important;
@@ -114,6 +129,12 @@
       #studentGrid .student.rank-one::after{
         display:none!important;
       }
+    }
+    @media (max-width:760px), (max-width:1024px) and (pointer:coarse){
+      #studentGrid .student-line{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto!important;row-gap:1px!important;min-height:0!important;padding:2px!important}
+      #studentGrid .student-line h2{grid-column:1!important;grid-row:1!important}
+      #studentGrid .monthly-star{grid-column:2!important;grid-row:1!important}
+      #studentGrid .star-count{grid-column:1/-1!important;grid-row:2!important}
     }
   `;
   document.head.appendChild(style);

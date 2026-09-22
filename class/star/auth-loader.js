@@ -1,4 +1,4 @@
-const originalUrl = new URL('./star.js?v=3312', import.meta.url);
+const originalUrl = new URL('./star.js?v=3313', import.meta.url);
 const connectorUrl = new URL('./spark-connector.js?v=102', import.meta.url).href;
 const smartNameVoiceUrl = new URL('./smart-name-voice.js?v=101', import.meta.url).href;
 const integratedMultiVoiceUrl = new URL('./integrated-multi-voice.js?v=200', import.meta.url).href;
