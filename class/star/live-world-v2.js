@@ -81,8 +81,7 @@
       { type: "drone", level: 2, min: LIVE_CONFIG.droneMin, max: LIVE_CONFIG.droneMax },
       { type: "rocket", level: 2, min: LIVE_CONFIG.rocketMin, max: LIVE_CONFIG.rocketMax },
       { type: "comet", level: 2, min: LIVE_CONFIG.cometMin, max: LIVE_CONFIG.cometMax },
-      { type: "peek", level: 2, min: LIVE_CONFIG.characterPeekMin, max: LIVE_CONFIG.characterPeekMax },
-      { type: "growth", level: 3, min: LIVE_CONFIG.growthPopupMin, max: LIVE_CONFIG.growthPopupMax }
+      { type: "peek", level: 2, min: LIVE_CONFIG.characterPeekMin, max: LIVE_CONFIG.characterPeekMax }
     ];
     jobs.forEach((job, index) => { job.nextAt = now() + random(index < 3 ? job.min * .35 : job.min * .55, index < 3 ? job.max * .65 : job.max * .78); });
 
@@ -109,7 +108,7 @@
     const runGrowth = () => { const g=growthData(), el=document.createElement("div"); if(!g.image)return false;el.className="lwv2-overlay";el.innerHTML=`<div class="lwv2-overlay-card"><h2>우리 반 공동성장</h2><img src="${g.image}" alt="공동성장 ${g.stage}단계"><strong>${g.stage} / 7</strong><p>${g.score}</p><p>${g.next}</p></div>`;document.body.appendChild(el);cleanup(el,4200);occupy("growth",4200);return true; };
     const showMilestone = (card, total) => { const name=card?.querySelector("h2")?.textContent||"STAR HERO", el=document.createElement("div");el.className="lwv2-overlay";el.innerHTML=`<div class="lwv2-overlay-card milestone"><h2>${total===10?"🌟 STAR 10 달성!":"⭐ 5 STAR!"}</h2><strong>${name}</strong><p>${"⭐".repeat(Math.min(total,10))}</p></div>`;document.body.appendChild(el);const duration=total===10?3900:3000;cleanup(el,duration);occupy(`milestone:${total}`,duration); };
 
-    const runners = { small:runSmall, leader:runLeader, drone:runDrone, rocket:()=>runSky("rocket"), comet:()=>runSky("comet"), peek:runPeek, growth:runGrowth };
+    const runners = { small:runSmall, leader:runLeader, drone:runDrone, rocket:()=>runSky("rocket"), comet:()=>runSky("comet"), peek:runPeek };
     const schedule = job => { job.nextAt = now() + random(job.min, job.max); };
     const tick = () => {
       const t=now();

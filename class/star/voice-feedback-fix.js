@@ -308,8 +308,5 @@
     lastStage=stage;
   };
 
-  new MutationObserver(()=>syncStage()).observe(growthStages,{childList:true,subtree:true,attributes:true,attributeFilter:["data-stage"]});
-  syncStage();
-  scheduleAuto();
-  document.addEventListener("visibilitychange",()=>{if(!document.hidden)scheduleAuto()});
+  // 공동성장 자동 팝업의 타이머와 단계 변경 감시를 시작하지 않는다.
 })();

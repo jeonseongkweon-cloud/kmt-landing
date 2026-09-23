@@ -178,7 +178,7 @@ function renderGrowth({celebrate=true}={}){
   else if(stage>=7){$("growthNext").textContent=total>goal?`목표 초과 ⭐ +${total-goal}`:"공동 목표를 달성했습니다!";$("growthHint").textContent=`출석 ${attendanceCount}명 · 자동 목표 ${goal} STAR · 완전체 달성`}
   else{const next=thresholds[stage];$("growthNext").innerHTML=`<small>다음 성장까지</small><b>⭐ ${Math.max(0,next-total)}</b>`;$("growthHint").textContent=`출석 ${attendanceCount}명 · 자동 목표 ${goal} STAR · 현재 ${stage}단계`}
   $("goalButton").hidden=true;$("goalResetButton").hidden=true;panel.dataset.ready=goal?"true":"false";panel.classList.toggle("complete",stage===7);panel.classList.toggle("over-goal",stage===7&&total>goal);
-  if(celebrate&&state.growth.ready&&stage>state.growth.stage)showGrowthCelebration(stage,total,goal);state.growth.stage=stage;state.growth.ready=true
+  state.growth.stage=stage;state.growth.ready=true
 }
 function calculateGrowthGoal(){
   renderGrowth({celebrate:false});
