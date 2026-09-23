@@ -20,12 +20,24 @@ function monthlyBounds(){
 }
 async function loadMonthlyStars(){
   const {month,start,end}=monthlyBounds(),totals=new Map();
-  for(let offset=0;;offset+=500){
-    const {data,error}=await db.from("star_events").select("student_id,amount").gte("awarded_at",start).lt("awarded_at",end).order("awarded_at").order("id").range(offset,offset+499);
-    if(error){console.warn("[MONTHLY STAR]",error.message);state.monthlyKey=month;state.monthlyStars=null;return}
-    for(const row of data||[])totals.set(String(row.student_id),(totals.get(String(row.student_id))||0)+Number(row.amount||0));
-    if((data||[]).length<500)break;
+  const pageSize=1000,fetchPage=(offset,count=false)=>db.from("star_events").select("student_id,amount",count?{count:"exact"}:undefined).gte("awarded_at",start).lt("awarded_at",end).order("awarded_at").order("id").range(offset,offset+pageSize-1);
+  const first=await fetchPage(0,true);
+  if(first.error){console.warn("[MONTHLY STAR]",first.error.message);state.monthlyKey=month;state.monthlyStars=null;return}
+  const pages=[first.data||[]],lastPage=Math.ceil((first.count??pages[0].length)/pageSize);
+  for(let page=1;page<lastPage;page+=4){
+    const batch=await Promise.all(Array.from({length:Math.min(4,lastPage-page)},(_,i)=>fetchPage((page+i)*pageSize)));
+    const failure=batch.find(result=>result.error);
+    if(failure){console.warn("[MONTHLY STAR]",failure.error.message);state.monthlyKey=month;state.monthlyStars=null;return}
+    pages.push(...batch.map(result=>result.data||[]));
   }
+  if(first.count==null){
+    for(let page=1;pages.at(-1).length===pageSize;page++){
+      const result=await fetchPage(page*pageSize);
+      if(result.error){console.warn("[MONTHLY STAR]",result.error.message);state.monthlyKey=month;state.monthlyStars=null;return}
+      pages.push(result.data||[]);
+    }
+  }
+  for(const row of pages.flat())totals.set(String(row.student_id),(totals.get(String(row.student_id))||0)+Number(row.amount||0));
   state.monthlyKey=month;state.monthlyStars=totals;
 }
 async function loadMonthlyAdjustments(){
@@ -415,7 +427,7 @@ async function loadBase(){const [p,s,c]=await Promise.all([db.from("class_period
 function integratedStarPeriod(){return state.periods.find(p=>clean(p.name).includes("기타")||clean(p.code).toUpperCase()==="ETC")||state.periods.at(-1)||state.periods[0]||null}
 async function openIntegratedStarRoom(){const p=integratedStarPeriod();if(!p){$("periodScreen").hidden=false;$("starScreen").hidden=true;$("periodGrid").innerHTML='<div class="empty">활성 수업부가 없어 STAR ROOM을 열 수 없습니다.</div>';toast("활성 수업부를 확인해 주세요.");return}await openPeriod(p)}
 function renderPeriods(){}
-async function openPeriod(p){state.period=p;let {data,error}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",p.id).maybeSingle();if(error){toast(error.message);return}if(!data){const created=await db.from("class_sessions").insert({session_date:localDate(),class_period_id:p.id,status:"open"}).select().single();if(created.error){toast(created.error.message);return}data=created.data}state.session=data;state.selectedIds.clear();state.category=state.categories.find(x=>x.code==="POSTURE")||state.categories[0]||null;state.growth.goal=0;state.growth.stage=0;state.growth.ready=false;await Promise.all([loadRecords(),loadMonthlyView()]);syncGrowthCycle();await loadNotices();startRealtime();startLiveFallback();$("periodScreen").hidden=true;$("starScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent="오늘의 통합 STAR ROOM";$("sessionTitle").dataset.desktopTitle="오늘 ⭐ STAR ROOM";renderCategories();renderStudents();renderGrowth({celebrate:false});setTimeout(playStarRoomEntrySound,80)}
+async function openPeriod(p){state.period=p;let {data,error}=await db.from("class_sessions").select("*").eq("session_date",localDate()).eq("class_period_id",p.id).maybeSingle();if(error){toast(error.message);return}if(!data){const created=await db.from("class_sessions").insert({session_date:localDate(),class_period_id:p.id,status:"open"}).select().single();if(created.error){toast(created.error.message);return}data=created.data}state.session=data;state.selectedIds.clear();state.category=state.categories.find(x=>x.code==="POSTURE")||state.categories[0]||null;state.growth.goal=0;state.growth.stage=0;state.growth.ready=false;await Promise.all([loadRecords(),loadMonthlyView()]);syncGrowthCycle();await loadNotices();startRealtime();$("periodScreen").hidden=true;$("starScreen").hidden=false;$("sessionDate").textContent=localDate();$("sessionTitle").textContent="오늘의 통합 STAR ROOM";$("sessionTitle").dataset.desktopTitle="오늘 ⭐ STAR ROOM";renderCategories();renderStudents();renderGrowth({celebrate:false});setTimeout(playStarRoomEntrySound,80)}
 async function loadRecords(){const [a,e,p,c]=await Promise.all([db.from("attendance").select("id,session_id,student_id,status,checked_at,checked_out_at").eq("attendance_date",localDate()),db.from("star_events").select("*").eq("session_id",state.session.id).order("awarded_at"),db.from("praise_events").select("*").eq("session_id",state.session.id).order("praised_at"),db.from("champions").select("*,star_categories(name,icon)").eq("session_id",state.session.id).order("selected_at")]);const error=a.error||e.error||p.error||c.error;if(error){toast(error.message);return}state.attendance=a.data||[];state.events=e.data||[];state.praises=p.data||[];state.champions=c.data||[]}
 function renderCategories(){
   const primary=state.categories[0];if(!primary){$("categoryBar").innerHTML="";return}
@@ -568,7 +580,7 @@ async function pollLiveChanges(){
   }finally{state.livePollBusy=false}
 }
 function startLiveFallback(){
-  if(state.livePollTimer)clearInterval(state.livePollTimer);
+  if(state.livePollTimer)return;
   state.livePollTimer=setInterval(pollLiveChanges,3000);
 }
 function scheduleRealtimeRefresh(){clearTimeout(state.realtimeTimer);const beforeIds=new Set(state.events.map(x=>String(x.id)));state.realtimeTimer=setTimeout(async()=>{if(!state.session)return;await Promise.all([loadRecords(),loadMonthlyView()]);const incoming=incomingStarEvents(beforeIds,state.events);renderStudents();playIncomingStarFeedback(incoming);if(!$("championDialog").open)renderChampions();$("saveStatus").textContent="Supabase 자동저장 · LIVE"},250)}
@@ -582,7 +594,7 @@ function startRealtime(){
     .on("postgres_changes",{event:"*",schema:"public",table:"champions",filter:`session_id=eq.${sid}`},scheduleRealtimeRefresh)
     .on("postgres_changes",{event:"*",schema:"public",table:"kmt_class_notices",filter:`class_period_id=eq.${state.period.id}`},()=>setTimeout(loadNotices,180))
     .on("postgres_changes",{event:"UPDATE",schema:"public",table:"class_sessions",filter:`id=eq.${sid}`},async()=>{await syncSessionState();scheduleRealtimeRefresh()})
-    .subscribe(status=>{if(status==="SUBSCRIBED")$("saveStatus").textContent="Supabase 자동저장 · LIVE";else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT")$("saveStatus").textContent="LIVE 재연결 중"});
+    .subscribe(status=>{if(status==="SUBSCRIBED"){if(state.livePollTimer){clearInterval(state.livePollTimer);state.livePollTimer=null;pollLiveChanges()}$("saveStatus").textContent="Supabase 자동저장 · LIVE"}else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){startLiveFallback();$("saveStatus").textContent="LIVE 재연결 중"}});
 }
 
 function showBurst(s,c,total,newBadges=[]){
