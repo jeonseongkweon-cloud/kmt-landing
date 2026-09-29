@@ -1050,7 +1050,8 @@
     });
 
     if(KMT.youtubeVideoId){
-      $("ytFrame").src = `https://www.youtube.com/embed/${KMT.youtubeVideoId}`;
+      const ytFrame = $("ytFrame");
+      if(ytFrame) ytFrame.src = `https://www.youtube.com/embed/${KMT.youtubeVideoId}`;
     }
 
     const grid = $("scheduleGrid");
