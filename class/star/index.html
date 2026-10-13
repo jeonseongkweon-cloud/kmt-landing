@@ -62,6 +62,15 @@
 #photoDownloadDialog #photoDownloadAll{background:#194b7b;color:white;border:0;margin-top:13px}
 </style><script>
 (function(){
+  // Independent menu binding: STAR module initialization must not block the menu.
+  const menuButton=document.getElementById("systemMenuButton");
+  const systemMenu=document.getElementById("systemMenu");
+  menuButton?.addEventListener("click",function(event){
+    event.stopImmediatePropagation();
+    const nextOpen=systemMenu.hidden;
+    systemMenu.hidden=!nextOpen;
+    menuButton.setAttribute("aria-expanded",String(nextOpen));
+  },true);
   const button=document.getElementById("photoDownloadMenuButton");
   const dialog=document.getElementById("photoDownloadDialog");
   const status=document.getElementById("photoDownloadStatus");
