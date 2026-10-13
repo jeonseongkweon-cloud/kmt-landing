@@ -4,7 +4,7 @@ const config = window.KMT_STAR_CONFIG;
 const db = createClient(config.supabaseUrl, config.supabasePublishableKey, {
   auth: { persistSession: true, detectSessionInUrl: true, flowType: "pkce" }
 });
-const ownerEmail = "class-admin@ipma.kr";
+const ownerEmail = "jeonseongkweon@gmail.com";
 const button = document.getElementById("photoDownloadMenuButton");
 const dialog = document.getElementById("photoDownloadDialog");
 const results = document.getElementById("photoDownloadResults");
