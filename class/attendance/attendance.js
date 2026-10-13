@@ -121,13 +121,6 @@ async function markStudent(student,status){
     const result=await db.from("attendance").update({checked_out_at:new Date().toISOString()}).eq("id",old.id).select().single();
     if(result.error){toast(result.error.message);return}await loadAttendance();toast(`${student.name} · 귀가`);return;
   }
-  if(status==="present"){
-    const shared=sharedPhoneStudents(student);
-    if(shared.length){
-      const others=shared.map(s=>`${s.name}(${s.student_code})`).join(", ");
-      if(!confirm(`보호자 번호가 ${others} 학생과 같습니다.\n\n${student.name} (${student.student_code}) 학생을 ${statusText[status]} 처리할까요?`))return;
-    }
-  }
   setSaving(`${student.name} 저장 중...`);const payload={session_id:old?.session_id||state.session.id,student_id:student.id,attendance_date:localDate(),status,checked_at:new Date().toISOString(),checked_out_at:null,points_awarded:status==="present"?1:0};
   let result;if(old)result=await db.from("attendance").update(payload).eq("id",old.id).select().single();else result=await db.from("attendance").insert(payload).select().single();
   if(result.error){toast(result.error.message);setSaving("저장 오류");return}
