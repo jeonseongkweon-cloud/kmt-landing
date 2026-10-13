@@ -590,7 +590,10 @@ function startRealtime(){
   state.starRealtimeChannel=db.channel(`kmt-star-events-${sid}-${today}`)
     .on("postgres_changes",{event:"*",schema:"public",table:"star_events",filter:`session_id=eq.${sid}`},scheduleRealtimeRefresh)
     .subscribe();
-  // Keep periodic synchronization even when the realtime socket reports SUBSCRIBED.\n  // Subscription success does not guarantee that attendance changes are published.\n  startLiveFallback();\n  state.realtimeChannel=db.channel(`kmt-star-live-${sid}-${today}`)
+  // Keep periodic synchronization even when the realtime socket reports SUBSCRIBED.
+  // Subscription success does not guarantee that attendance changes are published.
+  startLiveFallback();
+  state.realtimeChannel=db.channel(`kmt-star-live-${sid}-${today}`)
     .on("postgres_changes",{event:"*",schema:"public",table:"attendance",filter:`attendance_date=eq.${today}`},scheduleRealtimeRefresh)
     .on("postgres_changes",{event:"*",schema:"public",table:"praise_events",filter:`session_id=eq.${sid}`},scheduleRealtimeRefresh)
     .on("postgres_changes",{event:"*",schema:"public",table:"champions",filter:`session_id=eq.${sid}`},scheduleRealtimeRefresh)
