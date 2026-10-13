@@ -590,13 +590,13 @@ function startRealtime(){
   state.starRealtimeChannel=db.channel(`kmt-star-events-${sid}-${today}`)
     .on("postgres_changes",{event:"*",schema:"public",table:"star_events",filter:`session_id=eq.${sid}`},scheduleRealtimeRefresh)
     .subscribe();
-  state.realtimeChannel=db.channel(`kmt-star-live-${sid}-${today}`)
+  // Keep periodic synchronization even when the realtime socket reports SUBSCRIBED.\n  // Subscription success does not guarantee that attendance changes are published.\n  startLiveFallback();\n  state.realtimeChannel=db.channel(`kmt-star-live-${sid}-${today}`)
     .on("postgres_changes",{event:"*",schema:"public",table:"attendance",filter:`attendance_date=eq.${today}`},scheduleRealtimeRefresh)
     .on("postgres_changes",{event:"*",schema:"public",table:"praise_events",filter:`session_id=eq.${sid}`},scheduleRealtimeRefresh)
     .on("postgres_changes",{event:"*",schema:"public",table:"champions",filter:`session_id=eq.${sid}`},scheduleRealtimeRefresh)
     .on("postgres_changes",{event:"*",schema:"public",table:"kmt_class_notices",filter:`class_period_id=eq.${state.period.id}`},()=>setTimeout(loadNotices,180))
     .on("postgres_changes",{event:"UPDATE",schema:"public",table:"class_sessions",filter:`id=eq.${sid}`},async()=>{await syncSessionState();scheduleRealtimeRefresh()})
-    .subscribe(status=>{if(status==="SUBSCRIBED"){if(state.livePollTimer){clearInterval(state.livePollTimer);state.livePollTimer=null;pollLiveChanges()}$("saveStatus").textContent="Supabase 자동저장 · LIVE"}else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){startLiveFallback();$("saveStatus").textContent="LIVE 재연결 중"}});
+    .subscribe(status=>{if(status==="SUBSCRIBED"){startLiveFallback();pollLiveChanges();$("saveStatus").textContent="Supabase 자동저장 · LIVE"}else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT"){startLiveFallback();$("saveStatus").textContent="LIVE 재연결 중"}});
 }
 
 function showBurst(s,c,total,newBadges=[]){
