@@ -60,4 +60,27 @@
 #photoDownloadDialog #photoDownloadResults{max-height:43vh;overflow:auto}
 #photoDownloadDialog #photoDownloadStatus{font-size:13px;white-space:normal}
 #photoDownloadDialog #photoDownloadAll{background:#194b7b;color:white;border:0;margin-top:13px}
-</style><script type="module" src="photo-download.js?v=1"></script></body></html>
+</style><script>
+(function(){
+  const button=document.getElementById("photoDownloadMenuButton");
+  const dialog=document.getElementById("photoDownloadDialog");
+  const status=document.getElementById("photoDownloadStatus");
+  if(!button||!dialog)return;
+  let initialized=false;
+  button.addEventListener("click",async function(){
+    document.getElementById("systemMenu").hidden=true;
+    document.getElementById("systemMenuButton")?.setAttribute("aria-expanded","false");
+    if(!dialog.open)dialog.showModal();
+    if(initialized)return;
+    status.textContent="사진 목록 기능을 불러오는 중입니다...";
+    try{
+      await import("./photo-download.js?v=3");
+      initialized=true;
+      button.click();
+    }catch(error){
+      console.error("[STAR PHOTO DOWNLOAD]",error);
+      status.textContent="사진 다운로드 기능을 불러오지 못했습니다. 인터넷 연결을 확인하고 새로고침해 주세요. ("+(error?.message||"로드 오류")+")";
+    }
+  });
+})();
+</script></body></html>
