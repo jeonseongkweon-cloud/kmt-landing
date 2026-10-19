@@ -174,6 +174,47 @@ async function addTrial(ev){
 }
 async function cancelTrial(id){const {data,error}=await db.from("attendance").update({status:"cancelled",checked_at:new Date().toISOString()}).eq("id",id).select().single();if(error){toast(error.message);return}const i=state.records.findIndex(r=>r.id===id);if(i>=0)state.records[i]=data;renderTrials();updateStats()}
 
+// Shared class memos use the existing client independently of attendance authentication.
+(()=>{
+  const dialog=$("classMemoDialog"),form=$("classMemoForm"),list=$("classMemoList"),message=$("classMemoMessage");
+  let editingId=null,busy=false;
+  function reset(){editingId=null;form.reset();$("classMemoDate").value=localDate();$("classMemoSave").textContent="저장"}
+  async function load(){
+    message.textContent="불러오는 중...";
+    try{
+      const {data,error}=await db.from("kmt_class_memos").select("id,memo_date,content,created_at").order("memo_date").order("created_at");
+      if(error)throw error;
+      const today=localDate();
+      const rows=(data||[]).sort((a,b)=>Number(a.memo_date<today)-Number(b.memo_date<today)||a.memo_date.localeCompare(b.memo_date)||a.created_at.localeCompare(b.created_at));
+      list.replaceChildren();
+      for(const row of rows){
+        const article=document.createElement("article"),date=document.createElement("strong"),content=document.createElement("p"),actions=document.createElement("div");
+        date.textContent=new Intl.DateTimeFormat("ko-KR",{month:"long",day:"numeric",weekday:"short"}).format(new Date(row.memo_date+"T12:00:00"));
+        content.textContent=row.content;actions.className="memo-actions";
+        for(const [label,handler] of [["수정",()=>{if(busy)return;editingId=row.id;$("classMemoDate").value=row.memo_date;$("classMemoContent").value=row.content;$("classMemoSave").textContent="수정 저장";$("classMemoContent").focus()}],["삭제",async()=>{
+          if(busy||!confirm("이 메모를 삭제할까요?"))return;
+          await mutate(()=>db.from("kmt_class_memos").delete().eq("id",row.id).select("id").single());
+        }]]){const button=document.createElement("button");button.type="button";button.textContent=label;button.onclick=handler;actions.append(button)}
+        article.append(date,content,actions);list.append(article);
+      }
+      message.textContent=rows.length?"":"등록된 메모가 없습니다.";
+    }catch(error){message.textContent="메모 조회 실패: "+error.message}
+  }
+  async function mutate(action){
+    if(busy)return;busy=true;$("classMemoSave").disabled=true;message.textContent="저장 중...";
+    try{const {error}=await action();if(error)throw error;reset();await load()}
+    catch(error){message.textContent="메모 저장 실패: "+error.message}
+    finally{busy=false;$("classMemoSave").disabled=false}
+  }
+  document.querySelectorAll("[data-class-memos]").forEach(button=>button.onclick=()=>{reset();dialog.showModal();load()});
+  $("classMemoClose").onclick=()=>dialog.close();$("classMemoReset").onclick=()=>{if(!busy)reset()};
+  form.onsubmit=event=>{
+    event.preventDefault();const content=clean($("classMemoContent").value);if(!content){message.textContent="내용을 입력해 주세요.";return}
+    const payload={memo_date:$("classMemoDate").value,content},id=editingId;
+    mutate(()=>id?db.from("kmt_class_memos").update(payload).eq("id",id).select("id").single():db.from("kmt_class_memos").insert(payload).select("id").single());
+  };
+})();
+
 $("loginButton").onclick=login;$("logoutButton").onclick=async()=>{await db.auth.signOut();location.reload()};$("viewToggle").onclick=()=>{state.attendedOnly=!state.attendedOnly;$("viewToggle").textContent=state.attendedOnly?"전체 명단 보기":"현재 도장 학생만";renderStudents()};$("trialButton").onclick=()=>{$("trialForm").reset();$("trialMessage").textContent="";$("trialDialog").showModal()};$("trialCancel").onclick=()=>$("trialDialog").close();$("trialForm").onsubmit=addTrial;
 $("attendanceVoiceRemote").onclick=toggleAttendanceVoice;
 $("attendanceSortSelect").value=state.sortMode==="name"?"name":"period";$("attendanceSortSelect").onchange=e=>{state.sortMode=e.target.value;localStorage.setItem("kmt-attendance-sort",state.sortMode);renderStudents()};

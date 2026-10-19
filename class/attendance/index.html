@@ -13,14 +13,14 @@
 <link rel="stylesheet" href="../effects/effect-manager.css?v=100"></head>
 <body>
   <section class="login-screen" id="loginScreen" hidden>
-    <div class="login-card"><img src="../../assets/icons/192로고.png" alt="계명태권도 로고"><p>CLASS v2.6.0 · AUTH RECOVERY</p><h1>오늘 수업 시작</h1><span>CLASS 관리자 로그인이 필요합니다.</span><button id="loginButton">CLASS 관리자 로그인으로 이동</button><a href="../">CLASS로 돌아가기</a><em id="loginMessage"></em></div>
+    <div class="login-card"><img src="../../assets/icons/192로고.png" alt="계명태권도 로고"><p>CLASS v2.6.0 · AUTH RECOVERY</p><h1>오늘 수업 시작</h1><span>CLASS 관리자 로그인이 필요합니다.</span><button id="loginButton">CLASS 관리자 로그인으로 이동</button><button type="button" data-class-memos>📝 수업메모</button><a href="../">CLASS로 돌아가기</a><em id="loginMessage"></em></div>
   </section>
 
   <div id="attendanceApp" hidden>
     <header class="topbar">
       <a class="brand" href="../" style="color:inherit;text-decoration:none"><img src="../../assets/icons/192로고.png" alt=""><div><strong>계명태권도 CLASS</strong><span>v2.6.0 · AUTH RECOVERY</span></div></a>
       <div class="clock"><strong id="todayLabel"></strong><span id="clockLabel"></span></div>
-      <nav><a href="../spark/">🔥 SPARK</a><a href="../sms/">문자대기</a><a href="../../dashboard/">LIVE</a><a href="../tools/">수업운영</a><a href="../star/">STAR</a><a href="../admin/">원생관리</a><a href="../">CLASS</a><button id="logoutButton">로그아웃</button></nav>
+      <nav><a href="../spark/">🔥 SPARK</a><a href="../sms/">문자대기</a><a href="../../dashboard/">LIVE</a><a href="../tools/">수업운영</a><a href="../star/">STAR</a><a href="../admin/">원생관리</a><a href="../">CLASS</a><button type="button" data-class-memos>📝 수업메모</button><button id="logoutButton">로그아웃</button></nav>
     </header>
 
     <main>
@@ -55,10 +55,29 @@
     </main>
   </div>
 
+  <style>
+    #classMemoDialog{width:min(520px,calc(100% - 24px));max-height:85dvh;box-sizing:border-box;overflow:auto;padding:20px;border:1px solid #bfd3e1;border-radius:16px;background:#fff;color:#142d42}
+    #classMemoDialog::backdrop{background:#06132199}
+    #classMemoDialog header,#classMemoDialog .memo-actions{display:flex;gap:8px;align-items:center;justify-content:space-between}
+    #classMemoDialog h2{margin:0 0 12px}#classMemoDialog label{display:block;margin:10px 0}
+    #classMemoDialog input,#classMemoDialog textarea{display:block;width:100%;box-sizing:border-box;margin-top:6px;padding:10px;border:1px solid #b7c9d7;border-radius:8px;font:inherit;background:#fff;color:#142d42}
+    #classMemoDialog textarea{min-height:84px;resize:vertical}#classMemoDialog button{padding:9px 12px;border:1px solid #b7c9d7;border-radius:8px;background:#edf6ff;color:#142d42;cursor:pointer}
+    #classMemoDialog article{border-top:1px solid #dbe5ec;padding:14px 0}#classMemoDialog article p{white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0}
+    #classMemoMessage{min-height:1.4em;color:#a32b20}
+  </style>
+  <dialog id="classMemoDialog" aria-labelledby="classMemoTitle">
+    <header><h2 id="classMemoTitle">📝 수업메모</h2><button type="button" id="classMemoClose">닫기</button></header>
+    <form id="classMemoForm">
+      <label>날짜<input type="date" id="classMemoDate" required></label>
+      <label>내용<textarea id="classMemoContent" required placeholder="예: 김나라 결석"></textarea></label>
+      <div class="memo-actions"><button type="button" id="classMemoReset">새 메모</button><button type="submit" id="classMemoSave">저장</button></div>
+    </form>
+    <p id="classMemoMessage" role="status" aria-live="polite"></p><div id="classMemoList"></div>
+  </dialog>
   <dialog id="trialDialog"><form id="trialForm"><h2>체험생 출석</h2><label>이름<input id="trialName" required maxlength="30" placeholder="체험생 이름"></label><label>메모<input id="trialNote" maxlength="100" placeholder="선택사항"></label><div><button type="button" id="trialCancel">취소</button><button type="submit">체험 출석</button></div><p id="trialMessage"></p></form></dialog>
   <div class="toast" id="toast"></div>
   <script src="attendance-config.js"></script>
-  <script type="module" src="auth-loader.js?v=3301-mobile-auth"></script>
+  <script type="module" src="auth-loader.js?v=3302-class-memos"></script>
   <script src="monthly-link.js?v=200"></script>
 <script src="../effects/effect-manager.js?v=100"></script></body>
 </html>

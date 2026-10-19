@@ -1,4 +1,4 @@
-const originalUrl = new URL('./attendance.js?v=3201', import.meta.url);
+const originalUrl = new URL('./attendance.js?v=3202-class-memos', import.meta.url);
 const source = await fetch(originalUrl, { cache: 'no-store' }).then(r => {
   if (!r.ok) throw new Error(`Attendance module load failed: ${r.status}`);
   return r.text();
