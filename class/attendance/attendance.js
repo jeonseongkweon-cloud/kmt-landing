@@ -59,7 +59,7 @@ async function boot(){
 async function loadPeriods(){
   const [pRes,sRes]=await Promise.all([
     db.from("class_periods").select("id,code,name,start_time,end_time,sort_order").eq("is_active",true).order("sort_order"),
-    db.from("students").select("id,student_code,name,photo_url,guardians(phone,sms_enabled),enrollments(class_period_id,class_label_raw,training_days,status),kmt_student_voice_aliases(id,alias,alias_key)").order("student_code")
+    db.from("students").select("id,student_code,name,photo_url,guardians(name,phone,sms_enabled),enrollments(class_period_id,class_label_raw,training_days,status),kmt_student_voice_aliases(id,alias,alias_key)").order("student_code")
   ]);
   if(pRes.error||sRes.error){toast(`자료 조회 실패: ${(pRes.error||sRes.error).message}`);return}
   state.periods=pRes.data||[];state.students=(sRes.data||[]).filter(s=>(s.enrollments?.[0]?.status||s.enrollments?.status)==="재원");
@@ -96,9 +96,19 @@ async function loadAttendance(){
   if(error){toast(error.message);return}state.records=data||[];const ids=state.records.map(r=>r.id);if(ids.length){const q=await db.from("sms_outbox").select("attendance_id,status").in("attendance_id",ids);state.smsRows=q.data||[]}else state.smsRows=[];renderStudents();renderTrials();updateStats();
 }
 
-function visibleStudents(){const list=sortedStudents();return state.attendedOnly?list.filter(s=>["present","late"].includes(recordFor(s.id)?.status)&&!recordFor(s.id)?.checked_out_at):list}
+function parentNameKey(value){return clean(value).normalize("NFKC").replace(/\s/g,"").toLocaleLowerCase("ko")}
+function matchesParent(student,query){return (student.guardians||[]).some(g=>parentNameKey(g.name).includes(query))}
+function visibleStudents(){const list=sortedStudents(),query=parentNameKey($("parentNameSearch").value);if(query)return list.filter(s=>matchesParent(s,query));return state.attendedOnly?list.filter(s=>["present","late"].includes(recordFor(s.id)?.status)&&!recordFor(s.id)?.checked_out_at):list}
+function renderParentResults(students){
+  const results=$("parentSearchResults"),query=parentNameKey($("parentNameSearch").value);results.replaceChildren();results.hidden=!query;if(!query)return;
+  const label=document.createElement("span");label.textContent=students.length?`학생 ${students.length}명`:"검색 결과가 없습니다.";results.append(label);
+  students.forEach(student=>{const button=document.createElement("button");button.type="button";button.textContent=student.name;button.onclick=()=>{
+    const card=[...$("studentGrid").children].find(el=>el.dataset.student===student.id);if(!card)return;
+    document.querySelectorAll(".parent-search-highlight").forEach(el=>el.classList.remove("parent-search-highlight"));card.classList.add("parent-search-highlight");card.scrollIntoView({behavior:"smooth",block:"center"});results.hidden=true;setTimeout(()=>card.classList.remove("parent-search-highlight"),2500);
+  };results.append(button)});
+}
 function renderStudents(){
-  const grid=$("studentGrid");grid.innerHTML="";const list=visibleStudents();$("emptyMessage").hidden=list.length>0;
+  const grid=$("studentGrid");grid.innerHTML="";const list=visibleStudents();$("emptyMessage").hidden=list.length>0;renderParentResults(list);
   list.forEach(s=>{const r=recordFor(s.id),status=displayStatus(r);const card=document.createElement("article");card.className="student-card";card.dataset.status=status||"waiting";card.dataset.student=s.id;const photo=clean(s.photo_url),days=trainingDaysText(s);card.innerHTML=`<button class="student-main" data-action="present">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="">`:`<div class="photo photo-fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<strong>${escapeHtml(s.name)}</strong>${days?`<span>${escapeHtml(days)}</span>`:""}<span class="status-pill">${status?statusText[status]:"미처리"}${r&&status?` · ${localTime(status==="checked_out"?r.checked_out_at:r.checked_at)}`:""}</span></button><div class="quick-actions"><button class="p" data-action="present">출석</button><button class="o" data-action="checked_out">귀가</button><button class="a" data-action="absent">결석</button><button class="w" data-action="cancelled">미선택</button></div>`;
     if(r&&["present","late"].includes(status)){const sms=document.createElement("small");sms.className="sms-state";sms.textContent=smsLabel(smsFor(r.id));card.querySelector(".student-main").appendChild(sms)}card.querySelectorAll("[data-action]").forEach(btn=>btn.onclick=()=>markStudent(s,btn.dataset.action));grid.appendChild(card)});
 }
@@ -215,6 +225,9 @@ async function cancelTrial(id){const {data,error}=await db.from("attendance").up
   };
 })();
 
+$("parentNameSearch").oninput=renderStudents;
+$("parentNameSearch").onfocus=()=>renderParentResults(visibleStudents());
+$("parentNameSearch").onkeydown=event=>{if(event.key==="Escape")$("parentSearchResults").hidden=true};
 $("loginButton").onclick=login;$("logoutButton").onclick=async()=>{await db.auth.signOut();location.reload()};$("viewToggle").onclick=()=>{state.attendedOnly=!state.attendedOnly;$("viewToggle").textContent=state.attendedOnly?"전체 명단 보기":"현재 도장 학생만";renderStudents()};$("trialButton").onclick=()=>{$("trialForm").reset();$("trialMessage").textContent="";$("trialDialog").showModal()};$("trialCancel").onclick=()=>$("trialDialog").close();$("trialForm").onsubmit=addTrial;
 $("attendanceVoiceRemote").onclick=toggleAttendanceVoice;
 $("attendanceSortSelect").value=state.sortMode==="name"?"name":"period";$("attendanceSortSelect").onchange=e=>{state.sortMode=e.target.value;localStorage.setItem("kmt-attendance-sort",state.sortMode);renderStudents()};
