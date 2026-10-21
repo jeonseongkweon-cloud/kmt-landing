@@ -97,12 +97,18 @@ async function loadAttendance(){
 }
 
 function parentNameKey(value){return clean(value).normalize("NFKC").replace(/\s/g,"").toLocaleLowerCase("ko")}
-function matchesParent(student,query){return (student.guardians||[]).some(g=>parentNameKey(g.name).includes(query))}
+function matchesParentName(name,query){
+  const normalized=parentNameKey(name);
+  if(!query.includes("*"))return normalized.includes(query);
+  const pattern=Array.from(query),letters=Array.from(normalized);
+  return letters.length===pattern.length&&pattern.every((letter,index)=>letter==="*"||letter===letters[index]);
+}
+function matchesParent(student,query){return (student.guardians||[]).some(g=>matchesParentName(g.name,query))}
 function visibleStudents(){const list=sortedStudents(),query=parentNameKey($("parentNameSearch").value);if(query)return list.filter(s=>matchesParent(s,query));return state.attendedOnly?list.filter(s=>["present","late"].includes(recordFor(s.id)?.status)&&!recordFor(s.id)?.checked_out_at):list}
 function renderParentResults(students){
   const results=$("parentSearchResults"),query=parentNameKey($("parentNameSearch").value);results.replaceChildren();results.hidden=!query;if(!query)return;
   const label=document.createElement("span");label.textContent=students.length?`학생 ${students.length}명`:"검색 결과가 없습니다.";results.append(label);
-  students.forEach(student=>{const button=document.createElement("button");button.type="button";button.textContent=student.name;button.onclick=()=>{
+  students.forEach(student=>{const button=document.createElement("button");button.type="button";button.textContent=`${(student.guardians||[]).filter(g=>matchesParentName(g.name,query)).map(g=>clean(g.name)).join(", ")} → ${student.name}`;button.onclick=()=>{
     const card=[...$("studentGrid").children].find(el=>el.dataset.student===student.id);if(!card)return;
     document.querySelectorAll(".parent-search-highlight").forEach(el=>el.classList.remove("parent-search-highlight"));card.classList.add("parent-search-highlight");card.scrollIntoView({behavior:"smooth",block:"center"});results.hidden=true;setTimeout(()=>card.classList.remove("parent-search-highlight"),2500);
   };results.append(button)});
