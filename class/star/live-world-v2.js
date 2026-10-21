@@ -66,7 +66,7 @@
 @keyframes lwv2Crown{0%,100%{transform:translateY(0) scale(1)}35%{transform:translateY(-10px) scale(1.18);filter:drop-shadow(0 0 12px #fff1a1)}65%{transform:translateY(-4px) rotate(5deg)}}@keyframes lwv2GoldDust{0%{opacity:0;transform:scale(.4)}35%{opacity:1;transform:translateY(8px) scale(1.3)}100%{opacity:0;transform:translateY(58px) rotate(35deg)}}
 @keyframes lwv2Search{0%,100%{opacity:0;transform:scale(.7)}30%,72%{opacity:1;transform:scale(1)}}@keyframes lwv2Particle{0%{opacity:0;transform:translateY(-12px) scale(.5)}28%{opacity:1;transform:scale(1.25)}100%{opacity:0;transform:translateY(62px) rotate(50deg)}}
 @keyframes lwv2Peek{0%,100%{transform:translateX(125%);opacity:0}18%,78%{transform:translateX(0);opacity:1}}@keyframes lwv2OverlayIn{from{opacity:0}to{opacity:1}}@keyframes lwv2Milestone{from{opacity:0;transform:scale(.55)}70%{transform:scale(1.06)}to{transform:scale(1)}}
-@media(max-width:760px){.lwv2-drone{font-size:42px;width:90px;height:64px}.lwv2-drone::after{top:55px;font-size:9px}.lwv2-sky{font-size:32px}.lwv2-peek{width:min(180px,65vw)}.lwv2-peek img{height:125px}.lwv2-overlay-card{padding:14px;width:92vw}}
+@media(max-width:760px){.lwv2-drone,.lwv2-sky,.lwv2-peek,.lwv2-overlay,.lwv2-searchlight,.lwv2-particle{display:none!important}}
 @media(prefers-reduced-motion:reduce){#starScreen .student h2::after,#starScreen .student .star-item::after,#starScreen .student .photo{animation:none!important}}
 `;
     document.head.appendChild(style);
