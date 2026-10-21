@@ -38,6 +38,60 @@ function luckyAudioContext(){
 function luckyTone(frequency,duration=.14,delay=0){
   try{const c=luckyAudioContext();if(!c||c.state!=="running")return;const t=c.currentTime+delay,o=c.createOscillator(),g=c.createGain();o.type="triangle";o.frequency.setValueAtTime(frequency,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.16,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+duration);o.connect(g).connect(c.destination);o.start(t);o.stop(t+duration+.02)}catch{}
 }
+let luckyCelebrationTimer=null,luckyCelebrationNodes=[],luckyPausedMedia=[];
+function stopLuckyCelebration(){
+  clearTimeout(luckyCelebrationTimer);luckyCelebrationTimer=null;
+  document.getElementById("luckyCelebration")?.remove();
+  luckyCelebrationNodes.forEach(node=>{try{node.stop()}catch{}});luckyCelebrationNodes=[];
+  luckyPausedMedia.forEach(({player,src})=>{if(player.paused&&player.currentSrc===src){try{player.play()?.catch(()=>{})}catch{}}});luckyPausedMedia=[];
+}
+function playLuckyCelebration(){
+  stopLuckyCelebration();
+  const overlay=$("luckyBurstOverlay");if(!overlay)return;
+  if(!$("luckyCelebrationStyle")){
+    const style=document.createElement("style");style.id="luckyCelebrationStyle";style.textContent=`
+    #luckyBurstOverlay .lucky-burst-card{z-index:1}
+    #luckyCelebration{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+    #luckyCelebration i{position:absolute;display:block;font-style:normal;opacity:0;will-change:transform,opacity;animation:luckyFirework 4.6s var(--delay) ease-out forwards}
+    #luckyCelebration .lucky-spark{width:7px;height:14px;border-radius:2px;background:var(--color);box-shadow:0 0 8px var(--color)}
+    #luckyCelebration .lucky-gold-star{font-size:22px;color:#ffd54a;text-shadow:0 0 10px #ffe17a}
+    @keyframes luckyFirework{0%{transform:translate(0,0) scale(.1);opacity:0}8%{opacity:1}28%{transform:translate(var(--tx),var(--ty)) rotate(110deg) scale(1);opacity:1}80%{opacity:.8}100%{transform:translate(var(--tx),calc(var(--ty) + 75vh)) rotate(620deg) scale(.6);opacity:0}}
+    @media(prefers-reduced-motion:reduce){#luckyCelebration i{animation-name:luckyFireworkFade} @keyframes luckyFireworkFade{10%,70%{opacity:.8}100%{opacity:0}}}`;
+    document.head.appendChild(style);
+  }
+  const layer=document.createElement("div");layer.id="luckyCelebration";layer.setAttribute("aria-hidden","true");
+  const colors=["#ffd54a","#ff638d","#51d9ff","#a78bfa","#6aef9b","#ffffff"];
+  const width=overlay.clientWidth||window.innerWidth,height=overlay.clientHeight||window.innerHeight;
+  // Three edge bursts keep the student's central portrait and name in front.
+  [[8,38],[92,38],[50,6]].forEach(([x,y],burst)=>{
+    for(let i=0;i<28;i++){
+      const particle=document.createElement("i"),angle=i/28*Math.PI*2,radius=.12+Math.random()*.16;
+      particle.className=i%5===0?"lucky-gold-star":"lucky-spark";
+      if(i%5===0)particle.textContent="★";
+      particle.style.cssText=`left:${x}%;top:${y}%;--tx:${Math.cos(angle)*width*radius}px;--ty:${Math.sin(angle)*height*radius}px;--delay:${burst*.12}s;--color:${colors[i%colors.length]}`;
+      layer.appendChild(particle);
+    }
+  });
+  overlay.appendChild(layer);
+  try{
+    const docs=[document];if(window.parent!==window)docs.push(window.parent.document);
+    docs.forEach(doc=>doc.querySelectorAll("#audioPlayer,#videoPlayer").forEach(player=>{
+      if(!player.paused&&!player.ended){luckyPausedMedia.push({player,src:player.currentSrc});player.pause()}
+    }));
+    const c=luckyAudioContext();
+    if(c&&c.state==="running"){
+      const t=c.currentTime;
+      // A 4.2 second brass-like victory phrase, scheduled once with finite stops.
+      [[523,0,.22],[523,.25,.22],[523,.5,.22],[698,.78,.48],[659,1.3,.22],[698,1.55,.22],[784,1.82,.5],[1047,2.4,1.75],[784,2.4,1.75],[659,2.4,1.75]].forEach(([frequency,delay,duration])=>{
+        const o=c.createOscillator(),gain=c.createGain();o.type="triangle";o.frequency.setValueAtTime(frequency,t+delay);
+        gain.gain.setValueAtTime(.0001,t+delay);gain.gain.exponentialRampToValueAtTime(.11,t+delay+.035);gain.gain.exponentialRampToValueAtTime(.0001,t+delay+duration);
+        o.connect(gain).connect(c.destination);o.onended=()=>{o.disconnect();gain.disconnect()};o.start(t+delay);o.stop(t+delay+duration+.025);luckyCelebrationNodes.push(o);
+      });
+    }
+  }catch(error){console.warn("[LUCKY CELEBRATION]",error)}
+  luckyCelebrationTimer=setTimeout(stopLuckyCelebration,5000);
+}
+
 async function luckyIntro(){
   // One short suspense phrase; no external audio download or loop.
   [196,196,233,220,196,246,293,311].forEach((f,i)=>luckyTone(f,.30,i*.35));
@@ -64,7 +118,7 @@ function ensureLuckyOverlay(){
   o.innerHTML=`<div class="lucky-burst-card"><i class="lucky-star ls1">⭐</i><i class="lucky-star ls2">⭐</i><i class="lucky-star ls3">⭐</i><i class="lucky-star ls4">⭐</i><div id="luckyCountdown" hidden aria-live="assertive"></div><div id="luckyGift" hidden aria-label="선물 상자">🎁</div><div id="luckyPhotoWrap" class="lucky-photo-wrap" hidden><div id="luckyPhotoFallback" class="lucky-photo-fallback">🍀</div></div><strong id="luckyBurstName" class="lucky-burst-name"></strong><b class="lucky-star-award" hidden>⭐ +1</b><p id="luckyStatus" role="status"></p><div class="burst-controls"><button type="button" id="luckyNext" class="burst-next" hidden>두 번째 행운아 뽑기</button><button type="button" id="luckyClose" class="burst-clear">닫기</button></div></div>`;
   document.body.appendChild(o);$("luckyNext").onclick=revealLucky;$("luckyClose").onclick=clearLuckyResult;return o;
 }
-function clearLuckyResult(){if(luckyBusy)return;const o=$("luckyBurstOverlay");if(o){o.hidden=true;o.classList.remove("burst")}setLuckyReady(true)}
+function clearLuckyResult(){if(luckyBusy)return;stopLuckyCelebration();const o=$("luckyBurstOverlay");if(o){o.hidden=true;o.classList.remove("burst")}setLuckyReady(true)}
 function armLucky(){setLuckyReady(true);const count=roster().length;$("gameStage").innerHTML=`<div class="lucky-ready-panel"><div class="lucky-ready-light">● READY</div><h2>🍀 오늘의 행운아</h2><p>오늘 출석한 ${count}명 중 한 명을 무작위로 뽑습니다. 하루 2회, 한 명당 별 1개!</p><button id="gameGo" class="lucky-go">행운아 뽑기 ⭐ +1</button></div>`;$("gameGo").onclick=revealLucky}
 async function awardLuckyStars(student,day,round){
   const {data:category,error:catError}=await db.from("star_categories").select("id,name,code").eq("is_active",true).order("sort_order").limit(1).maybeSingle();
@@ -86,7 +140,7 @@ function showLuckyWinner(event){
 }
 async function revealLucky(){
   if(luckyBusy||!state.session)return;
-  luckyBusy=true;luckyAudioContext();const o=ensureLuckyOverlay();o.hidden=false;o.classList.remove("burst");
+  luckyBusy=true;stopLuckyCelebration();luckyAudioContext();const o=ensureLuckyOverlay();o.hidden=false;o.classList.remove("burst");
   $("luckyNext").hidden=true;$("luckyClose").disabled=true;$("luckyPhotoWrap").hidden=true;o.querySelector(".lucky-star-award").hidden=true;$("luckyBurstName").textContent="";$("luckyCountdown").hidden=true;$("luckyGift").hidden=true;$("luckyGift").classList.remove("opening");$("luckyStatus").textContent="오늘의 추첨 기록 확인 중…";
   const day=date();
   try{
@@ -113,7 +167,7 @@ async function revealLucky(){
       $("luckyStatus").textContent="별 1개 저장 중…";result=await awardLuckyStars(student,day,round);
     }
     showLuckyWinner(result.event);
-    [523,659,784,1047].forEach((f,i)=>luckyTone(f,.35,i*.12));
+    if(result.inserted)playLuckyCelebration();
     history=await luckyHistory(day);
     $("luckyStatus").textContent=history.length>=2?"오늘의 추첨 완료":result.inserted?"축하합니다! 별 1개 지급 완료":"이미 완료된 추첨입니다. 추가 지급하지 않았습니다.";
     $("luckyNext").hidden=history.length>=2;
