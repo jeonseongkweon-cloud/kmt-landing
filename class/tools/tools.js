@@ -26,12 +26,6 @@ async function createDefaultTeams(){const{data,error}=await db.from("team_scores
 function luckyMenuButton(){return document.querySelector('[data-game="pick"]')}
 function setLuckyReady(on){luckyReady=!!on;const b=luckyMenuButton();if(!b)return;b.classList.toggle("game-ready",luckyReady);b.textContent=luckyReady?"🟢 오늘의 행운아 준비!":"🍀 오늘의 행운아"}
 const luckyWait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
-function luckyEventId(day,round){return `6b6d7400-0000-4000-8000-${day.replace(/-/g,"")}000${round}`}
-async function luckyHistory(day){
-  const {data,error}=await db.from("star_events").select("id,student_id,note").in("id",[luckyEventId(day,1),luckyEventId(day,2)]);
-  if(error)throw error;
-  return data||[];
-}
 function luckyAudioContext(){
   try{const host=window.parent;const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;const c=host.__kmtLuckyAudio||(host.__kmtLuckyAudio=new C());if(c.state==="suspended")c.resume().catch(()=>{});return c}catch{return null}
 }
@@ -115,19 +109,20 @@ function ensureLuckyOverlay(){
   @media(max-width:640px){#luckyBurstOverlay .lucky-photo-wrap{width:min(65vw,40dvh);height:min(65vw,40dvh)}}`;
   document.head.appendChild(style);
   o=document.createElement("div");o.id="luckyBurstOverlay";o.className="lucky-burst-overlay";o.hidden=true;
-  o.innerHTML=`<div class="lucky-burst-card"><i class="lucky-star ls1">⭐</i><i class="lucky-star ls2">⭐</i><i class="lucky-star ls3">⭐</i><i class="lucky-star ls4">⭐</i><div id="luckyCountdown" hidden aria-live="assertive"></div><div id="luckyGift" hidden aria-label="선물 상자">🎁</div><div id="luckyPhotoWrap" class="lucky-photo-wrap" hidden><div id="luckyPhotoFallback" class="lucky-photo-fallback">🍀</div></div><strong id="luckyBurstName" class="lucky-burst-name"></strong><b class="lucky-star-award" hidden>⭐ +1</b><p id="luckyStatus" role="status"></p><div class="burst-controls"><button type="button" id="luckyNext" class="burst-next" hidden>두 번째 행운아 뽑기</button><button type="button" id="luckyClose" class="burst-clear">닫기</button></div></div>`;
+  o.innerHTML=`<div class="lucky-burst-card"><i class="lucky-star ls1">⭐</i><i class="lucky-star ls2">⭐</i><i class="lucky-star ls3">⭐</i><i class="lucky-star ls4">⭐</i><div id="luckyCountdown" hidden aria-live="assertive"></div><div id="luckyGift" hidden aria-label="선물 상자">🎁</div><div id="luckyPhotoWrap" class="lucky-photo-wrap" hidden><div id="luckyPhotoFallback" class="lucky-photo-fallback">🍀</div></div><strong id="luckyBurstName" class="lucky-burst-name"></strong><b class="lucky-star-award" hidden>⭐ +1</b><p id="luckyStatus" role="status"></p><div class="burst-controls"><button type="button" id="luckyNext" class="burst-next" hidden>🎁 다시 뽑기</button><button type="button" id="luckyClose" class="burst-clear">닫기</button></div></div>`;
   document.body.appendChild(o);$("luckyNext").onclick=revealLucky;$("luckyClose").onclick=clearLuckyResult;return o;
 }
 function clearLuckyResult(){if(luckyBusy)return;stopLuckyCelebration();const o=$("luckyBurstOverlay");if(o){o.hidden=true;o.classList.remove("burst")}setLuckyReady(true)}
-function armLucky(){setLuckyReady(true);const count=roster().length;$("gameStage").innerHTML=`<div class="lucky-ready-panel"><div class="lucky-ready-light">● READY</div><h2>🍀 오늘의 행운아</h2><p>오늘 출석한 ${count}명 중 한 명을 무작위로 뽑습니다. 하루 2회, 한 명당 별 1개!</p><button id="gameGo" class="lucky-go">행운아 뽑기 ⭐ +1</button></div>`;$("gameGo").onclick=revealLucky}
-async function awardLuckyStars(student,day,round){
+function armLucky(){setLuckyReady(true);const count=roster().length;$("gameStage").innerHTML=`<div class="lucky-ready-panel"><div class="lucky-ready-light">● READY</div><h2>🍀 오늘의 행운아</h2><p>오늘 출석한 ${count}명 중 한 명을 무작위로 뽑습니다. 횟수 제한 없이, 추첨마다 별 1개!</p><button id="gameGo" class="lucky-go">행운아 뽑기 ⭐ +1</button></div>`;$("gameGo").onclick=revealLucky}
+async function awardLuckyStars(student,day,drawId){
   const {data:category,error:catError}=await db.from("star_categories").select("id,name,code").eq("is_active",true).order("sort_order").limit(1).maybeSingle();
   if(catError||!category?.id)throw catError||new Error("STAR 카테고리를 찾지 못했습니다.");
-  const id=luckyEventId(day,round);
-  const {data,error}=await db.from("star_events").insert({id,session_id:state.session.id,student_id:student.id,category_id:category.id,amount:1,note:`kmt-lucky:${day}:${round}`}).select("id,student_id,note").single();
+  const id=drawId;
+  const {data,error}=await db.from("star_events").insert({id,session_id:state.session.id,student_id:student.id,category_id:category.id,amount:1,note:`kmt-lucky:${day}:${drawId}`}).select("id,student_id,note").single();
   if(!error&&data)return {event:data,inserted:true};
   // Resolve duplicate-key races and ambiguous network failures from the DB itself.
-  const history=await luckyHistory(day),existing=history.find(e=>e.id===id);
+  const {data:existing,error:readError}=await db.from("star_events").select("id,student_id,note").eq("id",id).maybeSingle();
+  if(readError)throw readError;
   if(existing)return {event:existing,inserted:false};
   throw error||new Error("별 저장을 확인하지 못했습니다.");
 }
@@ -141,36 +136,26 @@ function showLuckyWinner(event){
 async function revealLucky(){
   if(luckyBusy||!state.session)return;
   luckyBusy=true;stopLuckyCelebration();luckyAudioContext();const o=ensureLuckyOverlay();o.hidden=false;o.classList.remove("burst");
-  $("luckyNext").hidden=true;$("luckyClose").disabled=true;$("luckyPhotoWrap").hidden=true;o.querySelector(".lucky-star-award").hidden=true;$("luckyBurstName").textContent="";$("luckyCountdown").hidden=true;$("luckyGift").hidden=true;$("luckyGift").classList.remove("opening");$("luckyStatus").textContent="오늘의 추첨 기록 확인 중…";
+  $("luckyNext").hidden=true;$("luckyClose").disabled=true;$("luckyPhotoWrap").hidden=true;o.querySelector(".lucky-star-award").hidden=true;$("luckyBurstName").textContent="";$("luckyCountdown").hidden=true;$("luckyGift").hidden=true;$("luckyGift").classList.remove("opening");$("luckyStatus").textContent="추첨 준비 중…";
   const day=date();
   try{
     if(state.session.session_date!==day)throw new Error("날짜가 바뀌었습니다. 새로고침 후 다시 진행해 주세요.");
-    let history=await luckyHistory(day);
-    if(history.length>=2){$("luckyStatus").textContent="오늘의 추첨 완료";return}
-    const round=history.some(e=>e.id===luckyEventId(day,1))?2:1;
-    const candidates=roster().filter(s=>!history.some(e=>e.student_id===s.id));
+    const drawId=crypto.randomUUID(),candidates=roster();
     if(!candidates.length)throw new Error("추첨 가능한 출석 학생이 없습니다.");
     $("luckyStatus").textContent="🍀 오늘의 행운아는 누구일까요?";await luckyIntro();
     $("luckyStatus").textContent="";const countdown=$("luckyCountdown");countdown.hidden=false;
     for(let n=5;n>=1;n--){countdown.textContent=n;countdown.style.animation="none";void countdown.offsetWidth;countdown.style.animation="";luckyTone(660,.12);await luckyWait(1000)}
     countdown.hidden=true;$("luckyGift").hidden=false;$("luckyGift").classList.add("opening");await luckyWait(1100);$("luckyGift").hidden=true;
-    // Re-read after the animation in case another screen completed this round.
-    history=await luckyHistory(day);
-    const existing=history.find(e=>e.id===luckyEventId(day,round));
-    let result;
-    if(existing)result={event:existing,inserted:false};
-    else{
-      const available=roster().filter(s=>!history.some(e=>e.student_id===s.id));
-      if(!available.length)throw new Error("추첨 가능한 출석 학생이 없습니다.");
-      if(date()!==day)throw new Error("날짜가 바뀌었습니다. 새로고침 후 다시 진행해 주세요.");
-      const student=available[Math.floor(Math.random()*available.length)];
-      $("luckyStatus").textContent="별 1개 저장 중…";result=await awardLuckyStars(student,day,round);
-    }
+    const available=roster();
+    if(!available.length)throw new Error("추첨 가능한 출석 학생이 없습니다.");
+    if(date()!==day)throw new Error("날짜가 바뀌었습니다. 새로고침 후 다시 진행해 주세요.");
+    const student=available[Math.floor(Math.random()*available.length)];
+    $("luckyStatus").textContent="별 1개 저장 중…";
+    const result=await awardLuckyStars(student,day,drawId);
     showLuckyWinner(result.event);
-    if(result.inserted)playLuckyCelebration();
-    history=await luckyHistory(day);
-    $("luckyStatus").textContent=history.length>=2?"오늘의 추첨 완료":result.inserted?"축하합니다! 별 1개 지급 완료":"이미 완료된 추첨입니다. 추가 지급하지 않았습니다.";
-    $("luckyNext").hidden=history.length>=2;
+    playLuckyCelebration();
+    $("luckyStatus").textContent=result.inserted?"축하합니다! 별 1개 지급 완료":"이미 완료된 추첨입니다. 추가 지급하지 않았습니다.";
+    $("luckyNext").hidden=false;
   }catch(error){
     $("luckyCountdown").hidden=true;$("luckyGift").hidden=true;
     $("luckyStatus").textContent=`추첨을 완료하지 못했습니다. ${error.message||"저장 상태를 확인해 주세요."}`;
@@ -239,3 +224,4 @@ async function uploadMediaFile(fd){
 $("mediaAdd").onclick=()=>dialog("URL 미디어 등록",`<input name="title" maxlength="100" placeholder="제목" required><select name="media_type"><option value="audio">MP3·음악</option><option value="video">MP4·영상</option></select><input name="category" value="기타" placeholder="분류"><input name="media_url" type="url" placeholder="https://..." required>`,async fd=>{const{data,error}=await db.from("media_library").insert(Object.fromEntries(fd)).select().single();if(error){toast(error.message);return false}state.media.push(data);renderMedia()});
 async function deleteMedia(id){const media=state.media.find(x=>x.id===id);if(!media||!confirm(`“${media.title}”을(를) 삭제할까요?`))return;const{error}=await db.from("media_library").update({is_active:false}).eq("id",id);if(error){toast(error.message);return}const path=managedMediaPath(media.media_url);if(path){const removed=await db.storage.from(MEDIA_BUCKET).remove([path]);if(removed.error){await db.from("media_library").update({is_active:true}).eq("id",id);toast(`파일 삭제 실패: ${removed.error.message}`);return}}state.media=state.media.filter(x=>x.id!==id);renderMedia();toast("미디어를 삭제했습니다.")}
 function dialog(title,fields,action){$("dialogTitle").textContent=title;$("dialogFields").innerHTML=fields;state.dialogAction=action;$("simpleDialog").showModal()}$("simpleForm").onsubmit=async e=>{e.preventDefault();const ok=await state.dialogAction(new FormData(e.target));if(ok!==false){$("simpleDialog").close();e.target.reset()}};$("simpleDialog").querySelector(".close").onclick=()=>$("simpleDialog").close();$("backButton").onclick=()=>{stopRealtime();location.href="../star/"};$("loginButton").onclick=login;$("logoutButton").onclick=async()=>{await db.auth.signOut();location.reload()};["pointerdown","touchstart","keydown"].forEach(type=>document.addEventListener(type,primeTeamLeaderAudio,{once:true,passive:true}));db.auth.onAuthStateChange((_e,s)=>{if(s&&$("app").hidden)setTimeout(boot,0)});boot();
+
