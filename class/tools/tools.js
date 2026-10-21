@@ -113,10 +113,29 @@ function ensureLuckyOverlay(){
   document.body.appendChild(o);$("luckyNext").onclick=revealLucky;$("luckyClose").onclick=clearLuckyResult;return o;
 }
 function clearLuckyResult(){if(luckyBusy)return;stopLuckyCelebration();const o=$("luckyBurstOverlay");if(o){o.hidden=true;o.classList.remove("burst")}setLuckyReady(true)}
-function luckyRoster(){
+function luckyRoster(attendance,day){
+  const latest=new Map();
+  for(const row of attendance){
+    if(row.attendance_date!==day||!row.student_id)continue;
+    const previous=latest.get(row.student_id);
+    const checked=Date.parse(row.checked_at)||0,previousChecked=previous?(Date.parse(previous.checked_at)||0):-1;
+    const changed=Date.parse(row.updated_at||row.checked_at||row.created_at)||0;
+    const previousChanged=previous?(Date.parse(previous.updated_at||previous.checked_at||previous.created_at)||0):-1;
+    if(!previous||checked>previousChecked||(checked===previousChecked&&changed>=previousChanged))latest.set(row.student_id,row);
+  }
+  const present=new Set([...latest.values()].filter(row=>["present","late"].includes(row.status)&&row.checked_out_at==null&&Number.isFinite(Date.parse(row.checked_at))).map(row=>row.student_id));
   const period=state.period;
-  const integrated=!period||["OTHER","ETC"].includes(String(period.code||"").toUpperCase())||/기타|통합/.test(period.name||"");
-  return roster().filter(student=>integrated||enrollment(student).class_period_id===period.id);
+  if(!period)return [];
+  const integrated=["OTHER","ETC"].includes(String(period.code||"").toUpperCase())||/기타|통합/.test(period.name||"");
+  return state.students.filter(student=>present.has(student.id)&&(integrated||enrollment(student).class_period_id===period.id));
+}
+async function refreshLuckyRoster(day){
+  const rows=[];
+  for(let offset=0;;offset+=1000){
+    const {data,error}=await db.from("attendance").select("id,student_id,attendance_date,status,checked_at,checked_out_at,updated_at,created_at").eq("attendance_date",day).order("updated_at").order("id").range(offset,offset+999);
+    if(error)throw new Error(`출석 정보를 조회하지 못했습니다. ${error.message||"잠시 후 다시 시도해 주세요."}`);
+    rows.push(...(data||[]));if((data||[]).length<1000)return luckyRoster(rows,day);
+  }
 }
 async function luckyHistory(){
   const rows=[];
@@ -145,11 +164,14 @@ async function luckyDailyId(day,studentId){
   const hex=Array.from(bytes,b=>b.toString(16).padStart(2,"0")).join("");
   return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
 }
-function armLucky(){setLuckyReady(true);const count=luckyRoster().length;$("gameStage").innerHTML=`<div class="lucky-ready-panel"><div class="lucky-ready-light">● READY</div><h2>🍀 오늘의 행운아</h2><p>오늘 출석한 ${count}명 중 한 명을 무작위로 뽑습니다. 미당첨·적게 당첨된 학생 우선, 하루 학생당 1회!</p><button id="gameGo" class="lucky-go">행운아 뽑기 ⭐ +1</button></div>`;$("gameGo").onclick=revealLucky}
+function armLucky(){setLuckyReady(true);$("gameStage").innerHTML=`<div class="lucky-ready-panel"><div class="lucky-ready-light">● READY</div><h2>🍀 오늘의 행운아</h2><p>현재 출석 중인 학생의 출석 상태를 확인하여 추첨합니다. 미당첨·적게 당첨된 학생 우선, 하루 학생당 1회!</p><button id="gameGo" class="lucky-go">행운아 뽑기 ⭐ +1</button></div>`;$("gameGo").onclick=revealLucky}
 async function awardLuckyStars(student,day,drawId){
   const {data:category,error:catError}=await db.from("star_categories").select("id,name,code").eq("is_active",true).order("sort_order").limit(1).maybeSingle();
   if(catError||!category?.id)throw catError||new Error("STAR 카테고리를 찾지 못했습니다.");
   const id=await luckyDailyId(day,student.id);
+  if(date()!==day||state.session.session_date!==day)throw new Error("날짜가 바뀌었습니다. 새로고침 후 다시 진행해 주세요.");
+  // Revalidate after category/ID loading, immediately before the STAR write.
+  if(!(await refreshLuckyRoster(day)).some(candidate=>candidate.id===student.id))return {retry:true};
   const {data,error}=await db.from("star_events").insert({id,session_id:state.session.id,student_id:student.id,category_id:category.id,amount:1,note:`kmt-lucky:${day}:${drawId}`}).select("id,student_id,note").single();
   if(!error&&data)return {event:data,inserted:true};
   // Resolve duplicate-key races and ambiguous network failures from the DB itself.
@@ -175,25 +197,35 @@ async function revealLucky(){
   const day=date();
   try{
     if(state.session.session_date!==day)throw new Error("날짜가 바뀌었습니다. 새로고침 후 다시 진행해 주세요.");
-    const drawId=crypto.randomUUID(),candidates=luckyFairPool(luckyRoster(),await luckyHistory(),day);
+    const drawId=crypto.randomUUID(),present=await refreshLuckyRoster(day);
+    if(!present.length)throw new Error("현재 출석한 학생이 없습니다");
+    const candidates=luckyFairPool(present,await luckyHistory(),day);
     if(!candidates.length)throw new Error("오늘 추첨 가능한 학생이 없습니다");
     $("luckyStatus").textContent="🍀 오늘의 행운아는 누구일까요?";await luckyIntro();
     $("luckyStatus").textContent="";const countdown=$("luckyCountdown");countdown.hidden=false;
     for(let n=5;n>=1;n--){countdown.textContent=n;countdown.style.animation="none";void countdown.offsetWidth;countdown.style.animation="";luckyTone(660,.12);await luckyWait(1000)}
     countdown.hidden=true;$("luckyGift").hidden=false;$("luckyGift").classList.add("opening");await luckyWait(1100);$("luckyGift").hidden=true;
-    const available=luckyFairPool(luckyRoster(),await luckyHistory(),day);
-    if(!available.length)throw new Error("오늘 추첨 가능한 학생이 없습니다");
-    if(date()!==day)throw new Error("날짜가 바뀌었습니다. 새로고침 후 다시 진행해 주세요.");
-    const student=available[Math.floor(Math.random()*available.length)];
-    $("luckyStatus").textContent="별 1개 저장 중…";
-    const result=await awardLuckyStars(student,day,drawId);
+    let result;
+    const changedStudents=new Set();
+    while(!result){
+      const present=(await refreshLuckyRoster(day)).filter(student=>!changedStudents.has(student.id));
+      if(!present.length)throw new Error("현재 출석한 학생이 없습니다");
+      const available=luckyFairPool(present,await luckyHistory(),day);
+      if(!available.length)throw new Error("오늘 추첨 가능한 학생이 없습니다");
+      if(date()!==day)throw new Error("날짜가 바뀌었습니다. 새로고침 후 다시 진행해 주세요.");
+      const student=available[Math.floor(Math.random()*available.length)];
+      $("luckyStatus").textContent="출석 확인 및 별 1개 저장 중…";
+      const saved=await awardLuckyStars(student,day,drawId);
+      if(saved.retry){changedStudents.add(student.id);continue}
+      result=saved;
+    }
     showLuckyWinner(result.event);
     playLuckyCelebration();
     $("luckyStatus").textContent=result.inserted?"축하합니다! 별 1개 지급 완료":"이미 완료된 추첨입니다. 추가 지급하지 않았습니다.";
     $("luckyNext").hidden=false;
   }catch(error){
     $("luckyCountdown").hidden=true;$("luckyGift").hidden=true;
-    $("luckyStatus").textContent=error.message==="오늘 추첨 가능한 학생이 없습니다"?error.message:`추첨을 완료하지 못했습니다. ${error.message||"저장 상태를 확인해 주세요."}`;
+    $("luckyStatus").textContent=["오늘 추첨 가능한 학생이 없습니다","현재 출석한 학생이 없습니다"].includes(error.message)?error.message:`추첨을 완료하지 못했습니다. ${error.message||"저장 상태를 확인해 주세요."}`;
     $("luckyNext").hidden=false;
   }finally{luckyBusy=false;$("luckyClose").disabled=false}
 }
@@ -260,5 +292,6 @@ async function uploadMediaFile(fd){
 $("mediaAdd").onclick=()=>dialog("URL 미디어 등록",`<input name="title" maxlength="100" placeholder="제목" required><select name="media_type"><option value="audio">MP3·음악</option><option value="video">MP4·영상</option></select><input name="category" value="기타" placeholder="분류"><input name="media_url" type="url" placeholder="https://..." required>`,async fd=>{const{data,error}=await db.from("media_library").insert(Object.fromEntries(fd)).select().single();if(error){toast(error.message);return false}state.media.push(data);renderMedia()});
 async function deleteMedia(id){const media=state.media.find(x=>x.id===id);if(!media||!confirm(`“${media.title}”을(를) 삭제할까요?`))return;const{error}=await db.from("media_library").update({is_active:false}).eq("id",id);if(error){toast(error.message);return}const path=managedMediaPath(media.media_url);if(path){const removed=await db.storage.from(MEDIA_BUCKET).remove([path]);if(removed.error){await db.from("media_library").update({is_active:true}).eq("id",id);toast(`파일 삭제 실패: ${removed.error.message}`);return}}state.media=state.media.filter(x=>x.id!==id);renderMedia();toast("미디어를 삭제했습니다.")}
 function dialog(title,fields,action){$("dialogTitle").textContent=title;$("dialogFields").innerHTML=fields;state.dialogAction=action;$("simpleDialog").showModal()}$("simpleForm").onsubmit=async e=>{e.preventDefault();const ok=await state.dialogAction(new FormData(e.target));if(ok!==false){$("simpleDialog").close();e.target.reset()}};$("simpleDialog").querySelector(".close").onclick=()=>$("simpleDialog").close();$("backButton").onclick=()=>{stopRealtime();location.href="../star/"};$("loginButton").onclick=login;$("logoutButton").onclick=async()=>{await db.auth.signOut();location.reload()};["pointerdown","touchstart","keydown"].forEach(type=>document.addEventListener(type,primeTeamLeaderAudio,{once:true,passive:true}));db.auth.onAuthStateChange((_e,s)=>{if(s&&$("app").hidden)setTimeout(boot,0)});boot();
+
 
 
