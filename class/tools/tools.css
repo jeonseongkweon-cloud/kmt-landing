@@ -58,3 +58,10 @@ body.random-team-board-mode .game-stage{position:relative;height:100%;min-height
 @media(max-width:850px){body.random-team-board-mode{overflow:auto}.random-team-full-board{height:auto;min-height:calc(100vh - 62px);grid-template-columns:1fr}.random-team-card-grid{grid-template-columns:repeat(3,minmax(90px,1fr));grid-auto-rows:auto}.random-team-side{overflow:visible}.random-team-student-card{min-height:160px}}
 
 .burst-controls{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);z-index:5;display:flex;gap:14px;align-items:center;justify-content:center}.burst-controls button{min-width:150px;min-height:56px;padding:12px 22px;border-radius:18px;border:2px solid rgba(255,255,255,.55);font-size:20px;font-weight:1000;cursor:pointer;box-shadow:0 0 24px rgba(255,255,255,.18)}.burst-next{background:#24c875;color:#04170d}.burst-clear{background:rgba(8,25,43,.82);color:#fff}.burst-controls button:active{transform:scale(.97)}@media(max-width:640px){.burst-controls{bottom:12px;gap:8px;width:96%}.burst-controls button{min-width:0;flex:1;min-height:52px;font-size:17px;padding:10px 12px}}
+
+/* Lucky impact starts on the same frame as the confirmed winner. */
+.lucky-burst-overlay.burst .lucky-burst-card{animation:luckyImpactShake .38s ease-out}
+.lucky-burst-overlay.burst .lucky-burst-name,.lucky-burst-overlay.burst .lucky-star-award{animation-delay:0s;opacity:1}
+.lucky-burst-overlay.burst #luckyGift{font-size:clamp(48px,10vw,90px);animation:luckyName .35s ease-out both}
+@keyframes luckyImpactShake{0%,100%{transform:translate(0)}15%{transform:translate(-9px,5px)}30%{transform:translate(9px,-5px)}50%{transform:translate(-6px,-3px)}75%{transform:translate(4px,2px)}}
+@media(prefers-reduced-motion:reduce){.lucky-burst-overlay.burst .lucky-burst-card{animation:none}}
