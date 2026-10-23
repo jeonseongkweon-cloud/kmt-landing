@@ -45,6 +45,7 @@ function playLuckyCelebration(){
   if(!$("luckyCelebrationStyle")){
     const style=document.createElement("style");style.id="luckyCelebrationStyle";style.textContent=`
     #luckyBurstOverlay .lucky-burst-card{z-index:1}
+    #luckyCelebration::before{content:"";position:absolute;inset:0;background:radial-gradient(circle,#fff 0%,#ffe49a 15%,transparent 65%);animation:luckyFlash .3s ease-out both} @keyframes luckyFlash{from{opacity:.9}to{opacity:0}}
     #luckyCelebration{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
     #luckyCelebration i{position:absolute;display:block;font-style:normal;opacity:0;will-change:transform,opacity;animation:luckyFirework 4.6s var(--delay) ease-out forwards}
     #luckyCelebration .lucky-spark{width:7px;height:14px;border-radius:2px;background:var(--color);box-shadow:0 0 8px var(--color)}
@@ -75,11 +76,23 @@ function playLuckyCelebration(){
     const c=luckyAudioContext();
     if(c&&c.state==="running"){
       const t=c.currentTime;
-      // A 4.2 second brass-like victory phrase, scheduled once with finite stops.
-      [[523,0,.22],[523,.25,.22],[523,.5,.22],[698,.78,.48],[659,1.3,.22],[698,1.55,.22],[784,1.82,.5],[1047,2.4,1.75],[784,2.4,1.75],[659,2.4,1.75]].forEach(([frequency,delay,duration])=>{
+      // Bounded impact: low boom and filtered noise peak below full scale.
+      const mix=c.createGain();mix.gain.value=.8;mix.connect(c.destination);
+      const boom=c.createOscillator(),bg=c.createGain();
+      boom.frequency.setValueAtTime(150,t);boom.frequency.exponentialRampToValueAtTime(38,t+.38);
+      bg.gain.setValueAtTime(.0001,t);bg.gain.exponentialRampToValueAtTime(.55,t+.008);bg.gain.exponentialRampToValueAtTime(.0001,t+.55);
+      boom.connect(bg).connect(mix);boom.start(t);boom.stop(t+.6);luckyCelebrationNodes.push(boom);
+      const noise=c.createBufferSource(),buffer=c.createBuffer(1,Math.ceil(c.sampleRate*.45),c.sampleRate),samples=buffer.getChannelData(0);
+      for(let i=0;i<samples.length;i++)samples[i]=Math.random()*2-1;
+      noise.buffer=buffer;const filter=c.createBiquadFilter(),ng=c.createGain();filter.type="lowpass";filter.frequency.value=2400;
+      ng.gain.setValueAtTime(.35,t);ng.gain.exponentialRampToValueAtTime(.0001,t+.45);
+      noise.connect(filter).connect(ng).connect(mix);noise.start(t);luckyCelebrationNodes.push(noise);
+      boom.onended=()=>{boom.disconnect();bg.disconnect()};noise.onended=()=>{noise.disconnect();filter.disconnect();ng.disconnect()};
+      // Short brass-like fanfare follows the impact, scheduled once with finite stops.
+      [[523,.2,.14],[659,.38,.14],[784,.56,.18],[1047,.8,.65],[784,.8,.65],[659,.8,.65]].forEach(([frequency,delay,duration])=>{
         const o=c.createOscillator(),gain=c.createGain();o.type="triangle";o.frequency.setValueAtTime(frequency,t+delay);
         gain.gain.setValueAtTime(.0001,t+delay);gain.gain.exponentialRampToValueAtTime(.11,t+delay+.035);gain.gain.exponentialRampToValueAtTime(.0001,t+delay+duration);
-        o.connect(gain).connect(c.destination);o.onended=()=>{o.disconnect();gain.disconnect()};o.start(t+delay);o.stop(t+delay+duration+.025);luckyCelebrationNodes.push(o);
+        o.connect(gain).connect(mix);o.onended=()=>{o.disconnect();gain.disconnect()};o.start(t+delay);o.stop(t+delay+duration+.025);luckyCelebrationNodes.push(o);
       });
     }
   }catch(error){console.warn("[LUCKY CELEBRATION]",error)}
@@ -190,6 +203,14 @@ function showLuckyWinner(event){
   wrap.hidden=false;$("luckyBurstName").textContent=name;$("luckyBurstOverlay").querySelector(".lucky-star-award").hidden=false;
   const o=$("luckyBurstOverlay");o.classList.remove("burst");void o.offsetWidth;o.classList.add("burst");
 }
+function revealLuckyImpact(event){
+  $("luckyCountdown").hidden=true;
+  $("luckyGift").hidden=false;
+  showLuckyWinner(event);
+  playLuckyCelebration();
+  performance.mark("lucky-impact-start");
+  performance.measure("lucky-countdown-to-impact","lucky-countdown-end","lucky-impact-start");
+}
 async function revealLucky(){
   if(luckyBusy||!state.session)return;
   luckyBusy=true;stopLuckyCelebration();luckyAudioContext();const o=ensureLuckyOverlay();o.hidden=false;o.classList.remove("burst");
@@ -203,9 +224,11 @@ async function revealLucky(){
     if(!candidates.length)throw new Error("오늘 추첨 가능한 학생이 없습니다");
     $("luckyStatus").textContent="🍀 오늘의 행운아는 누구일까요?";await luckyIntro();
     $("luckyStatus").textContent="";const countdown=$("luckyCountdown");countdown.hidden=false;
-    for(let n=5;n>=1;n--){countdown.textContent=n;countdown.style.animation="none";void countdown.offsetWidth;countdown.style.animation="";luckyTone(660,.12);await luckyWait(1000)}
-    countdown.hidden=true;$("luckyGift").hidden=false;$("luckyGift").classList.add("opening");await luckyWait(1100);$("luckyGift").hidden=true;
+    for(let n=5;n>=2;n--){countdown.textContent=n;countdown.style.animation="none";void countdown.offsetWidth;countdown.style.animation="";luckyTone(660,.12);await luckyWait(1000)}
+    countdown.textContent=1;countdown.style.animation="none";void countdown.offsetWidth;countdown.style.animation="";luckyTone(660,.12);
+    const countdownDone=luckyWait(1000).then(()=>performance.mark("lucky-countdown-end"));
     let result;
+    try{
     const changedStudents=new Set();
     while(!result){
       const present=(await refreshLuckyRoster(day)).filter(student=>!changedStudents.has(student.id));
@@ -214,13 +237,13 @@ async function revealLucky(){
       if(!available.length)throw new Error("오늘 추첨 가능한 학생이 없습니다");
       if(date()!==day)throw new Error("날짜가 바뀌었습니다. 새로고침 후 다시 진행해 주세요.");
       const student=available[Math.floor(Math.random()*available.length)];
-      $("luckyStatus").textContent="출석 확인 및 별 1개 저장 중…";
+      // Keep countdown visible while the existing validation/save completes.
       const saved=await awardLuckyStars(student,day,drawId);
       if(saved.retry){changedStudents.add(student.id);continue}
       result=saved;
     }
-    showLuckyWinner(result.event);
-    playLuckyCelebration();
+    }finally{await countdownDone}
+    revealLuckyImpact(result.event);
     $("luckyStatus").textContent=result.inserted?"축하합니다! 별 1개 지급 완료":"이미 완료된 추첨입니다. 추가 지급하지 않았습니다.";
     $("luckyNext").hidden=false;
   }catch(error){
