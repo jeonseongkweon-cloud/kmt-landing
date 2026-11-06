@@ -608,3 +608,9 @@ main{padding-top:8px}
 @media(max-width:1100px) and (min-width:761px){.star-main-layout{grid-template-columns:minmax(0,1fr) 190px}.pc-star-toolbar .award-selected{min-width:220px}.pc-star-toolbar>span{display:none}.student-line h2{font-size:15px}.student-line .star-count{font-size:17px}}
 @media(max-width:760px),(max-width:1024px) and (pointer:coarse){.system-menu-button{width:44px}.system-menu{top:62px}.pc-star-toolbar{display:none}.star-main-layout{display:block}.pc-side-panel{display:none}.student-zone>.star-growth-dashboard{display:grid}.voice-feedback{display:flex}.category-live-inline .mobile-only-controls{display:flex}.class-head{min-height:0}.class-head h1{font-size:34px}.student-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.student-grid .student{max-width:none}.student-grid .photo{height:auto;aspect-ratio:1/1}.selection-badge{display:none}.student-line h2{font-size:16px}.student-line .star-count{font-size:17px}.card-undo{width:28px;height:28px;flex-basis:28px}.student-grid .star-main{padding:7px 5px 0}}
 @media(max-width:540px){.student-grid{grid-template-columns:1fr 1fr}.category-dialog-grid{gap:8px}.category-dialog-grid button{min-height:62px;font-size:17px}}
+
+/* Cumulative STAR must remain clear of the mobile card's absolute UNDO button. */
+@media(max-width:760px),(max-width:1024px) and (pointer:coarse){
+  #studentGrid .student-line .monthly-star{grid-column:1/-1!important;grid-row:2!important;display:block!important;justify-self:start!important;visibility:visible!important}
+  #studentGrid .student-line .star-count{grid-row:3!important}
+}
