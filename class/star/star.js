@@ -12,15 +12,16 @@ const praisePresets=["오늘 인사가 아주 좋았어요.","친구를 도와�
 const clean=v=>v==null?"":String(v).trim(),escapeHtml=v=>clean(v).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
 const categoryDisplayName=category=>category?.code==="CARE"?"인성별":category?.code==="KICK"?"효도별":clean(category?.name);
 function localDate(){return new Intl.DateTimeFormat("en-CA",{timeZone:cfg.timezone,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())}
-// Monthly totals use the existing awarded_at timestamp; deleted UNDO rows are absent.
+// Cumulative display uses all original events and all monthly adjustments; UNDO rows are absent.
+// Keep existing monthly identifiers/DOM hooks to preserve integrations.
 function monthlyBounds(){
   const month=localDate().slice(0,7),[year,number]=month.split("-").map(Number);
   const next=new Date(Date.UTC(year,number,1)).toISOString().slice(0,7);
   return {month,start:`${month}-01T00:00:00+09:00`,end:`${next}-01T00:00:00+09:00`};
 }
 async function loadMonthlyStars(){
-  const {month,start,end}=monthlyBounds(),totals=new Map();
-  const pageSize=1000,fetchPage=(offset,count=false)=>db.from("star_events").select("student_id,amount",count?{count:"exact"}:undefined).gte("awarded_at",start).lt("awarded_at",end).order("awarded_at").order("id").range(offset,offset+pageSize-1);
+  const {month}=monthlyBounds(),totals=new Map();
+  const pageSize=1000,fetchPage=(offset,count=false)=>db.from("star_events").select("student_id,amount",count?{count:"exact"}:undefined).order("awarded_at").order("id").range(offset,offset+pageSize-1);
   const first=await fetchPage(0,true);
   if(first.error){console.warn("[MONTHLY STAR]",first.error.message);state.monthlyKey=month;state.monthlyStars=null;return}
   const pages=[first.data||[]],lastPage=Math.ceil((first.count??pages[0].length)/pageSize);
@@ -42,10 +43,14 @@ async function loadMonthlyStars(){
 }
 async function loadMonthlyAdjustments(){
   const month=monthlyBounds().month;
-  const {data,error}=await db.from("kmt_star_monthly_adjustments").select("student_id,adjustment").eq("year_month",month);
-  state.monthlyAdjustmentKey=month;
-  if(error){console.warn("[MONTHLY STAR ADJUSTMENT]",error.message);state.monthlyAdjustments=null;return}
-  state.monthlyAdjustments=new Map((data||[]).map(row=>[String(row.student_id),Number(row.adjustment)]));
+  const totals=new Map(),current=new Map(),pageSize=1000;
+  for(let offset=0;;offset+=pageSize){
+    const {data,error}=await db.from("kmt_star_monthly_adjustments").select("student_id,year_month,adjustment").order("student_id").order("year_month").range(offset,offset+pageSize-1);
+    if(error){console.warn("[CUMULATIVE STAR ADJUSTMENT]",error.message);state.monthlyAdjustments=null;return}
+    for(const row of data||[]){const id=String(row.student_id);totals.set(id,(totals.get(id)||0)+Number(row.adjustment));if(row.year_month===month)current.set(id,Number(row.adjustment))}
+    if((data||[]).length<pageSize)break;
+  }
+  state.monthlyAdjustmentKey=month;state.monthlyAdjustments=totals;state.currentMonthAdjustments=current;
 }
 async function loadMonthlyView(){await Promise.all([loadMonthlyStars(),loadMonthlyAdjustments()])}
 function monthlyRaw(id){return state.monthlyStars?.get(String(id))||0}
@@ -53,10 +58,10 @@ function monthlyAdjustment(id){return state.monthlyAdjustments?.get(String(id))|
 function monthlyDisplay(id){return Math.max(0,monthlyRaw(id)+monthlyAdjustment(id))}
 function monthlyReady(){const month=monthlyBounds().month;return state.monthlyKey===month&&state.monthlyAdjustmentKey===month&&state.monthlyStars!==null&&state.monthlyAdjustments!==null}
 function openMonthlyAdjustment(student){
-  if(!monthlyReady()){toast("월간 STAR를 불러온 뒤 다시 시도해 주세요.");return}
+  if(!monthlyReady()){toast("전체 누적 STAR를 불러온 뒤 다시 시도해 주세요.");return}
   state.monthlyAdjustmentStudent=student;
-  const raw=monthlyRaw(student.id),adjustment=monthlyAdjustment(student.id),month=monthlyBounds().month;
-  $("monthlyAdjustmentTitle").textContent=`${student.name} · ${Number(month.slice(0,4))}년 ${Number(month.slice(5))}월 STAR`;
+  const raw=monthlyRaw(student.id),adjustment=monthlyAdjustment(student.id);
+  $("monthlyAdjustmentTitle").textContent=`${student.name} · 전체 누적 STAR`;
   $("monthlyAdjustmentRaw").textContent=raw.toLocaleString("ko-KR");
   $("monthlyAdjustmentDelta").textContent=adjustment.toLocaleString("ko-KR");
   $("monthlyAdjustmentCurrent").textContent=monthlyDisplay(student.id).toLocaleString("ko-KR");
@@ -74,20 +79,22 @@ async function saveMonthlyAdjustment(target){
   state.monthlyAdjustmentBusy=true;$("monthlyAdjustmentApply").disabled=true;$("monthlyAdjustmentRestore").disabled=true;
   try{
     const {data:{user},error:authError}=await db.auth.getUser();if(authError||!user)throw authError||new Error("관리자 로그인을 확인해 주세요.");
-    const adjustment=number-raw;
+    // Replace only this month's correction; preserve every historical correction.
+    const previous=state.currentMonthAdjustments?.get(String(student.id))||0;
+    const adjustment=number-raw-monthlyAdjustment(student.id)+previous;
+    if(!Number.isSafeInteger(adjustment)||adjustment< -2147483648||adjustment>2147483647)throw new Error("보정값 범위를 초과했습니다.");
     const {data,error}=await db.from("kmt_star_monthly_adjustments")
       .upsert({student_id:student.id,year_month:month,adjustment,updated_at:new Date().toISOString(),updated_by:user.id},{onConflict:"student_id,year_month"})
       .select("student_id,year_month,adjustment").single();
     if(error)throw error;
-    if(state.monthlyAdjustmentKey===data.year_month){state.monthlyAdjustments.set(String(student.id),Number(data.adjustment));renderStudents()}
-    $("monthlyAdjustmentDialog").close();toast(`${student.name} 이번 달 STAR ${number}개로 보정했습니다.`);
+    if(state.monthlyAdjustmentKey===data.year_month){state.monthlyAdjustments.set(String(student.id),monthlyAdjustment(student.id)-previous+Number(data.adjustment));state.currentMonthAdjustments.set(String(student.id),Number(data.adjustment));renderStudents()}
+    $("monthlyAdjustmentDialog").close();toast(`${student.name} 전체 누적 STAR ${number}개로 보정했습니다.`);
   }catch(error){$("monthlyAdjustmentError").textContent=error?.message||"보정값을 저장하지 못했습니다."}
   finally{state.monthlyAdjustmentBusy=false;$("monthlyAdjustmentApply").disabled=false;$("monthlyAdjustmentRestore").disabled=false}
 }
 function updateMonthlyStars(rows,delta){
   if(!state.monthlyStars||state.monthlyKey!==monthlyBounds().month)return;
-  const {start,end}=monthlyBounds(),from=Date.parse(start),until=Date.parse(end);
-  for(const row of rows){const time=Date.parse(row.awarded_at||"");if(!(time>=from&&time<until))continue;
+  for(const row of rows){
     const id=String(row.student_id);state.monthlyStars.set(id,Math.max(0,(state.monthlyStars.get(id)||0)+delta*Number(row.amount||1)));
   }
 }
@@ -474,7 +481,7 @@ function renderStudents(){
   const presentIds=new Set(list.map(s=>String(s.id)));state.selectedIds.forEach(id=>{if(!presentIds.has(id))state.selectedIds.delete(id)});
   $("emptyMessage").hidden=!!list.length;$("totalStars").textContent=currentRoomEvents().length;
   const columns=gridColumns(list.length);$("studentGrid").dataset.count=list.length;$("studentGrid").style.setProperty("--grid-columns",columns);$("studentGrid").style.setProperty("--grid-rows",Math.max(1,Math.ceil(list.length/columns)));$("studentGrid").style.setProperty("--card-width",`${100/columns}%`);
-  $("studentGrid").innerHTML=list.map(s=>{const count=eventsFor(s.id).length,photo=clean(s.photo_url),perfect=count>=cfg.perfectStar,isLeader=leaders.has(String(s.id)),selected=state.selectedIds.has(String(s.id));return `<article class="student ${perfect?"perfect":""} ${isLeader?"current-leader":""} ${selected?"selected":""}" data-student="${s.id}">${isLeader?'<div class="leader-badge" aria-label="현재 공동 1등">👑</div>':""}${selected?'<div class="selection-badge">✓</div>':""}<div class="star-main" data-star="${s.id}" role="button" tabindex="0" aria-pressed="${selected}">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="${escapeHtml(s.name)} 사진">`:`<div class="photo fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<button class="undo card-undo" type="button" data-undo="${s.id}" aria-label="${escapeHtml(s.name)} 마지막 STAR 취소">↶</button><div class="student-line"><h2>${escapeHtml(s.name)}</h2><span class="monthly-star" role="button" tabindex="0" aria-label="이번 달 STAR ${monthlyReady()?monthlyDisplay(s.id):"조회 중"}개">⭐ ${monthlyReady()?monthlyDisplay(s.id).toLocaleString("ko-KR"):"—"}</span><strong class="star-count">⭐${count}</strong></div></div></article>`}).join("");
+  $("studentGrid").innerHTML=list.map(s=>{const count=eventsFor(s.id).length,photo=clean(s.photo_url),perfect=count>=cfg.perfectStar,isLeader=leaders.has(String(s.id)),selected=state.selectedIds.has(String(s.id));return `<article class="student ${perfect?"perfect":""} ${isLeader?"current-leader":""} ${selected?"selected":""}" data-student="${s.id}">${isLeader?'<div class="leader-badge" aria-label="현재 공동 1등">👑</div>':""}${selected?'<div class="selection-badge">✓</div>':""}<div class="star-main" data-star="${s.id}" role="button" tabindex="0" aria-pressed="${selected}">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="${escapeHtml(s.name)} 사진">`:`<div class="photo fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<button class="undo card-undo" type="button" data-undo="${s.id}" aria-label="${escapeHtml(s.name)} 마지막 STAR 취소">↶</button><div class="student-line"><h2>${escapeHtml(s.name)}</h2><span class="monthly-star" role="button" tabindex="0" aria-label="전체 누적 STAR ${monthlyReady()?monthlyDisplay(s.id):"조회 중"}개">⭐ ${monthlyReady()?monthlyDisplay(s.id).toLocaleString("ko-KR"):"—"}</span><strong class="star-count">⭐${count}</strong></div></div></article>`}).join("");
   animateCardMoves(before);
   state.leaderId=leader&&eventsFor(leader.id).length>0?leader.id:null;
   if(state.leaderReady&&state.leaderId&&state.leaderId!==previousLeader){document.querySelector(`[data-student="${state.leaderId}"]`)?.classList.add("leader-changed");showLeaderChanged(leader)}
@@ -588,7 +595,8 @@ async function syncSessionState(){if(!state.session)return;const{data,error}=awa
 function startRealtime(){
   stopRealtime();if(!state.session)return;const sid=state.session.id,today=localDate();
   state.starRealtimeChannel=db.channel(`kmt-star-events-${sid}-${today}`)
-    .on("postgres_changes",{event:"*",schema:"public",table:"star_events",filter:`session_id=eq.${sid}`},scheduleRealtimeRefresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"star_events"},scheduleRealtimeRefresh)
+    .on("postgres_changes",{event:"*",schema:"public",table:"kmt_star_monthly_adjustments"},scheduleRealtimeRefresh)
     .subscribe();
   // Keep periodic synchronization even when the realtime socket reports SUBSCRIBED.
   // Subscription success does not guarantee that attendance changes are published.
