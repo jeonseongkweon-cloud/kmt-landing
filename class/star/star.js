@@ -20,25 +20,19 @@ function monthlyBounds(){
   return {month,start:`${month}-01T00:00:00+09:00`,end:`${next}-01T00:00:00+09:00`};
 }
 async function loadMonthlyStars(){
-  const {month}=monthlyBounds(),totals=new Map();
-  const pageSize=1000,fetchPage=(offset,count=false)=>db.from("star_events").select("student_id,amount",count?{count:"exact"}:undefined).order("awarded_at").order("id").range(offset,offset+pageSize-1);
-  const first=await fetchPage(0,true);
-  if(first.error){console.warn("[MONTHLY STAR]",first.error.message);state.monthlyKey=month;state.monthlyStars=null;return}
-  const pages=[first.data||[]],lastPage=Math.ceil((first.count??pages[0].length)/pageSize);
-  for(let page=1;page<lastPage;page+=4){
-    const batch=await Promise.all(Array.from({length:Math.min(4,lastPage-page)},(_,i)=>fetchPage((page+i)*pageSize)));
-    const failure=batch.find(result=>result.error);
-    if(failure){console.warn("[MONTHLY STAR]",failure.error.message);state.monthlyKey=month;state.monthlyStars=null;return}
-    pages.push(...batch.map(result=>result.data||[]));
+  const {month}=monthlyBounds(),totals=new Map(),pageSize=500;
+  // Indexed keyset pages avoid an all-history count/sort timing out under RLS.
+  let cursor=null;
+  for(;;){
+    let query=db.from("star_events").select("id,student_id,amount").order("id").limit(pageSize);
+    if(cursor)query=query.gt("id",cursor);
+    const {data,error}=await query;
+    if(error){console.warn("[CUMULATIVE STAR]",error.message);state.monthlyKey=month;state.monthlyStars=null;return}
+    const rows=data||[];
+    for(const row of rows)totals.set(String(row.student_id),(totals.get(String(row.student_id))||0)+Number(row.amount||0));
+    if(rows.length<pageSize)break;
+    cursor=rows.at(-1).id;
   }
-  if(first.count==null){
-    for(let page=1;pages.at(-1).length===pageSize;page++){
-      const result=await fetchPage(page*pageSize);
-      if(result.error){console.warn("[MONTHLY STAR]",result.error.message);state.monthlyKey=month;state.monthlyStars=null;return}
-      pages.push(result.data||[]);
-    }
-  }
-  for(const row of pages.flat())totals.set(String(row.student_id),(totals.get(String(row.student_id))||0)+Number(row.amount||0));
   state.monthlyKey=month;state.monthlyStars=totals;
 }
 async function loadMonthlyAdjustments(){
