@@ -5,6 +5,37 @@ import { resolveStudentName } from "./smart-name-voice.js?v=100";
 const SINGLE_OWNER_EMAIL="class-admin@ipma.kr";
 const isSingleOwner=session=>String(session?.user?.email||"").trim().toLowerCase()===SINGLE_OWNER_EMAIL;
 const cfg=window.KMT_STAR_CONFIG,db=createClient(cfg.supabaseUrl,cfg.supabasePublishableKey,{auth:{persistSession:true,detectSessionInUrl:true,flowType:"pkce"}}),$=id=>document.getElementById(id);
+const MOBILE_STAR_QUERY="(max-width:760px), (max-width:1024px) and (pointer:coarse)";
+const mobileStarStyle=document.createElement("style");
+mobileStarStyle.textContent=`
+  @media ${MOBILE_STAR_QUERY} {
+    #starBurst, #growthCelebration, #missionClearEffect, #leaderChangeEffect,
+    .lwv2-drone, .lwv2-sky, .lwv2-particle, .lwv2-peek, .lwv2-overlay,
+    .live-drone-wrap, .live-drone-spark, .live-surprise-comet, .live-growth-overlay {
+      display: none !important;
+    }
+    #starScreen #studentGrid .student,
+    #starScreen #studentGrid .student *,
+    #starScreen #studentGrid .student::before,
+    #starScreen #studentGrid .student::after,
+    #starScreen #studentGrid .student *::before,
+    #starScreen #studentGrid .student *::after,
+    #growthPanel #growthStages, #growthPanel #growthStages *,
+    #growthPanel #growthMeterFill, #toast {
+      animation: none !important;
+      transition: none !important;
+    }
+    #starScreen #studentGrid .student .student-line h2::after,
+    #starScreen #studentGrid .student .star-item::after {
+      content: none !important;
+    }
+    #starScreen #studentGrid .student .star-main {
+      transform: none !important;
+    }
+  }
+`;
+document.head.appendChild(mobileStarStyle);
+
 const VOICE_COMMAND_COOLDOWN_MS=2600;
 const NOTICE_ICONS={focus:"🥋",notice:"📢",personal:"🔔",item:"🎒",event:"📅",praise:"⭐"};
 const state={periods:[],students:[],session:null,period:null,categories:[],category:null,attendance:[],events:[],praises:[],champions:[],notices:[],selectedIds:new Set(),mobileSort:localStorage.getItem("kmt-star-mobile-sort")||"stars",realtimeChannel:null,starRealtimeChannel:null,realtimeTimer:null,livePollTimer:null,livePollBusy:false,monthlyStars:null,monthlyKey:"",monthlyAdjustments:null,monthlyAdjustmentKey:"",monthlyAdjustmentStudent:null,monthlyAdjustmentBusy:false,localAwardPending:0,leaderId:null,leaderReady:false,growth:{goal:0,stage:0,ready:false,revealTimer:null,celebrationTimers:[]},voice:{recognition:null,listening:false,mode:null,lastCommands:new Map(),lastVoiceStarId:null,pending:null,lastDebug:null,sessionId:0,active:null,retryTimer:null,debug:localStorage.getItem("kmt-voice-debug")==="on",debugEvents:[]}};
@@ -299,6 +330,7 @@ function playStarSound(){
 }
 function playAttendanceSound(){try{const ctx=ensureStarAudioReady();if(!ctx)return;const o=ctx.createOscillator(),g=ctx.createGain(),n=ctx.currentTime;o.frequency.setValueAtTime(660,n);o.frequency.linearRampToValueAtTime(990,n+.15);g.gain.setValueAtTime(.1,n);g.gain.exponentialRampToValueAtTime(.0001,n+.22);o.connect(g).connect(ctx.destination);o.start();o.stop(n+.23)}catch{}}
 function highlightStudent(student,{arrive=false}={}){
+  if(!arrive&&usesMobileStarControls())return;
   requestAnimationFrame(()=>{const card=document.querySelector(`[data-student="${student.id}"]`);if(!card)return;card.classList.remove("voice-hit","voice-arrive");void card.offsetWidth;card.classList.add(arrive?"voice-arrive":"voice-hit");const main=card.querySelector(".star-main");if(main){const plus=document.createElement("span");plus.className="voice-plus";plus.textContent=arrive?"어서 와!":"⭐ +1";main.appendChild(plus);setTimeout(()=>plus.remove(),1000)}setTimeout(()=>card.classList.remove("voice-hit","voice-arrive"),950)})
 }
 function speakShort(text){
@@ -376,6 +408,7 @@ async function handleVoiceCommand(command,mode=null,alternatives=[command]){
   await executeResolvedVoiceCommand(resolution.student,t,mode)
 }
 function showMissionClear(student){
+  if(usesMobileStarControls())return;
   const old=document.getElementById("missionClearEffect");if(old)old.remove();const layer=document.createElement("div");layer.id="missionClearEffect";layer.className="mission-clear-effect";layer.innerHTML=`<div><span>🎯</span><strong>MISSION CLEAR!</strong><b>${escapeHtml(student.name)} ⭐ +1</b></div>`;document.body.appendChild(layer);setTimeout(()=>layer.classList.add("out"),1200);setTimeout(()=>layer.remove(),1750)
 }
 function noticeLabel(type){return {focus:"수련 미션",notice:"공지사항",personal:"개인 전달",item:"준비물",event:"행사/일정",praise:"칭찬"}[type]||"공지"}
@@ -458,7 +491,7 @@ function animateCardMoves(before){requestAnimationFrame(()=>document.querySelect
 function showLeaderChanged(student){
   const old=document.getElementById("leaderChangeEffect");if(old)old.remove();const layer=document.createElement("div");layer.id="leaderChangeEffect";layer.className="leader-change-effect";layer.innerHTML=`<div><span>👑</span><strong>새로운 1위!</strong><b>${escapeHtml(student.name)}</b></div>`;document.body.appendChild(layer);playLeaderChangeSound();setTimeout(()=>layer.classList.add("out"),1200);setTimeout(()=>layer.remove(),1800)
 }
-function usesMobileStarControls(){return matchMedia("(max-width:760px), (max-width:1024px) and (pointer:coarse)").matches}
+function usesMobileStarControls(){return matchMedia(MOBILE_STAR_QUERY).matches}
 function gridColumns(count){if(count<=1)return 1;if(count<=4)return count;if(count<=7)return count;return 7}
 function renderSelectionToolbar(){
   const count=state.selectedIds.size,label=state.category?categoryDisplayName(state.category):"STAR";
@@ -471,14 +504,15 @@ function toggleStudentSelection(id){
 }
 function renderStudents(){
   if(state.monthlyKey!==monthlyBounds().month||state.monthlyAdjustmentKey!==monthlyBounds().month){state.monthlyStars=null;state.monthlyAdjustments=null;loadMonthlyView().then(renderStudents)}
-  const before=captureCardPositions(),list=sortedAttendedStudents(),maxScore=Math.max(0,...attendedStudents().map(s=>eventsFor(s.id).length)),leaders=new Set(maxScore>0?attendedStudents().filter(s=>eventsFor(s.id).length===maxScore).map(s=>String(s.id)):[]),leader=list.find(s=>leaders.has(String(s.id)))||null,previousLeader=state.leaderId;
+  const mobile=usesMobileStarControls();
+  const before=mobile?null:captureCardPositions(),list=sortedAttendedStudents(),maxScore=Math.max(0,...attendedStudents().map(s=>eventsFor(s.id).length)),leaders=new Set(maxScore>0?attendedStudents().filter(s=>eventsFor(s.id).length===maxScore).map(s=>String(s.id)):[]),leader=list.find(s=>leaders.has(String(s.id)))||null,previousLeader=state.leaderId;
   const presentIds=new Set(list.map(s=>String(s.id)));state.selectedIds.forEach(id=>{if(!presentIds.has(id))state.selectedIds.delete(id)});
   $("emptyMessage").hidden=!!list.length;$("totalStars").textContent=currentRoomEvents().length;
   const columns=gridColumns(list.length);$("studentGrid").dataset.count=list.length;$("studentGrid").style.setProperty("--grid-columns",columns);$("studentGrid").style.setProperty("--grid-rows",Math.max(1,Math.ceil(list.length/columns)));$("studentGrid").style.setProperty("--card-width",`${100/columns}%`);
   $("studentGrid").innerHTML=list.map(s=>{const count=eventsFor(s.id).length,photo=clean(s.photo_url),perfect=count>=cfg.perfectStar,isLeader=leaders.has(String(s.id)),selected=state.selectedIds.has(String(s.id));return `<article class="student ${perfect?"perfect":""} ${isLeader?"current-leader":""} ${selected?"selected":""}" data-student="${s.id}">${isLeader?'<div class="leader-badge" aria-label="현재 공동 1등">👑</div>':""}${selected?'<div class="selection-badge">✓</div>':""}<div class="star-main" data-star="${s.id}" role="button" tabindex="0" aria-pressed="${selected}">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="${escapeHtml(s.name)} 사진">`:`<div class="photo fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<button class="undo card-undo" type="button" data-undo="${s.id}" aria-label="${escapeHtml(s.name)} 마지막 STAR 취소">↶</button><div class="student-line"><h2>${escapeHtml(s.name)}</h2><span class="monthly-star" role="button" tabindex="0" aria-label="전체 누적 STAR ${monthlyReady()?monthlyDisplay(s.id):"조회 중"}개">⭐ ${monthlyReady()?monthlyDisplay(s.id).toLocaleString("ko-KR"):"—"}</span><strong class="star-count">⭐${count}</strong></div></div></article>`}).join("");
-  animateCardMoves(before);
+  if(before)animateCardMoves(before);
   state.leaderId=leader&&eventsFor(leader.id).length>0?leader.id:null;
-  if(state.leaderReady&&state.leaderId&&state.leaderId!==previousLeader){document.querySelector(`[data-student="${state.leaderId}"]`)?.classList.add("leader-changed");showLeaderChanged(leader)}
+  if(!mobile&&state.leaderReady&&state.leaderId&&state.leaderId!==previousLeader){document.querySelector(`[data-student="${state.leaderId}"]`)?.classList.add("leader-changed");showLeaderChanged(leader)}
   state.leaderReady=true;
   document.querySelectorAll("[data-star]").forEach(b=>b.onclick=()=>{const student=state.students.find(s=>String(s.id)===String(b.dataset.star));if(usesMobileStarControls())award(student);else toggleStudentSelection(b.dataset.star)});document.querySelectorAll("[data-undo]").forEach(b=>b.onclick=e=>{e.stopPropagation();undo(state.students.find(s=>String(s.id)===String(b.dataset.undo)))});document.querySelectorAll(".monthly-star").forEach(b=>{b.onclick=e=>{e.stopPropagation();openMonthlyAdjustment(state.students.find(s=>String(s.id)===String(b.closest("[data-student]").dataset.student)))};b.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();e.stopPropagation();b.click()}}});renderSelectionToolbar();renderGrowth()
 }
@@ -513,17 +547,19 @@ async function awardAll(){
     const {data,error}=await db.from("star_events").insert(payload).select();
     if(error){toast(`전체 STAR 저장 실패: ${error.message}`);return}
     const rows=data||[];state.events.push(...rows);updateMonthlyStars(rows,1);
+    const mobile=usesMobileStarControls();
+    if(mobile){renderStudents();toast(`⭐ ${students.length}명 모두에게 ${label} +1!`)}
     await Promise.allSettled(rows.map(event=>{
       const student=students.find(s=>String(s.id)===String(event.student_id));
       return student?syncSparkAward({db,student,category,event}):Promise.resolve({skipped:true,reason:"STUDENT_NOT_FOUND"});
     })).then(results=>results.forEach(result=>{if(result.status==="rejected")console.warn("[GLOBAL SPARK AWARD ALL]",result.reason)}));
     await Promise.allSettled(students.map(s=>awardAdvancedBadges(s.id)));
-    renderStudents();
+    if(!mobile)renderStudents();
     students.forEach((s,i)=>setTimeout(()=>highlightStudent(s),Math.min(i,6)*70));
     playGrowthSound(false);playStarSound();playAllStarCheerSound();
     speakShort(`전체 ${label} 하나!`);
     $("saveStatus").textContent=`전체 ${students.length}명 ${label} +1 완료`;
-    toast(`⭐ ${students.length}명 모두에게 ${label} +1!`);
+    if(!mobile)toast(`⭐ ${students.length}명 모두에게 ${label} +1!`);
     setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장 · LIVE",1400);
   }finally{state.localAwardPending=Math.max(0,state.localAwardPending-1);button.disabled=false}
 }
@@ -544,7 +580,7 @@ async function awardSelected(){
   }finally{state.localAwardPending=Math.max(0,state.localAwardPending-1);renderSelectionToolbar()}
 }
 
-async function award(s,{source="click"}={}){if(!state.category){toast("STAR 카테고리를 먼저 선택해 주세요.");return}if(state.session.status==="closed"){toast("종료된 수업입니다.");return}$("saveStatus").textContent=`${s.name} 저장 중...`;const category=state.category;state.localAwardPending++;try{const {data,error}=await db.from("star_events").insert({session_id:state.session.id,student_id:s.id,category_id:category.id}).select().single();if(error){toast(error.message);return}state.events.push(data);updateMonthlyStars([data],1);syncSparkAward({db,student:s,category,event:data}).then(result=>{if(result?.ok)console.info("[GLOBAL SPARK AWARD]",result)}).catch(e=>console.warn("[GLOBAL SPARK AWARD]",e));state.voice.lastVoiceStarId=source==="voice"?data.id:state.voice.lastVoiceStarId;const total=eventsFor(s.id).length;const newBadges=await awardAdvancedBadges(s.id);renderStudents();showBurst(s,category,total,newBadges);highlightStudent(s);playStarSound();$("saveStatus").textContent=advancedRewardText(s,total,newBadges);setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장",900)}finally{state.localAwardPending=Math.max(0,state.localAwardPending-1)}}
+async function award(s,{source="click"}={}){if(!state.category){toast("STAR 카테고리를 먼저 선택해 주세요.");return}if(state.session.status==="closed"){toast("종료된 수업입니다.");return}$("saveStatus").textContent=`${s.name} 저장 중...`;const category=state.category;state.localAwardPending++;try{const {data,error}=await db.from("star_events").insert({session_id:state.session.id,student_id:s.id,category_id:category.id}).select().single();if(error){toast(error.message);return}state.events.push(data);updateMonthlyStars([data],1);syncSparkAward({db,student:s,category,event:data}).then(result=>{if(result?.ok)console.info("[GLOBAL SPARK AWARD]",result)}).catch(e=>console.warn("[GLOBAL SPARK AWARD]",e));state.voice.lastVoiceStarId=source==="voice"?data.id:state.voice.lastVoiceStarId;const total=eventsFor(s.id).length;const mobile=usesMobileStarControls();if(mobile){renderStudents();toast(`${s.name} ⭐ +1`)}const newBadges=await awardAdvancedBadges(s.id);if(!mobile)renderStudents();showBurst(s,category,total,newBadges);highlightStudent(s);playStarSound();$("saveStatus").textContent=advancedRewardText(s,total,newBadges);setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장",900)}finally{state.localAwardPending=Math.max(0,state.localAwardPending-1)}}
 function incomingStarEvents(beforeIds,rows=state.events){
   return (rows||[]).filter(e=>!beforeIds.has(String(e.id))).sort((a,b)=>new Date(a.awarded_at||0)-new Date(b.awarded_at||0));
 }
@@ -557,6 +593,7 @@ function playIncomingStarFeedback(rows){
     const total=eventsFor(student.id).length;
     highlightStudent(student);playStarSound();
     if(category)showBurst(student,category,total,[]);
+    if(usesMobileStarControls())toast(`${student.name} ⭐ +1`);
     $("saveStatus").textContent="다른 기기 STAR 수신 · LIVE";
     setTimeout(()=>$("saveStatus").textContent="Supabase 자동저장 · LIVE",1000);
   },index*220));
@@ -605,6 +642,7 @@ function startRealtime(){
 }
 
 function showBurst(s,c,total,newBadges=[]){
+  if(usesMobileStarControls())return;
   $("burstIcon").textContent=total>=cfg.perfectStar?"🌟":(c.icon||"⭐");
   $("burstName").textContent=s.name;
   $("burstCategory").textContent=total>=cfg.perfectStar?"PERFECT STAR!":`${categoryDisplayName(c)} +1`;
