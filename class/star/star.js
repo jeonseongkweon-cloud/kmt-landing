@@ -8,7 +8,21 @@ const cfg=window.KMT_STAR_CONFIG,db=createClient(cfg.supabaseUrl,cfg.supabasePub
 const MOBILE_STAR_QUERY="(max-width:760px), (max-width:1024px) and (pointer:coarse)";
 const mobileStarStyle=document.createElement("style");
 mobileStarStyle.textContent=`
+  .mobile-monthly-adjustment { display: none; }
   @media ${MOBILE_STAR_QUERY} {
+    #studentGrid .monthly-star { pointer-events: none; }
+    #studentGrid .mobile-monthly-adjustment {
+      display: block;
+      grid-column: 1 / -1;
+      margin: 4px auto;
+      min-height: 32px;
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel2);
+      color: var(--text);
+      font-size: 12px;
+    }
     #starBurst, #growthCelebration, #missionClearEffect, #leaderChangeEffect,
     .lwv2-drone, .lwv2-sky, .lwv2-particle, .lwv2-peek, .lwv2-overlay,
     .live-drone-wrap, .live-drone-spark, .live-surprise-comet, .live-growth-overlay {
@@ -509,12 +523,25 @@ function renderStudents(){
   const presentIds=new Set(list.map(s=>String(s.id)));state.selectedIds.forEach(id=>{if(!presentIds.has(id))state.selectedIds.delete(id)});
   $("emptyMessage").hidden=!!list.length;$("totalStars").textContent=currentRoomEvents().length;
   const columns=gridColumns(list.length);$("studentGrid").dataset.count=list.length;$("studentGrid").style.setProperty("--grid-columns",columns);$("studentGrid").style.setProperty("--grid-rows",Math.max(1,Math.ceil(list.length/columns)));$("studentGrid").style.setProperty("--card-width",`${100/columns}%`);
-  $("studentGrid").innerHTML=list.map(s=>{const count=eventsFor(s.id).length,photo=clean(s.photo_url),perfect=count>=cfg.perfectStar,isLeader=leaders.has(String(s.id)),selected=state.selectedIds.has(String(s.id));return `<article class="student ${perfect?"perfect":""} ${isLeader?"current-leader":""} ${selected?"selected":""}" data-student="${s.id}">${isLeader?'<div class="leader-badge" aria-label="현재 공동 1등">👑</div>':""}${selected?'<div class="selection-badge">✓</div>':""}<div class="star-main" data-star="${s.id}" role="button" tabindex="0" aria-pressed="${selected}">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="${escapeHtml(s.name)} 사진">`:`<div class="photo fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<button class="undo card-undo" type="button" data-undo="${s.id}" aria-label="${escapeHtml(s.name)} 마지막 STAR 취소">↶</button><div class="student-line"><h2>${escapeHtml(s.name)}</h2><span class="monthly-star" role="button" tabindex="0" aria-label="전체 누적 STAR ${monthlyReady()?monthlyDisplay(s.id):"조회 중"}개">⭐ ${monthlyReady()?monthlyDisplay(s.id).toLocaleString("ko-KR"):"—"}</span><strong class="star-count">⭐${count}</strong></div></div></article>`}).join("");
+  $("studentGrid").innerHTML=list.map(s=>{const count=eventsFor(s.id).length,photo=clean(s.photo_url),perfect=count>=cfg.perfectStar,isLeader=leaders.has(String(s.id)),selected=state.selectedIds.has(String(s.id));return `<article class="student ${perfect?"perfect":""} ${isLeader?"current-leader":""} ${selected?"selected":""}" data-student="${s.id}">${isLeader?'<div class="leader-badge" aria-label="현재 공동 1등">👑</div>':""}${selected?'<div class="selection-badge">✓</div>':""}<div class="star-main" data-star="${s.id}" role="button" tabindex="0" aria-pressed="${selected}">${photo?`<img class="photo" src="${escapeHtml(photo)}" alt="${escapeHtml(s.name)} 사진">`:`<div class="photo fallback">${escapeHtml(s.name.slice(0,2))}</div>`}<button class="undo card-undo" type="button" data-undo="${s.id}" aria-label="${escapeHtml(s.name)} 마지막 STAR 취소">↶</button><div class="student-line"><h2>${escapeHtml(s.name)}</h2><span class="monthly-star"${mobile?"":' role="button" tabindex="0"'} aria-label="전체 누적 STAR ${monthlyReady()?monthlyDisplay(s.id):"조회 중"}개">⭐ ${monthlyReady()?monthlyDisplay(s.id).toLocaleString("ko-KR"):"—"}</span><strong class="star-count">⭐${count}</strong></div></div><button class="mobile-monthly-adjustment" type="button" aria-label="${escapeHtml(s.name)} 전체 누적 STAR 보정">누적 보정</button></article>`}).join("");
   if(before)animateCardMoves(before);
   state.leaderId=leader&&eventsFor(leader.id).length>0?leader.id:null;
   if(!mobile&&state.leaderReady&&state.leaderId&&state.leaderId!==previousLeader){document.querySelector(`[data-student="${state.leaderId}"]`)?.classList.add("leader-changed");showLeaderChanged(leader)}
   state.leaderReady=true;
-  document.querySelectorAll("[data-star]").forEach(b=>b.onclick=()=>{const student=state.students.find(s=>String(s.id)===String(b.dataset.star));if(usesMobileStarControls())award(student);else toggleStudentSelection(b.dataset.star)});document.querySelectorAll("[data-undo]").forEach(b=>b.onclick=e=>{e.stopPropagation();undo(state.students.find(s=>String(s.id)===String(b.dataset.undo)))});document.querySelectorAll(".monthly-star").forEach(b=>{b.onclick=e=>{e.stopPropagation();openMonthlyAdjustment(state.students.find(s=>String(s.id)===String(b.closest("[data-student]").dataset.student)))};b.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();e.stopPropagation();b.click()}}});renderSelectionToolbar();renderGrowth()
+  document.querySelectorAll("[data-star]").forEach(b=>b.onclick=()=>{const student=state.students.find(s=>String(s.id)===String(b.dataset.star));if(usesMobileStarControls())award(student);else toggleStudentSelection(b.dataset.star)});document.querySelectorAll("[data-undo]").forEach(b=>b.onclick=e=>{e.stopPropagation();undo(state.students.find(s=>String(s.id)===String(b.dataset.undo)))});document.querySelectorAll(".monthly-star, .mobile-monthly-adjustment").forEach(button=>{
+    button.onclick=event=>{
+      if(button.classList.contains("monthly-star")&&usesMobileStarControls())return;
+      event.stopPropagation();
+      const studentId=button.closest("[data-student]").dataset.student;
+      openMonthlyAdjustment(state.students.find(student=>String(student.id)===studentId));
+    };
+    if(button.classList.contains("monthly-star"))button.onkeydown=event=>{
+      if(usesMobileStarControls()||(event.key!=="Enter"&&event.key!==" "))return;
+      event.preventDefault();
+      event.stopPropagation();
+      button.click();
+    };
+  });renderSelectionToolbar();renderGrowth()
 }
 
 async function awardAdvancedBadges(studentId){
