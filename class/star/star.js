@@ -10,6 +10,10 @@ const mobileStarStyle=document.createElement("style");
 mobileStarStyle.textContent=`
   .mobile-monthly-adjustment { display: none; }
   @media ${MOBILE_STAR_QUERY} {
+    #mobileVoiceRemote, #voiceAttendanceButton, #voiceStarButton,
+    #voiceStatus, #voiceDebugToggle, #voiceDebugPanel, .voice-feedback {
+      display: none !important;
+    }
     #studentGrid .monthly-star { pointer-events: none; }
     #studentGrid .mobile-monthly-adjustment {
       display: block;
@@ -275,6 +279,7 @@ function renderVoiceDebug(){
   const log=$("voiceDebugEvents");if(log)log.textContent=state.voice.debugEvents.map(x=>`[${x.time}] ${x.event}${x.detail?` · ${x.detail}`:""}`).join("\n")
 }
 async function inspectMicrophonePermission(){
+  if(usesMobileStarControls())return;
   if(!navigator.permissions?.query){state.voice.permission="브라우저 확인 필요";renderVoiceDebug();return}
   try{const p=await navigator.permissions.query({name:"microphone"});state.voice.permission=p.state;p.onchange=()=>{state.voice.permission=p.state;renderVoiceDebug()}}catch{state.voice.permission="브라우저 확인 필요"}renderVoiceDebug()
 }
@@ -385,6 +390,7 @@ function initSpeechRecognition(){
   state.voice.recognition=r;return true;
 }
 function startOneShotVoice(mode,{retryCount=0}={}){
+  if(usesMobileStarControls())return;
   if(state.voice.listening){stopOneShotVoice();return}
   if(!state.session){toast("수업부를 먼저 선택해 주세요.");return}
   if(!initSpeechRecognition()){toast("이 브라우저는 Web Speech 음성인식을 지원하지 않습니다.");setVoiceStatus("off","🔴 음성 미지원");return}
@@ -710,6 +716,11 @@ $("noticeManageButton").onclick=()=>{renderNoticeList();$("noticeDialog").showMo
 $("noticeForm").onsubmit=async e=>{e.preventDefault();try{await addNotice($("noticeType").value,$("noticeText").value);$("noticeText").value="";toast("전광판 공지를 추가했습니다.")}catch(err){toast(err.message)}};
 ["pointerdown","touchstart","keydown"].forEach(type=>document.addEventListener(type,unlockStarAudio,{once:true,passive:true}));
 document.addEventListener("visibilitychange",()=>{if(document.hidden&&state.voice.listening)stopOneShotVoice()});
+matchMedia(MOBILE_STAR_QUERY).addEventListener("change",event=>{
+  if(!event.matches)return;
+  if(state.voice.active&&!state.voice.active.cancelled)stopOneShotVoice();
+  if($("voiceChoiceDialog").open)$("voiceChoiceDialog").close();
+});
 document.addEventListener("keydown",e=>{const card=e.target.closest?.("[data-star]");if(card&&(e.key==="Enter"||e.key===" ")){e.preventDefault();card.click()}});
 
 $("monthlyAdjustmentForm").onsubmit=e=>{e.preventDefault();saveMonthlyAdjustment($("monthlyAdjustmentTarget").value)};
